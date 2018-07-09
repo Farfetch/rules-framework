@@ -9,12 +9,12 @@ namespace Rules.Framework
 {
     public class RulesEngine<TContentType, TConditionType>
     {
-        private readonly ConditionsEvalEngine<TConditionType> conditionsEvalEngine;
+        private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
 
         internal RulesEngine(
-            ConditionsEvalEngine<TConditionType> conditionsEvalEngine,
+            IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
             IRulesDataSource<TContentType, TConditionType> rulesDataSource)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;

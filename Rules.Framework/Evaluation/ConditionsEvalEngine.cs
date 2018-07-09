@@ -8,7 +8,7 @@ using Rules.Framework.Evaluation.ValueEvaluation;
 
 namespace Rules.Framework.Evaluation
 {
-    internal class ConditionsEvalEngine<TConditionType>
+    internal class ConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
         private readonly DeferredEval deferredEval;
 
