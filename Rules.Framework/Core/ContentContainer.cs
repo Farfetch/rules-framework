@@ -14,6 +14,16 @@ namespace Rules.Framework.Core
 
         public TContentType ContentType { get; }
 
-        public TContent GetContentAs<TContent>() => (TContent)this.getContentFunc.Invoke(typeof(TContent));
+        public TContent GetContentAs<TContent>()
+        {
+            try
+            {
+                return (TContent)this.getContentFunc.Invoke(typeof(TContent));
+            }
+            catch (InvalidCastException ice)
+            {
+                throw new ContentTypeException($"Cannot cast content to provided type as {nameof(TContent)}: {typeof(TContent).FullName}", ice);
+            }
+        }
     }
 }
