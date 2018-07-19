@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Rules.Framework.Core
 {
+    [ExcludeFromCodeCoverage]
     public class ContentTypeException : Exception
     {
         public ContentTypeException()
