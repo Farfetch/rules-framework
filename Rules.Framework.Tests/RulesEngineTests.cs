@@ -67,7 +67,7 @@ namespace Rules.Framework.Tests
 
             // Assert
             Assert.AreEqual(expected, actual);
-            mockRulesDataSource.Verify(x => x.GetRules(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
+            mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
             mockConditionsEvalEngine.Verify(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()), Times.AtLeastOnce());
         }
 
@@ -122,7 +122,7 @@ namespace Rules.Framework.Tests
 
             // Assert
             Assert.IsNull(actual);
-            mockRulesDataSource.Verify(x => x.GetRules(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
+            mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
             mockConditionsEvalEngine.Verify(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()), Times.AtLeastOnce());
         }
 
@@ -137,7 +137,7 @@ namespace Rules.Framework.Tests
         private static Mock<IRulesDataSource<ContentType, ConditionType>> SetupMockForRulesDataSource(IEnumerable<Rule<ContentType, ConditionType>> rules)
         {
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = new Mock<IRulesDataSource<ContentType, ConditionType>>();
-            mockRulesDataSource.Setup(x => x.GetRules(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            mockRulesDataSource.Setup(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(rules);
             return mockRulesDataSource;
         }

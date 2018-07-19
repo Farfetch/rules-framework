@@ -26,7 +26,7 @@ namespace Rules.Framework
             DateTime dateBegin = matchDateTime.Date;
             DateTime dateEnd = matchDateTime.Date.AddDays(1);
 
-            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRules(contentType, dateBegin, dateEnd);
+            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd);
 
             IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
                 .Where(r => this.conditionsEvalEngine.Eval(r.RootCondition, conditions))

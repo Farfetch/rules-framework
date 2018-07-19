@@ -7,6 +7,6 @@ namespace Rules.Framework
 {
     public interface IRulesDataSource<TContentType, TConditionType>
     {
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRules(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
+        Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
     }
 }
