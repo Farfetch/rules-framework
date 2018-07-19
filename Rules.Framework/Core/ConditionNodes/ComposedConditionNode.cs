@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Rules.Framework.Core.ConditionNodes
 {
@@ -14,10 +13,5 @@ namespace Rules.Framework.Core.ConditionNodes
         public IEnumerable<IConditionNode<TConditionNode>> ChildConditionNodes { get; }
 
         public LogicalOperators LogicalOperator { get; }
-
-        public bool Eval(IEnumerable<Condition<TConditionNode>> conditions)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
