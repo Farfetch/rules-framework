@@ -7,9 +7,9 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     internal class DeferredEval
     {
-        private readonly OperatorEvalStrategyFactory operatorEvalStrategyFactory;
+        private readonly IOperatorEvalStrategyFactory operatorEvalStrategyFactory;
 
-        public DeferredEval(OperatorEvalStrategyFactory operatorEvalStrategyFactory)
+        public DeferredEval(IOperatorEvalStrategyFactory operatorEvalStrategyFactory)
         {
             this.operatorEvalStrategyFactory = operatorEvalStrategyFactory;
         }

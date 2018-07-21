@@ -4,7 +4,7 @@ using Rules.Framework.Core;
 
 namespace Rules.Framework.Evaluation.ValueEvaluation
 {
-    internal class OperatorEvalStrategyFactory
+    internal class OperatorEvalStrategyFactory : IOperatorEvalStrategyFactory
     {
         private readonly IDictionary<Operators, IOperatorEvalStrategy> strategies;
 
