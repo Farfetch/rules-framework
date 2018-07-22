@@ -10,9 +10,9 @@ namespace Rules.Framework.Evaluation
 {
     internal class ConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
-        private readonly DeferredEval deferredEval;
+        private readonly IDeferredEval deferredEval;
 
-        public ConditionsEvalEngine(DeferredEval deferredEval)
+        public ConditionsEvalEngine(IDeferredEval deferredEval)
         {
             this.deferredEval = deferredEval;
         }

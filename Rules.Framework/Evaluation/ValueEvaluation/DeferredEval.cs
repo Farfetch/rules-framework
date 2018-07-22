@@ -5,7 +5,7 @@ using Rules.Framework.Core.ConditionNodes;
 
 namespace Rules.Framework.Evaluation.ValueEvaluation
 {
-    internal class DeferredEval
+    internal class DeferredEval : IDeferredEval
     {
         private readonly IOperatorEvalStrategyFactory operatorEvalStrategyFactory;
 
