@@ -29,7 +29,7 @@ namespace Rules.Framework
             IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd);
 
             IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
-                .Where(r => this.conditionsEvalEngine.Eval(r.RootCondition, conditions))
+                .Where(r => r.RootCondition != null ? this.conditionsEvalEngine.Eval(r.RootCondition, conditions) : true)
                 .ToList();
 
             return matchedRules.Any() ? matchedRules.OrderBy(r => r.Priority).First() : null;
