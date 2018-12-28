@@ -35,7 +35,9 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object);
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+
+            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
@@ -71,7 +73,9 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object);
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+
+            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
@@ -107,7 +111,9 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object);
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+
+            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
@@ -143,7 +149,9 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object);
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+
+            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
@@ -164,16 +172,9 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
 
-            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
-            {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCurrency,
-                    Value = "EUR"
-                }
-            };
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object);
+            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Assert
             Assert.ThrowsException<NotSupportedException>(() =>

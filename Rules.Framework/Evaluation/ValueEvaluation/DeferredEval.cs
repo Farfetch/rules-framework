@@ -8,10 +8,14 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
     internal class DeferredEval : IDeferredEval
     {
         private readonly IOperatorEvalStrategyFactory operatorEvalStrategyFactory;
+        private readonly RulesEngineOptions rulesEngineOptions;
 
-        public DeferredEval(IOperatorEvalStrategyFactory operatorEvalStrategyFactory)
+        public DeferredEval(
+            IOperatorEvalStrategyFactory operatorEvalStrategyFactory,
+            RulesEngineOptions rulesEngineOptions)
         {
             this.operatorEvalStrategyFactory = operatorEvalStrategyFactory;
+            this.rulesEngineOptions = rulesEngineOptions;
         }
 
         public Func<IEnumerable<Condition<TConditionType>>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode)
@@ -19,55 +23,38 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
             switch (valueConditionNode)
             {
                 case IntegerConditionNode<TConditionType> integerConditionNode:
-                    return (conditions) =>
-                    {
-                        int leftOperand = SeekAndConvert<int, TConditionType>(integerConditionNode.ConditionType, conditions);
-                        int rightOperand = integerConditionNode.Operand;
-                        IOperatorEvalStrategy operatorEvalStrategy = operatorEvalStrategyFactory.GetOperatorEvalStrategy(integerConditionNode.Operator);
-
-                        return operatorEvalStrategy.Eval(leftOperand, rightOperand);
-                    };
+                    return (conditions) => Eval<IntegerConditionNode<TConditionType>, TConditionType, int>(conditions, integerConditionNode);
 
                 case DecimalConditionNode<TConditionType> decimalConditionNode:
-                    return (conditions) =>
-                    {
-                        decimal leftOperand = SeekAndConvert<decimal, TConditionType>(decimalConditionNode.ConditionType, conditions);
-                        decimal rightOperand = decimalConditionNode.Operand;
-                        IOperatorEvalStrategy operatorEvalStrategy = operatorEvalStrategyFactory.GetOperatorEvalStrategy(decimalConditionNode.Operator);
-
-                        return operatorEvalStrategy.Eval(leftOperand, rightOperand);
-                    };
+                    return (conditions) => Eval<DecimalConditionNode<TConditionType>, TConditionType, decimal>(conditions, decimalConditionNode);
 
                 case StringConditionNode<TConditionType> stringConditionNode:
-                    return (conditions) =>
-                    {
-                        string leftOperand = SeekAndConvert<string, TConditionType>(stringConditionNode.ConditionType, conditions);
-                        string rightOperand = stringConditionNode.Operand;
-                        IOperatorEvalStrategy operatorEvalStrategy = operatorEvalStrategyFactory.GetOperatorEvalStrategy(stringConditionNode.Operator);
-
-                        return operatorEvalStrategy.Eval(leftOperand, rightOperand);
-                    };
+                    return (conditions) => Eval<StringConditionNode<TConditionType>, TConditionType, string>(conditions, stringConditionNode);
 
                 case BooleanConditionNode<TConditionType> booleanConditionNode:
-                    return (conditions) =>
-                    {
-                        bool leftOperand = SeekAndConvert<bool, TConditionType>(booleanConditionNode.ConditionType, conditions);
-                        bool rightOperand = booleanConditionNode.Operand;
-                        IOperatorEvalStrategy operatorEvalStrategy = operatorEvalStrategyFactory.GetOperatorEvalStrategy(booleanConditionNode.Operator);
-
-                        return operatorEvalStrategy.Eval(leftOperand, rightOperand);
-                    };
+                    return (conditions) => Eval<BooleanConditionNode<TConditionType>, TConditionType, bool>(conditions, booleanConditionNode);
 
                 default:
                     throw new NotSupportedException($"Unsupported value condition node: '{valueConditionNode.GetType().Name}'.");
             }
         }
 
-        private static T SeekAndConvert<T, TConditionType>(TConditionType conditionType, IEnumerable<Condition<TConditionType>> conditions)
+        private bool Eval<TConditionNode, TConditionType, T>(IEnumerable<Condition<TConditionType>> conditions, TConditionNode valueConditionNode)
+            where TConditionNode : ValueConditionNodeTemplate<T, TConditionType>
+            where T : IComparable<T>
         {
-            Condition<TConditionType> condition = conditions.FirstOrDefault(c => object.Equals(c.Type, conditionType));
+            Condition<TConditionType> leftOperandCondition = conditions.FirstOrDefault(c => object.Equals(c.Type, valueConditionNode.ConditionType));
 
-            return (T)Convert.ChangeType(condition.Value, typeof(T));
+            if (leftOperandCondition == null && this.rulesEngineOptions.MissingConditionBehavior == MissingConditionBehaviors.Discard)
+            {
+                return false;
+            }
+
+            T leftOperand = (T)Convert.ChangeType(leftOperandCondition?.Value ?? this.rulesEngineOptions.DataTypeDefaults[valueConditionNode.DataType], typeof(T));
+            T rightOperand = valueConditionNode.Operand;
+            IOperatorEvalStrategy operatorEvalStrategy = operatorEvalStrategyFactory.GetOperatorEvalStrategy(valueConditionNode.Operator);
+
+            return operatorEvalStrategy.Eval(leftOperand, rightOperand);
         }
     }
 }
