@@ -28,7 +28,8 @@ namespace Rules.Framework.IntegrationTests.Tests
             RulesEngine<IntegrationTestsContentTypes, IntegrationTestsConditionTypes> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<IntegrationTestsContentTypes>()
                 .WithConditionType<IntegrationTestsConditionTypes>()
-                .SetDataSource(rulesDataSource);
+                .SetDataSource(rulesDataSource)
+                .Build();
 
             // Act
             Rule<IntegrationTestsContentTypes, IntegrationTestsConditionTypes> actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);

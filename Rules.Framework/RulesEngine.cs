@@ -13,12 +13,16 @@ namespace Rules.Framework
 
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
 
+        private readonly RulesEngineOptions rulesEngineOptions;
+
         internal RulesEngine(
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
-            IRulesDataSource<TContentType, TConditionType> rulesDataSource)
+            IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+            RulesEngineOptions rulesEngineOptions)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;
             this.rulesDataSource = rulesDataSource;
+            this.rulesEngineOptions = rulesEngineOptions;
         }
 
         public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
@@ -32,7 +36,19 @@ namespace Rules.Framework
                 .Where(r => r.RootCondition != null ? this.conditionsEvalEngine.Eval(r.RootCondition, conditions) : true)
                 .ToList();
 
-            return matchedRules.Any() ? matchedRules.OrderBy(r => r.Priority).First() : null;
+            return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
+        }
+
+        public Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        {
+            switch (this.rulesEngineOptions.PriotityCriteria)
+            {
+                case PriorityCriterias.BottommostRuleWins:
+                    return rules.OrderByDescending(r => r.Priority).First();
+
+                default:
+                    return rules.OrderBy(r => r.Priority).First();
+            }
         }
     }
 }

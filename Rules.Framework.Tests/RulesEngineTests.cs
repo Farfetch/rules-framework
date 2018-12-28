@@ -59,8 +59,9 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true);
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
 
-            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object);
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
 
             // Act
             Rule<ContentType, ConditionType> actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
@@ -114,8 +115,9 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false);
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
 
-            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object);
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
 
             // Act
             Rule<ContentType, ConditionType> actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);

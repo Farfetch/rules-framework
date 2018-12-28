@@ -1,6 +1,4 @@
 ﻿using System;
-using Rules.Framework.Evaluation;
-using Rules.Framework.Evaluation.ValueEvaluation;
 
 namespace Rules.Framework.Builder
 {
@@ -19,17 +17,14 @@ namespace Rules.Framework.Builder
 
         internal class RulesDataSourceSelector<TContentType, TConditionType> : IRulesDataSourceSelector<TContentType, TConditionType>
         {
-            public RulesEngine<TContentType, TConditionType> SetDataSource(IRulesDataSource<TContentType, TConditionType> rulesDataSource)
+            public IConfiguredRulesEngineBuilder<TContentType, TConditionType> SetDataSource(IRulesDataSource<TContentType, TConditionType> rulesDataSource)
             {
                 if (rulesDataSource == null)
                 {
                     throw new ArgumentNullException(nameof(rulesDataSource));
                 }
 
-                IOperatorEvalStrategyFactory operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
-                DeferredEval deferredEval = new DeferredEval(operatorEvalStrategyFactory);
-                IConditionsEvalEngine<TConditionType> conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval);
-                return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, rulesDataSource);
+                return new ConfiguredRulesEngineBuilder<TContentType, TConditionType>(rulesDataSource);
             }
         }
     }

@@ -60,7 +60,7 @@ namespace Rules.Framework.Tests.Builder
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = new Mock<IRulesDataSource<ContentType, ConditionType>>();
 
             // Act
-            RulesEngine<ContentType, ConditionType> actual = sut.SetDataSource(mockRulesDataSource.Object);
+            IConfiguredRulesEngineBuilder<ContentType, ConditionType> actual = sut.SetDataSource(mockRulesDataSource.Object);
 
             // Assert
             actual.Should().NotBeNull();
