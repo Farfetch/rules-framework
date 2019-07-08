@@ -16,11 +16,11 @@ build_script:
   - ps: dotnet restore rules-framework.sln --no-cache
   - ps: dotnet build rules-framework.sln --no-restore
   - ps: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
+after_build:
+  - ps: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 test_script:
   - ps: dotnet test tests/Rules.Framework.Tests --no-build
   - ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
-after_test:
-  - ps: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 artifacts:
 - path: '**/*.nupkg'
   name: NuGetPackages
