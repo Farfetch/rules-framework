@@ -22,7 +22,7 @@ deploy:
     secure: 7Oxxk5PLf3+3rZSSqpjRS7DogIQi9E3ipeMw0ACOTHhVtLE2aLzn7OT9/+vnumjb
   skip_symbols: false
   symbol_server: https://nuget.smbsrc.net/
-  artifact: Rules.Framework.$(appveyor_build_version).nupkg
+  artifact: /.*\.nupkg/
 notifications:
 - provider: Email
   to:
