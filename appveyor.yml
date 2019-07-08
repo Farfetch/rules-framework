@@ -15,14 +15,18 @@ build_script:
 test_script:
 - ps: dotnet test tests/Rules.Framework.Tests --no-build
 - ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
+artifacts:
+- path: '**/*.nupkg'
+  name: NuGetPackages
 deploy:
 - provider: NuGet
-  server: https://www.nuget.org
   api_key:
-    secure: 7Oxxk5PLf3+3rZSSqpjRS7DogIQi9E3ipeMw0ACOTHhVtLE2aLzn7OT9/+vnumjb
+    secure: cG3wX34IgH0rZS3vCTrlP6GLi9yineCNh2yGalO2JEINY0XRyNrXHINl0MwHFzIw
   skip_symbols: false
   symbol_server: https://nuget.smbsrc.net/
   artifact: /.*\.nupkg/
+  on:
+    branch: master
 notifications:
 - provider: Email
   to:
