@@ -11,14 +11,14 @@ dotnet_csproj:
 install:
   - sh: dotnet tool install --global dotnet-sonarscanner
 before_build:
-  - sh: dotnet sonarscanner begin /k:pikenikes_rules-framework /o:pikenikes-github /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866 /d:sonar.coverage.exclusions="tests/*Tests/**" /d:sonar.cs.opencover.reportsPaths="./lcov/lcov.opencover.xml"
+  - sh: dotnet sonarscanner begin /k:pikenikes_rules-framework /o:pikenikes-github /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866 /d:sonar.coverage.exclusions="tests/*Tests/**" /d:sonar.cs.opencover.reportsPaths="*.opencover.xml"
 build_script:
   - sh: dotnet restore rules-framework.sln --no-cache
   - sh: dotnet build rules-framework.sln --no-restore
   - sh: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
 test_script:
-  - sh: dotnet test tests/Rules.Framework.Tests --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=\"opencover,lcov\" /p:CoverletOutput=./lcov
-  - sh: dotnet test tests/Rules.Framework.IntegrationTests --no-build
+  - sh: dotnet test tests/Rules.Framework.Tests --no-build /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=../../tests-coverage
+  - sh: dotnet test tests/Rules.Framework.IntegrationTests --no-build /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=../../integration-tests-coverage
 after_test:
   - sh: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 artifacts:
