@@ -1,0 +1,26 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+build_script:
+- ps: dotnet restore rules-framework.sln
+- ps: dotnet build rules-framework.sln
+- ps: dotnet pack src/Rules.Framework/Rules.Framework.csproj
+- ps: dotnet nuget push src/Rules.Framework/*.nupkg --api-key oy2mw3abu2lbs4c7oxdqfhpjkkoxgdeepk2j7owiyfwtdu
+test_script:
+- ps: dotnet test tests/Rules.Framework.Tests --no-build
+- ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
+deploy: off
+notifications:
+- provider: Email
+  to:
+  - luis_garces@live.com.pt
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: false
