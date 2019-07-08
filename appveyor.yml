@@ -11,7 +11,7 @@ dotnet_csproj:
 install:
   - ps: dotnet tool install --global dotnet-sonarscanner
 before_build:
-  - ps: dotnet sonarscanner begin /d:sonar.projectKey=pikenikes_rules-framework /d:sonar.organization=pikenikes-github /d:sonar.sources=. /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
+  - ps: dotnet sonarscanner begin /k:pikenikes_rules-framework /o:pikenikes-github /d:sonar.sources=. /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 build_script:
   - ps: dotnet restore rules-framework.sln --no-cache
   - ps: dotnet build rules-framework.sln --no-restore
