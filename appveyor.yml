@@ -20,7 +20,7 @@ test_script:
   - ps: dotnet test tests/Rules.Framework.Tests --no-build
   - ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
 after_test:
-  - ps: dotnet sonarscanner end 
+  - ps: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 artifacts:
 - path: '**/*.nupkg'
   name: NuGetPackages
