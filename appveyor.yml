@@ -11,11 +11,7 @@ dotnet_csproj:
 install:
   - sh: dotnet tool install --global dotnet-sonarscanner
 before_build:
-  - sh: dotnet sonarscanner begin /k:pikenikes_rules-framework /o:pikenikes-github \
-   /d:sonar.host.url=https://sonarcloud.io \
-   /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
-   /d:sonar.coverage.exclusions="tests/*Tests/**"
-   /d:sonar.cs.opencover.reportsPaths="%cd%\lcov.opencover.xml"
+  - sh: dotnet sonarscanner begin /k:pikenikes_rules-framework /o:pikenikes-github /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866 /d:sonar.coverage.exclusions="tests/*Tests/**" /d:sonar.cs.opencover.reportsPaths="%cd%\lcov.opencover.xml"
 build_script:
   - sh: dotnet restore rules-framework.sln --no-cache
   - sh: dotnet build rules-framework.sln --no-restore
