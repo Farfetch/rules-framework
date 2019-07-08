@@ -12,7 +12,7 @@ build_script:
 - ps: dotnet restore rules-framework.sln
 - ps: dotnet build rules-framework.sln --no-restore
 - ps: dotnet pack src/Rules.Framework/Rules.Framework.csproj
-- ps: dotnet nuget push src/Rules.Framework/*.nupkg --source https://www.nuget.org --api-key oy2mw3abu2lbs4c7oxdqfhpjkkoxgdeepk2j7owiyfwtdu
+- ps: dotnet nuget push **/*.nupkg --source https://www.nuget.org --api-key oy2mw3abu2lbs4c7oxdqfhpjkkoxgdeepk2j7owiyfwtdu
 test_script:
 - ps: dotnet test tests/Rules.Framework.Tests --no-build
 - ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
