@@ -5,7 +5,7 @@ namespace Rules.Framework.Core.ConditionNodes
     public abstract class ValueConditionNodeTemplate<T, TConditionType> : IValueConditionNode<TConditionType>
         where T : IComparable<T>
     {
-        public ValueConditionNodeTemplate(TConditionType conditionType, Operators @operator, T operand)
+        protected ValueConditionNodeTemplate(TConditionType conditionType, Operators @operator, T operand)
         {
             this.ConditionType = conditionType;
             this.Operand = operand;

@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 namespace Rules.Framework.Core
 {
     [ExcludeFromCodeCoverage]
+    [Serializable]
     public class ContentTypeException : Exception
     {
         public ContentTypeException()

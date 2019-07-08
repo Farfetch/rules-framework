@@ -33,13 +33,13 @@ namespace Rules.Framework
             IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd);
 
             IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
-                .Where(r => r.RootCondition != null ? this.conditionsEvalEngine.Eval(r.RootCondition, conditions) : true)
+                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditions))
                 .ToList();
 
             return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
         }
 
-        public Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
             switch (this.rulesEngineOptions.PriotityCriteria)
             {
