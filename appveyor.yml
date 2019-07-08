@@ -11,12 +11,18 @@ dotnet_csproj:
 build_script:
 - ps: dotnet restore rules-framework.sln
 - ps: dotnet build rules-framework.sln --no-restore
-- ps: dotnet pack src/Rules.Framework/Rules.Framework.csproj
-- ps: dotnet nuget push **/*.nupkg --source https://www.nuget.org --api-key oy2mw3abu2lbs4c7oxdqfhpjkkoxgdeepk2j7owiyfwtdu
+- ps: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
 test_script:
 - ps: dotnet test tests/Rules.Framework.Tests --no-build
 - ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
-deploy: off
+deploy:
+- provider: NuGet
+  server: https://www.nuget.org
+  api_key:
+    secure: 7Oxxk5PLf3+3rZSSqpjRS7DogIQi9E3ipeMw0ACOTHhVtLE2aLzn7OT9/+vnumjb
+  skip_symbols: false
+  symbol_server: https://nuget.smbsrc.net/
+  artifact: Rules.Framework.$(appveyor_build_version).nupkg
 notifications:
 - provider: Email
   to:
