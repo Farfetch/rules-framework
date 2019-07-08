@@ -8,13 +8,19 @@ dotnet_csproj:
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
+install:
+  - ps: dotnet tool install --global dotnet-sonarscanner
+before_build:
+  - ps: dotnet sonarscanner begin /d:sonar.projectKey=pikenikes_rules-framework /d:sonar.organization=pikenikes-github /d:sonar.sources=. /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 build_script:
-- ps: dotnet restore rules-framework.sln
-- ps: dotnet build rules-framework.sln --no-restore
-- ps: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
+  - ps: dotnet restore rules-framework.sln --no-cache
+  - ps: dotnet build rules-framework.sln --no-restore
+  - ps: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
 test_script:
-- ps: dotnet test tests/Rules.Framework.Tests --no-build
-- ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
+  - ps: dotnet test tests/Rules.Framework.Tests --no-build
+  - ps: dotnet test tests/Rules.Framework.IntegrationTests --no-build
+after_test:
+  - ps: dotnet sonarscanner end 
 artifacts:
 - path: '**/*.nupkg'
   name: NuGetPackages
