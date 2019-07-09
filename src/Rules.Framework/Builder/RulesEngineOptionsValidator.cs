@@ -16,15 +16,15 @@ namespace Rules.Framework.Builder
             this.EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Boolean,
-                value => value != null && bool.TryParse(value?.ToString(), out bool boolRes));
+                value => value != null && bool.TryParse(value.ToString(), out bool boolRes));
             this.EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Decimal,
-                value => value != null && decimal.TryParse(value?.ToString(), out decimal decimalRes));
+                value => value != null && decimal.TryParse(value.ToString(), out decimal decimalRes));
             this.EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Integer,
-                value => value != null && int.TryParse(value?.ToString(), out int intRes));
+                value => value != null && int.TryParse(value.ToString(), out int intRes));
             this.EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.String,
@@ -36,7 +36,7 @@ namespace Rules.Framework.Builder
             object value = dataTypeDefaults[dataType];
             if (!validFunc.Invoke(value))
             {
-                throw new InvalidRulesEngineOptionsException($"Specified invalid default value for data type {DataTypes.Boolean}: {value}.");
+                throw new InvalidRulesEngineOptionsException($"Specified invalid default value for data type {dataType}: {value ?? "null"}.");
             }
         }
     }

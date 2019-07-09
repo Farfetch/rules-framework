@@ -17,7 +17,7 @@ namespace Rules.Framework.IntegrationTests
 
         public static RulesFromJsonFile Load => instance;
 
-        public async Task<IRulesDataSource<TContentType, TConditionType>> FromJsonFileAsync<TContentType, TConditionType>(string filePath)
+        public async Task<IRulesDataSource<TContentType, TConditionType>> FromJsonFileAsync<TContentType, TConditionType>(string filePath, bool serializedContent = true)
             where TContentType : new()
         {
             JsonContentSerializationProvider<TContentType> serializationProvider = new JsonContentSerializationProvider<TContentType>();
@@ -35,7 +35,9 @@ namespace Rules.Framework.IntegrationTests
 
                     Rule<TContentType, TConditionType> integrationTestsRule = new Rule<TContentType, TConditionType>
                     {
-                        ContentContainer = new SerializedContentContainer<TContentType>(contentType, ruleDataModel.Content, serializationProvider),
+                        ContentContainer = serializedContent
+                        ? new SerializedContentContainer<TContentType>(contentType, ruleDataModel.Content, serializationProvider)
+                        : new ContentContainer<TContentType>(contentType, (t) => RulesFromJsonFile.Parse(ruleDataModel.Content, t)),
                         DateBegin = ruleDataModel.DateBegin,
                         DateEnd = ruleDataModel.DateEnd,
                         Name = ruleDataModel.Name,
@@ -55,15 +57,17 @@ namespace Rules.Framework.IntegrationTests
         }
 
         private static TContentType GetContentType<TContentType>(short contentTypeCode) where TContentType : new()
-        {
-            Type type = typeof(TContentType);
+            => RulesFromJsonFile.Parse<TContentType>(contentTypeCode.ToString());
 
-            return type.IsEnum ? (TContentType)Enum.Parse(type, contentTypeCode.ToString()) : (TContentType)Convert.ChangeType(contentTypeCode, type);
-        }
+        private static T Parse<T>(string value)
+            => (T)Parse(value, typeof(T));
+
+        private static object Parse(string value, Type type)
+            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type);
 
         private IConditionNode<TConditionType> ConvertConditionNode<TConditionType>(ConditionNodeDataModel conditionNodeDataModel)
         {
-            LogicalOperators logicalOperator = (LogicalOperators)conditionNodeDataModel.LogicalOperatorCode;
+            LogicalOperators logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
             if (logicalOperator == LogicalOperators.Eval)
             {
                 return this.CreateValueConditionNode<TConditionType>(conditionNodeDataModel);
@@ -83,9 +87,9 @@ namespace Rules.Framework.IntegrationTests
 
         private IConditionNode<TConditionType> CreateValueConditionNode<TConditionType>(ConditionNodeDataModel conditionNodeDataModel)
         {
-            DataTypes dataType = (DataTypes)conditionNodeDataModel.DataTypeCode;
-            TConditionType integrationTestsConditionType = (TConditionType)Convert.ChangeType(conditionNodeDataModel.ConditionTypeCode, typeof(TConditionType));
-            Operators @operator = (Operators)conditionNodeDataModel.OperatorCode;
+            DataTypes dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
+            TConditionType integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
+            Operators @operator = RulesFromJsonFile.Parse<Operators>(conditionNodeDataModel.Operator);
             switch (dataType)
             {
                 case DataTypes.Integer:

@@ -6,14 +6,14 @@ namespace Rules.Framework.IntegrationTests.DataSource
     {
         public IEnumerable<ConditionNodeDataModel> ChildConditionNodes { get; set; }
 
-        public short ConditionTypeCode { get; set; }
+        public string ConditionType { get; set; }
 
-        public short DataTypeCode { get; set; }
+        public string DataType { get; set; }
 
-        public short LogicalOperatorCode { get; set; }
+        public string LogicalOperator { get; set; }
 
         public string Operand { get; set; }
 
-        public short OperatorCode { get; set; }
+        public string Operator { get; set; }
     }
 }

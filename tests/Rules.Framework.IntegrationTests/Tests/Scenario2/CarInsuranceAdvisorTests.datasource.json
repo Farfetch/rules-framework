@@ -1,0 +1,59 @@
+[
+  {
+    "Content": "RefusePaymentPerFranchise",
+    "ContentTypeCode": 1,
+    "DateBegin": "2018-01-01",
+    "DateEnd": null,
+    "Name": "Car Insurance Advise on repair costs lower than franchise boundary",
+    "Priority": 500,
+    "RootCondition": {
+      "LogicalOperator": "And",
+      "ChildConditionNodes": [
+        {
+          "ConditionType": "RepairCosts",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "LesserThan",
+          "Operand": "1000"
+        },
+        {
+          "ConditionType": "RepairCostsCommercialValueRate",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "LesserThan",
+          "Operand": "80"
+        }
+      ]
+    }
+  },
+  {
+    "Content": "PayNewCar",
+    "ContentTypeCode": 1,
+    "DateBegin": "2018-01-01",
+    "DateEnd": null,
+    "Name": "Car Insurance Advise on repair costs greater than 80% of commercial value",
+    "Priority": 400,
+    "RootCondition": {
+      "ConditionType": "RepairCostsCommercialValueRate",
+      "DataType": "Decimal",
+      "LogicalOperator": "Eval",
+      "Operator": "GreaterThanOrEqual",
+      "Operand": "80"
+    }
+  },
+  {
+    "Content": "Pay",
+    "ContentTypeCode": 1,
+    "DateBegin": "2018-01-01",
+    "DateEnd": null,
+    "Name": "Car Insurance Advise on repair costs greater than 80% of commercial value",
+    "Priority": 100,
+    "RootCondition": {
+      "ConditionType": "RepairCostsCommercialValueRate",
+      "DataType": "Decimal",
+      "LogicalOperator": "Eval",
+      "Operator": "LesserThan",
+      "Operand": "80"
+    }
+  }
+]

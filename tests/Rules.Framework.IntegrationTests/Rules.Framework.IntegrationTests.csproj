@@ -26,7 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Tests\BodyMassIndexTests.datasource.json">
+    <None Update="Tests\Scenario1\BodyMassIndexTests.datasource.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\Scenario2\CarInsuranceAdvisorTests.datasource.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

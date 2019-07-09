@@ -1,4 +1,4 @@
-namespace Rules.Framework.IntegrationTests.ContentTypes
+namespace Rules.Framework.IntegrationTests.Tests.Scenario1
 {
     internal class Formula
     {
