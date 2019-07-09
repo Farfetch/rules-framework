@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rules.Framework.Tests.TestStubs;
-
 namespace Rules.Framework.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Rules.Framework.Tests.TestStubs;
+
     [TestClass]
     public class ConditionTests
     {

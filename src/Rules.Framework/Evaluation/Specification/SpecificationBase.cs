@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.Evaluation.Specification
+namespace Rules.Framework.Evaluation.Specification
 {
     internal abstract class SpecificationBase<T> : ISpecification<T>
     {

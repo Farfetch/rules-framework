@@ -1,7 +1,7 @@
-﻿using System;
-
 namespace Rules.Framework.Builder
 {
+    using System;
+
     internal class Selectors
     {
         internal class ConditionTypeSelector<TContentType> : IConditionTypeSelector<TContentType>

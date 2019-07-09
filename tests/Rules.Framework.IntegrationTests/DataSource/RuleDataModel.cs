@@ -1,7 +1,7 @@
-﻿using System;
-
 namespace Rules.Framework.IntegrationTests.DataSource
 {
+    using System;
+
     internal class RuleDataModel
     {
         public string Content { get; set; }

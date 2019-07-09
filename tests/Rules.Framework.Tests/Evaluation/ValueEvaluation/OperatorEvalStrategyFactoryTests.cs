@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rules.Framework.Core;
-using Rules.Framework.Evaluation.ValueEvaluation;
-
 namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 {
+    using System;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation.ValueEvaluation;
+
     [TestClass]
     public class OperatorEvalStrategyFactoryTests
     {

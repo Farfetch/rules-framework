@@ -1,13 +1,13 @@
-﻿using System;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Rules.Framework.Builder;
-using Rules.Framework.Tests.TestStubs;
-using static Rules.Framework.Builder.Selectors;
-
 namespace Rules.Framework.Tests.Builder
 {
+    using System;
+    using FluentAssertions;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using Rules.Framework.Builder;
+    using Rules.Framework.Tests.TestStubs;
+    using static Rules.Framework.Builder.Selectors;
+
     [TestClass]
     public class SelectorsTests
     {

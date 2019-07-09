@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Rules.Framework.Core.ConditionNodes;
-
 namespace Rules.Framework.Evaluation.ValueEvaluation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Rules.Framework.Core.ConditionNodes;
+
     internal class DeferredEval : IDeferredEval
     {
         private readonly IOperatorEvalStrategyFactory operatorEvalStrategyFactory;

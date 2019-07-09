@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.IntegrationTests
+namespace Rules.Framework.IntegrationTests
 {
     internal enum IntegrationTestsContentTypes
     {

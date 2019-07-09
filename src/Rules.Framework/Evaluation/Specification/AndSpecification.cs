@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.Evaluation.Specification
+namespace Rules.Framework.Evaluation.Specification
 {
     internal class AndSpecification<T> : SpecificationBase<T>
     {

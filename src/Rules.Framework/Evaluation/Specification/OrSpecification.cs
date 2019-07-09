@@ -1,5 +1,3 @@
-﻿using System.Collections.Generic;
-
 namespace Rules.Framework.Evaluation.Specification
 {
     internal class OrSpecification<T> : SpecificationBase<T>

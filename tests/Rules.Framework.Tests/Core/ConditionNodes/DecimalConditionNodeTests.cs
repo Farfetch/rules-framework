@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rules.Framework.Core;
-using Rules.Framework.Core.ConditionNodes;
-using Rules.Framework.Tests.TestStubs;
-
 namespace Rules.Framework.Tests.Core.ConditionNodes
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Tests.TestStubs;
+
     [TestClass]
     public class DecimalConditionNodeTests
     {
@@ -12,7 +12,7 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
         public void DecimalConditionNode_Init_GivenSetupWithDecimalValue_ReturnsSettedValues()
         {
             // Arrange
-            ConditionType expectedConditionType = ConditionType.IsoCountryCode;
+            ConditionType expectedConditionType = ConditionType.PluviosityRate;
             Operators expectedOperator = Operators.NotEqual;
             decimal expectedOperand = 5682.2654m;
             LogicalOperators expectedLogicalOperator = LogicalOperators.Eval;

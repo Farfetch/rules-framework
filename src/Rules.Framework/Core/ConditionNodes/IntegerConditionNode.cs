@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-
 namespace Rules.Framework.Core.ConditionNodes
 {
-    [DebuggerDisplay("Integer condition: <?> {Operator} {Operand}")]
+    using System.Diagnostics;
+
+    [DebuggerDisplay("Integer condition: <{ConditionType.ToString(),nq}> {Operator} {Operand}")]
     public class IntegerConditionNode<TConditionType> : ValueConditionNodeTemplate<int, TConditionType>
     {
         public IntegerConditionNode(TConditionType conditionType, Operators @operator, int operand)

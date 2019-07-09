@@ -1,9 +1,9 @@
-﻿using System;
-using Rules.Framework.Evaluation;
-using Rules.Framework.Evaluation.ValueEvaluation;
-
 namespace Rules.Framework.Builder
 {
+    using System;
+    using Rules.Framework.Evaluation;
+    using Rules.Framework.Evaluation.ValueEvaluation;
+
     internal class ConfiguredRulesEngineBuilder<TContentType, TConditionType> : IConfiguredRulesEngineBuilder<TContentType, TConditionType>
     {
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Rules.Framework.Core;
-using Rules.Framework.Core.ConditionNodes;
-using Rules.Framework.Evaluation.Specification;
-using Rules.Framework.Evaluation.ValueEvaluation;
-
 namespace Rules.Framework.Evaluation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Evaluation.Specification;
+    using Rules.Framework.Evaluation.ValueEvaluation;
+
     internal class ConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
         private readonly IDeferredEval deferredEval;

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Rules.Framework.Core;
-
 namespace Rules.Framework.Builder
 {
+    using System;
+    using System.Collections.Generic;
+    using Rules.Framework.Core;
+
     internal class RulesEngineOptionsValidator
     {
         public void EnsureValid(RulesEngineOptions rulesEngineOptions)

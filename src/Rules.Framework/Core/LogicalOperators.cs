@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.Core
+namespace Rules.Framework.Core
 {
     public enum LogicalOperators
     {

@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.Evaluation.Specification
+namespace Rules.Framework.Evaluation.Specification
 {
     internal interface ISpecification<T>
     {

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Rules.Framework.Core;
-using Rules.Framework.Core.ConditionNodes;
-using Rules.Framework.Evaluation;
-using Rules.Framework.Tests.TestStubs;
-
 namespace Rules.Framework.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Evaluation;
+    using Rules.Framework.Tests.TestStubs;
+
     [TestClass]
     public class RulesEngineTests
     {
@@ -55,7 +55,8 @@ namespace Rules.Framework.Tests
 
             IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
             {
-                expected
+                expected,
+                other
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true);

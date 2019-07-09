@@ -1,7 +1,7 @@
-﻿using Rules.Framework.Core;
-
 namespace Rules.Framework.Serialization
 {
+    using Rules.Framework.Core;
+
     public class SerializedContentContainer<TContentType> : ContentContainer<TContentType>
     {
         public SerializedContentContainer(

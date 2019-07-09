@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.Core.ConditionNodes
+namespace Rules.Framework.Core.ConditionNodes
 {
     public interface IValueConditionNode<TConditionType> : IConditionNode<TConditionType>
     {

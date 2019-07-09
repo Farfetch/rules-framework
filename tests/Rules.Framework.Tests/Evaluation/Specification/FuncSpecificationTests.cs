@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Rules.Framework.Evaluation.Specification;
-
 namespace Rules.Framework.Tests.Evaluation.Specification
 {
+    using System;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using Rules.Framework.Evaluation.Specification;
+
     [TestClass]
     public class FuncSpecificationTests
     {

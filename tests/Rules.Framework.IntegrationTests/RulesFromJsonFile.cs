@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Rules.Framework.Core;
-using Rules.Framework.Core.ConditionNodes;
-using Rules.Framework.IntegrationTests.DataSource;
-using Rules.Framework.Serialization;
-
 namespace Rules.Framework.IntegrationTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.IntegrationTests.DataSource;
+    using Rules.Framework.Serialization;
+
     internal class RulesFromJsonFile
     {
         private static readonly RulesFromJsonFile instance = new RulesFromJsonFile();

@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework
+namespace Rules.Framework
 {
     public class Condition<TConditionType>
     {

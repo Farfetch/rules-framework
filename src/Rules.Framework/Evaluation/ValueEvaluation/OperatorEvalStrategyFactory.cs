@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Rules.Framework.Core;
-
 namespace Rules.Framework.Evaluation.ValueEvaluation
 {
+    using System;
+    using System.Collections.Generic;
+    using Rules.Framework.Core;
+
     internal class OperatorEvalStrategyFactory : IOperatorEvalStrategyFactory
     {
         private readonly IDictionary<Operators, IOperatorEvalStrategy> strategies;

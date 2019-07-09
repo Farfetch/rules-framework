@@ -1,7 +1,7 @@
-﻿using System;
-
 namespace Rules.Framework.Core
 {
+    using System;
+
     public class ContentContainer<TContentType>
     {
         private readonly Func<Type, object> getContentFunc;

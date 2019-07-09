@@ -1,11 +1,11 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Rules.Framework.Serialization;
-using Rules.Framework.Tests.TestStubs;
-
 namespace Rules.Framework.Tests.Serialization
 {
+    using System;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using Rules.Framework.Serialization;
+    using Rules.Framework.Tests.TestStubs;
+
     [TestClass]
     public class SerializedContentContainerTests
     {

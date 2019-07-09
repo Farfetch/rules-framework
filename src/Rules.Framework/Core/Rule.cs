@@ -1,7 +1,7 @@
-﻿using System;
-
 namespace Rules.Framework.Core
 {
+    using System;
+
     public class Rule<TContentType, TConditionType>
     {
         public ContentContainer<TContentType> ContentContainer { get; internal set; }

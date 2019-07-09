@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rules.Framework.Core;
-using Rules.Framework.IntegrationTests.ContentTypes;
-
 namespace Rules.Framework.IntegrationTests.Tests
 {
+    using System;
+    using System.Threading.Tasks;
+    using FluentAssertions;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Rules.Framework.Core;
+    using Rules.Framework.IntegrationTests.ContentTypes;
+
     [TestClass]
     public class BodyMassIndexTests
     {

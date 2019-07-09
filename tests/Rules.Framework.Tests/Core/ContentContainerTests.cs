@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rules.Framework.Core;
-using Rules.Framework.Tests.TestStubs;
-
 namespace Rules.Framework.Tests.Core
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Rules.Framework.Core;
+    using Rules.Framework.Tests.TestStubs;
+
     [TestClass]
     public class ContentContainerTests
     {

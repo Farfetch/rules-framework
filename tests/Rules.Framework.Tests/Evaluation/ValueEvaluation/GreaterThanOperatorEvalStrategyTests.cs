@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rules.Framework.Evaluation.ValueEvaluation;
-
 namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Rules.Framework.Evaluation.ValueEvaluation;
+
     [TestClass]
     public class GreaterThanOperatorEvalStrategyTests
     {

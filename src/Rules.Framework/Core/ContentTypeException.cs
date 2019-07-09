@@ -1,9 +1,9 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
-
 namespace Rules.Framework.Core
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.Serialization;
+
     [ExcludeFromCodeCoverage]
     [Serializable]
     public class ContentTypeException : Exception

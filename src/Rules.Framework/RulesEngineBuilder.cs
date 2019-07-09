@@ -1,4 +1,4 @@
-﻿using Rules.Framework.Builder;
+using Rules.Framework.Builder;
 using static Rules.Framework.Builder.Selectors;
 
 namespace Rules.Framework

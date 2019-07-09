@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
 namespace Rules.Framework.IntegrationTests.DataSource
 {
+    using System.Collections.Generic;
+
     internal class ConditionNodeDataModel
     {
         public IEnumerable<ConditionNodeDataModel> ChildConditionNodes { get; set; }

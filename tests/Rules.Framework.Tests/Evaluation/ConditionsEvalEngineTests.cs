@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Rules.Framework.Core;
-using Rules.Framework.Core.ConditionNodes;
-using Rules.Framework.Evaluation;
-using Rules.Framework.Evaluation.ValueEvaluation;
-using Rules.Framework.Tests.TestStubs;
-
 namespace Rules.Framework.Tests.Evaluation
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Evaluation;
+    using Rules.Framework.Evaluation.ValueEvaluation;
+    using Rules.Framework.Tests.TestStubs;
+
     [TestClass]
     public class ConditionsEvalEngineTests
     {

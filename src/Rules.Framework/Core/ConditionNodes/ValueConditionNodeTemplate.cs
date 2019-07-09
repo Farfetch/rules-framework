@@ -1,7 +1,7 @@
-﻿using System;
-
 namespace Rules.Framework.Core.ConditionNodes
 {
+    using System;
+
     public abstract class ValueConditionNodeTemplate<T, TConditionType> : IValueConditionNode<TConditionType>
         where T : IComparable<T>
     {

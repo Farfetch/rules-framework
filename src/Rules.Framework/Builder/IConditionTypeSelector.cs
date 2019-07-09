@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.Builder
+namespace Rules.Framework.Builder
 {
     public interface IConditionTypeSelector<TContentType>
     {

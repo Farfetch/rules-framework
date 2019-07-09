@@ -1,4 +1,4 @@
-﻿namespace Rules.Framework.Serialization
+namespace Rules.Framework.Serialization
 {
     public interface IContentSerializationProvider<in TContentType>
     {
