@@ -13,7 +13,7 @@ namespace Rules.Framework.Builder
         public ConfiguredRulesEngineBuilder(IRulesDataSource<TContentType, TConditionType> rulesDataSource)
         {
             this.rulesDataSource = rulesDataSource;
-            this.rulesEngineOptions = RulesEngineOptions.NewWithDefaults;
+            this.rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             this.rulesEngineOptionsValidator = new RulesEngineOptionsValidator();
         }
 
