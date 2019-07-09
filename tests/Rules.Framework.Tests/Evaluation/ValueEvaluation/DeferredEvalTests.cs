@@ -165,6 +165,84 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         }
 
         [TestMethod]
+        public void DeferredEval_GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToDiscardWhenMissing_ReturnsFuncThatEvalsFalse()
+        {
+            // Arrange
+            StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+
+            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
+            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(true);
+
+            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
+            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+                .Returns(mockOperatorEvalStrategy.Object);
+
+            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            {
+                new Condition<ConditionType>
+                {
+                    Type = ConditionType.IsoCountryCode,
+                    Value = "PT"
+                }
+            };
+
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.Discard;
+
+            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+
+            // Act
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            bool actualEvalResult = actual.Invoke(conditions);
+
+            // Assert
+            Assert.IsFalse(actualEvalResult);
+
+            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Never());
+            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
+
+        [TestMethod]
+        public void DeferredEval_GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToUseDataTypeDefaultWhenMissing_ReturnsFuncThatEvalsFalse()
+        {
+            // Arrange
+            StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+
+            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
+            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(false);
+
+            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
+            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+                .Returns(mockOperatorEvalStrategy.Object);
+
+            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            {
+                new Condition<ConditionType>
+                {
+                    Type = ConditionType.IsoCountryCode,
+                    Value = "PT"
+                }
+            };
+
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault;
+
+            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+
+            // Act
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            bool actualEvalResult = actual.Invoke(conditions);
+
+            // Assert
+            Assert.IsFalse(actualEvalResult);
+
+            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
+            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
+        }
+
+        [TestMethod]
         public void DeferredEval_GetDeferredEvalFor_GivenUnknownConditionNodeType_ThrowsNotSupportedException()
         {
             // Arrange

@@ -1,8 +1,8 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-
 namespace Rules.Framework
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+
     [ExcludeFromCodeCoverage]
     [Serializable]
     public class InvalidRulesEngineOptionsException : Exception

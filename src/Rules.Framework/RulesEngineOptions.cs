@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using Rules.Framework.Core;
-
 namespace Rules.Framework
 {
+    using System.Collections.Generic;
+    using Rules.Framework.Core;
+
     public class RulesEngineOptions
     {
         private RulesEngineOptions()

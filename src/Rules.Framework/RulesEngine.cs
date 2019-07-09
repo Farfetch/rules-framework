@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Rules.Framework.Core;
-using Rules.Framework.Evaluation;
-
 namespace Rules.Framework
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation;
+
     public class RulesEngine<TContentType, TConditionType>
     {
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
