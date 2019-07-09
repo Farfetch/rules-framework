@@ -30,7 +30,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithInvalidDefaultForBooleanDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = "abc";
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();
@@ -49,7 +49,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithNullDefaultForBooleanDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = null;
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();
@@ -68,7 +68,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithInvalidDefaultForDecimalDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.Decimal] = "abc";
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();
@@ -87,7 +87,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithNullDefaultForDecimalDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.Decimal] = null;
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();
@@ -106,7 +106,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithInvalidDefaultForIntegerDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.Integer] = "abc";
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();
@@ -125,7 +125,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithNullDefaultForIntegerDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.Integer] = null;
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();
@@ -143,7 +143,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithInvalidDefaultForStringDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.String] = 0;
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();
@@ -161,7 +161,7 @@ namespace Rules.Framework.Tests.Builder
         public void RuleEngineOptionsValidator_EnsureValid_GivenOptionsWithNullDefaultForStringDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault()
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.DataTypeDefaults[DataTypes.String] = null;
 
             RulesEngineOptionsValidator sut = new RulesEngineOptionsValidator();

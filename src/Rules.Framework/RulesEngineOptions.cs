@@ -10,23 +10,20 @@ namespace Rules.Framework
             this.DataTypeDefaults = new Dictionary<DataTypes, object>();
         }
 
-        public static RulesEngineOptions Default
+        public static RulesEngineOptions NewWithDefaults()
         {
-            get
+            RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
             {
-                RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
-                {
-                    MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                    PriotityCriteria = PriorityCriterias.TopmostRuleWins
-                };
+                MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
+                PriotityCriteria = PriorityCriterias.TopmostRuleWins
+            };
 
-                rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);
-                rulesEngineOptions.DataTypeDefaults[DataTypes.Decimal] = default(decimal);
-                rulesEngineOptions.DataTypeDefaults[DataTypes.Integer] = default(int);
-                rulesEngineOptions.DataTypeDefaults[DataTypes.String] = string.Empty;
+            rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);
+            rulesEngineOptions.DataTypeDefaults[DataTypes.Decimal] = default(decimal);
+            rulesEngineOptions.DataTypeDefaults[DataTypes.Integer] = default(int);
+            rulesEngineOptions.DataTypeDefaults[DataTypes.String] = string.Empty;
 
-                return rulesEngineOptions;
-            }
+            return rulesEngineOptions;
         }
 
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }

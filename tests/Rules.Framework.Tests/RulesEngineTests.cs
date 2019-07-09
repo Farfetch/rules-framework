@@ -60,7 +60,7 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true);
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
 
@@ -120,7 +120,7 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true);
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             rulesEngineOptions.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
 
@@ -178,7 +178,7 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false);
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
 

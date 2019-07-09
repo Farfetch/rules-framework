@@ -35,7 +35,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
@@ -73,7 +73,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
@@ -111,7 +111,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
@@ -149,7 +149,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
@@ -187,7 +187,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.Discard;
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
@@ -226,7 +226,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault;
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
@@ -250,7 +250,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.Default;
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
