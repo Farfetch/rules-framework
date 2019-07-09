@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Luís Garcês</Authors>
     <Version></Version>
     <PackageVersion></PackageVersion>
@@ -13,6 +14,8 @@
     <RepositoryUrl>https://github.com/pikenikes/rules-framework</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>rules rulesframework</PackageTags>
+    <Description>A generic rules engine that allows defining rules for complex business scenarios and a faster response to changes.</Description>
+    <Copyright>Copyright (c) 2019 Luís Garcês</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
