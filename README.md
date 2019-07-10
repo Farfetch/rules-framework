@@ -12,13 +12,13 @@ Why use rules? Most of us at some point, while developing software to support a 
 
 The following listing presents features implemented and features to be implemented:
 
-[x] Rules evaluation (match one)
-[ ] Rules evaluation (match many)
-[ ] Rules search
-[x] Rules content serializarion
-[ ] Rules data source caching
-[ ] Rules management (Create, Read, Update)
-[ ] MongoDB data source support
+- [x] Rules evaluation (match one)
+- [ ] Rules evaluation (match many)
+- [ ] Rules search
+- [x] Rules content serializarion
+- [ ] Rules data source caching
+- [ ] Rules management (Create, Read, Update)
+- [ ] MongoDB data source support
 
 ## How it works
 
