@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -14,7 +14,7 @@
     <RepositoryUrl>https://github.com/pikenikes/rules-framework</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>rules rulesframework</PackageTags>
-    <Description>A generic rules engine that allows defining rules for complex business scenarios and a faster response to changes.</Description>
+    <Description>A generic rules framework that allows defining and evaluating rules for complex business scenarios.</Description>
     <Copyright>Copyright (c) 2019 Luís Garcês</Copyright>
   </PropertyGroup>
 
