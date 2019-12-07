@@ -31,6 +31,31 @@ namespace Rules.Framework
         }
 
         /// <summary>
+        /// Provides all rule matches (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <param name="matchDateTime"></param>
+        /// <param name="conditions"></param>
+        /// <remarks>
+        /// <para>A set of rules is requested to rules data source and all conditions are evaluated against them to provide a set of matches.</para>
+        /// <para>All rules matching supplied conditions are returned.</para>
+        /// </remarks>
+        /// <returns>the matched rule; otherwise, null.</returns>
+        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
+        {
+            DateTime dateBegin = matchDateTime.Date;
+            DateTime dateEnd = matchDateTime.Date.AddDays(1);
+
+            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd);
+
+            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
+                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditions))
+                .ToList();
+
+            return matchedRules;
+        }
+
+        /// <summary>
         /// Provides a rule match (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>
         /// <param name="contentType"></param>
@@ -43,14 +68,7 @@ namespace Rules.Framework
         /// <returns>the matched rule; otherwise, null.</returns>
         public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
         {
-            DateTime dateBegin = matchDateTime.Date;
-            DateTime dateEnd = matchDateTime.Date.AddDays(1);
-
-            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd);
-
-            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
-                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditions))
-                .ToList();
+            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = await this.MatchManyAsync(contentType, matchDateTime, conditions);
 
             return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
         }

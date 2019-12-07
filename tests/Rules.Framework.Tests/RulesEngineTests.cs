@@ -3,6 +3,7 @@ namespace Rules.Framework.Tests
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using FluentAssertions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using Rules.Framework.Core;
@@ -13,6 +14,88 @@ namespace Rules.Framework.Tests
     [TestClass]
     public class RulesEngineTests
     {
+        [TestMethod]
+        public async Task RulesEngine_MatchManyAsync_GivenContentTypeDateAndConditions_FetchesRulesForDayEvalsAndReturnsAllMatches()
+        {
+            // Arrange
+            DateTime matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
+            ContentType contentType = ContentType.Type1;
+            IEnumerable<Condition<ConditionType>> conditions = new[]
+            {
+                new Condition<ConditionType>
+                {
+                    Type = ConditionType.IsoCountryCode,
+                    Value = "USA"
+                },
+                new Condition<ConditionType>
+                {
+                    Type = ConditionType.IsoCurrency,
+                    Value = "USD"
+                }
+            };
+
+            Rule<ContentType, ConditionType> expected1 = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = new DateTime(2018, 01, 01),
+                DateEnd = new DateTime(2019, 01, 01),
+                Name = "Expected rule 1",
+                Priority = 3,
+                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            };
+
+            Rule<ContentType, ConditionType> expected2 = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = new DateTime(2010, 01, 01),
+                DateEnd = new DateTime(2021, 01, 01),
+                Name = "Expected rule 2",
+                Priority = 200,
+                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            };
+
+            Rule<ContentType, ConditionType> notExpected = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = new DateTime(2018, 01, 01),
+                DateEnd = new DateTime(2019, 01, 01),
+                Name = "Not expected rule",
+                Priority = 1, // Topmost rule, should be the one that wins if options are set to topmost wins.
+                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "CHE")
+            };
+
+            IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
+            {
+                expected1,
+                expected2,
+                notExpected
+            };
+            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions) =>
+            {
+                switch (rootConditionNode)
+                {
+                    case StringConditionNode<ConditionType> stringConditionNode:
+                        return stringConditionNode.Operand == "USA";
+                    default:
+                        return false;
+                }
+            });
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
+
+            // Act
+            IEnumerable<Rule<ContentType, ConditionType>> actual = await sut.MatchManyAsync(contentType, matchDateTime, conditions);
+
+            // Assert
+            actual.Should().Contain(expected1)
+                .And.Contain(expected2)
+                .And.NotContain(notExpected);
+            mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
+            mockConditionsEvalEngine.Verify(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()), Times.AtLeastOnce());
+        }
+
         [TestMethod]
         public async Task RulesEngine_MatchOneAsync_GivenContentTypeDateAndConditions_FetchesRulesForDayEvalsAndReturnsTheTopmostPriorityOne()
         {
@@ -196,6 +279,14 @@ namespace Rules.Framework.Tests
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
             mockConditionsEvalEngine.Setup(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()))
                 .Returns(result);
+            return mockConditionsEvalEngine;
+        }
+
+        private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(Func<IConditionNode<ConditionType>, IEnumerable<Condition<ConditionType>>, bool> evalFunc)
+        {
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
+            mockConditionsEvalEngine.Setup(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()))
+                .Returns(evalFunc);
             return mockConditionsEvalEngine;
         }
 
