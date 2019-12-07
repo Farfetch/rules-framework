@@ -28,7 +28,7 @@ namespace Rules.Framework.Builder
             this.EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.String,
-                value => value != null && value is string);
+                value => value is string);
         }
 
         private void EnsureValidDataTypeDefault(IDictionary<DataTypes, object> dataTypeDefaults, DataTypes dataType, Func<object, bool> validFunc)
