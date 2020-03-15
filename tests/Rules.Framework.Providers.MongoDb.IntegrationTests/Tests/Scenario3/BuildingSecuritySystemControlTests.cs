@@ -8,7 +8,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
     using MongoDB.Driver;
     using Rules.Framework.Core;
     using Rules.Framework.Providers.MongoDb;
-    using Rules.Framework.Providers.MongoDb.Serialization;
     using Xunit;
 
     public class BuildingSecuritySystemControlTests
@@ -39,14 +38,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = CreateRulesDataSource();
-
-            RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetMongoDbDataSource(CreateMongoClient(), CreateProviderSettings())
                 .Build();
 
             // Act
@@ -89,14 +84,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = CreateRulesDataSource();
-
-            RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetMongoDbDataSource(CreateMongoClient(), CreateProviderSettings())
                 .Build();
 
             // Act
@@ -137,14 +128,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = CreateRulesDataSource();
-
-            RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetMongoDbDataSource(CreateMongoClient(), CreateProviderSettings())
                 .Build();
 
             // Act
@@ -160,19 +147,12 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
                 .And.Contain(ssa => ssa.ActionName == "CallPowerGridPicket");
         }
 
-        private static IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> CreateRulesDataSource()
+        private static MongoClient CreateMongoClient() => new MongoClient("mongodb://192.168.110.128:27017");
+
+        private static MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
         {
-            MongoDbProviderSettings mongoDbProviderSettings = new MongoDbProviderSettings
-            {
-                DatabaseName = "rules-framework-tests",
-                RulesCollectionName = "security-system-actionables"
-            };
-
-            MongoClient mongoClient = new MongoClient("mongodb://192.168.110.128:27017");
-
-            DynamicToStrongTypeContentSerializationProvider<SecuritySystemActionables> serializationProvider = new DynamicToStrongTypeContentSerializationProvider<SecuritySystemActionables>();
-
-            return new MongoDbProviderRulesDataSource<SecuritySystemActionables, SecuritySystemConditions>(mongoClient, mongoDbProviderSettings, serializationProvider);
-        }
+            DatabaseName = "rules-framework-tests",
+            RulesCollectionName = "security-system-actionables"
+        };
     }
 }

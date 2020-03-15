@@ -3,6 +3,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
     using System;
     using System.Collections.Generic;
     using System.Dynamic;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
@@ -59,7 +60,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
             }
             else
             {
-                return Convert.ChangeType(value, type);
+                return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
             }
         }
 

@@ -1,4 +1,3 @@
-
 namespace Rules.Framework.IntegrationTests.Tests.Scenario3
 {
     using System;
@@ -41,9 +40,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario3
             IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>($@"{Environment.CurrentDirectory}/Tests/Scenario3/BuildingSecuritySystemControlTests.datasource.json");
 
-            RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetDataSource(rulesDataSource)
@@ -92,9 +89,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario3
             IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>($@"{Environment.CurrentDirectory}/Tests/Scenario3/BuildingSecuritySystemControlTests.datasource.json");
 
-            RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetDataSource(rulesDataSource)
@@ -141,9 +136,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario3
             IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>($@"{Environment.CurrentDirectory}/Tests/Scenario3/BuildingSecuritySystemControlTests.datasource.json");
 
-            RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetDataSource(rulesDataSource)

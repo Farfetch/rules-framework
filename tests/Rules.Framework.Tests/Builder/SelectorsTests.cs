@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Builder
     using Moq;
     using Rules.Framework.Builder;
     using Rules.Framework.Tests.TestStubs;
-    using static Rules.Framework.Builder.Selectors;
+    using static Rules.Framework.Builder.RulesEngineSelectors;
 
     [TestClass]
     public class SelectorsTests
