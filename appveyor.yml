@@ -1,4 +1,4 @@
-version: 1.0.{build}-{branch}
+version: 1.0.{build}
 image: Ubuntu
 dotnet_csproj:
   patch: true
