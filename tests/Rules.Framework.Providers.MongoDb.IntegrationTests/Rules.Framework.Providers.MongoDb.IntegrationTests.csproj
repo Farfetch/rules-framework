@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
+    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -19,5 +19,4 @@
     <ProjectReference Include="..\..\src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj" />
     <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
   </ItemGroup>
-
 </Project>

@@ -19,6 +19,7 @@ build_script:
   - sh: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
   - sh: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --no-build --include-symbols
 test_script:
+  - sh: setenv MONGO_DB_HOST localhost
   - sh: dotnet test tests/Rules.Framework.Tests --no-build /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=../../tests-coverage
   - sh: dotnet test tests/Rules.Framework.Providers.MongoDb.Tests --no-build /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=../../tests-coverage
   - sh: dotnet test tests/Rules.Framework.IntegrationTests --no-build /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=../../integration-tests-coverage

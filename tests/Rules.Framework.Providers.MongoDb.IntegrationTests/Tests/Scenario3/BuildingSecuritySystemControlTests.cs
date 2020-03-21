@@ -147,7 +147,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
                 .And.Contain(ssa => ssa.ActionName == "CallPowerGridPicket");
         }
 
-        private static MongoClient CreateMongoClient() => new MongoClient("mongodb://192.168.110.128:27017");
+        private static MongoClient CreateMongoClient() => new MongoClient($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
 
         private static MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
         {
