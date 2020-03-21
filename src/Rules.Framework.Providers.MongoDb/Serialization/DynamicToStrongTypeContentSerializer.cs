@@ -25,19 +25,36 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
 
             if (!(serializedContent is ExpandoObject))
             {
-                throw new NotSupportedException($"The serialized content type is not supported for deserialization: {type.FullName}");
+                throw new NotSupportedException($"The serialized content type is not supported for deserialization: {serializedContent.GetType().FullName}");
             }
 
             IDictionary<string, object> serializedContentDictionary = serializedContent as IDictionary<string, object>;
             IDictionary<string, PropertyInfo> reflectionInformation = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).ToDictionary(x => x.Name);
-            object deserializedRepresentation = Activator.CreateInstance(type);
+            object deserializedRepresentation = null;
 
+            try
+            {
+                deserializedRepresentation = Activator.CreateInstance(type, true);
+            }
+            catch (MissingMethodException mme) when (mme.Message.Contains("parameterless"))
+            {
+                throw new NotSupportedException($"The target type '{type.FullName}' must define a default (no parameters) constructor.", mme);
+            }
 
             foreach (string key in serializedContentDictionary.Keys)
             {
                 if (reflectionInformation.TryGetValue(key, out PropertyInfo currentPropertyInfo))
                 {
-                    currentPropertyInfo.SetValue(deserializedRepresentation, Parse(serializedContentDictionary[key], currentPropertyInfo.PropertyType));
+                    object serializedPropertyValue = serializedContentDictionary[key];
+
+                    try
+                    {
+                        currentPropertyInfo.SetValue(deserializedRepresentation, Parse(serializedPropertyValue, currentPropertyInfo.PropertyType));
+                    }
+                    catch (FormatException fe)
+                    {
+                        throw new SerializationException($"An invalid value has been provided for property '{key}' of type '{type.FullName}': '{serializedPropertyValue}'.", fe);
+                    }
                 }
                 else
                 {
@@ -60,6 +77,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
             }
             else
             {
+                // InvariantCulture for all formats is an assumption.
                 return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
             }
         }
