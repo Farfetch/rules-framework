@@ -1,4 +1,3 @@
-
 namespace Rules.Framework.Providers.MongoDb
 {
     using System;
@@ -11,7 +10,6 @@ namespace Rules.Framework.Providers.MongoDb
 
     public class MongoDbProviderRulesDataSource<TContentType, TConditionType> : IRulesDataSource<TContentType, TConditionType>
     {
-        private readonly IMongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
         private readonly IRuleFactory<TContentType, TConditionType> ruleFactory;
         private readonly IMongoDatabase mongoDatabase;
@@ -21,10 +19,14 @@ namespace Rules.Framework.Providers.MongoDb
             MongoDbProviderSettings mongoDbProviderSettings,
             IRuleFactory<TContentType, TConditionType> ruleFactory)
         {
+            if (mongoClient is null)
+            {
+                throw new ArgumentNullException(nameof(mongoClient));
+            }
+
             this.mongoDbProviderSettings = mongoDbProviderSettings ?? throw new ArgumentNullException(nameof(mongoDbProviderSettings));
             this.ruleFactory = ruleFactory ?? throw new ArgumentNullException(nameof(ruleFactory));
-            this.mongoClient = mongoClient ?? throw new ArgumentNullException(nameof(mongoClient));
-            this.mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            this.mongoDatabase = mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
         }
 
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)

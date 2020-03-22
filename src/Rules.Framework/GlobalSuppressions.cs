@@ -11,3 +11,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1717:Only FlagsAttribute enums should have plural names", Justification = "<Pending>", Scope = "type", Target = "~T:Rules.Framework.Core.LogicalOperators")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1717:Only FlagsAttribute enums should have plural names", Justification = "<Pending>", Scope = "type", Target = "~T:Rules.Framework.Core.DataTypes")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "<Pending>", Scope = "member", Target = "~P:Rules.Framework.Core.ConditionNodes.IValueConditionNode`1.Operator")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performace", "CA1801", Justification = "<Pending>", Scope = "type", Target = "~T:Rules.Framework.InvalidRulesEngineOptionsException")]

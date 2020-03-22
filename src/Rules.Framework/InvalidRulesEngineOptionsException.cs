@@ -24,7 +24,6 @@ namespace Rules.Framework
         /// </summary>
         /// <param name="serializationInfo">The serialization information.</param>
         /// <param name="streamingContext">The streaming context.</param>
-        /// <exception cref="NotImplementedException"></exception>
         protected InvalidRulesEngineOptionsException(
             System.Runtime.Serialization.SerializationInfo serializationInfo,
             System.Runtime.Serialization.StreamingContext streamingContext)

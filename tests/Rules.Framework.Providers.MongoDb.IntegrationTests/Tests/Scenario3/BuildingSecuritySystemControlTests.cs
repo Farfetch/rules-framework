@@ -29,7 +29,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
                 .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3.rules-framework-tests.security-system-actionables.json");
 
             IEnumerable<RuleDataModel> rules;
-            using (StreamReader streamReader = new StreamReader(rulesFile))
+            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
                 string json = streamReader.ReadToEnd();
 
