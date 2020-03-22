@@ -1,5 +1,6 @@
 version: 1.0.{build}
 image: Ubuntu
+skip_branch_with_pr: true
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
