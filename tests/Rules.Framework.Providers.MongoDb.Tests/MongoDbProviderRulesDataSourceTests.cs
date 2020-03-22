@@ -68,7 +68,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             IRuleFactory<ContentType, ConditionType> ruleFactory = Mock.Of<IRuleFactory<ContentType, ConditionType>>();
             Mock.Get(ruleFactory)
                 .Setup(x => x.CreateRule(It.IsAny<RuleDataModel>()))
-                .Returns<RuleDataModel>(x => RuleBuilder.NewRule<ContentType, ConditionType>().WithName(x.Name).Build());
+                .Returns<RuleDataModel>(x => RuleBuilder.NewRule<ContentType, ConditionType>().WithName(x.Name).Build().Rule);
 
             MongoDbProviderRulesDataSource<ContentType, ConditionType> mongoDbProviderRulesDataSource = new MongoDbProviderRulesDataSource<ContentType, ConditionType>(
                 mongoClient,

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
+    <LangVersion>8.0</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -36,5 +36,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

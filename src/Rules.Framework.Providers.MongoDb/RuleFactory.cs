@@ -25,35 +25,20 @@ namespace Rules.Framework.Providers.MongoDb
 
             TContentType contentType = Parse<TContentType>(ruleDataModel.ContentType);
 
-            return RuleBuilder.NewRule<TContentType, TConditionType>()
+            RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
                 .WithPriority(ruleDataModel.Priority)
                 .WithCondition(cnb => this.ConvertConditionNode(cnb, ruleDataModel.RootCondition))
                 .WithSerializedContent(contentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
                 .Build();
-        }
 
-        private IConditionNode<TConditionType> ConvertConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
-        {
-            if (conditionNodeDataModel.LogicalOperator == LogicalOperators.Eval)
+            if (!ruleBuilderResult.IsSuccess)
             {
-                return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel as ValueConditionNodeDataModel);
+                throw new InvalidRuleException($"An invalid rule was loaded from data source. Rule ID: {ruleDataModel.Id.ToString()}", ruleBuilderResult.Errors);
             }
-            else
-            {
-                ComposedConditionNodeDataModel composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
 
-                IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
-                    .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
-
-                foreach (ConditionNodeDataModel child in composedConditionNodeDataModel.ChildConditionNodes)
-                {
-                    composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, child));
-                }
-
-                return composedConditionNodeBuilder.Build();
-            }
+            return ruleBuilderResult.Rule;
         }
 
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ValueConditionNodeDataModel conditionNodeDataModel)
@@ -99,5 +84,27 @@ namespace Rules.Framework.Providers.MongoDb
 
         private static object Parse(string value, Type type)
             => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+
+        private IConditionNode<TConditionType> ConvertConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        {
+            if (conditionNodeDataModel.LogicalOperator == LogicalOperators.Eval)
+            {
+                return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel as ValueConditionNodeDataModel);
+            }
+            else
+            {
+                ComposedConditionNodeDataModel composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
+
+                IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
+                    .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
+
+                foreach (ConditionNodeDataModel child in composedConditionNodeDataModel.ChildConditionNodes)
+                {
+                    composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, child));
+                }
+
+                return composedConditionNodeBuilder.Build();
+            }
+        }
     }
 }

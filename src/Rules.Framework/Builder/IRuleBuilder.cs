@@ -14,7 +14,7 @@ namespace Rules.Framework.Builder
         /// Builds the new rule.
         /// </summary>
         /// <returns></returns>
-        Rule<TContentType, TConditionType> Build();
+        RuleBuilderResult<TContentType, TConditionType> Build();
 
         /// <summary>
         /// Sets the new rule with a specified condition.

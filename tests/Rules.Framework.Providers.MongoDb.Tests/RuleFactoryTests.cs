@@ -17,6 +17,24 @@ namespace Rules.Framework.Providers.MongoDb.Tests
     public class RuleFactoryTests
     {
         [Fact]
+        public void CreateRule_GivenNullRuleDataModel_ThrowsArgumentNullException()
+        {
+            // Arrange
+            RuleDataModel ruleDataModel = null;
+
+            IContentSerializationProvider<ContentType> contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
+
+            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>(contentSerializationProvider);
+
+            // Act
+            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(ruleDataModel));
+
+            // Assert
+            argumentNullException.Should().NotBeNull();
+            argumentNullException.ParamName.Should().Be(nameof(ruleDataModel));
+        }
+
+        [Fact]
         public void CreateRule_GivenRuleDataModelWithComposedNodeAndChildNodesOfEachDataType_ReturnsRuleInstance()
         {
             // Arrange

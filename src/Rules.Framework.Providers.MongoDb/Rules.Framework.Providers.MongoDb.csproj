@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,5 +24,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
   </ItemGroup>
-
 </Project>
