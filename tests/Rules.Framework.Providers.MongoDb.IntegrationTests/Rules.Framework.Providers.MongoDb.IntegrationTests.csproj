@@ -7,9 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
@@ -18,5 +23,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj" />
     <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
   </ItemGroup>
 </Project>

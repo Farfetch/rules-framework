@@ -1,176 +1,192 @@
-{
-	"_id" : ObjectId("5e63fd9361f24b15f4531bea"),
-	"Content" : {
-		"ActionId" : "3dd3eadc-15c2-4f66-9e01-4cdf106fd9d6",
-		"ActionName" : "CallPowerGridPicket"
-	},
-	"ContentType" : "PowerSystem",
-	"DateBegin" : ISODate("2018-01-01"),
-	"DateEnd": null,
-	"Name" : "Call power grid picket rule",
-	"Priority" : 6,
-	"RootCondition" : {
-		"_t": "value",
-		"ConditionType" : "PowerStatus",
-		"DataType" : "String",
-		"LogicalOperator" : "Eval",
-		"Operator" : "Equal",
-		"Operand" : "Offline"
-	}
-},
-{
-	"_id" : ObjectId("5e63fd9361f24b15f4531be9"),
-	"Content" : {
-		"ActionId" : "5f1c1e0c-6f49-448d-b9ce-7b154436fe5c",
-		"ActionName" : "EnableEmergencyLights"
-	},
-	"ContentType" : "PowerSystem",
-	"DateBegin" : ISODate("2018-01-01"),
-	"DateEnd": null,
-	"Name" : "Enable emergency lights rule",
-	"Priority" : 5,
-	"RootCondition" : {
-		"_t": "composed",
-		"LogicalOperator" : "Or",
-		"ChildConditionNodes" : [
-			{
-				"_t": "value",
-				"ConditionType" : "PowerStatus",
-				"DataType" : "String",
-				"LogicalOperator" : "Eval",
-				"Operator" : "Equal",
-				"Operand" : "Offline"
-			},
-			{
-				"_t": "value",
-				"ConditionType" : "PowerStatus",
-				"DataType" : "String",
-				"LogicalOperator" : "Eval",
-				"Operator" : "Equal",
-				"Operand" : "Shutdown"
-			}
-		]
-	}
-},
-{
-	"_id" : ObjectId("5e63fd9361f24b15f4531be8"),
-	"Content" : {
-		"ActionId" : "39958de2-1201-4904-9555-65f97e8a1d1d",
-		"ActionName" : "EnableEmergencyPower"
-	},
-	"ContentType" : "PowerSystem",
-	"DateBegin" : ISODate("2018-01-01"),
-	"DateEnd": null,
-	"Name" : "Emergency power activation rule",
-	"Priority" : 4,
-	"RootCondition" : {
-		"_t": "value",
-		"ConditionType" : "PowerStatus",
-		"DataType" : "String",
-		"LogicalOperator" : "Eval",
-		"Operator" : "Equal",
-		"Operand" : "Offline"
-	}
-},
-{
-	"_id" : ObjectId("5e63fd9361f24b15f4531be7"),
-	"Content" : {
-		"ActionId" : "4f771d96-43c7-4939-a8a8-aabd9ad0eee5",
-		"ActionName" : "CallPolice"
-	},
-	"ContentType" : "FireSystem",
-	"DateBegin" : ISODate("2018-01-01"),
-	"DateEnd": null,
-	"Name" : "Police call rule",
-	"Priority" : 3,
-	"RootCondition" : {
-		"_t": "composed",
-		"LogicalOperator" : "Or",
-		"ChildConditionNodes" : [
-			{
-				"_t": "value",
-				"ConditionType" : "TemperatureCelsius",
-				"DataType" : "Decimal",
-				"LogicalOperator" : "Eval",
-				"Operator" : "GreaterThanOrEqual",
-				"Operand" : 70
-			},
-			{
-				"_t": "value",
-				"ConditionType" : "SmokeRate",
-				"DataType" : "Decimal",
-				"LogicalOperator" : "Eval",
-				"Operator" : "GreaterThanOrEqual",
-				"Operand" : 50
-			}
-		]
-	}
-},
-{
-	"_id" : ObjectId("5e63fd9361f24b15f4531be6"),
-	"Content" : {
-		"ActionId" : "96cce7f0-f8ba-4e8a-a3ce-b0d200d49ab2",
-		"ActionName" : "CallFireBrigade"
-	},
-	"ContentType" : "FireSystem",
-	"DateBegin" : ISODate("2018-01-01"),
-	"DateEnd": null,
-	"Name" : "Fire brigade call rule",
-	"Priority" : 1,
-	"RootCondition" : {
-		"_t": "composed",
-		"LogicalOperator" : "Or",
-		"ChildConditionNodes" : [
-			{
-				"_t": "value",
-				"ConditionType" : "TemperatureCelsius",
-				"DataType" : "Decimal",
-				"LogicalOperator" : "Eval",
-				"Operator" : "GreaterThanOrEqual",
-				"Operand" : 70
-			},
-			{
-				"_t": "value",
-				"ConditionType" : "SmokeRate",
-				"DataType" : "Decimal",
-				"LogicalOperator" : "Eval",
-				"Operator" : "GreaterThanOrEqual",
-				"Operand" : 50
-			}
-		]
-	}
-},
-{
-	"_id" : ObjectId("5e63fd9361f24b15f4531be5"),
-	"Content" : {
-		"ActionId" : "7367d5d8-bac1-48bb-9b88-28cfe534aed2",
-		"ActionName" : "ActivateSprinklers"
-	},
-	"ContentType" : "FireSystem",
-	"DateBegin" : ISODate("2018-01-01"),
-	"DateEnd": null,
-	"Name" : "Sprinkler system activation rule",
-	"Priority" : 2,
-	"RootCondition" : {
-		"_t": "composed",
-		"LogicalOperator" : "Or",
-		"ChildConditionNodes" : [
-			{
-				"_t": "value",
-				"ConditionType" : "TemperatureCelsius",
-				"DataType" : "Decimal",
-				"LogicalOperator" : "Eval",
-				"Operator" : "GreaterThanOrEqual",
-				"Operand" : 50
-			},
-			{
-				"_t": "value",
-				"ConditionType" : "SmokeRate",
-				"DataType" : "Decimal",
-				"LogicalOperator" : "Eval",
-				"Operator" : "GreaterThan",
-				"Operand" : 40
-			}
-		]
-	}
-},
+[
+  {
+    "_id": "5e63fd9361f24b15f4531bea",
+    "Content": {
+      "ActionId": "3dd3eadc-15c2-4f66-9e01-4cdf106fd9d6",
+      "ActionName": "CallPowerGridPicket"
+    },
+    "ContentType": "PowerSystem",
+    "DateBegin": "\/Date(1527807600000+0100)\/",
+    "DateEnd": null,
+    "Name": "Call power grid picket rule",
+    "Priority": 6,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "value",
+      "ConditionType": "PowerStatus",
+      "DataType": "String",
+      "LogicalOperator": "Eval",
+      "Operator": "Equal",
+      "Operand": "Offline"
+    }
+  },
+  {
+    "_id": "5e63fd9361f24b15f4531be9",
+    "Content": {
+      "ActionId": "5f1c1e0c-6f49-448d-b9ce-7b154436fe5c",
+      "ActionName": "EnableEmergencyLights"
+    },
+    "ContentType": "PowerSystem",
+    "DateBegin": "\/Date(1527807600000+0100)\/",
+    "DateEnd": null,
+    "Name": "Enable emergency lights rule",
+    "Priority": 5,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ComposedConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "composed",
+      "LogicalOperator": "Or",
+      "ChildConditionNodes": [
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "PowerStatus",
+          "DataType": "String",
+          "LogicalOperator": "Eval",
+          "Operator": "Equal",
+          "Operand": "Offline"
+        },
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "PowerStatus",
+          "DataType": "String",
+          "LogicalOperator": "Eval",
+          "Operator": "Equal",
+          "Operand": "Shutdown"
+        }
+      ]
+    }
+  },
+  {
+    "_id": "5e63fd9361f24b15f4531be8",
+    "Content": {
+      "ActionId": "39958de2-1201-4904-9555-65f97e8a1d1d",
+      "ActionName": "EnableEmergencyPower"
+    },
+    "ContentType": "PowerSystem",
+    "DateBegin": "\/Date(1527807600000+0100)\/",
+    "DateEnd": null,
+    "Name": "Emergency power activation rule",
+    "Priority": 4,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "value",
+      "ConditionType": "PowerStatus",
+      "DataType": "String",
+      "LogicalOperator": "Eval",
+      "Operator": "Equal",
+      "Operand": "Offline"
+    }
+  },
+  {
+    "_id": "5e63fd9361f24b15f4531be7",
+    "Content": {
+      "ActionId": "4f771d96-43c7-4939-a8a8-aabd9ad0eee5",
+      "ActionName": "CallPolice"
+    },
+    "ContentType": "FireSystem",
+    "DateBegin": "\/Date(1527807600000+0100)\/",
+    "DateEnd": null,
+    "Name": "Police call rule",
+    "Priority": 3,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ComposedConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "composed",
+      "LogicalOperator": "Or",
+      "ChildConditionNodes": [
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "TemperatureCelsius",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "GreaterThanOrEqual",
+          "Operand": 70
+        },
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "SmokeRate",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "GreaterThanOrEqual",
+          "Operand": 50
+        }
+      ]
+    }
+  },
+  {
+    "_id": "5e63fd9361f24b15f4531be6",
+    "Content": {
+      "ActionId": "96cce7f0-f8ba-4e8a-a3ce-b0d200d49ab2",
+      "ActionName": "CallFireBrigade"
+    },
+    "ContentType": "FireSystem",
+    "DateBegin": "\/Date(1527807600000+0100)\/",
+    "DateEnd": null,
+    "Name": "Fire brigade call rule",
+    "Priority": 1,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ComposedConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "composed",
+      "LogicalOperator": "Or",
+      "ChildConditionNodes": [
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "TemperatureCelsius",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "GreaterThanOrEqual",
+          "Operand": 70
+        },
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "SmokeRate",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "GreaterThanOrEqual",
+          "Operand": 50
+        }
+      ]
+    }
+  },
+  {
+    "_id": "5e63fd9361f24b15f4531be5",
+    "Content": {
+      "ActionId": "7367d5d8-bac1-48bb-9b88-28cfe534aed2",
+      "ActionName": "ActivateSprinklers"
+    },
+    "ContentType": "FireSystem",
+    "DateBegin": "\/Date(1527807600000+0100)\/",
+    "DateEnd": null,
+    "Name": "Sprinkler system activation rule",
+    "Priority": 2,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ComposedConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "composed",
+      "LogicalOperator": "Or",
+      "ChildConditionNodes": [
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "TemperatureCelsius",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "GreaterThanOrEqual",
+          "Operand": 50
+        },
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "SmokeRate",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "GreaterThan",
+          "Operand": 40
+        }
+      ]
+    }
+  }
+]
