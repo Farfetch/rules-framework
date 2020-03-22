@@ -2,6 +2,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using Rules.Framework.Core.ConditionNodes;
 
@@ -50,7 +51,8 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 return false;
             }
 
-            T leftOperand = (T)Convert.ChangeType(leftOperandCondition?.Value ?? this.rulesEngineOptions.DataTypeDefaults[valueConditionNode.DataType], typeof(T));
+            T leftOperand = (T)Convert.ChangeType(leftOperandCondition?.Value
+                ?? this.rulesEngineOptions.DataTypeDefaults[valueConditionNode.DataType], typeof(T), CultureInfo.InvariantCulture);
             T rightOperand = valueConditionNode.Operand;
             IOperatorEvalStrategy operatorEvalStrategy = operatorEvalStrategyFactory.GetOperatorEvalStrategy(valueConditionNode.Operator);
 

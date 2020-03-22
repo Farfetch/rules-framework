@@ -13,25 +13,25 @@ namespace Rules.Framework.Builder
                 throw new InvalidRulesEngineOptionsException($"Specified null {nameof(rulesEngineOptions)}.");
             }
 
-            this.EnsureValidDataTypeDefault(
+            EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Boolean,
                 value => value != null && bool.TryParse(value.ToString(), out bool boolRes));
-            this.EnsureValidDataTypeDefault(
+            EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Decimal,
                 value => value != null && decimal.TryParse(value.ToString(), out decimal decimalRes));
-            this.EnsureValidDataTypeDefault(
+            EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Integer,
                 value => value != null && int.TryParse(value.ToString(), out int intRes));
-            this.EnsureValidDataTypeDefault(
+            EnsureValidDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.String,
                 value => value is string);
         }
 
-        private void EnsureValidDataTypeDefault(IDictionary<DataTypes, object> dataTypeDefaults, DataTypes dataType, Func<object, bool> validFunc)
+        private static void EnsureValidDataTypeDefault(IDictionary<DataTypes, object> dataTypeDefaults, DataTypes dataType, Func<object, bool> validFunc)
         {
             object value = dataTypeDefaults[dataType];
             if (!validFunc.Invoke(value))

@@ -22,9 +22,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario1/BodyMassIndexTests.datasource.json");
 
-            RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
