@@ -1,6 +1,9 @@
 namespace Rules.Framework.Builder
 {
     using System;
+    using System.Linq;
+    using FluentValidation.Results;
+    using Rules.Framework.Builder.Validation;
     using Rules.Framework.Core;
 
     internal class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
@@ -24,7 +27,15 @@ namespace Rules.Framework.Builder
                 RootCondition = this.rootCondition
             };
 
-            return RuleBuilderResult.Success(rule);
+            RuleValidator<TContentType, TConditionType> ruleValidator = new RuleValidator<TContentType, TConditionType>();
+            ValidationResult validationResult = ruleValidator.Validate(rule);
+
+            if (validationResult.IsValid)
+            {
+                return RuleBuilderResult.Success(rule);
+            }
+
+            return RuleBuilderResult.Failure<TContentType, TConditionType>(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition)
