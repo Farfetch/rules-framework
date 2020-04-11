@@ -3,6 +3,20 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>Luís Garcês</Authors>
+    <Version></Version>
+    <PackageVersion></PackageVersion>
+    <AssemblyVersion></AssemblyVersion>
+    <FileVersion></FileVersion>
+    <InformationalVersion></InformationalVersion>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/pikenikes/rules-framework</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>rules rulesframework mongo mongodb</PackageTags>
+    <Description>A data source provider implementation using Mongo DB for rules framework.</Description>
+    <Copyright>Copyright (c) 2019 Luís Garcês</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
