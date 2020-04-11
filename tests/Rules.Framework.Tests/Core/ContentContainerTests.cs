@@ -1,13 +1,14 @@
 namespace Rules.Framework.Tests.Core
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using FluentAssertions;
     using Rules.Framework.Core;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
 
-    [TestClass]
     public class ContentContainerTests
     {
-        [TestMethod]
+        [Fact]
         public void ContentContainer_ContentType_HavingProvidedContentTypeByCtor_ReturnsProvidedValue()
         {
             // Arrange
@@ -19,10 +20,10 @@ namespace Rules.Framework.Tests.Core
             ContentType actual = sut.ContentType;
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ContentContainer_GetContentAs_HavingProvidedContentByCtorAndGivenCorrectRuntimeType_ReturnsProvidedValue()
         {
             // Arrange
@@ -34,10 +35,10 @@ namespace Rules.Framework.Tests.Core
             object actual = sut.GetContentAs<string>();
 
             // Assert
-            Assert.AreSame(expected, actual);
+            actual.Should().BeSameAs(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ContentContainer_GetContentAs_HavingProvidedContentByCtorAndGivenWrongRuntimeType_ThrowsArgumentException()
         {
             // Arrange
@@ -45,12 +46,14 @@ namespace Rules.Framework.Tests.Core
 
             ContentContainer<ContentType> sut = new ContentContainer<ContentType>(ContentType.Type1, (t) => expected);
 
+            // Act
+            ContentTypeException contentTypeException = Assert.Throws<ContentTypeException>(() => sut.GetContentAs<int>());
+
             // Assert
-            Assert.ThrowsException<ContentTypeException>(() =>
-            {
-                // Act
-                sut.GetContentAs<int>();
-            });
+            contentTypeException.Should().NotBeNull();
+            contentTypeException.Message.Should().Be("Cannot cast content to provided type as TContent: System.Int32");
+            contentTypeException.InnerException.Should().NotBeNull()
+                .And.BeOfType<InvalidCastException>($"{nameof(ContentTypeException)} should happen when an invalid cast is attempted.");
         }
     }
 }

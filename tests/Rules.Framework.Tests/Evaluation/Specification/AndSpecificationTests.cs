@@ -1,14 +1,14 @@
 namespace Rules.Framework.Tests.Evaluation.Specification
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Moq;
     using Rules.Framework.Evaluation.Specification;
+    using Xunit;
 
-    [TestClass]
     public class AndSpecificationTests
     {
-        [TestMethod]
-        public void AndSpecification_IsSatisfiedBy_GivenLeftSpecificationEvalAsFalse_ShortCircuitsDoesNotEvalRightSpecificationAndReturnsFalse()
+        [Fact]
+        public void IsSatisfiedBy_GivenLeftSpecificationEvalAsFalse_ShortCircuitsDoesNotEvalRightSpecificationAndReturnsFalse()
         {
             // Arrange
             object expectedInput = new object();
@@ -29,14 +29,14 @@ namespace Rules.Framework.Tests.Evaluation.Specification
             bool actual = sut.IsSatisfiedBy(expectedInput);
 
             // Assert
-            Assert.IsFalse(actual);
+            actual.Should().BeFalse();
 
             mockLeftSpecification.Verify(x => x.IsSatisfiedBy(It.Is<object>(o => o == expectedInput)), Times.Once());
             mockRightSpecification.Verify(x => x.IsSatisfiedBy(It.Is<object>(o => o == expectedInput)), Times.Never());
         }
 
-        [TestMethod]
-        public void AndSpecification_IsSatisfiedBy_GivenLeftSpecificationEvalAsTrueAndRightSpecificationEvalAsFalse_EvalsBothSpecificationsAndReturnsFalse()
+        [Fact]
+        public void IsSatisfiedBy_GivenLeftSpecificationEvalAsTrueAndRightSpecificationEvalAsFalse_EvalsBothSpecificationsAndReturnsFalse()
         {
             // Arrange
             object expectedInput = new object();
@@ -57,14 +57,14 @@ namespace Rules.Framework.Tests.Evaluation.Specification
             bool actual = sut.IsSatisfiedBy(expectedInput);
 
             // Assert
-            Assert.IsFalse(actual);
+            actual.Should().BeFalse();
 
             mockLeftSpecification.Verify(x => x.IsSatisfiedBy(It.Is<object>(o => o == expectedInput)), Times.Once());
             mockRightSpecification.Verify(x => x.IsSatisfiedBy(It.Is<object>(o => o == expectedInput)), Times.Once());
         }
 
-        [TestMethod]
-        public void AndSpecification_IsSatisfiedBy_GivenLeftSpecificationEvalAsTrueAndRightSpecificationEvalAsTrue_EvalsBothSpecificationsAndReturnsTrue()
+        [Fact]
+        public void IsSatisfiedBy_GivenLeftSpecificationEvalAsTrueAndRightSpecificationEvalAsTrue_EvalsBothSpecificationsAndReturnsTrue()
         {
             // Arrange
             object expectedInput = new object();
@@ -85,7 +85,7 @@ namespace Rules.Framework.Tests.Evaluation.Specification
             bool actual = sut.IsSatisfiedBy(expectedInput);
 
             // Assert
-            Assert.IsTrue(actual);
+            actual.Should().BeTrue();
 
             mockLeftSpecification.Verify(x => x.IsSatisfiedBy(It.Is<object>(o => o == expectedInput)), Times.Once());
             mockRightSpecification.Verify(x => x.IsSatisfiedBy(It.Is<object>(o => o == expectedInput)), Times.Once());

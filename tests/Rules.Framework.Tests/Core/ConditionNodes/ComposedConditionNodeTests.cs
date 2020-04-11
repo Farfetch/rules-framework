@@ -1,16 +1,16 @@
 namespace Rules.Framework.Tests.Core.ConditionNodes
 {
     using System.Collections.Generic;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
 
-    [TestClass]
     public class ComposedConditionNodeTests
     {
-        [TestMethod]
+        [Fact]
         public void ComposedConditionNode_Init_GivenSetupWithChildConditionsAndLogicalOperator_ReturnsSettedValues()
         {
             // Arrange
@@ -28,8 +28,8 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
             IEnumerable<IConditionNode<ConditionType>> actualChildConditionNodes = sut.ChildConditionNodes;
 
             // Assert
-            Assert.AreEqual(expectedLogicalOperator, actualLogicalOperator);
-            Assert.AreSame(expectedChildConditionNodes, actualChildConditionNodes);
+            actualLogicalOperator.Should().Be(expectedLogicalOperator);
+            actualChildConditionNodes.Should().NotBeNull().And.BeSameAs(expectedChildConditionNodes);
         }
     }
 }

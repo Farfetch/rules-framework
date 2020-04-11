@@ -1,13 +1,13 @@
 namespace Rules.Framework.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
 
-    [TestClass]
     public class ConditionTests
     {
-        [TestMethod]
-        public void Condition_Type_HavingSettedType_ReturnsSettedValue()
+        [Fact]
+        public void Type_HavingSettedType_ReturnsSettedValue()
         {
             // Arrange
             ConditionType expected = ConditionType.IsoCountryCode;
@@ -21,11 +21,11 @@ namespace Rules.Framework.Tests
             ConditionType actual = sut.Type;
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected);
         }
 
-        [TestMethod]
-        public void Condition_Value_HavingSettedValue_ReturnsSettedValue()
+        [Fact]
+        public void Value_HavingSettedValue_ReturnsSettedValue()
         {
             // Arrange
             object expected = "abc";
@@ -39,7 +39,7 @@ namespace Rules.Framework.Tests
             object actual = sut.Value;
 
             // Assert
-            Assert.AreSame(expected, actual);
+            actual.Should().Be(expected);
         }
     }
 }

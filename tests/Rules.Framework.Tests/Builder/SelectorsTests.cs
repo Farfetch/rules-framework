@@ -2,16 +2,15 @@ namespace Rules.Framework.Tests.Builder
 {
     using System;
     using FluentAssertions;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using Rules.Framework.Builder;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
     using static Rules.Framework.Builder.RulesEngineSelectors;
 
-    [TestClass]
     public class SelectorsTests
     {
-        [TestMethod]
+        [Fact]
         public void ConditionTypeSelector_WithConditionType_GivenTypeOfCondition_ReturnsNewRulesDataSourceSelector()
         {
             // Arrange
@@ -24,7 +23,7 @@ namespace Rules.Framework.Tests.Builder
             actual.Should().BeOfType<RulesDataSourceSelector<ContentType, ConditionType>>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ContentTypeSelector_WithContentType_GivenTypeOfContent_ReturnsNewConditionTypeSelector()
         {
             // Arrange
@@ -37,21 +36,21 @@ namespace Rules.Framework.Tests.Builder
             actual.Should().BeOfType<ConditionTypeSelector<ContentType>>();
         }
 
-        [TestMethod]
+        [Fact]
         public void RulesDataSourceSelector_SetDataSource_GivenNullRulesDataSource_ThrowsArgumentNullException()
         {
             // Arrange
             RulesDataSourceSelector<ContentType, ConditionType> sut = new RulesDataSourceSelector<ContentType, ConditionType>();
 
             // Assert
-            Assert.ThrowsException<ArgumentNullException>(() =>
+            Assert.Throws<ArgumentNullException>(() =>
             {
                 // Act
                 sut.SetDataSource(null);
             });
         }
 
-        [TestMethod]
+        [Fact]
         public void RulesDataSourceSelector_SetDataSource_GivenRulesDataSourceInstance_ReturnsRulesEngine()
         {
             // Arrange

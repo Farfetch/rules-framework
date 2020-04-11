@@ -3,13 +3,12 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
     using System;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Rules.Framework.Core;
+    using Xunit;
 
-    [TestClass]
     public class CarInsuranceAdvisorTests
     {
-        [TestMethod]
+        [Fact]
         public async Task BodyMassIndex_NoConditions_ReturnsDefaultFormula()
         {
             // Arrange

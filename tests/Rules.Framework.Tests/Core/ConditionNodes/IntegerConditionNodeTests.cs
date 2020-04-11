@@ -1,15 +1,15 @@
 namespace Rules.Framework.Tests.Core.ConditionNodes
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
 
-    [TestClass]
     public class IntegerConditionNodeTests
     {
-        [TestMethod]
-        public void IntegerConditionNode_Init_GivenSetupWithIntegerValue_ReturnsSettedValues()
+        [Fact]
+        public void Init_GivenSetupWithIntegerValue_ReturnsSettedValues()
         {
             // Arrange
             ConditionType expectedConditionType = ConditionType.IsoCountryCode;
@@ -28,11 +28,11 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
             int actualOperand = sut.Operand;
 
             // Assert
-            Assert.AreEqual(expectedConditionType, actualConditionType);
-            Assert.AreEqual(expectedOperator, actualOperator);
-            Assert.AreEqual(expectedOperand, actualOperand);
-            Assert.AreEqual(expectedLogicalOperator, actualLogicalOperator);
-            Assert.AreEqual(expectedDataType, actualDataType);
+            actualConditionType.Should().Be(expectedConditionType);
+            actualOperator.Should().Be(expectedOperator);
+            actualOperand.Should().Be(expectedOperand);
+            actualLogicalOperator.Should().Be(expectedLogicalOperator);
+            actualDataType.Should().Be(expectedDataType);
         }
     }
 }

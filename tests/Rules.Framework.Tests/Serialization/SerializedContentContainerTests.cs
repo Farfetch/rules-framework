@@ -1,16 +1,16 @@
 namespace Rules.Framework.Tests.Serialization
 {
     using System;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Moq;
     using Rules.Framework.Serialization;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
 
-    [TestClass]
     public class SerializedContentContainerTests
     {
-        [TestMethod]
-        public void SerializedContentContainer_Init_GivenSerializedContent_DeserializesAndReturnsWhenFetchingContent()
+        [Fact]
+        public void Init_GivenSerializedContent_DeserializesAndReturnsWhenFetchingContent()
         {
             // Arrange
             ContentType expectedContentType = ContentType.Type1;
@@ -31,7 +31,7 @@ namespace Rules.Framework.Tests.Serialization
             decimal actual = sut.GetContentAs<decimal>();
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected.As<decimal>());
         }
     }
 }

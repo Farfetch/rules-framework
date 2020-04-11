@@ -1,15 +1,15 @@
 namespace Rules.Framework.Tests.Evaluation.Specification
 {
     using System;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Moq;
     using Rules.Framework.Evaluation.Specification;
+    using Xunit;
 
-    [TestClass]
     public class FuncSpecificationTests
     {
-        [TestMethod]
-        public void FuncSpecification_And_GivenOtherSpecification_ReturnsAndSpecification()
+        [Fact]
+        public void And_GivenOtherSpecification_ReturnsAndSpecification()
         {
             // Arrange
             Mock<ISpecification<object>> mockOtherSpecification = new Mock<ISpecification<object>>();
@@ -22,11 +22,11 @@ namespace Rules.Framework.Tests.Evaluation.Specification
             ISpecification<object> actual = sut.And(expectedOtherSpecification);
 
             // Assert
-            Assert.IsInstanceOfType(actual, typeof(AndSpecification<object>));
+            actual.Should().BeOfType<AndSpecification<object>>();
         }
 
-        [TestMethod]
-        public void FuncSpecification_IsSatisfiedBy_GivenFuncEvalsAsFalse_ReturnsFalse()
+        [Fact]
+        public void IsSatisfiedBy_GivenFuncEvalsAsFalse_ReturnsFalse()
         {
             // Arrange
             object expectedInput = new object();
@@ -38,11 +38,11 @@ namespace Rules.Framework.Tests.Evaluation.Specification
             bool actual = sut.IsSatisfiedBy(expectedInput);
 
             // Assert
-            Assert.IsFalse(actual);
+            actual.Should().BeFalse();
         }
 
-        [TestMethod]
-        public void FuncSpecification_IsSatisfiedBy_GivenFuncEvalsAsTrue_ReturnsTrue()
+        [Fact]
+        public void IsSatisfiedBy_GivenFuncEvalsAsTrue_ReturnsTrue()
         {
             // Arrange
             object expectedInput = new object();
@@ -54,11 +54,11 @@ namespace Rules.Framework.Tests.Evaluation.Specification
             bool actual = sut.IsSatisfiedBy(expectedInput);
 
             // Assert
-            Assert.IsTrue(actual);
+            actual.Should().BeTrue();
         }
 
-        [TestMethod]
-        public void FuncSpecification_Or_GivenOtherSpecification_ReturnsOrSpecification()
+        [Fact]
+        public void Or_GivenOtherSpecification_ReturnsOrSpecification()
         {
             // Arrange
             Mock<ISpecification<object>> mockOtherSpecification = new Mock<ISpecification<object>>();
@@ -71,7 +71,7 @@ namespace Rules.Framework.Tests.Evaluation.Specification
             ISpecification<object> actual = sut.Or(expectedOtherSpecification);
 
             // Assert
-            Assert.IsInstanceOfType(actual, typeof(OrSpecification<object>));
+            actual.Should().BeOfType<OrSpecification<object>>();
         }
     }
 }

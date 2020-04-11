@@ -1,13 +1,13 @@
 namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Rules.Framework.Evaluation.ValueEvaluation;
+    using Xunit;
 
-    [TestClass]
     public class GreaterThanOperatorEvalStrategyTests
     {
-        [TestMethod]
-        public void GreaterThanOperatorEvalStrategy_Eval_GivenAsIntegers0And1_ReturnsFalse()
+        [Fact]
+        public void Eval_GivenAsIntegers0And1_ReturnsFalse()
         {
             // Assert
             int expectedLeftOperand = 0;
@@ -19,11 +19,11 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actual = sut.Eval(expectedLeftOperand, expectedRightOperand);
 
             // Arrange
-            Assert.IsFalse(actual);
+            actual.Should().BeFalse();
         }
 
-        [TestMethod]
-        public void GreaterThanOperatorEvalStrategy_Eval_GivenAsIntegers1And1_ReturnsFalse()
+        [Fact]
+        public void Eval_GivenAsIntegers1And1_ReturnsFalse()
         {
             // Assert
             int expectedLeftOperand = 1;
@@ -35,11 +35,11 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actual = sut.Eval(expectedLeftOperand, expectedRightOperand);
 
             // Arrange
-            Assert.IsFalse(actual);
+            actual.Should().BeFalse();
         }
 
-        [TestMethod]
-        public void GreaterThanOperatorEvalStrategy_Eval_GivenAsIntegers2And1_ReturnsTrue()
+        [Fact]
+        public void Eval_GivenAsIntegers2And1_ReturnsTrue()
         {
             // Assert
             int expectedLeftOperand = 2;
@@ -51,7 +51,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actual = sut.Eval(expectedLeftOperand, expectedRightOperand);
 
             // Arrange
-            Assert.IsTrue(actual);
+            actual.Should().BeTrue();
         }
     }
 }

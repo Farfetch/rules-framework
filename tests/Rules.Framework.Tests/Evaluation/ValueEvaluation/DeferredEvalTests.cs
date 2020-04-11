@@ -2,18 +2,18 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.ValueEvaluation;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
 
-    [TestClass]
     public class DeferredEvalTests
     {
-        [TestMethod]
-        public void DeferredEval_GetDeferredEvalFor_GivenBooleanConditionNode_ReturnsFuncToEvalConditionsCollection()
+        [Fact]
+        public void GetDeferredEvalFor_GivenBooleanConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
             BooleanConditionNode<ConditionType> conditionNode = new BooleanConditionNode<ConditionType>(ConditionType.IsVip, Operators.NotEqual, true);
@@ -44,14 +44,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
-            Assert.IsTrue(actualEvalResult);
+            actualEvalResult.Should().BeTrue();
 
             mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
             mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
         }
 
-        [TestMethod]
-        public void DeferredEval_GetDeferredEvalFor_GivenDecimalConditionNode_ReturnsFuncToEvalConditionsCollection()
+        [Fact]
+        public void GetDeferredEvalFor_GivenDecimalConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
             DecimalConditionNode<ConditionType> conditionNode = new DecimalConditionNode<ConditionType>(ConditionType.PluviosityRate, Operators.GreaterThan, 50);
@@ -82,14 +82,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
-            Assert.IsTrue(actualEvalResult);
+            actualEvalResult.Should().BeTrue();
 
             mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
             mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<decimal>(), It.IsAny<decimal>()), Times.Once());
         }
 
-        [TestMethod]
-        public void DeferredEval_GetDeferredEvalFor_GivenIntegerConditionNode_ReturnsFuncToEvalConditionsCollection()
+        [Fact]
+        public void GetDeferredEvalFor_GivenIntegerConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
             IntegerConditionNode<ConditionType> conditionNode = new IntegerConditionNode<ConditionType>(ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
@@ -120,14 +120,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
-            Assert.IsTrue(actualEvalResult);
+            actualEvalResult.Should().BeTrue();
 
             mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
             mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<int>(), It.IsAny<int>()), Times.Once());
         }
 
-        [TestMethod]
-        public void DeferredEval_GetDeferredEvalFor_GivenStringConditionNode_ReturnsFuncToEvalConditionsCollection()
+        [Fact]
+        public void GetDeferredEvalFor_GivenStringConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
             StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
@@ -158,14 +158,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
-            Assert.IsTrue(actualEvalResult);
+            actualEvalResult.Should().BeTrue();
 
             mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
             mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
-        [TestMethod]
-        public void DeferredEval_GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToDiscardWhenMissing_ReturnsFuncThatEvalsFalse()
+        [Fact]
+        public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToDiscardWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
             StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
@@ -197,14 +197,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
-            Assert.IsFalse(actualEvalResult);
+            actualEvalResult.Should().BeFalse();
 
             mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Never());
             mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
         }
 
-        [TestMethod]
-        public void DeferredEval_GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToUseDataTypeDefaultWhenMissing_ReturnsFuncThatEvalsFalse()
+        [Fact]
+        public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToUseDataTypeDefaultWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
             StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
@@ -236,14 +236,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
-            Assert.IsFalse(actualEvalResult);
+            actualEvalResult.Should().BeFalse();
 
             mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
             mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
-        [TestMethod]
-        public void DeferredEval_GetDeferredEvalFor_GivenUnknownConditionNodeType_ThrowsNotSupportedException()
+        [Fact]
+        public void GetDeferredEvalFor_GivenUnknownConditionNodeType_ThrowsNotSupportedException()
         {
             // Arrange
             Mock<IValueConditionNode<ConditionType>> mockValueConditionNode = new Mock<IValueConditionNode<ConditionType>>();
@@ -254,12 +254,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
+            // Act
+            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetDeferredEvalFor(mockValueConditionNode.Object));
+
             // Assert
-            Assert.ThrowsException<NotSupportedException>(() =>
-            {
-                // Act
-                sut.GetDeferredEvalFor(mockValueConditionNode.Object);
-            });
+            notSupportedException.Should().NotBeNull();
+            notSupportedException.Message.Should().Be($"Unsupported value condition node: '{mockValueConditionNode.Object.GetType().Name}'.");
         }
     }
 }

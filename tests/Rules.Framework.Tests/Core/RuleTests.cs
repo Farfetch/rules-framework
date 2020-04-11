@@ -1,16 +1,16 @@
 namespace Rules.Framework.Tests.Core
 {
     using System;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using FluentAssertions;
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Tests.TestStubs;
+    using Xunit;
 
-    [TestClass]
     public class RuleTests
     {
-        [TestMethod]
-        public void Rule_ContentContainer_ContentContainer_HavingSettedInstance_ReturnsProvidedInstance()
+        [Fact]
+        public void ContentContainer_ContentContainer_HavingSettedInstance_ReturnsProvidedInstance()
         {
             // Arrange
             ContentContainer<ContentType> expected = new ContentContainer<ContentType>(ContentType.Type1, (t) => null);
@@ -24,11 +24,11 @@ namespace Rules.Framework.Tests.Core
             ContentContainer<ContentType> actual = sut.ContentContainer;
 
             // Assert
-            Assert.AreSame(expected, actual);
+            actual.Should().BeSameAs(expected);
         }
 
-        [TestMethod]
-        public void Rule_DateBegin_HavingSettedValue_ReturnsProvidedValue()
+        [Fact]
+        public void DateBegin_HavingSettedValue_ReturnsProvidedValue()
         {
             // Arrange
             DateTime expected = new DateTime(2018, 07, 19);
@@ -42,11 +42,11 @@ namespace Rules.Framework.Tests.Core
             DateTime actual = sut.DateBegin;
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected);
         }
 
-        [TestMethod]
-        public void Rule_DateEnd_HavingSettedValue_ReturnsProvidedValue()
+        [Fact]
+        public void DateEnd_HavingSettedValue_ReturnsProvidedValue()
         {
             // Arrange
             DateTime expected = new DateTime(2018, 07, 19);
@@ -60,11 +60,11 @@ namespace Rules.Framework.Tests.Core
             DateTime? actual = sut.DateEnd;
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected);
         }
 
-        [TestMethod]
-        public void Rule_DateEnd_NotHavingSettedValue_ReturnsNull()
+        [Fact]
+        public void DateEnd_NotHavingSettedValue_ReturnsNull()
         {
             // Arrange
             Rule<ContentType, ConditionType> sut = new Rule<ContentType, ConditionType>();
@@ -73,11 +73,11 @@ namespace Rules.Framework.Tests.Core
             DateTime? actual = sut.DateEnd;
 
             // Assert
-            Assert.IsNull(actual);
+            actual.Should().BeNull();
         }
 
-        [TestMethod]
-        public void Rule_Name_HavingSettedValue_ReturnsProvidedValue()
+        [Fact]
+        public void Name_HavingSettedValue_ReturnsProvidedValue()
         {
             // Arrange
             string expected = "My awesome name";
@@ -91,11 +91,11 @@ namespace Rules.Framework.Tests.Core
             string actual = sut.Name;
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected);
         }
 
-        [TestMethod]
-        public void Rule_Priority_HavingSettedValue_ReturnsProvidedValue()
+        [Fact]
+        public void Priority_HavingSettedValue_ReturnsProvidedValue()
         {
             // Arrange
             int expected = 123;
@@ -109,11 +109,11 @@ namespace Rules.Framework.Tests.Core
             int actual = sut.Priority;
 
             // Arrange
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected);
         }
 
-        [TestMethod]
-        public void Rule_RootCondition_HavingSettedInstance_ReturnsProvidedInstance()
+        [Fact]
+        public void RootCondition_HavingSettedInstance_ReturnsProvidedInstance()
         {
             // Arrange
             Mock<IConditionNode<ConditionType>> mockConditionNode = new Mock<IConditionNode<ConditionType>>();
@@ -128,7 +128,7 @@ namespace Rules.Framework.Tests.Core
             IConditionNode<ConditionType> actual = sut.RootCondition;
 
             // Assert
-            Assert.AreSame(expected, actual);
+            actual.Should().BeSameAs(expected);
         }
     }
 }
