@@ -1,7 +1,6 @@
 namespace Rules.Framework.Builder.Validation
 {
     using FluentValidation;
-    using FluentValidation.Results;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
@@ -20,44 +19,15 @@ namespace Rules.Framework.Builder.Validation
             this.booleanConditionNodeValidator = new ValueConditionNodeValidator<bool, TConditionType>();
 
             this.RuleFor(c => c.LogicalOperator).IsContainedOn(LogicalOperators.And, LogicalOperators.Or);
-            this.RuleForEach(c => c.ChildConditionNodes).Custom((cn, cc) =>
+            this.RuleForEach(c => c.ChildConditionNodes).Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType>
             {
-                ValidationResult validationResult = null;
-
-                switch (cn)
-                {
-                    case ComposedConditionNode<TConditionType> composedConditionNode:
-                        validationResult = this.Validate(composedConditionNode);
-                        break;
-
-                    case IntegerConditionNode<TConditionType> integerConditionNode:
-                        validationResult = this.integerConditionNodeValidator.Validate(integerConditionNode);
-                        break;
-
-                    case DecimalConditionNode<TConditionType> decimalConditionNode:
-                        validationResult = this.decimalConditionNodeValidator.Validate(decimalConditionNode);
-                        break;
-
-                    case StringConditionNode<TConditionType> stringConditionNode:
-                        validationResult = this.stringConditionNodeValidator.Validate(stringConditionNode);
-                        break;
-
-                    case BooleanConditionNode<TConditionType> booleanConditionNode:
-                        validationResult = this.booleanConditionNodeValidator.Validate(booleanConditionNode);
-                        break;
-
-                    default:
-                        return;
-                }
-
-                if (!validationResult.IsValid)
-                {
-                    foreach (ValidationFailure validationFailure in validationResult.Errors)
-                    {
-                        cc.AddFailure(validationFailure);
-                    }
-                }
-            });
+                BooleanConditionNodeValidator = this.booleanConditionNodeValidator,
+                ComposedConditionNodeValidator = this,
+                CustomContext = cc,
+                DecimalConditionNodeValidator = this.decimalConditionNodeValidator,
+                IntegerConditionNodeValidator = this.integerConditionNodeValidator,
+                StringConditionNodeValidator = this.stringConditionNodeValidator
+            }));
         }
     }
 }
