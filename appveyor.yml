@@ -20,7 +20,7 @@ build_script:
   - sh: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
   - sh: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --no-build --include-symbols
 test_script:
-  - sh: dotnet test rules-framework.sln --no-build /p:CollectCoverage=true /p:CoverletOutputFormat="json%2copencover" /p:CoverletOutput=../../coverage-outputs /p:MergeWith=../../coverage-outputs/coverage.json -m:1
+  - sh: dotnet test rules-framework.sln --no-build /p:CollectCoverage=true /p:CoverletOutputFormat="json%2copencover" /p:CoverletOutput=../../coverage-outputs/ /p:MergeWith=../../coverage-outputs/coverage.json -m:1
   - sh: rm coverage-outputs/coverage.json
 after_test:
   - sh: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
