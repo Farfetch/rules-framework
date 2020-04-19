@@ -7,7 +7,13 @@ Why use rules? Most of us at some point, while developing software to support a 
 [![Build status](https://ci.appveyor.com/api/projects/status/bhu3hh8cag509l4s/branch/master?svg=true)](https://ci.appveyor.com/project/pikenikes/rules-framework/branch/master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pikenikes_rules-framework&metric=alert_status)](https://sonarcloud.io/dashboard?id=pikenikes_rules-framework)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pikenikes_rules-framework&metric=coverage)](https://sonarcloud.io/dashboard?id=pikenikes_rules-framework)
-[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.svg?logo=nuget)](https://www.nuget.org/packages/Rules.Framework/)
+
+## Packages
+
+|Name                             |Link|
+|---------------------------------|----|
+|Rules.Framework|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.svg?logo=nuget)](https://www.nuget.org/packages/Rules.Framework/)|
+|Rules.Framework.Providers.MongoDb|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.Providers.MongoDb?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.Providers.MongoDb/)|
 
 ## Features
 
@@ -18,8 +24,8 @@ The following listing presents features implemented and features to be implement
 - [ ] Rules search
 - [x] Rules content serializarion
 - [ ] Rules data source caching
-- [ ] Rules management (Create, Read, Update)
-- [ ] MongoDB data source support
+- [x] Rules management (Create, Read, Update)
+- [x] MongoDB data source support
 
 ## How it works
 
@@ -57,7 +63,7 @@ If you request a rule for the content type "Body Mass formula" by specifying dat
 
 ## Using the framework
 
-So, how do you use the framework to have rules evaluated? Let's see how...
+### Getting started
 
 1. Define your content types (suggestion: use an enum).
 
@@ -78,25 +84,7 @@ internal enum ConditionTypes
 }
 ```
 
-3. Have a rules data source set up (e.g. a database). NOTE: you will have to implement your data source for the time being. There's plans to support MongoDB in the future.
-
-```csharp
-public interface IRulesDataSource<TContentType, TConditionType>
-{
-    Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
-}
-```
-
-You'll have to map each condition type defined by you to a data type on your rules data source. The ones available are:
-
-- Integer
-- Decimal
-- String
-- Boolean
-
-For your guidance, check sample rules load from file: [RulesFromJsonFile.cs](tests/Rules.Framework.IntegrationTests/RulesFromJsonFile.cs)
-
-4. Build a rules engine.
+3. Build a rules engine.
 
 ```csharp
 RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
@@ -104,11 +92,13 @@ RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
 RulesEngine<ContentTypes, ConditionTypes> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
     .WithContentType<ContentTypes>() // Your content types.
     .WithConditionType<ConditionTypes>() // Your condition types.
-    .SetDataSource(rulesDataSource) // A rules data source instance implemented by you.
+    .SetDataSource(rulesDataSource) // A rules data source instance implemented by you OR using one of the available providers.
     .Build();
 ```
 
-5. Evalutate rule match.
+### Evaluating rules
+
+1. Set the conditions to supply to the engine.
 
 ```csharp
 Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
@@ -124,9 +114,51 @@ Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
         Value = "inches"
     }
 };
-
-Rule<ContentTypes, ConditionTypes> ruleMatch = await rulesEngine.MatchOneAsync(ContentTypes.BodyMassIndexFormula, new DateTime(2019, 1, 1), conditions);
 ```
+
+2. Set the date at which you want the rules set to evalutated.
+
+```csharp
+DateTime date = new DateTime(2019, 1, 1);
+```
+
+3. Set the content you want to fetch.
+
+```csharp
+ContentTypes contentType = ContentTypes.BodyMassIndexFormula;
+```
+
+4. Evalutate rule match.
+
+```csharp
+Rule<ContentTypes, ConditionTypes> ruleMatch = await rulesEngine.MatchOneAsync(contentType, date, conditions);
+```
+
+### My database has no provider available
+
+In case you need to support other databases, you'll have to implement your own data source provider logic. You should implement `IRulesDataSource<TContentType, TConditionType>` interface and use it on rules engine builder.
+
+```csharp
+public interface IRulesDataSource<TContentType, TConditionType>
+{
+    Task AddRuleAsync(Rule<TContentType, TConditionType> rule);
+
+    Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
+
+    Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs);
+
+    Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule);
+}
+```
+
+You'll have to map each condition type defined by you to a data type on your rules data source. The ones available are:
+
+- Integer
+- Decimal
+- String
+- Boolean
+
+For your guidance, check Mongo DB implementation: [MongoDbProviderRulesDataSource.cs](src\Rules.Framework.Providers.MongoDb/MongoDbProviderRulesDataSource.cs)
 
 ## Contributing
 
