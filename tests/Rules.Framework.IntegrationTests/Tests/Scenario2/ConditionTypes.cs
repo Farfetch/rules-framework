@@ -4,6 +4,8 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
     {
         RepairCosts = 1,
 
-        RepairCostsCommercialValueRate = 2
+        RepairCostsCommercialValueRate = 2,
+
+        SelfDamageCoverage = 3
     }
 }

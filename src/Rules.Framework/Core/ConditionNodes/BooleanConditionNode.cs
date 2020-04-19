@@ -24,5 +24,12 @@ namespace Rules.Framework.Core.ConditionNodes
         /// The condition node data type.
         /// </summary>
         public override DataTypes DataType => DataTypes.Boolean;
+
+        /// <summary>
+        /// Clones the condition node into a different instance.
+        /// </summary>
+        /// <returns></returns>
+        public override IConditionNode<TConditionType> Clone()
+            => new BooleanConditionNode<TConditionType>(this.ConditionType, this.Operator, this.Operand);
     }
 }

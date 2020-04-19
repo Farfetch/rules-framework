@@ -10,5 +10,11 @@ namespace Rules.Framework.Core
         /// Gets the logical operator to apply to condition node.
         /// </summary>
         LogicalOperators LogicalOperator { get; }
+
+        /// <summary>
+        /// Clones the condition node into a different instance.
+        /// </summary>
+        /// <returns></returns>
+        IConditionNode<TConditionType> Clone();
     }
 }

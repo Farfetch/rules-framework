@@ -38,5 +38,20 @@ namespace Rules.Framework.Core
         /// Gets the rule root condition. This property is null when rule has no conditions.
         /// </summary>
         public IConditionNode<TConditionType> RootCondition { get; internal set; }
+
+        /// <summary>
+        /// Clones the rule into a different instance.
+        /// </summary>
+        /// <returns></returns>
+        public virtual Rule<TContentType, TConditionType> Clone()
+            => new Rule<TContentType, TConditionType>
+            {
+                ContentContainer = this.ContentContainer,
+                DateBegin = this.DateBegin,
+                DateEnd = this.DateEnd,
+                Name = this.Name,
+                Priority = this.Priority,
+                RootCondition = this.RootCondition?.Clone()
+            };
     }
 }
