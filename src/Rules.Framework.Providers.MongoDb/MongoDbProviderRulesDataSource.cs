@@ -5,7 +5,6 @@ namespace Rules.Framework.Providers.MongoDb
     using System.Linq;
     using System.Threading.Tasks;
     using MongoDB.Driver;
-    using Rules.Framework;
     using Rules.Framework.Core;
     using Rules.Framework.Providers.MongoDb.DataModel;
 
@@ -69,7 +68,7 @@ namespace Rules.Framework.Providers.MongoDb
         /// </summary>
         /// <param name="rulesFilterArgs">The rules filter arguments.</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs)
+        public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs)
         {
             if (rulesFilterArgs is null)
             {
@@ -79,7 +78,7 @@ namespace Rules.Framework.Providers.MongoDb
             FilterDefinition<RuleDataModel> filterDefinition = MongoDbProviderRulesDataSource<TContentType, TConditionType>
                 .BuildFilterFromRulesFilterArgs(rulesFilterArgs);
 
-            return await this.GetRulesAsync(filterDefinition).ConfigureAwait(false);
+            return this.GetRulesAsync(filterDefinition);
         }
 
         /// <summary>
