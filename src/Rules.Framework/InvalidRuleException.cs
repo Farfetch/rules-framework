@@ -1,15 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-
 namespace Rules.Framework
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Runtime.Serialization;
+
     /// <summary>
     /// Exception thrown when a operation is attempted with a invalid rule.
     /// </summary>
     /// <seealso cref="System.Exception" />
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class InvalidRuleException : Exception
     {
         /// <summary>

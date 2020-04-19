@@ -31,7 +31,19 @@ namespace Rules.Framework
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
-        public async Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
+        /// <summary>
+        /// Adds a new rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <param name="ruleAddPriorityOption">The rule add priority option.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">
+        /// rule
+        /// or
+        /// rule
+        /// </exception>
+        /// <exception cref="NotSupportedException">The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.</exception>
+        public Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
         {
             if (rule is null)
             {
@@ -43,6 +55,70 @@ namespace Rules.Framework
                 throw new ArgumentNullException(nameof(rule));
             }
 
+            return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
+        }
+
+        /// <summary>
+        /// Provides all rule matches (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <param name="matchDateTime"></param>
+        /// <param name="conditions"></param>
+        /// <remarks>
+        /// <para>A set of rules is requested to rules data source and all conditions are evaluated against them to provide a set of matches.</para>
+        /// <para>All rules matching supplied conditions are returned.</para>
+        /// </remarks>
+        /// <returns>the matched rule; otherwise, null.</returns>
+        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
+        {
+            DateTime dateBegin = matchDateTime.Date;
+            DateTime dateEnd = matchDateTime.Date.AddDays(1);
+
+            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd).ConfigureAwait(false);
+
+            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
+                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditions))
+                .ToList();
+
+            return matchedRules;
+        }
+
+        /// <summary>
+        /// Provides a rule match (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <param name="matchDateTime"></param>
+        /// <param name="conditions"></param>
+        /// <remarks>
+        /// <para>A set of rules is requested to rules data source and all conditions are evaluated against them to provide a set of matches.</para>
+        /// <para>If there's more than one match, a rule is selected based on the priority criteria and value: topmost selects the lowest priority number and bottommost selects highest priority.</para>
+        /// </remarks>
+        /// <returns>the matched rule; otherwise, null.</returns>
+        public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
+        {
+            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = await this.MatchManyAsync(contentType, matchDateTime, conditions).ConfigureAwait(false);
+
+            return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
+        }
+
+        /// <summary>
+        /// Updates the specified existing rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
+        public Task<RuleOperationResult> UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            return this.UpdateRuleInternalAsync(rule);
+        }
+
+        private async Task<RuleOperationResult> AddRuleInternalAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
+        {
             List<string> errors = new List<string>();
             RulesFilterArgs<TContentType> rulesFilterArgs = new RulesFilterArgs<TContentType>
             {
@@ -117,56 +193,20 @@ namespace Rules.Framework
             return RuleOperationResult.Success();
         }
 
-        /// <summary>
-        /// Provides all rule matches (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="matchDateTime"></param>
-        /// <param name="conditions"></param>
-        /// <remarks>
-        /// <para>A set of rules is requested to rules data source and all conditions are evaluated against them to provide a set of matches.</para>
-        /// <para>All rules matching supplied conditions are returned.</para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
+        private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
-            DateTime dateBegin = matchDateTime.Date;
-            DateTime dateEnd = matchDateTime.Date.AddDays(1);
-
-            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd).ConfigureAwait(false);
-
-            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
-                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditions))
-                .ToList();
-
-            return matchedRules;
-        }
-
-        /// <summary>
-        /// Provides a rule match (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="matchDateTime"></param>
-        /// <param name="conditions"></param>
-        /// <remarks>
-        /// <para>A set of rules is requested to rules data source and all conditions are evaluated against them to provide a set of matches.</para>
-        /// <para>If there's more than one match, a rule is selected based on the priority criteria and value: topmost selects the lowest priority number and bottommost selects highest priority.</para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
-        public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
-        {
-            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = await this.MatchManyAsync(contentType, matchDateTime, conditions).ConfigureAwait(false);
-
-            return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
-        }
-
-        public async Task<RuleOperationResult> UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
-        {
-            if (rule is null)
+            switch (this.rulesEngineOptions.PriotityCriteria)
             {
-                throw new ArgumentNullException(nameof(rule));
-            }
+                case PriorityCriterias.BottommostRuleWins:
+                    return rules.OrderByDescending(r => r.Priority).First();
 
+                default:
+                    return rules.OrderBy(r => r.Priority).First();
+            }
+        }
+
+        private async Task<RuleOperationResult> UpdateRuleInternalAsync(Rule<TContentType, TConditionType> rule)
+        {
             RulesFilterArgs<TContentType> rulesFilterArgs = new RulesFilterArgs<TContentType>
             {
                 ContentType = rule.ContentContainer.ContentType
@@ -225,18 +265,6 @@ namespace Rules.Framework
             }
 
             return RuleOperationResult.Success();
-        }
-
-        private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
-        {
-            switch (this.rulesEngineOptions.PriotityCriteria)
-            {
-                case PriorityCriterias.BottommostRuleWins:
-                    return rules.OrderByDescending(r => r.Priority).First();
-
-                default:
-                    return rules.OrderBy(r => r.Priority).First();
-            }
         }
     }
 }

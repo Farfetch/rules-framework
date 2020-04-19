@@ -23,7 +23,13 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (!(serializedContent is ExpandoObject))
+            Type serializedContentType = serializedContent.GetType();
+            if (serializedContentType.IsValueType || typeof(string).IsAssignableFrom(serializedContentType))
+            {
+                return Parse(serializedContent, type);
+            }
+
+            if (!typeof(ExpandoObject).IsAssignableFrom(serializedContentType))
             {
                 throw new NotSupportedException($"The serialized content type is not supported for deserialization: {serializedContent.GetType().FullName}");
             }
@@ -71,7 +77,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
             {
                 return Enum.Parse(type, value.ToString());
             }
-            else if (type.IsAssignableFrom(typeof(Guid)))
+            else if (typeof(Guid).IsAssignableFrom(type))
             {
                 return Guid.Parse(value.ToString());
             }

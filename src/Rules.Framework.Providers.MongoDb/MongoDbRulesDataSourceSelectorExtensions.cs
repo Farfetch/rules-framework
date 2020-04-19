@@ -6,8 +6,27 @@ namespace Rules.Framework.Providers.MongoDb
     using Rules.Framework.Providers.MongoDb.Serialization;
     using Rules.Framework.Serialization;
 
+    /// <summary>
+    /// Rules data source selector extensions from Mongo DB provider.
+    /// </summary>
     public static class MongoDbRulesDataSourceSelectorExtensions
     {
+        /// <summary>
+        /// Sets the rules engine data source from a Mongo DB database.
+        /// </summary>
+        /// <typeparam name="TContentType">The type of the content type.</typeparam>
+        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
+        /// <param name="rulesDataSourceSelector">The rules data source selector.</param>
+        /// <param name="mongoClient">The mongo client.</param>
+        /// <param name="mongoDbProviderSettings">The mongo database provider settings.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">
+        /// rulesDataSourceSelector
+        /// or
+        /// mongoClient
+        /// or
+        /// mongoDbProviderSettings
+        /// </exception>
         public static IConfiguredRulesEngineBuilder<TContentType, TConditionType> SetMongoDbDataSource<TContentType, TConditionType>(
             this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector,
             IMongoClient mongoClient,

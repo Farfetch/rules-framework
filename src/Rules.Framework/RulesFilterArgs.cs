@@ -1,9 +1,12 @@
 namespace Rules.Framework
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     /// The set of arguments to filter rules.
     /// </summary>
     /// <typeparam name="TContentType">The type of the content type.</typeparam>
+    [ExcludeFromCodeCoverage]
     public class RulesFilterArgs<TContentType>
     {
         /// <summary>
