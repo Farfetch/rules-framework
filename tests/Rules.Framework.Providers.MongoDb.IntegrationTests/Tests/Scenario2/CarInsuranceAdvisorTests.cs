@@ -2,15 +2,83 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using MongoDB.Bson;
+    using MongoDB.Driver;
+    using MongoDB.Driver.Core.Events;
+    using Newtonsoft.Json;
+    using Rules.Framework;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
+    using Rules.Framework.Providers.MongoDb;
+    using Rules.Framework.Providers.MongoDb.DataModel;
+    using Rules.Framework.Providers.MongoDb.IntegrationTests;
+    using Rules.Framework.Providers.MongoDb.Serialization;
+    using Rules.Framework.Serialization;
     using Xunit;
 
-    public class CarInsuranceAdvisorTests
+    public class CarInsuranceAdvisorTests : IDisposable
     {
+        private readonly IMongoClient mongoClient;
+        private readonly MongoDbProviderSettings mongoDbProviderSettings;
+
+        public CarInsuranceAdvisorTests()
+        {
+            this.mongoClient = CreateMongoClient();
+            this.mongoDbProviderSettings = CreateProviderSettings();
+
+            Stream? rulesFile = Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2.rules-framework-tests.car-insurance-advisor.json");
+
+            IEnumerable<RuleDataModel> rules;
+            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
+            {
+                string json = streamReader.ReadToEnd();
+
+                IEnumerable<RuleDataModel> array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+
+                rules = array.Select(t =>
+                {
+                    t.Content = t.Content as string;
+
+                    return t;
+                }).ToList();
+            }
+
+            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
+            IMongoCollection<RuleDataModel> mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+
+            mongoCollection.InsertMany(rules);
+        }
+
+        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        {
+            DatabaseName = "rules-framework-tests",
+            RulesCollectionName = "car-insurance-advisor"
+        };
+
+        private static MongoClient CreateMongoClient()
+        {
+            MongoClientSettings settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
+            settings.ClusterConfigurator = (cb) =>
+            {
+                cb.Subscribe<CommandStartedEvent>(e =>
+                {
+                    Trace.WriteLine($"{e.CommandName} - {e.Command.ToJson()}");
+                });
+            };
+            return new MongoClient(settings);
+        }
+
         [Fact]
         public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
         {
@@ -32,13 +100,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                 }
             };
 
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario2/CarInsuranceAdvisorTests.datasource.json", serializedContent: false);
-
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(reo =>
                 {
                     reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
@@ -74,18 +139,17 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                 }
             };
 
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario2/CarInsuranceAdvisorTests.datasource.json", serializedContent: false);
-
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(reo =>
                 {
                     reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
+
+            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = CreateRulesDataSourceTest<ContentTypes, ConditionTypes>(this.mongoClient, this.mongoDbProviderSettings);
 
             RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
@@ -193,6 +257,24 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             Rule<ContentTypes, ConditionTypes> rule34 = rules3.FirstOrDefault(r => r.Name == "Car Insurance Advise on repair costs lower than franchise boundary");
             rule34.Should().NotBeNull();
             rule34.Priority.Should().Be(4);
+        }
+
+        private static IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(
+            IMongoClient mongoClient,
+            MongoDbProviderSettings mongoDbProviderSettings)
+        {
+            IContentSerializationProvider<TContentType> contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<TContentType>();
+            IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>(contentSerializationProvider);
+            return new MongoDbProviderRulesDataSource<TContentType, TConditionType>(
+                    mongoClient,
+                    mongoDbProviderSettings,
+                    ruleFactory);
+        }
+
+        public void Dispose()
+        {
+            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
         }
     }
 }

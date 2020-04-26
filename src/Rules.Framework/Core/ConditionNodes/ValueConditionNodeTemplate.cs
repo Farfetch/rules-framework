@@ -47,5 +47,11 @@ namespace Rules.Framework.Core.ConditionNodes
         /// Gets the condition's operator to perform value comparison.
         /// </summary>
         public Operators Operator { get; }
+
+        /// <summary>
+        /// Clones the condition node into a different instance.
+        /// </summary>
+        /// <returns></returns>
+        public abstract IConditionNode<TConditionType> Clone();
     }
 }

@@ -1,0 +1,72 @@
+[
+  {
+    "_id": "5e9c659bf1b6421fe0eee8e2",
+    "Content": "Pay",
+    "ContentType": "CarInsuranceAdvice",
+    "DateBegin": "2018-01-01T00:00:00Z",
+    "DateEnd": null,
+    "Name": "Car Insurance Advise on repair costs lesser than 80% of commercial value",
+    "Priority": 1,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "value",
+      "ConditionType": "RepairCostsCommercialValueRate",
+      "DataType": "Decimal",
+      "LogicalOperator": "Eval",
+      "Operator": "LesserThan",
+      "Operand": 80
+    }
+  },
+  {
+    "_id": "5e9c659bf1b6421fe0eee8e1",
+    "Content": "PayNewCar",
+    "ContentType": "CarInsuranceAdvice",
+    "DateBegin": "2018-01-01T00:00:00Z",
+    "DateEnd": null,
+    "Name": "Car Insurance Advise on repair costs greater than 80% of commercial value",
+    "Priority": 2,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "value",
+      "ConditionType": "RepairCostsCommercialValueRate",
+      "DataType": "Decimal",
+      "LogicalOperator": "Eval",
+      "Operator": "GreaterThanOrEqual",
+      "Operand": 80
+    }
+  },
+  {
+    "_id": "5e9c659bf1b6421fe0eee8e0",
+    "Content": "RefusePaymentPerFranchise",
+    "ContentType": "CarInsuranceAdvice",
+    "DateBegin": "2018-01-01T00:00:00Z",
+    "DateEnd": null,
+    "Name": "Car Insurance Advise on repair costs lower than franchise boundary",
+    "Priority": 3,
+    "RootCondition": {
+      "$type": "Rules.Framework.Providers.MongoDb.DataModel.ComposedConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+      "_t": "composed",
+      "LogicalOperator": "And",
+      "ChildConditionNodes": [
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "RepairCosts",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "LesserThan",
+          "Operand": 1000
+        },
+        {
+          "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
+          "_t": "value",
+          "ConditionType": "RepairCostsCommercialValueRate",
+          "DataType": "Decimal",
+          "LogicalOperator": "Eval",
+          "Operator": "LesserThan",
+          "Operand": 80
+        }
+      ]
+    }
+  }
+]

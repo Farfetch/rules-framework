@@ -6,6 +6,7 @@ namespace Rules.Framework
     using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
+    using Rules.Framework.Management;
 
     /// <summary>
     /// Exposes rules engine logic to provide rule matches to requests.
@@ -28,6 +29,33 @@ namespace Rules.Framework
             this.conditionsEvalEngine = conditionsEvalEngine;
             this.rulesDataSource = rulesDataSource;
             this.rulesEngineOptions = rulesEngineOptions;
+        }
+
+        /// <summary>
+        /// Adds a new rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <param name="ruleAddPriorityOption">The rule add priority option.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">
+        /// rule
+        /// or
+        /// rule
+        /// </exception>
+        /// <exception cref="NotSupportedException">The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.</exception>
+        public Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            if (ruleAddPriorityOption is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
         }
 
         /// <summary>
@@ -73,6 +101,98 @@ namespace Rules.Framework
             return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
         }
 
+        /// <summary>
+        /// Updates the specified existing rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
+        public Task<RuleOperationResult> UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            return this.UpdateRuleInternalAsync(rule);
+        }
+
+        private async Task<RuleOperationResult> AddRuleInternalAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
+        {
+            List<string> errors = new List<string>();
+            RulesFilterArgs<TContentType> rulesFilterArgs = new RulesFilterArgs<TContentType>
+            {
+                ContentType = rule.ContentContainer.ContentType
+            };
+
+            IEnumerable<Rule<TContentType, TConditionType>> existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
+
+            if (ruleAddPriorityOption.PriorityOption == PriorityOptions.AtRuleName
+                && !existentRules.Any(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                errors.Add($"Rule name '{ruleAddPriorityOption.AtRuleNameOptionValue}' specified for priority placement does not exist.");
+            }
+
+            if (existentRules.Any(r => string.Equals(r.Name, rule.Name, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                errors.Add($"A rule with name '{rule.Name}' already exists.");
+            }
+
+            if (errors.Any())
+            {
+                return RuleOperationResult.Error(errors);
+            }
+
+            switch (ruleAddPriorityOption.PriorityOption)
+            {
+                case PriorityOptions.AtTop:
+                    rule.Priority = 1;
+
+                    await ManagementOperations.Manage(existentRules)
+                        .UsingDataSource(this.rulesDataSource)
+                        .IncreasePriority()
+                        .UpdateRules()
+                        .AddRule(rule)
+                        .ExecuteOperationsAsync()
+                        .ConfigureAwait(false);
+
+                    break;
+
+                case PriorityOptions.AtBottom:
+                    rule.Priority = existentRules.Max(r => r.Priority) + 1;
+
+                    await ManagementOperations.Manage(existentRules)
+                        .UsingDataSource(this.rulesDataSource)
+                        .AddRule(rule)
+                        .ExecuteOperationsAsync()
+                        .ConfigureAwait(false);
+
+                    break;
+
+                case PriorityOptions.AtRuleName:
+                    int firstPriorityToIncrement = existentRules
+                        .FirstOrDefault(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.InvariantCultureIgnoreCase))
+                        .Priority;
+                    rule.Priority = firstPriorityToIncrement;
+
+                    await ManagementOperations.Manage(existentRules)
+                        .UsingDataSource(this.rulesDataSource)
+                        .FilterFromThresholdPriorityToBottom(firstPriorityToIncrement)
+                        .IncreasePriority()
+                        .UpdateRules()
+                        .AddRule(rule)
+                        .ExecuteOperationsAsync()
+                        .ConfigureAwait(false);
+
+                    break;
+
+                default:
+                    throw new NotSupportedException($"The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.");
+            }
+
+            return RuleOperationResult.Success();
+        }
+
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
             switch (this.rulesEngineOptions.PriotityCriteria)
@@ -83,6 +203,68 @@ namespace Rules.Framework
                 default:
                     return rules.OrderBy(r => r.Priority).First();
             }
+        }
+
+        private async Task<RuleOperationResult> UpdateRuleInternalAsync(Rule<TContentType, TConditionType> rule)
+        {
+            RulesFilterArgs<TContentType> rulesFilterArgs = new RulesFilterArgs<TContentType>
+            {
+                ContentType = rule.ContentContainer.ContentType
+            };
+
+            IEnumerable<Rule<TContentType, TConditionType>> existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
+
+            List<string> errors = new List<string>();
+            Rule<TContentType, TConditionType> existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.InvariantCultureIgnoreCase));
+            if (existentRule is null)
+            {
+                errors.Add($"Rule with name '{rule.Name}' does not exist.");
+            }
+
+            if (errors.Any())
+            {
+                return RuleOperationResult.Error(errors);
+            }
+
+            int topPriorityThreshold = Math.Min(rule.Priority, existentRule.Priority);
+            int bottomPriorityThreshold = Math.Max(rule.Priority, existentRule.Priority);
+
+            switch (rule.Priority)
+            {
+                case int _ when rule.Priority > existentRule.Priority:
+                    await ManagementOperations.Manage(existentRules)
+                        .UsingDataSource(this.rulesDataSource)
+                        .FilterPrioritiesRange(topPriorityThreshold, bottomPriorityThreshold)
+                        .DecreasePriority()
+                        .SetRuleForUpdate(rule)
+                        .UpdateRules()
+                        .ExecuteOperationsAsync()
+                        .ConfigureAwait(false);
+                    break;
+
+                case int _ when rule.Priority < existentRule.Priority:
+                    await ManagementOperations.Manage(existentRules)
+                        .UsingDataSource(this.rulesDataSource)
+                        .FilterPrioritiesRange(topPriorityThreshold, bottomPriorityThreshold)
+                        .IncreasePriority()
+                        .SetRuleForUpdate(rule)
+                        .UpdateRules()
+                        .ExecuteOperationsAsync()
+                        .ConfigureAwait(false);
+                    break;
+
+                default:
+                    await ManagementOperations.Manage(existentRules)
+                        .UsingDataSource(this.rulesDataSource)
+                        .SetRuleForUpdate(rule)
+                        .UpdateRules()
+                        .ExecuteOperationsAsync()
+                        .ConfigureAwait(false);
+
+                    break;
+            }
+
+            return RuleOperationResult.Success();
         }
     }
 }

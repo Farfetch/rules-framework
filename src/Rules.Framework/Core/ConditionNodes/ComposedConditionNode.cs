@@ -2,6 +2,7 @@ namespace Rules.Framework.Core.ConditionNodes
 {
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
 
     /// <summary>
     /// A composed condition node which aggregates a set of child condition nodes and defines a logical operator to apply to them.
@@ -30,5 +31,12 @@ namespace Rules.Framework.Core.ConditionNodes
         /// Gets the logical operator to apply between child condition nodes.
         /// </summary>
         public LogicalOperators LogicalOperator { get; }
+
+        /// <summary>
+        /// Clones the condition node into a different instance.
+        /// </summary>
+        /// <returns></returns>
+        public IConditionNode<TConditionNode> Clone()
+            => new ComposedConditionNode<TConditionNode>(this.LogicalOperator, this.ChildConditionNodes?.Select(cn => cn.Clone()));
     }
 }

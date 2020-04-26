@@ -24,5 +24,12 @@ namespace Rules.Framework.Core.ConditionNodes
         /// Gets the condition node data type.
         /// </summary>
         public override DataTypes DataType => DataTypes.Integer;
+
+        /// <summary>
+        /// Clones the condition node into a different instance.
+        /// </summary>
+        /// <returns></returns>
+        public override IConditionNode<TConditionType> Clone()
+            => new IntegerConditionNode<TConditionType>(this.ConditionType, this.Operator, this.Operand);
     }
 }

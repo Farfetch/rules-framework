@@ -162,5 +162,132 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             booleanConditionNode.Operand.Should().Be(Convert.ToBoolean(booleanConditionNodeDataModel.Operand));
             booleanConditionNode.Operator.Should().Be(booleanConditionNodeDataModel.Operator);
         }
+
+        [Fact]
+        public void CreateRule_GivenNullRule_ThrowsArgumentNullException()
+        {
+            // Arrange
+            Rule<ContentType, ConditionType> rule = null;
+
+            IContentSerializationProvider<ContentType> contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
+
+            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>(contentSerializationProvider);
+
+            // Act
+            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(rule));
+
+            // Assert
+            argumentNullException.Should().NotBeNull();
+            argumentNullException.ParamName.Should().Be(nameof(rule));
+        }
+
+        [Fact]
+        public void CreateRule_GivenRuleWithComposedNodeAndChildNodesOfEachDataType_ReturnsRuleDataModelInstance()
+        {
+            // Arrange
+            dynamic content = new ExpandoObject();
+            content.Prop1 = 123;
+            content.Prop2 = "Sample string";
+            content.Prop3 = 500.34m;
+
+            IContentSerializer contentSerializer = Mock.Of<IContentSerializer>();
+            Mock.Get(contentSerializer)
+                .Setup(x => x.Deserialize(It.IsAny<object>(), It.IsAny<Type>()))
+                .Returns((object)content);
+
+            IContentSerializationProvider<ContentType> contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
+            Mock.Get(contentSerializationProvider)
+                .Setup(x => x.GetContentSerializer(ContentType.ContentTypeSample))
+                .Returns(contentSerializer);
+
+            BooleanConditionNode<ConditionType> booleanConditionNode = null;
+            DecimalConditionNode<ConditionType> decimalConditionNode = null;
+            IntegerConditionNode<ConditionType> integerConditionNode = null;
+            StringConditionNode<ConditionType> stringConditionNode = null;
+
+            Rule<ContentType, ConditionType> rule1 = RuleBuilder.NewRule<ContentType, ConditionType>()
+                .WithName("My rule used for testing purposes")
+                .WithDateBegin(new DateTime(2020, 1, 1))
+                .WithPriority(1)
+                .WithSerializedContent(ContentType.ContentTypeSample, (object)content, contentSerializationProvider)
+                .WithCondition(cnb => cnb.AsComposed()
+                    .WithLogicalOperator(LogicalOperators.And)
+                    .AddCondition(cnb1 => booleanConditionNode = cnb1.AsValued(ConditionType.SampleBooleanCondition)
+                        .OfDataType<bool>()
+                        .WithComparisonOperator(Operators.NotEqual)
+                        .SetOperand(true)
+                        .Build() as BooleanConditionNode<ConditionType>)
+                    .AddCondition(cnb1 => decimalConditionNode = cnb1.AsValued(ConditionType.SampleDecimalCondition)
+                        .OfDataType<decimal>()
+                        .WithComparisonOperator(Operators.LesserThanOrEqual)
+                        .SetOperand(50.3m)
+                        .Build() as DecimalConditionNode<ConditionType>)
+                    .AddCondition(cnb1 => integerConditionNode = cnb1.AsValued(ConditionType.SampleIntegerCondition)
+                        .OfDataType<int>()
+                        .WithComparisonOperator(Operators.GreaterThan)
+                        .SetOperand(20)
+                        .Build() as IntegerConditionNode<ConditionType>)
+                    .AddCondition(cnb1 => stringConditionNode = cnb1.AsValued(ConditionType.SampleStringCondition)
+                        .OfDataType<string>()
+                        .WithComparisonOperator(Operators.Equal)
+                        .SetOperand("TEST")
+                        .Build() as StringConditionNode<ConditionType>)
+                    .Build())
+                .Build().Rule;
+
+            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>(contentSerializationProvider);
+
+            // Act
+            RuleDataModel rule = ruleFactory.CreateRule(rule1);
+
+            // Assert
+            rule.Should().NotBeNull();
+            object content1 = rule.Content;
+            content1.Should().NotBeNull()
+                .And.BeSameAs(content);
+            rule.DateBegin.Should().Be(rule.DateBegin);
+            rule.DateEnd.Should().BeNull();
+            rule.Name.Should().Be(rule.Name);
+            rule.Priority.Should().Be(rule.Priority);
+            rule.RootCondition.Should().BeOfType<ComposedConditionNodeDataModel>();
+
+            ComposedConditionNodeDataModel composedConditionNodeDataModel = rule.RootCondition.As<ComposedConditionNodeDataModel>();
+            composedConditionNodeDataModel.LogicalOperator.Should().Be(LogicalOperators.And);
+            composedConditionNodeDataModel.ChildConditionNodes.Should().HaveCount(4);
+
+            IEnumerable<ValueConditionNodeDataModel> valueConditionNodeDataModels = composedConditionNodeDataModel.ChildConditionNodes.OfType<ValueConditionNodeDataModel>();
+            valueConditionNodeDataModels.Should().HaveCount(4);
+            ValueConditionNodeDataModel integerConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Integer);
+            integerConditionNodeDataModel.Should().NotBeNull();
+            integerConditionNodeDataModel.ConditionType.Should().Match<string>(x => integerConditionNode.ConditionType == Enum.Parse<ConditionType>(x));
+            integerConditionNodeDataModel.DataType.Should().Be(integerConditionNode.DataType);
+            integerConditionNodeDataModel.LogicalOperator.Should().Be(integerConditionNode.LogicalOperator);
+            integerConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, integerConditionNode.Operand));
+            integerConditionNodeDataModel.Operator.Should().Be(integerConditionNode.Operator);
+
+            ValueConditionNodeDataModel stringConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.String);
+            stringConditionNodeDataModel.Should().NotBeNull();
+            stringConditionNodeDataModel.ConditionType.Should().Match<string>(x => stringConditionNode.ConditionType == Enum.Parse<ConditionType>(x));
+            stringConditionNodeDataModel.DataType.Should().Be(stringConditionNode.DataType);
+            stringConditionNodeDataModel.LogicalOperator.Should().Be(stringConditionNode.LogicalOperator);
+            stringConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, stringConditionNode.Operand));
+            stringConditionNodeDataModel.Operator.Should().Be(stringConditionNode.Operator);
+
+            ValueConditionNodeDataModel decimalConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Decimal);
+            decimalConditionNodeDataModel.Should().NotBeNull();
+            decimalConditionNodeDataModel.ConditionType.Should().Match<string>(x => decimalConditionNode.ConditionType == Enum.Parse<ConditionType>(x));
+            decimalConditionNodeDataModel.DataType.Should().Be(decimalConditionNode.DataType);
+            decimalConditionNodeDataModel.LogicalOperator.Should().Be(decimalConditionNode.LogicalOperator);
+            decimalConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, decimalConditionNode.Operand));
+            decimalConditionNodeDataModel.Operator.Should().Be(decimalConditionNode.Operator);
+
+            ValueConditionNodeDataModel booleanConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Boolean);
+            booleanConditionNodeDataModel.Should().NotBeNull();
+            booleanConditionNodeDataModel.ConditionType.Should().Match<string>(x => booleanConditionNode.ConditionType == Enum.Parse<ConditionType>(x));
+            booleanConditionNodeDataModel.DataType.Should().Be(booleanConditionNode.DataType);
+            booleanConditionNodeDataModel.LogicalOperator.Should().Be(booleanConditionNode.LogicalOperator);
+            booleanConditionNodeDataModel.Operand.Should().Be(Convert.ToBoolean(booleanConditionNode.Operand));
+            booleanConditionNodeDataModel.Operator.Should().Be(booleanConditionNode.Operator);
+        }
     }
 }
