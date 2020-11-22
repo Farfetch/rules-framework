@@ -30,7 +30,7 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: cG3wX34IgH0rZS3vCTrlP6GLi9yineCNh2yGalO2JEINY0XRyNrXHINl0MwHFzIw
+    secure: kWutFj0HSiu1hDXHcYc3dKVJFeW5ZX+Oj2SDvP4IvAooGK98f3qXpWlAEq7swAFC
   skip_symbols: false
   symbol_server: https://nuget.smbsrc.net/
   artifact: /.*\.nupkg/
