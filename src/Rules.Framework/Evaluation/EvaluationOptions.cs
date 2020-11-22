@@ -11,6 +11,10 @@ namespace Rules.Framework.Evaluation
         public override bool Equals(object obj)
             => obj is EvaluationOptions options && this.Equals(options);
 
+        public bool Equals(EvaluationOptions other)
+            => this.ExcludeRulesWithoutSearchConditions == other.ExcludeRulesWithoutSearchConditions
+                && this.MatchMode == other.MatchMode;
+
         public override int GetHashCode()
         {
             int hashCode = -1260975221;
@@ -22,9 +26,5 @@ namespace Rules.Framework.Evaluation
         public static bool operator ==(EvaluationOptions left, EvaluationOptions right) => left.Equals(right);
 
         public static bool operator !=(EvaluationOptions left, EvaluationOptions right) => !(left == right);
-
-        public bool Equals(EvaluationOptions other)
-            => this.ExcludeRulesWithoutSearchConditions == other.ExcludeRulesWithoutSearchConditions
-                && this.MatchMode == other.MatchMode;
     }
 }

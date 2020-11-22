@@ -4,9 +4,9 @@ namespace Rules.Framework.Builder
     using System.Collections.Generic;
     using Rules.Framework.Core;
 
-    internal class RulesEngineOptionsValidator
+    internal static class RulesEngineOptionsValidator
     {
-        public void EnsureValid(RulesEngineOptions rulesEngineOptions)
+        public static void EnsureValid(RulesEngineOptions rulesEngineOptions)
         {
             if (rulesEngineOptions == null)
             {

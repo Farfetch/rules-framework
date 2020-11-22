@@ -160,12 +160,12 @@ namespace Rules.Framework
             IEnumerable<Rule<TContentType, TConditionType>> existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
 
             if (ruleAddPriorityOption.PriorityOption == PriorityOptions.AtRuleName
-                && !existentRules.Any(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.InvariantCultureIgnoreCase)))
+                && !existentRules.Any(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.OrdinalIgnoreCase)))
             {
                 errors.Add($"Rule name '{ruleAddPriorityOption.AtRuleNameOptionValue}' specified for priority placement does not exist.");
             }
 
-            if (existentRules.Any(r => string.Equals(r.Name, rule.Name, StringComparison.InvariantCultureIgnoreCase)))
+            if (existentRules.Any(r => string.Equals(r.Name, rule.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 errors.Add($"A rule with name '{rule.Name}' already exists.");
             }
@@ -203,7 +203,7 @@ namespace Rules.Framework
 
                 case PriorityOptions.AtRuleName:
                     int firstPriorityToIncrement = existentRules
-                        .FirstOrDefault(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.InvariantCultureIgnoreCase))
+                        .FirstOrDefault(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.OrdinalIgnoreCase))
                         .Priority;
                     rule.Priority = firstPriorityToIncrement;
 
@@ -243,14 +243,11 @@ namespace Rules.Framework
 
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
-            switch (this.rulesEngineOptions.PriotityCriteria)
+            return this.rulesEngineOptions.PriotityCriteria switch
             {
-                case PriorityCriterias.BottommostRuleWins:
-                    return rules.OrderByDescending(r => r.Priority).First();
-
-                default:
-                    return rules.OrderBy(r => r.Priority).First();
-            }
+                PriorityCriterias.BottommostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
+                _ => rules.OrderBy(r => r.Priority).First(),
+            };
         }
 
         private async Task<RuleOperationResult> UpdateRuleInternalAsync(Rule<TContentType, TConditionType> rule)
@@ -263,7 +260,7 @@ namespace Rules.Framework
             IEnumerable<Rule<TContentType, TConditionType>> existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
 
             List<string> errors = new List<string>();
-            Rule<TContentType, TConditionType> existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.InvariantCultureIgnoreCase));
+            Rule<TContentType, TConditionType> existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.OrdinalIgnoreCase));
             if (existentRule is null)
             {
                 errors.Add($"Rule with name '{rule.Name}' does not exist.");
