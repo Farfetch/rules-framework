@@ -69,18 +69,18 @@ namespace Rules.Framework
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
+        public Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
         {
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                ExcludeRulesWithoutSearchConditions = false,
+                MatchMode = MatchModes.Exact
+            };
+
             DateTime dateBegin = matchDateTime.Date;
             DateTime dateEnd = matchDateTime.Date.AddDays(1);
 
-            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd).ConfigureAwait(false);
-
-            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
-                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditions))
-                .ToList();
-
-            return matchedRules;
+            return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
         }
 
         /// <summary>
@@ -99,6 +99,38 @@ namespace Rules.Framework
             IEnumerable<Rule<TContentType, TConditionType>> matchedRules = await this.MatchManyAsync(contentType, matchDateTime, conditions).ConfigureAwait(false);
 
             return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
+        }
+
+        /// <summary>
+        /// Searches for rules on given content type that match on supplied <paramref name="searchArgs"/>.
+        /// </summary>
+        /// <param name="searchArgs"></param>
+        /// <remarks>
+        /// <para>Only the condition types supplied on input conditions are evaluated, the remaining conditions are ignored.</para>
+        /// </remarks>
+        /// <returns>the set of rules matching the conditions.</returns>
+        public Task<IEnumerable<Rule<TContentType, TConditionType>>> SearchAsync(SearchArgs<TContentType, TConditionType> searchArgs)
+        {
+            if (searchArgs is null)
+            {
+                throw new ArgumentNullException(nameof(searchArgs));
+            }
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
+                MatchMode = MatchModes.Search
+            };
+
+            DateTime dateBegin = searchArgs.DateBegin;
+            DateTime dateEnd = searchArgs.DateEnd;
+
+            if (dateBegin == dateEnd)
+            {
+                dateEnd = dateBegin.AddDays(1);
+            }
+
+            return this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions);
         }
 
         /// <summary>
@@ -193,6 +225,22 @@ namespace Rules.Framework
             return RuleOperationResult.Success();
         }
 
+        private async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchAsync(
+            TContentType contentType,
+            DateTime matchDateBegin,
+            DateTime matchDateEnd,
+            IEnumerable<Condition<TConditionType>> conditions,
+            EvaluationOptions evaluationOptions)
+        {
+            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, matchDateBegin, matchDateEnd).ConfigureAwait(false);
+
+            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
+                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditions, evaluationOptions))
+                .ToList();
+
+            return matchedRules;
+        }
+
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
             switch (this.rulesEngineOptions.PriotityCriteria)
@@ -231,7 +279,7 @@ namespace Rules.Framework
 
             switch (rule.Priority)
             {
-                case int _ when rule.Priority > existentRule.Priority:
+                case int p when p > existentRule.Priority:
                     await ManagementOperations.Manage(existentRules)
                         .UsingDataSource(this.rulesDataSource)
                         .FilterPrioritiesRange(topPriorityThreshold, bottomPriorityThreshold)
@@ -242,7 +290,7 @@ namespace Rules.Framework
                         .ConfigureAwait(false);
                     break;
 
-                case int _ when rule.Priority < existentRule.Priority:
+                case int p when p < existentRule.Priority:
                     await ManagementOperations.Manage(existentRules)
                         .UsingDataSource(this.rulesDataSource)
                         .FilterPrioritiesRange(topPriorityThreshold, bottomPriorityThreshold)

@@ -17,50 +17,82 @@ namespace Rules.Framework.Evaluation
             this.deferredEval = deferredEval;
         }
 
-        public bool Eval(IConditionNode<TConditionType> conditionNode, IEnumerable<Condition<TConditionType>> conditions)
+        public bool Eval(IConditionNode<TConditionType> conditionNode, IEnumerable<Condition<TConditionType>> conditions, EvaluationOptions evaluationOptions)
         {
-            ISpecification<IEnumerable<Condition<TConditionType>>> specification = this.BuildSpecification(conditionNode);
+            if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !AreAllSearchConditionsPresent(conditionNode, conditions))
+            {
+                return false;
+            }
+
+            ISpecification<IEnumerable<Condition<TConditionType>>> specification = this.BuildSpecification(conditionNode, evaluationOptions.MatchMode);
 
             return specification.IsSatisfiedBy(conditions);
         }
 
-        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecification(IConditionNode<TConditionType> conditionNode)
+        private static bool AreAllSearchConditionsPresent(IConditionNode<TConditionType> conditionNode, IEnumerable<Condition<TConditionType>> conditions)
+        {
+            // Conditions checklist is a mere control construct to avoid a full sweep of the condition nodes tree when we already found all conditions.
+            IDictionary<TConditionType, bool> conditionsChecklist = new Dictionary<TConditionType, bool>(conditions.ToDictionary(ks => ks.Type, vs => false));
+
+            return VisitConditionNode(conditionNode, conditionsChecklist);
+        }
+
+        private static bool VisitConditionNode(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, bool> conditionsChecklist)
         {
             switch (conditionNode)
             {
                 case IValueConditionNode<TConditionType> valueConditionNode:
-                    return this.BuildSpecificationForValueNode(valueConditionNode);
+                    if (conditionsChecklist.ContainsKey(valueConditionNode.ConditionType))
+                    {
+                        conditionsChecklist[valueConditionNode.ConditionType] = true;
+                    }
+
+                    return conditionsChecklist.All(kvp => kvp.Value);
 
                 case ComposedConditionNode<TConditionType> composedConditionNode:
-                    return this.BuildSpecificationForComposedNode(composedConditionNode);
+                    foreach (IConditionNode<TConditionType> childConditionNode in composedConditionNode.ChildConditionNodes)
+                    {
+                        bool allPresentAlready = VisitConditionNode(childConditionNode, conditionsChecklist);
+                        if (allPresentAlready)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
 
                 default:
                     throw new NotSupportedException($"Unsupported condition node: '{conditionNode.GetType().Name}'.");
             }
         }
 
-        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecificationForComposedNode(ComposedConditionNode<TConditionType> composedConditionNode)
+        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecification(IConditionNode<TConditionType> conditionNode, MatchModes matchMode)
+        {
+            return conditionNode switch
+            {
+                IValueConditionNode<TConditionType> valueConditionNode => this.BuildSpecificationForValueNode(valueConditionNode, matchMode),
+                ComposedConditionNode<TConditionType> composedConditionNode => this.BuildSpecificationForComposedNode(composedConditionNode, matchMode),
+                _ => throw new NotSupportedException($"Unsupported condition node: '{conditionNode.GetType().Name}'."),
+            };
+        }
+
+        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecificationForComposedNode(ComposedConditionNode<TConditionType> composedConditionNode, MatchModes matchMode)
         {
             IEnumerable<ISpecification<IEnumerable<Condition<TConditionType>>>> childConditionNodesSpecifications = composedConditionNode
                 .ChildConditionNodes
-                .Select(cn => this.BuildSpecification(cn));
+                .Select(cn => this.BuildSpecification(cn, matchMode));
 
-            switch (composedConditionNode.LogicalOperator)
+            return composedConditionNode.LogicalOperator switch
             {
-                case LogicalOperators.And:
-                    return childConditionNodesSpecifications.Aggregate((s1, s2) => s1.And(s2));
-
-                case LogicalOperators.Or:
-                    return childConditionNodesSpecifications.Aggregate((s1, s2) => s1.Or(s2));
-
-                default:
-                    throw new NotSupportedException($"Unsupported logical operator: '{composedConditionNode.LogicalOperator}'.");
-            }
+                LogicalOperators.And => childConditionNodesSpecifications.Aggregate((s1, s2) => s1.And(s2)),
+                LogicalOperators.Or => childConditionNodesSpecifications.Aggregate((s1, s2) => s1.Or(s2)),
+                _ => throw new NotSupportedException($"Unsupported logical operator: '{composedConditionNode.LogicalOperator}'."),
+            };
         }
 
-        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecificationForValueNode(IValueConditionNode<TConditionType> valueConditionNode)
+        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecificationForValueNode(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
         {
-            return new FuncSpecification<IEnumerable<Condition<TConditionType>>>(this.deferredEval.GetDeferredEvalFor(valueConditionNode));
+            return new FuncSpecification<IEnumerable<Condition<TConditionType>>>(this.deferredEval.GetDeferredEvalFor(valueConditionNode, matchMode));
         }
     }
 }

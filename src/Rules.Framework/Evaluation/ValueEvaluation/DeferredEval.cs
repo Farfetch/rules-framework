@@ -19,36 +19,35 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
-        public Func<IEnumerable<Condition<TConditionType>>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode)
+        public Func<IEnumerable<Condition<TConditionType>>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
         {
-            switch (valueConditionNode)
+            return valueConditionNode switch
             {
-                case IntegerConditionNode<TConditionType> integerConditionNode:
-                    return (conditions) => Eval<IntegerConditionNode<TConditionType>, TConditionType, int>(conditions, integerConditionNode);
-
-                case DecimalConditionNode<TConditionType> decimalConditionNode:
-                    return (conditions) => Eval<DecimalConditionNode<TConditionType>, TConditionType, decimal>(conditions, decimalConditionNode);
-
-                case StringConditionNode<TConditionType> stringConditionNode:
-                    return (conditions) => Eval<StringConditionNode<TConditionType>, TConditionType, string>(conditions, stringConditionNode);
-
-                case BooleanConditionNode<TConditionType> booleanConditionNode:
-                    return (conditions) => Eval<BooleanConditionNode<TConditionType>, TConditionType, bool>(conditions, booleanConditionNode);
-
-                default:
-                    throw new NotSupportedException($"Unsupported value condition node: '{valueConditionNode.GetType().Name}'.");
-            }
+                IntegerConditionNode<TConditionType> integerConditionNode => (conditions) => Eval<IntegerConditionNode<TConditionType>, TConditionType, int>(conditions, integerConditionNode, matchMode),
+                DecimalConditionNode<TConditionType> decimalConditionNode => (conditions) => Eval<DecimalConditionNode<TConditionType>, TConditionType, decimal>(conditions, decimalConditionNode, matchMode),
+                StringConditionNode<TConditionType> stringConditionNode => (conditions) => Eval<StringConditionNode<TConditionType>, TConditionType, string>(conditions, stringConditionNode, matchMode),
+                BooleanConditionNode<TConditionType> booleanConditionNode => (conditions) => Eval<BooleanConditionNode<TConditionType>, TConditionType, bool>(conditions, booleanConditionNode, matchMode),
+                _ => throw new NotSupportedException($"Unsupported value condition node: '{valueConditionNode.GetType().Name}'."),
+            };
         }
 
-        private bool Eval<TConditionNode, TConditionType, T>(IEnumerable<Condition<TConditionType>> conditions, TConditionNode valueConditionNode)
+        private bool Eval<TConditionNode, TConditionType, T>(IEnumerable<Condition<TConditionType>> conditions, TConditionNode valueConditionNode, MatchModes matchMode)
             where TConditionNode : ValueConditionNodeTemplate<T, TConditionType>
             where T : IComparable<T>
         {
             Condition<TConditionType> leftOperandCondition = conditions.FirstOrDefault(c => object.Equals(c.Type, valueConditionNode.ConditionType));
 
-            if (leftOperandCondition == null && this.rulesEngineOptions.MissingConditionBehavior == MissingConditionBehaviors.Discard)
+            if (leftOperandCondition is null)
             {
-                return false;
+                if (this.rulesEngineOptions.MissingConditionBehavior == MissingConditionBehaviors.Discard)
+                {
+                    return false;
+                }
+                else if (matchMode == MatchModes.Search)
+                {
+                    // When match mode is search, if condition is missing, it is not used as search criteria, so we don't filter out the rule.
+                    return true;
+                }
             }
 
             T leftOperand = (T)Convert.ChangeType(leftOperandCondition?.Value
