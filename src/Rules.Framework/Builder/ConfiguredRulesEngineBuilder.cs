@@ -8,13 +8,11 @@ namespace Rules.Framework.Builder
     {
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
         private readonly RulesEngineOptions rulesEngineOptions;
-        private readonly RulesEngineOptionsValidator rulesEngineOptionsValidator;
 
         public ConfiguredRulesEngineBuilder(IRulesDataSource<TContentType, TConditionType> rulesDataSource)
         {
             this.rulesDataSource = rulesDataSource;
             this.rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
-            this.rulesEngineOptionsValidator = new RulesEngineOptionsValidator();
         }
 
         public RulesEngine<TContentType, TConditionType> Build()
@@ -28,7 +26,7 @@ namespace Rules.Framework.Builder
         public IConfiguredRulesEngineBuilder<TContentType, TConditionType> Configure(Action<RulesEngineOptions> configurationAction)
         {
             configurationAction.Invoke(this.rulesEngineOptions);
-            this.rulesEngineOptionsValidator.EnsureValid(this.rulesEngineOptions);
+            RulesEngineOptionsValidator.EnsureValid(this.rulesEngineOptions);
 
             return this;
         }

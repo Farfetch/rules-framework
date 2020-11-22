@@ -1,4 +1,4 @@
-namespace Rules.Framework.IntegrationTests.Tests.Scenario2
+namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
 {
     public enum ContentTypes
     {

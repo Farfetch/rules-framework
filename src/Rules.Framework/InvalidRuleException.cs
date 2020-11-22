@@ -82,7 +82,8 @@ namespace Rules.Framework
             StreamingContext context)
             : base(info, context)
         {
-            this.Errors = info.GetValue(nameof(this.Errors), typeof(IEnumerable<string>)) as IEnumerable<string>;
+            IEnumerable<string> errors = info.GetValue(nameof(this.Errors), typeof(IEnumerable<string>)) as IEnumerable<string>;
+            this.Errors = errors ?? throw new InvalidDataContractException($"Found null '{nameof(this.Errors)}' collection while deserializing");
         }
 
         /// <summary>

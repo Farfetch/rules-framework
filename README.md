@@ -158,7 +158,7 @@ You'll have to map each condition type defined by you to a data type on your rul
 - String
 - Boolean
 
-For your guidance, check Mongo DB implementation: [MongoDbProviderRulesDataSource.cs](src\Rules.Framework.Providers.MongoDb/MongoDbProviderRulesDataSource.cs)
+For your guidance, check Mongo DB implementation: [MongoDbProviderRulesDataSource.cs](src/Rules.Framework.Providers.MongoDb/MongoDbProviderRulesDataSource.cs)
 
 ## Contributing
 

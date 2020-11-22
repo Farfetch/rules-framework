@@ -6,6 +6,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.ValueEvaluation;
     using Rules.Framework.Tests.TestStubs;
     using Xunit;
@@ -35,12 +36,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
+            MatchModes matchMode = MatchModes.Exact;
+
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
@@ -73,12 +76,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
+            MatchModes matchMode = MatchModes.Exact;
+
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
@@ -111,12 +116,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
+            MatchModes matchMode = MatchModes.Exact;
+
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
@@ -149,12 +156,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
+            MatchModes matchMode = MatchModes.Exact;
+
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
@@ -187,13 +196,15 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
+            MatchModes matchMode = MatchModes.Exact;
+
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.Discard;
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
@@ -226,13 +237,15 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
                 }
             };
 
+            MatchModes matchMode = MatchModes.Exact;
+
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault;
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode);
+            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
@@ -250,12 +263,14 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
 
+            MatchModes matchMode = MatchModes.Exact;
+
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
 
             // Act
-            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetDeferredEvalFor(mockValueConditionNode.Object));
+            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetDeferredEvalFor(mockValueConditionNode.Object, matchMode));
 
             // Assert
             notSupportedException.Should().NotBeNull();

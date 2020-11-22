@@ -69,8 +69,13 @@ namespace Rules.Framework.Tests
                 expected2,
                 notExpected
             };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions) =>
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
             {
                 switch (rootConditionNode)
                 {
@@ -80,7 +85,7 @@ namespace Rules.Framework.Tests
                     default:
                         return false;
                 }
-            });
+            }, evaluationOptions);
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
@@ -93,7 +98,10 @@ namespace Rules.Framework.Tests
                 .And.Contain(expected2)
                 .And.NotContain(notExpected);
             mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
-            mockConditionsEvalEngine.Verify(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()), Times.AtLeastOnce());
+            mockConditionsEvalEngine.Verify(x => x.Eval(
+                It.IsAny<IConditionNode<ConditionType>>(),
+                It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.AtLeastOnce());
         }
 
         [Fact]
@@ -141,8 +149,13 @@ namespace Rules.Framework.Tests
                 other,
                 expected
             };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true);
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             rulesEngineOptions.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
@@ -155,7 +168,10 @@ namespace Rules.Framework.Tests
             // Assert
             actual.Should().BeSameAs(expected);
             mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
-            mockConditionsEvalEngine.Verify(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()), Times.AtLeastOnce());
+            mockConditionsEvalEngine.Verify(x => x.Eval(
+                It.IsAny<IConditionNode<ConditionType>>(),
+                It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.AtLeastOnce());
         }
 
         [Fact]
@@ -203,8 +219,13 @@ namespace Rules.Framework.Tests
                 expected,
                 other
             };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true);
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
@@ -215,7 +236,10 @@ namespace Rules.Framework.Tests
             // Assert
             actual.Should().BeSameAs(expected);
             mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
-            mockConditionsEvalEngine.Verify(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()), Times.AtLeastOnce());
+            mockConditionsEvalEngine.Verify(x => x.Eval(
+                It.IsAny<IConditionNode<ConditionType>>(),
+                It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.AtLeastOnce());
         }
 
         [Fact]
@@ -259,8 +283,13 @@ namespace Rules.Framework.Tests
                     RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 }
             };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false);
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false, evaluationOptions);
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
@@ -271,21 +300,30 @@ namespace Rules.Framework.Tests
             // Assert
             actual.Should().BeNull();
             mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
-            mockConditionsEvalEngine.Verify(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()), Times.AtLeastOnce());
+            mockConditionsEvalEngine.Verify(x => x.Eval(
+                It.IsAny<IConditionNode<ConditionType>>(),
+                It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.AtLeastOnce());
         }
 
-        private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(bool result)
+        private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(bool result, EvaluationOptions evaluationOptions)
         {
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
-            mockConditionsEvalEngine.Setup(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()))
+            mockConditionsEvalEngine.Setup(x => x.Eval(
+                    It.IsAny<IConditionNode<ConditionType>>(),
+                    It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                    It.Is<EvaluationOptions>(eo => eo == evaluationOptions)))
                 .Returns(result);
             return mockConditionsEvalEngine;
         }
 
-        private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(Func<IConditionNode<ConditionType>, IEnumerable<Condition<ConditionType>>, bool> evalFunc)
+        private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(Func<IConditionNode<ConditionType>, IEnumerable<Condition<ConditionType>>, EvaluationOptions, bool> evalFunc, EvaluationOptions evaluationOptions)
         {
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
-            mockConditionsEvalEngine.Setup(x => x.Eval(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IEnumerable<Condition<ConditionType>>>()))
+            mockConditionsEvalEngine.Setup(x => x.Eval(
+                    It.IsAny<IConditionNode<ConditionType>>(),
+                    It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                    It.Is<EvaluationOptions>(eo => eo == evaluationOptions)))
                 .Returns(evalFunc);
             return mockConditionsEvalEngine;
         }

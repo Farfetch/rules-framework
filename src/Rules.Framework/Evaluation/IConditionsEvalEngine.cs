@@ -5,6 +5,6 @@ namespace Rules.Framework.Evaluation
 
     internal interface IConditionsEvalEngine<TConditionType>
     {
-        bool Eval(IConditionNode<TConditionType> conditionNode, IEnumerable<Condition<TConditionType>> conditions);
+        bool Eval(IConditionNode<TConditionType> conditionNode, IEnumerable<Condition<TConditionType>> conditions, EvaluationOptions evaluationOptions);
     }
 }
