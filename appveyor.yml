@@ -21,7 +21,7 @@ build_script:
   - sh: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
   - sh: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --no-build --include-symbols
 test_script:
-  - sh: dotnet test rules-framework.sln --no-build --collect:"XPlat Code Coverage" --results-directory:"$coverageDir" -m:1
+  - sh: dotnet test rules-framework.sln --no-build --collect:"XPlat Code Coverage" --results-directory:"../../coverage-outputs" -m:1
   - sh: reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:Cobertura
   - sh: rm -rf ../../coverage-outputs/*/
 after_test:
