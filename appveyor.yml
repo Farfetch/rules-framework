@@ -24,6 +24,7 @@ test_script:
   - sh: dotnet test rules-framework.sln --no-build --collect:"XPlat Code Coverage" --results-directory:"../../coverage-outputs" -m:1
   - sh: reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:Cobertura
   - sh: rm -rfv ../../coverage-outputs/*/
+  - sh: ll
 after_test:
   - sh: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 artifacts:
