@@ -22,7 +22,6 @@ build_script:
   - sh: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --no-build --include-symbols
 test_script:
   - sh: dotnet test rules-framework.sln --no-build --collect:"XPlat Code Coverage" --results-directory:"../../coverage-outputs" -m:1
-  - sh: pwd
   - sh: reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:SonarQube
   - sh: rm -rfv ../../coverage-outputs/*/
   - sh: ls -la ../../coverage-outputs
