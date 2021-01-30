@@ -11,7 +11,7 @@ $coverageDir = "$currentDir\\coverage-outputs\\$reportTimestamp\\"
 
 dotnet test .\rules-framework.sln --collect:"XPlat Code Coverage" --results-directory:"$coverageDir" -m:1
 
-reportgenerator -reports:"$($coverageDir)*\\*.xml" -targetdir:"$($coverageDir)" -reporttypes:Cobertura
+reportgenerator -reports:"$($coverageDir)*\\*.xml" -targetdir:"$($coverageDir)" -reporttypes:SonarQube
 
 $coverageFile = "$($coverageDir)*.xml"
 $coverageReportFolder = "$($currentDir)\\coverage-outputs\\report\\"

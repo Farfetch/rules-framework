@@ -14,7 +14,7 @@ install:
   - sh: dotnet tool install --global dotnet-sonarscanner
   - sh: dotnet tool install --global dotnet-reportgenerator-globaltool
 before_build:
-  - sh: dotnet sonarscanner begin /k:pikenikes_rules-framework /v:$APPVEYOR_BUILD_VERSION /o:pikenikes-github /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866 /d:sonar.coverage.exclusions="tests/*Tests/**" /d:sonar.cs.opencover.reportsPaths="../../coverage-outputs/Cobertura.xml" /d:sonar.branch.name=$APPVEYOR_REPO_BRANCH
+  - sh: dotnet sonarscanner begin /k:pikenikes_rules-framework /v:$APPVEYOR_BUILD_VERSION /o:pikenikes-github /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866 /d:sonar.coverage.exclusions="tests/*Tests/**" /d:sonar.coverageReportPaths="../../coverage-outputs/SonarQube.xml" /d:sonar.branch.name=$APPVEYOR_REPO_BRANCH
 build_script:
   - sh: dotnet restore rules-framework.sln --no-cache
   - sh: dotnet build rules-framework.sln --no-restore
@@ -22,7 +22,8 @@ build_script:
   - sh: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --no-build --include-symbols
 test_script:
   - sh: dotnet test rules-framework.sln --no-build --collect:"XPlat Code Coverage" --results-directory:"../../coverage-outputs" -m:1
-  - sh: reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:Cobertura
+  - sh: pwd
+  - sh: reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:SonarQube
   - sh: rm -rfv ../../coverage-outputs/*/
   - sh: ls -la ../../coverage-outputs
 after_test:
