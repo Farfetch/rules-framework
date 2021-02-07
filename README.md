@@ -2,7 +2,7 @@
 
 Rules.Framework is a generic rules framework that allows defining and evaluating rules for complex business scenarios.
 
-Why use rules? Most of us at some point, while developing software to support a business, have come across fast paced business logic changes. Sometimes, business needs changes overnight, which requires a fast response to changes by engineering teams. By using rules, changing a calculus formula or a value mapping no longer requires code changes/endless CI/CD pipelines, QA validation, and so on... Business logic changes can be offloaded to configuration scenarios, instead of development scenarios.
+Why use rules? Most of us at some point, while developing software to support a business, have come across fast paced business logic changes. Sometimes, business needs change overnight, which requires a fast response to changes by engineering teams. By using rules, changing a calculus formula, a value mapping or simply a toggle configuration no longer requires code changes/endless CI/CD pipelines, QA validation, and so on... Business logic changes can be offloaded to configuration scenarios, instead of development scenarios.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/bhu3hh8cag509l4s/branch/master?svg=true)](https://ci.appveyor.com/project/pikenikes/rules-framework/branch/master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pikenikes_rules-framework&metric=alert_status)](https://sonarcloud.io/dashboard?id=pikenikes_rules-framework)
@@ -10,10 +10,10 @@ Why use rules? Most of us at some point, while developing software to support a 
 
 ## Packages
 
-|Name                             |Link|
-|---------------------------------|----|
-|Rules.Framework|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.svg?logo=nuget)](https://www.nuget.org/packages/Rules.Framework/)|
-|Rules.Framework.Providers.MongoDb|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.Providers.MongoDb?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.Providers.MongoDb/)|
+|Name                             |nuget.org|fuget.org|
+|---------------------------------|----|---------|
+|Rules.Framework|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.svg?logo=nuget)](https://www.nuget.org/packages/Rules.Framework/)|[![Rules.Framework on fuget.org](https://www.fuget.org/packages/Rules.Framework/badge.svg)](https://www.fuget.org/packages/Rules.Framework)|
+|Rules.Framework.Providers.MongoDb|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.Providers.MongoDb?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.Providers.MongoDb/)|[![Rules.Framework.Providers.MongoDb on fuget.org](https://www.fuget.org/packages/Rules.Framework.Providers.MongoDb/badge.svg)](https://www.fuget.org/packages/Rules.Framework.Providers.MongoDb)|
 
 ## Features
 
@@ -21,11 +21,13 @@ The following listing presents features implemented and features to be implement
 
 - [x] Rules evaluation (match one)
 - [x] Rules evaluation (match many)
-- [ ] Rules search
+- [x] Rules search
 - [x] Rules content serializarion
 - [ ] Rules data source caching
 - [x] Rules management (Create, Read, Update)
+- [ ] In-memory data source support
 - [x] MongoDB data source support
+- [ ] SQL Server data source support
 
 ## How it works
 
@@ -87,9 +89,7 @@ internal enum ConditionTypes
 3. Build a rules engine.
 
 ```csharp
-RulesEngineBuilder rulesEngineBuilder = new RulesEngineBuilder();
-
-RulesEngine<ContentTypes, ConditionTypes> rulesEngine = rulesEngineBuilder.CreateRulesEngine()
+RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
     .WithContentType<ContentTypes>() // Your content types.
     .WithConditionType<ConditionTypes>() // Your condition types.
     .SetDataSource(rulesDataSource) // A rules data source instance implemented by you OR using one of the available providers.
