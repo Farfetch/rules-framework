@@ -26,17 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Tests\Scenario1\BodyMassIndexTests.datasource.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tests\Scenario3\BuildingSecuritySystemControlTests.datasource.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tests\Scenario2\CarInsuranceAdvisorTests.datasource.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj" />
   </ItemGroup>
 </Project>

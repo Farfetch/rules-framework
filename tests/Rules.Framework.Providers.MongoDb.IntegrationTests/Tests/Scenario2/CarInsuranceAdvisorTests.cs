@@ -15,6 +15,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
     using Rules.Framework;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
+    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
     using Rules.Framework.Providers.MongoDb.IntegrationTests;

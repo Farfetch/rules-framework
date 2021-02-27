@@ -11,6 +11,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
     using MongoDB.Driver;
     using Newtonsoft.Json;
     using Rules.Framework.Core;
+    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
     using Xunit;

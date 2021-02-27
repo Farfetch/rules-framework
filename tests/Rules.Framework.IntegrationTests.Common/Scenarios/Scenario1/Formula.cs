@@ -1,6 +1,6 @@
-namespace Rules.Framework.IntegrationTests.Tests.Scenario1
+namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario1
 {
-    internal class Formula
+    public class Formula
     {
         public string Description { get; set; }
 

@@ -1,9 +1,8 @@
-
-namespace Rules.Framework.IntegrationTests.Tests.Scenario3
+namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3
 {
     using System;
 
-    internal class SecuritySystemAction
+    public class SecuritySystemAction
     {
         public Guid ActionId { get; set; }
 

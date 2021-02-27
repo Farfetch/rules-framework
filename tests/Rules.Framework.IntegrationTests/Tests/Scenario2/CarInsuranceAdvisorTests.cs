@@ -7,10 +7,13 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
     using FluentAssertions;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
+    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
     using Xunit;
 
     public class CarInsuranceAdvisorTests
     {
+        private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario2/rules-framework-tests.car-insurance-advisor.json";
+
         [Fact]
         public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
         {
@@ -33,7 +36,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             };
 
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario2/CarInsuranceAdvisorTests.datasource.json", serializedContent: false);
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
 
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
@@ -75,7 +78,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             };
 
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario2/CarInsuranceAdvisorTests.datasource.json", serializedContent: false);
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
 
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
@@ -218,7 +221,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             };
 
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario2/CarInsuranceAdvisorTests.datasource.json", serializedContent: false);
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
 
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
@@ -268,7 +271,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             };
 
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario2/CarInsuranceAdvisorTests.datasource.json", serializedContent: false);
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
 
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
