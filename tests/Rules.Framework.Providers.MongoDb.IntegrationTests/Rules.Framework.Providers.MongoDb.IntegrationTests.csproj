@@ -34,7 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj" />
-    <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
   </ItemGroup>
 
   <ItemGroup>
