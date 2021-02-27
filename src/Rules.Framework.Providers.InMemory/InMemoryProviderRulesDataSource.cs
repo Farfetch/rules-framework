@@ -77,6 +77,14 @@ namespace Rules.Framework.Providers.InMemory
             });
         }
 
-        public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule) => throw new NotImplementedException();
+        public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            return Task.Run(() =>
+            {
+                RuleDataModel<TContentType, TConditionType> newRuleDataModel = this.ruleFactory.CreateRule(rule);
+
+                this.inMemoryRulesStorage.UpdateRule(newRuleDataModel);
+            });
+        }
     }
 }
