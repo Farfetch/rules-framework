@@ -8,17 +8,9 @@ namespace Rules.Framework.Providers.InMemory
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Providers.InMemory.DataModel;
-    using Rules.Framework.Serialization;
 
     internal class RuleFactory<TContentType, TConditionType> : IRuleFactory<TContentType, TConditionType>
     {
-        private readonly IContentSerializationProvider<TContentType> contentSerializationProvider;
-
-        public RuleFactory(IContentSerializationProvider<TContentType> contentSerializationProvider)
-        {
-            this.contentSerializationProvider = contentSerializationProvider;
-        }
-
         public Rule<TContentType, TConditionType> CreateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
         {
             if (ruleDataModel is null)
@@ -26,12 +18,13 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
+            ContentContainer<TContentType> contentContainer = new ContentContainer<TContentType>(ruleDataModel.ContentType, (t) => (object)ruleDataModel.Content);
             RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
                 .WithPriority(ruleDataModel.Priority)
                 .WithCondition(cnb => ruleDataModel.RootCondition is { } ? this.ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
-                .WithSerializedContent(ruleDataModel.ContentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
+                .WithContentContainer(contentContainer)
                 .Build();
 
             if (!ruleBuilderResult.IsSuccess)
@@ -92,12 +85,6 @@ namespace Rules.Framework.Providers.InMemory
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
             };
         }
-
-        private static T Parse<T>(string value)
-            => (T)Parse(value, typeof(T));
-
-        private static object Parse(string value, Type type)
-            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
         private IConditionNode<TConditionType> ConvertConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel<TConditionType> conditionNodeDataModel)
         {
