@@ -1,71 +1,32 @@
-namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
+namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
     using System.Linq;
-    using System.Reflection;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using MongoDB.Bson;
-    using MongoDB.Driver;
-    using MongoDB.Driver.Core.Events;
-    using Newtonsoft.Json;
+    using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
-    using Rules.Framework.Providers.MongoDb;
-    using Rules.Framework.Providers.MongoDb.DataModel;
-    using Rules.Framework.Providers.MongoDb.IntegrationTests;
-    using Rules.Framework.Providers.MongoDb.Serialization;
-    using Rules.Framework.Serialization;
+    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
-    public class CarInsuranceAdvisorTests : IDisposable
+    public class CarInsuranceAdvisorTests : BaseScenarioTests
     {
-        private readonly IMongoClient mongoClient;
-        private readonly MongoDbProviderSettings mongoDbProviderSettings;
+        private readonly InMemoryRulesStorage<ContentTypes, ConditionTypes> inMemoryRulesStorage;
 
         public CarInsuranceAdvisorTests()
         {
-            this.mongoClient = CreateMongoClient();
-            this.mongoDbProviderSettings = CreateProviderSettings();
-
-            Stream? rulesFile = Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2.rules-framework-tests.car-insurance-advisor.json");
-
-            IEnumerable<RuleDataModel> rules;
-            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
-            {
-                string json = streamReader.ReadToEnd();
-
-                IEnumerable<RuleDataModel> array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-
-                rules = array.Select(t =>
-                {
-                    t.Content = t.Content as string;
-
-                    return t;
-                }).ToList();
-            }
-
-            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-            IMongoCollection<RuleDataModel> mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
-
-            mongoCollection.InsertMany(rules);
+            this.inMemoryRulesStorage = new InMemoryRulesStorage<ContentTypes, ConditionTypes>();
+            this.LoadInMemoryStorage<ContentTypes, ConditionTypes, CarInsuranceAdvices>(
+                DataSourceFilePath,
+                this.inMemoryRulesStorage,
+                (c) => this.Parse<CarInsuranceAdvices>((string)c));
         }
 
-        public void Dispose()
-        {
-            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-        }
+        private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario2/rules-framework-tests.car-insurance-advisor.json";
 
         [Fact]
         public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
@@ -88,10 +49,14 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
                 }
             };
 
+            IServiceCollection serviceDescriptors = new ServiceCollection();
+            serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
+            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
+
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(reo =>
                 {
                     reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
@@ -127,17 +92,21 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
                 }
             };
 
+            IServiceCollection serviceDescriptors = new ServiceCollection();
+            serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
+            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
+
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(reo =>
                 {
                     reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = CreateRulesDataSourceTest<ContentTypes, ConditionTypes>(this.mongoClient, this.mongoDbProviderSettings);
+            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = CreateRulesDataSourceTest<ContentTypes, ConditionTypes>(this.inMemoryRulesStorage);
 
             RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
@@ -246,36 +215,5 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
             rule34.Should().NotBeNull();
             rule34.Priority.Should().Be(4);
         }
-
-        private static MongoClient CreateMongoClient()
-        {
-            MongoClientSettings settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
-            settings.ClusterConfigurator = (cb) =>
-            {
-                cb.Subscribe<CommandStartedEvent>(e =>
-                {
-                    Trace.WriteLine($"{e.CommandName} - {e.Command.ToJson()}");
-                });
-            };
-            return new MongoClient(settings);
-        }
-
-        private static IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(
-            IMongoClient mongoClient,
-            MongoDbProviderSettings mongoDbProviderSettings)
-        {
-            IContentSerializationProvider<TContentType> contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<TContentType>();
-            IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>(contentSerializationProvider);
-            return new MongoDbProviderRulesDataSource<TContentType, TConditionType>(
-                    mongoClient,
-                    mongoDbProviderSettings,
-                    ruleFactory);
-        }
-
-        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
-        {
-            DatabaseName = "rules-framework-tests",
-            RulesCollectionName = "car-insurance-advisor"
-        };
     }
 }
