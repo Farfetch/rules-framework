@@ -8,8 +8,8 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 
         public DataTypes DataType { get; set; }
 
-        public Operators Operator { get; set; }
-
         public object Operand { get; set; }
+
+        public Operators Operator { get; set; }
     }
 }

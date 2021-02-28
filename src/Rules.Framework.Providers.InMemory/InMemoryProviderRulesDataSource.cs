@@ -7,6 +7,12 @@ namespace Rules.Framework.Providers.InMemory
     using Rules.Framework.Core;
     using Rules.Framework.Providers.InMemory.DataModel;
 
+    /// <summary>
+    /// The rules data source implementation for usage backed with a in-memory database.
+    /// </summary>
+    /// <typeparam name="TContentType">The type of the content type.</typeparam>
+    /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
+    /// <seealso cref="Rules.Framework.IRulesDataSource{TContentType, TConditionType}" />
     public class InMemoryProviderRulesDataSource<TContentType, TConditionType> : IRulesDataSource<TContentType, TConditionType>
     {
         private readonly IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage;
@@ -20,6 +26,12 @@ namespace Rules.Framework.Providers.InMemory
             this.ruleFactory = ruleFactory ?? throw new ArgumentNullException(nameof(ruleFactory));
         }
 
+        /// <summary>
+        /// Adds a new rule to data source.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
         public Task AddRuleAsync(Rule<TContentType, TConditionType> rule)
         {
             if (rule is null)
@@ -35,6 +47,13 @@ namespace Rules.Framework.Providers.InMemory
             });
         }
 
+        /// <summary>
+        /// Gets the rules categorized with specified <paramref name="contentType" /> between <paramref name="dateBegin" /> and <paramref name="dateEnd" />.
+        /// </summary>
+        /// <param name="contentType">the content type categorization.</param>
+        /// <param name="dateBegin">the filtering begin date.</param>
+        /// <param name="dateEnd">the filtering end date.</param>
+        /// <returns></returns>
         public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
         {
             return Task.Run(() =>
@@ -50,6 +69,12 @@ namespace Rules.Framework.Providers.InMemory
             });
         }
 
+        /// <summary>
+        /// Gets the rules filtered by specified arguments.
+        /// </summary>
+        /// <param name="rulesFilterArgs">The rules filter arguments.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rulesFilterArgs</exception>
         public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs)
         {
             if (rulesFilterArgs is null)
@@ -82,6 +107,12 @@ namespace Rules.Framework.Providers.InMemory
             });
         }
 
+        /// <summary>
+        /// Updates the existent rule on data source.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
         public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
         {
             if (rule is null)
