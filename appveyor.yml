@@ -13,8 +13,9 @@ services: mongodb
 install:
   - sh: dotnet tool install --global dotnet-sonarscanner
   - sh: dotnet tool install --global dotnet-reportgenerator-globaltool
+  - sh: sudo update-alternatives --query python
   - sh: sudo update-alternatives --auto java
-  - sh: export JAVA_HOME=/usr/lib/jvm/java-11-oracle/
+  - sh: export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
   - sh: export PATH=$PATH:$JAVA_HOME
 before_build:
   - sh: dotnet sonarscanner begin /k:pikenikes_rules-framework /v:$APPVEYOR_BUILD_VERSION /o:pikenikes-github /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866 /d:sonar.coverage.exclusions="tests/*Tests/**" /d:sonar.coverageReportPaths="../../coverage-outputs/SonarQube.xml" /d:sonar.branch.name=$APPVEYOR_REPO_BRANCH
