@@ -22,6 +22,11 @@ namespace Rules.Framework.Providers.InMemory
 
         public Task AddRuleAsync(Rule<TContentType, TConditionType> rule)
         {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
             return Task.Run(() =>
             {
                 RuleDataModel<TContentType, TConditionType> ruleDataModel = this.ruleFactory.CreateRule(rule);
@@ -79,6 +84,11 @@ namespace Rules.Framework.Providers.InMemory
 
         public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
         {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
             return Task.Run(() =>
             {
                 RuleDataModel<TContentType, TConditionType> newRuleDataModel = this.ruleFactory.CreateRule(rule);
