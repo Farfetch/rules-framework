@@ -15,6 +15,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
     using Rules.Framework;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
+    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
     using Rules.Framework.Providers.MongoDb.IntegrationTests;
@@ -60,23 +61,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
             mongoCollection.InsertMany(rules);
         }
 
-        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        public void Dispose()
         {
-            DatabaseName = "rules-framework-tests",
-            RulesCollectionName = "car-insurance-advisor"
-        };
-
-        private static MongoClient CreateMongoClient()
-        {
-            MongoClientSettings settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
-            settings.ClusterConfigurator = (cb) =>
-            {
-                cb.Subscribe<CommandStartedEvent>(e =>
-                {
-                    Trace.WriteLine($"{e.CommandName} - {e.Command.ToJson()}");
-                });
-            };
-            return new MongoClient(settings);
+            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
         }
 
         [Fact]
@@ -259,6 +247,19 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
             rule34.Priority.Should().Be(4);
         }
 
+        private static MongoClient CreateMongoClient()
+        {
+            MongoClientSettings settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
+            settings.ClusterConfigurator = (cb) =>
+            {
+                cb.Subscribe<CommandStartedEvent>(e =>
+                {
+                    Trace.WriteLine($"{e.CommandName} - {e.Command.ToJson()}");
+                });
+            };
+            return new MongoClient(settings);
+        }
+
         private static IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(
             IMongoClient mongoClient,
             MongoDbProviderSettings mongoDbProviderSettings)
@@ -271,10 +272,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
                     ruleFactory);
         }
 
-        public void Dispose()
+        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
         {
-            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-        }
+            DatabaseName = "rules-framework-tests",
+            RulesCollectionName = "car-insurance-advisor"
+        };
     }
 }

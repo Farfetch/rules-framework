@@ -14,29 +14,25 @@
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/pikenikes/rules-framework</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>rules rulesframework</PackageTags>
-    <Description>A generic rules framework that allows defining and evaluating rules for complex business scenarios.</Description>
+    <PackageTags>rules rulesframework memory inmemory</PackageTags>
+    <Description>A data source provider implementation using Mongo DB for rules framework.</Description>
     <Copyright>Copyright (c) 2019 Luís Garcês</Copyright>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
   <ItemGroup>
-    <None Include="..\..\LICENSE.md">
-      <Pack>True</Pack>
+    <None Include="..\..\LICENSE.md" Link="LICENSE.md">
       <PackagePath></PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="9.4.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Rules.Framework" Version="1.0.69" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.18.0.27296">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

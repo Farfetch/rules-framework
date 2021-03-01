@@ -1,4 +1,4 @@
-namespace Rules.Framework.IntegrationTests.Tests.Scenario3
+namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3
 {
     public enum SecuritySystemActionables
     {

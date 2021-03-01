@@ -6,10 +6,13 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
     using FluentAssertions;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
+    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario1;
     using Xunit;
 
     public class BodyMassIndexTests
     {
+        private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario1/rules-framework-tests.body-mass-index.datasource.json";
+
         [Fact]
         public async Task BodyMassIndex_NoConditions_ReturnsDefaultFormula()
         {
@@ -21,7 +24,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
             Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[0];
 
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario1/BodyMassIndexTests.datasource.json");
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
 
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
@@ -44,7 +47,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
         {
             // Arrange
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>($@"{Environment.CurrentDirectory}/Tests/Scenario1/BodyMassIndexTests.datasource.json");
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
 
             RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
