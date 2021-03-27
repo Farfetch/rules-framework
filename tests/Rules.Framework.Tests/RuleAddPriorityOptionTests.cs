@@ -17,7 +17,6 @@ namespace Rules.Framework.Tests
             // Assert
 
             actual.Should().NotBeNull();
-            actual.AtPriorityNumberOptionValue.Should().Be(0);
             actual.AtRuleNameOptionValue.Should().BeNull();
             actual.PriorityOption.Should().Be(priorityOption);
         }
@@ -34,25 +33,6 @@ namespace Rules.Framework.Tests
             // Assert
 
             actual.Should().NotBeNull();
-            actual.AtPriorityNumberOptionValue.Should().Be(0);
-            actual.AtRuleNameOptionValue.Should().BeNull();
-            actual.PriorityOption.Should().Be(priorityOption);
-        }
-
-        [Fact]
-        public void ByPriorityNumber_GivenPriority1_ReturnsNewObjectSettedByPriorityNumberAndAtPriority1()
-        {
-            // Arrange
-            int priorityNumber = 1;
-            PriorityOptions priorityOption = PriorityOptions.AtPriorityNumber;
-
-            // Act
-            RuleAddPriorityOption actual = RuleAddPriorityOption.ByPriorityNumber(priorityNumber);
-
-            // Assert
-
-            actual.Should().NotBeNull();
-            actual.AtPriorityNumberOptionValue.Should().Be(priorityNumber);
             actual.AtRuleNameOptionValue.Should().BeNull();
             actual.PriorityOption.Should().Be(priorityOption);
         }
@@ -70,7 +50,6 @@ namespace Rules.Framework.Tests
             // Assert
 
             actual.Should().NotBeNull();
-            actual.AtPriorityNumberOptionValue.Should().Be(0);
             actual.AtRuleNameOptionValue.Should().Be(ruleName);
             actual.PriorityOption.Should().Be(priorityOption);
         }

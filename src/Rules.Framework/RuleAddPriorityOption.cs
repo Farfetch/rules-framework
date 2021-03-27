@@ -11,7 +11,6 @@ namespace Rules.Framework
         public static RuleAddPriorityOption AtBottom => new RuleAddPriorityOption
         {
             AtRuleNameOptionValue = null,
-            AtPriorityNumberOptionValue = 0,
             PriorityOption = PriorityOptions.AtBottom
         };
 
@@ -21,17 +20,8 @@ namespace Rules.Framework
         public static RuleAddPriorityOption AtTop => new RuleAddPriorityOption
         {
             AtRuleNameOptionValue = null,
-            AtPriorityNumberOptionValue = 0,
             PriorityOption = PriorityOptions.AtTop
         };
-
-        /// <summary>
-        /// Gets or sets at priority number to use when
-        /// <code>PriorityOptions.AtRuleName</code>
-        /// option is selected.
-        /// </summary>
-        /// <value>At priority number option value.</value>
-        public int AtPriorityNumberOptionValue { get; set; }
 
         /// <summary>
         /// Gets or sets the rule name to use when
@@ -48,18 +38,6 @@ namespace Rules.Framework
         public PriorityOptions PriorityOption { get; set; }
 
         /// <summary>
-        /// Creates a <see cref="RuleAddPriorityOption"/> setted by priority number.
-        /// </summary>
-        /// <param name="priority">The priority.</param>
-        /// <returns></returns>
-        public static RuleAddPriorityOption ByPriorityNumber(int priority) => new RuleAddPriorityOption
-        {
-            AtRuleNameOptionValue = null,
-            AtPriorityNumberOptionValue = priority,
-            PriorityOption = PriorityOptions.AtPriorityNumber
-        };
-
-        /// <summary>
         /// Creates a <see cref="RuleAddPriorityOption"/> setted by rule name.
         /// </summary>
         /// <param name="ruleName">Name of the rule.</param>
@@ -67,7 +45,6 @@ namespace Rules.Framework
         public static RuleAddPriorityOption ByRuleName(string ruleName) => new RuleAddPriorityOption
         {
             AtRuleNameOptionValue = ruleName,
-            AtPriorityNumberOptionValue = 0,
             PriorityOption = PriorityOptions.AtRuleName
         };
     }
