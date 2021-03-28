@@ -29,7 +29,6 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
 
             RuleBuilderResult<ContentTypes, ConditionTypes> newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
-                .WithPriority(60) // Won't matter, we are actually testing that it will assume 1.
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
                 {
@@ -49,7 +48,6 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
 
             RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Sample rule")
-                .WithPriority(35)
                 .WithDateBegin(DateTime.Parse("2021-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
                 {
@@ -94,7 +92,6 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
 
             RuleBuilderResult<ContentTypes, ConditionTypes> newRuleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
-                .WithPriority(60) // Won't matter, we are actually testing that it will assume 1.
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
                 {

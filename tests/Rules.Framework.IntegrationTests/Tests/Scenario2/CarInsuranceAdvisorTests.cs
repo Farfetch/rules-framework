@@ -58,6 +58,99 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
         }
 
         [Fact]
+        public async Task GetCarInsuranceAdvice_SearchForRulesExcludingRulesWithoutSearchConditions_ReturnsNoRules()
+        {
+            // Arrange
+            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
+            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>
+            {
+                Conditions = new Condition<ConditionTypes>[]
+                {
+                    new Condition<ConditionTypes>
+                    {
+                        Type = ConditionTypes.RepairCosts,
+                        Value = 800.00000m
+                    },
+                    new Condition<ConditionTypes>
+                    {
+                        Type = ConditionTypes.RepairCostsCommercialValueRate,
+                        Value = 86.33m
+                    }
+                },
+                ContentType = expectedContent,
+                DateBegin = expectedMatchDate,
+                DateEnd = expectedMatchDate,
+                ExcludeRulesWithoutSearchConditions = true
+            };
+
+            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+
+            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+                .WithContentType<ContentTypes>()
+                .WithConditionType<ConditionTypes>()
+                .SetDataSource(rulesDataSource)
+                .Configure(reo =>
+                {
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                })
+                .Build();
+
+            // Act
+            IEnumerable<Rule<ContentTypes, ConditionTypes>> actual = await rulesEngine.SearchAsync(searchArgs);
+
+            // Assert
+            actual.Should().NotBeNull();
+            actual.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public async Task GetCarInsuranceAdvice_SearchForRulesWithRepairCostsGreaterThan1000_Returns2Rules()
+        {
+            // Arrange
+            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
+            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>
+            {
+                Conditions = new Condition<ConditionTypes>[]
+                {
+                    new Condition<ConditionTypes>
+                    {
+                        Type = ConditionTypes.RepairCosts,
+                        Value = 1200.00000m
+                    }
+                },
+                ContentType = expectedContent,
+                DateBegin = expectedMatchDate,
+                DateEnd = expectedMatchDate,
+                ExcludeRulesWithoutSearchConditions = false
+            };
+
+            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+
+            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+                .WithContentType<ContentTypes>()
+                .WithConditionType<ConditionTypes>()
+                .SetDataSource(rulesDataSource)
+                .Configure(reo =>
+                {
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                })
+                .Build();
+
+            // Act
+            IEnumerable<Rule<ContentTypes, ConditionTypes>> actual = await rulesEngine.SearchAsync(searchArgs);
+
+            // Assert
+            actual.Should().NotBeNull();
+            actual.Should().HaveCount(2);
+            actual.Should().Contain(r => r.Name == "Car Insurance Advise on repair costs greater than 80% of commercial value");
+            actual.Should().Contain(r => r.Name == "Car Insurance Advise on repair costs lesser than 80% of commercial value");
+        }
+
+        [Fact]
         public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay()
         {
             // Arrange
@@ -93,7 +186,6 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithPriority(1)
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
                 .Build();
             IEnumerable<Rule<ContentTypes, ConditionTypes>> existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>
@@ -196,99 +288,6 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             Rule<ContentTypes, ConditionTypes> rule34 = rules3.FirstOrDefault(r => r.Name == "Car Insurance Advise on repair costs lower than franchise boundary");
             rule34.Should().NotBeNull();
             rule34.Priority.Should().Be(4);
-        }
-
-        [Fact]
-        public async Task GetCarInsuranceAdvice_SearchForRulesWithRepairCostsGreaterThan1000_Returns2Rules()
-        {
-            // Arrange
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>
-            {
-                Conditions = new Condition<ConditionTypes>[]
-                {
-                    new Condition<ConditionTypes>
-                    {
-                        Type = ConditionTypes.RepairCosts,
-                        Value = 1200.00000m
-                    }
-                },
-                ContentType = expectedContent,
-                DateBegin = expectedMatchDate,
-                DateEnd = expectedMatchDate,
-                ExcludeRulesWithoutSearchConditions = false
-            };
-
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
-
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
-                .Configure(reo =>
-                {
-                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
-                })
-                .Build();
-
-            // Act
-            IEnumerable<Rule<ContentTypes, ConditionTypes>> actual = await rulesEngine.SearchAsync(searchArgs);
-
-            // Assert
-            actual.Should().NotBeNull();
-            actual.Should().HaveCount(2);
-            actual.Should().Contain(r => r.Name == "Car Insurance Advise on repair costs greater than 80% of commercial value");
-            actual.Should().Contain(r => r.Name == "Car Insurance Advise on repair costs lesser than 80% of commercial value");
-        }
-
-        [Fact]
-        public async Task GetCarInsuranceAdvice_SearchForRulesExcludingRulesWithoutSearchConditions_ReturnsNoRules()
-        {
-            // Arrange
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>
-            {
-                Conditions = new Condition<ConditionTypes>[]
-                {
-                    new Condition<ConditionTypes>
-                    {
-                        Type = ConditionTypes.RepairCosts,
-                        Value = 800.00000m
-                    },
-                    new Condition<ConditionTypes>
-                    {
-                        Type = ConditionTypes.RepairCostsCommercialValueRate,
-                        Value = 86.33m
-                    }
-                },
-                ContentType = expectedContent,
-                DateBegin = expectedMatchDate,
-                DateEnd = expectedMatchDate,
-                ExcludeRulesWithoutSearchConditions = true
-            };
-
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
-
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
-                .Configure(reo =>
-                {
-                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
-                })
-                .Build();
-
-            // Act
-            IEnumerable<Rule<ContentTypes, ConditionTypes>> actual = await rulesEngine.SearchAsync(searchArgs);
-
-            // Assert
-            actual.Should().NotBeNull();
-            actual.Should().HaveCount(0);
         }
     }
 }

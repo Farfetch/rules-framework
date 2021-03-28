@@ -35,8 +35,7 @@ namespace Rules.Framework.IntegrationTests
 
                     IRuleBuilder<TContentType, TConditionType> ruleBuilder = RuleBuilder.NewRule<TContentType, TConditionType>()
                         .WithName(ruleDataModel.Name)
-                        .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
-                        .WithPriority(ruleDataModel.Priority);
+                        .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd);
 
                     if (ruleDataModel.RootCondition is { })
                     {
@@ -56,7 +55,9 @@ namespace Rules.Framework.IntegrationTests
 
                     if (ruleBuilderResult.IsSuccess)
                     {
-                        rules.Add(ruleBuilderResult.Rule);
+                        var rule = ruleBuilderResult.Rule;
+                        rule.Priority = ruleDataModel.Priority;
+                        rules.Add(rule);
                     }
                     else
                     {
