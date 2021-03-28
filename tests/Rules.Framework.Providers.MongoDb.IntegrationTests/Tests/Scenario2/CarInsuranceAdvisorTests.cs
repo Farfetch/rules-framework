@@ -23,7 +23,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
     using Rules.Framework.Serialization;
     using Xunit;
 
-    public class CarInsuranceAdvisorTests : IDisposable
+    public sealed class CarInsuranceAdvisorTests : IDisposable
     {
         private readonly IMongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
@@ -142,7 +142,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
             RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithPriority(1)
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
                 .Build();
             IEnumerable<Rule<ContentTypes, ConditionTypes>> existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>

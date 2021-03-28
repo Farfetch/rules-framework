@@ -32,7 +32,6 @@ namespace Rules.Framework.Providers.MongoDb
             RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
-                .WithPriority(ruleDataModel.Priority)
                 .WithCondition(cnb => ruleDataModel.RootCondition is { } ? this.ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
                 .WithSerializedContent(contentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
                 .Build();
@@ -40,6 +39,15 @@ namespace Rules.Framework.Providers.MongoDb
             if (!ruleBuilderResult.IsSuccess)
             {
                 throw new InvalidRuleException($"An invalid rule was loaded from data source. Rule ID: {ruleDataModel.Id.ToString()}", ruleBuilderResult.Errors);
+            }
+
+            ruleBuilderResult.Rule.Priority = ruleDataModel.Priority;
+
+            if (ruleBuilderResult.Rule.Priority <= 0)
+            {
+                throw new InvalidRuleException(
+                    $"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}",
+                    new[] { $"Loaded rule priority number is invalid: {ruleBuilderResult.Rule.Priority}." });
             }
 
             return ruleBuilderResult.Rule;

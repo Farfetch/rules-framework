@@ -16,7 +16,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario3
     using Rules.Framework.Providers.MongoDb.DataModel;
     using Xunit;
 
-    public class BuildingSecuritySystemControlTests : IDisposable
+    public sealed class BuildingSecuritySystemControlTests : IDisposable
     {
         private readonly IMongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;

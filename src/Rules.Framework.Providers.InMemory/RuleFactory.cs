@@ -22,7 +22,6 @@ namespace Rules.Framework.Providers.InMemory
             RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
-                .WithPriority(ruleDataModel.Priority)
                 .WithCondition(cnb => ruleDataModel.RootCondition is { } ? this.ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
                 .WithContentContainer(contentContainer)
                 .Build();
@@ -30,6 +29,15 @@ namespace Rules.Framework.Providers.InMemory
             if (!ruleBuilderResult.IsSuccess)
             {
                 throw new InvalidRuleException($"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}", ruleBuilderResult.Errors);
+            }
+
+            ruleBuilderResult.Rule.Priority = ruleDataModel.Priority;
+
+            if (ruleBuilderResult.Rule.Priority <= 0)
+            {
+                throw new InvalidRuleException(
+                    $"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}",
+                    new[] { $"Loaded rule priority number is invalid: {ruleBuilderResult.Rule.Priority}." });
             }
 
             return ruleBuilderResult.Rule;

@@ -19,7 +19,9 @@ namespace Rules.Framework.Builder
         /// <summary>
         /// Sets the new rule with a specified condition.
         /// </summary>
-        /// <param name="conditionFunc">The function with specific logic to create the condition for the rule.</param>
+        /// <param name="conditionFunc">
+        /// The function with specific logic to create the condition for the rule.
+        /// </param>
         /// <returns></returns>
         IRuleBuilder<TContentType, TConditionType> WithCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
 
@@ -64,6 +66,8 @@ namespace Rules.Framework.Builder
         /// </summary>
         /// <param name="priority">The priority.</param>
         /// <returns></returns>
+        [Obsolete("This method is obsolete and will be removed on a future release. " +
+            "Please use RuleAddPriorityOption.ByPriorityNumber(number) instead if you are adding a new rule or use Priority property if updating.")]
         IRuleBuilder<TContentType, TConditionType> WithPriority(int priority);
     }
 }
