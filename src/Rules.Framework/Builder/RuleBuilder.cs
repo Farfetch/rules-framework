@@ -12,7 +12,7 @@ namespace Rules.Framework.Builder
         private DateTime dateBegin;
         private DateTime? dateEnd;
         private string name;
-        private int priority;
+        private int? priority;
         private IConditionNode<TConditionType> rootCondition;
 
         public RuleBuilderResult<TContentType, TConditionType> Build()
@@ -23,7 +23,7 @@ namespace Rules.Framework.Builder
                 DateBegin = this.dateBegin,
                 DateEnd = this.dateEnd,
                 Name = this.name,
-                Priority = this.priority,
+                Priority = this.priority.GetValueOrDefault(0),
                 RootCondition = this.rootCondition
             };
 
@@ -83,6 +83,8 @@ namespace Rules.Framework.Builder
             return this;
         }
 
+        [Obsolete("This method is obsolete and will be removed on a future release. " +
+            "Please use RuleAddPriorityOption.ByPriorityNumber(number) instead if you are adding a new rule or use Priority property if updating.")]
         public IRuleBuilder<TContentType, TConditionType> WithPriority(int priority)
         {
             this.priority = priority;

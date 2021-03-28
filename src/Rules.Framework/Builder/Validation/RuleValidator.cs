@@ -23,7 +23,6 @@ namespace Rules.Framework.Builder.Validation
             this.RuleFor(r => r.DateBegin).NotEmpty();
             this.RuleFor(r => r.DateEnd).GreaterThanOrEqualTo(r => r.DateBegin).When(r => r.DateEnd != null);
             this.RuleFor(r => r.Name).NotNull().NotEmpty();
-            this.RuleFor(r => r.Priority).GreaterThan(0);
             this.RuleFor(r => r.RootCondition).Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType>
             {
                 BooleanConditionNodeValidator = this.booleanConditionNodeValidator,

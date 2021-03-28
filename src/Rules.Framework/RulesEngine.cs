@@ -12,7 +12,9 @@ namespace Rules.Framework
     /// Exposes rules engine logic to provide rule matches to requests.
     /// </summary>
     /// <typeparam name="TContentType">The content type that allows to categorize rules.</typeparam>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     public class RulesEngine<TContentType, TConditionType>
     {
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
@@ -37,12 +39,10 @@ namespace Rules.Framework
         /// <param name="rule">The rule.</param>
         /// <param name="ruleAddPriorityOption">The rule add priority option.</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">
-        /// rule
-        /// or
-        /// rule
+        /// <exception cref="ArgumentNullException">rule or rule</exception>
+        /// <exception cref="NotSupportedException">
+        /// The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.
         /// </exception>
-        /// <exception cref="NotSupportedException">The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.</exception>
         public Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
         {
             if (rule is null)
@@ -59,13 +59,17 @@ namespace Rules.Framework
         }
 
         /// <summary>
-        /// Provides all rule matches (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// Provides all rule matches (if any) to the given content type at the specified <paramref
+        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>
         /// <param name="contentType"></param>
         /// <param name="matchDateTime"></param>
         /// <param name="conditions"></param>
         /// <remarks>
-        /// <para>A set of rules is requested to rules data source and all conditions are evaluated against them to provide a set of matches.</para>
+        /// <para>
+        /// A set of rules is requested to rules data source and all conditions are evaluated
+        /// against them to provide a set of matches.
+        /// </para>
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
@@ -84,14 +88,21 @@ namespace Rules.Framework
         }
 
         /// <summary>
-        /// Provides a rule match (if any) to the given content type at the specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// Provides a rule match (if any) to the given content type at the specified <paramref
+        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>
         /// <param name="contentType"></param>
         /// <param name="matchDateTime"></param>
         /// <param name="conditions"></param>
         /// <remarks>
-        /// <para>A set of rules is requested to rules data source and all conditions are evaluated against them to provide a set of matches.</para>
-        /// <para>If there's more than one match, a rule is selected based on the priority criteria and value: topmost selects the lowest priority number and bottommost selects highest priority.</para>
+        /// <para>
+        /// A set of rules is requested to rules data source and all conditions are evaluated
+        /// against them to provide a set of matches.
+        /// </para>
+        /// <para>
+        /// If there's more than one match, a rule is selected based on the priority criteria and
+        /// value: topmost selects the lowest priority number and bottommost selects highest priority.
+        /// </para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
         public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
@@ -106,7 +117,10 @@ namespace Rules.Framework
         /// </summary>
         /// <param name="searchArgs"></param>
         /// <remarks>
-        /// <para>Only the condition types supplied on input conditions are evaluated, the remaining conditions are ignored.</para>
+        /// <para>
+        /// Only the condition types supplied on input conditions are evaluated, the remaining
+        /// conditions are ignored.
+        /// </para>
         /// </remarks>
         /// <returns>the set of rules matching the conditions.</returns>
         public Task<IEnumerable<Rule<TContentType, TConditionType>>> SearchAsync(SearchArgs<TContentType, TConditionType> searchArgs)
@@ -195,6 +209,27 @@ namespace Rules.Framework
 
                     await ManagementOperations.Manage(existentRules)
                         .UsingDataSource(this.rulesDataSource)
+                        .AddRule(rule)
+                        .ExecuteOperationsAsync()
+                        .ConfigureAwait(false);
+
+                    break;
+
+                case PriorityOptions.AtPriorityNumber:
+                    int priorityMin = existentRules.Min(r => r.Priority);
+                    int priorityMax = existentRules.Max(r => r.Priority);
+
+                    int rulePriority = ruleAddPriorityOption.AtPriorityNumberOptionValue;
+                    rulePriority = Math.Min(rulePriority, priorityMax + 1);
+                    rulePriority = Math.Max(rulePriority, priorityMin);
+
+                    rule.Priority = rulePriority;
+
+                    await ManagementOperations.Manage(existentRules)
+                        .UsingDataSource(this.rulesDataSource)
+                        .FilterFromThresholdPriorityToBottom(rulePriority)
+                        .IncreasePriority()
+                        .UpdateRules()
                         .AddRule(rule)
                         .ExecuteOperationsAsync()
                         .ConfigureAwait(false);
