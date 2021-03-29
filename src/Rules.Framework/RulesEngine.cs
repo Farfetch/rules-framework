@@ -216,8 +216,8 @@ namespace Rules.Framework
                     break;
 
                 case PriorityOptions.AtPriorityNumber:
-                    int priorityMin = existentRules.Min(r => r.Priority);
-                    int priorityMax = existentRules.Max(r => r.Priority);
+                    int priorityMin = existentRules.MinOrDefault(r => r.Priority);
+                    int priorityMax = existentRules.MaxOrDefault(r => r.Priority);
 
                     int rulePriority = ruleAddPriorityOption.AtPriorityNumberOptionValue;
                     rulePriority = Math.Min(rulePriority, priorityMax + 1);

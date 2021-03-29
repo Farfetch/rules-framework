@@ -2,6 +2,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
     using Rules.Framework.Builder;
@@ -13,6 +14,69 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
     public class BodyMassIndexTests
     {
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario1/rules-framework-tests.body-mass-index.datasource.json";
+
+        [Fact]
+        public async Task AddRule_AddingNewRuleFromScratchWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter()
+        {
+            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource =
+                new InMemoryRulesDataSource<ContentTypes, ConditionTypes>(Enumerable.Empty<Rule<ContentTypes, ConditionTypes>>());
+
+            // Arrange
+            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+                .WithContentType<ContentTypes>()
+                .WithConditionType<ConditionTypes>()
+                .SetDataSource(rulesDataSource)
+                .Build();
+
+            RuleBuilderResult<ContentTypes, ConditionTypes> newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                .WithName("Body Mass Index up to 18 years formula")
+                .WithDateBegin(DateTime.Parse("2018-01-01"))
+                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
+                {
+                    Description = "Body Mass Index up to 18 years formula",
+                    Value = "weight / ((height + 1) ^ 2)" // Not real, for the sake of the test.
+                }))
+                .WithCondition(cnb => cnb
+                    .AsValued(ConditionTypes.Age)
+                    .OfDataType<int>()
+                    .WithComparisonOperator(Operators.LesserThanOrEqual)
+                    .SetOperand(18)
+                    .Build())
+                .Build();
+
+            Rule<ContentTypes, ConditionTypes> newRule1 = newRuleResult1.Rule;
+            RuleAddPriorityOption ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
+
+            RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                .WithName("Sample rule")
+                .WithDateBegin(DateTime.Parse("2021-01-01"))
+                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
+                {
+                    Description = "Sample formula",
+                    Value = "0"
+                }))
+                .Build();
+
+            Rule<ContentTypes, ConditionTypes> newRule2 = ruleBuilderResult2.Rule;
+            RuleAddPriorityOption ruleAddPriorityOption2 = RuleAddPriorityOption.ByPriorityNumber(4);
+
+            // Act
+            RuleOperationResult ruleOperationResult1 = await rulesEngine.AddRuleAsync(newRule1, ruleAddPriorityOption1).ConfigureAwait(false);
+            RuleOperationResult ruleOperationResult2 = await rulesEngine.AddRuleAsync(newRule2, ruleAddPriorityOption2).ConfigureAwait(false);
+
+            // Assert
+            ruleOperationResult1.Should().NotBeNull();
+            ruleOperationResult1.IsSuccess.Should().BeTrue();
+
+            ruleOperationResult2.Should().NotBeNull();
+            ruleOperationResult2.IsSuccess.Should().BeTrue();
+
+            IEnumerable<Rule<ContentTypes, ConditionTypes>> rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
+            rules.Should().NotBeNull().And.HaveCount(2);
+            rules.Should().ContainEquivalentOf(newRule1);
+            newRule1.Priority.Should().Be(1, "rule should to priority 1 if inserted at priority 1");
+            newRule2.Priority.Should().Be(2, "rule should have priority 2 if inserted at priority 2, given that last rule after insert was at priority 2.");
+        }
 
         [Fact]
         public async Task AddRule_AddingNewRuleWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter()
