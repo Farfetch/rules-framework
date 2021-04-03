@@ -3,10 +3,14 @@ namespace Rules.Framework
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
+    using FluentValidation;
+    using FluentValidation.Results;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Management;
+    using Rules.Framework.Validation;
 
     /// <summary>
     /// Exposes rules engine logic to provide rule matches to requests.
@@ -20,16 +24,18 @@ namespace Rules.Framework
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
-
         private readonly RulesEngineOptions rulesEngineOptions;
+        private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
             IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+            IValidatorProvider validatorProvider,
             RulesEngineOptions rulesEngineOptions)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;
             this.rulesDataSource = rulesDataSource;
+            this.validatorProvider = validatorProvider;
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
@@ -130,14 +136,31 @@ namespace Rules.Framework
                 throw new ArgumentNullException(nameof(searchArgs));
             }
 
+            IValidator<SearchArgs<TContentType, TConditionType>> validator = this.validatorProvider.GetValidatorFor<SearchArgs<TContentType, TConditionType>>();
+            ValidationResult validationResult = validator.Validate(searchArgs);
+            if (!validationResult.IsValid)
+            {
+                StringBuilder stringBuilder = new StringBuilder()
+                    .AppendFormat("Specified '{0}' with invalid search values:", nameof(searchArgs))
+                    .AppendLine();
+
+                foreach (ValidationFailure validationFailure in validationResult.Errors)
+                {
+                    stringBuilder.AppendFormat("> {0}", validationFailure.ErrorMessage)
+                        .AppendLine();
+                }
+
+                throw new ArgumentException(stringBuilder.ToString(), nameof(searchArgs));
+            }
+
+            DateTime dateBegin = searchArgs.DateBegin;
+            DateTime dateEnd = searchArgs.DateEnd;
+
             EvaluationOptions evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
                 MatchMode = MatchModes.Search
             };
-
-            DateTime dateBegin = searchArgs.DateBegin;
-            DateTime dateEnd = searchArgs.DateEnd;
 
             if (dateBegin == dateEnd)
             {

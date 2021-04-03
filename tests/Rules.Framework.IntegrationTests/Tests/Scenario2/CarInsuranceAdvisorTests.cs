@@ -63,7 +63,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>
+            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>(expectedContent, expectedMatchDate, expectedMatchDate)
             {
                 Conditions = new Condition<ConditionTypes>[]
                 {
@@ -78,9 +78,6 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                         Value = 86.33m
                     }
                 },
-                ContentType = expectedContent,
-                DateBegin = expectedMatchDate,
-                DateEnd = expectedMatchDate,
                 ExcludeRulesWithoutSearchConditions = true
             };
 
@@ -111,7 +108,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>
+            SearchArgs<ContentTypes, ConditionTypes> searchArgs = new SearchArgs<ContentTypes, ConditionTypes>(expectedContent, expectedMatchDate, expectedMatchDate)
             {
                 Conditions = new Condition<ConditionTypes>[]
                 {
@@ -121,9 +118,6 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                         Value = 1200.00000m
                     }
                 },
-                ContentType = expectedContent,
-                DateBegin = expectedMatchDate,
-                DateEnd = expectedMatchDate,
                 ExcludeRulesWithoutSearchConditions = false
             };
 
