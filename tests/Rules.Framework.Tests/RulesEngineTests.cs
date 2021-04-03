@@ -4,11 +4,14 @@ namespace Rules.Framework.Tests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using FluentValidation;
+    using FluentValidation.Results;
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Validation;
     using Xunit;
 
     public class RulesEngineTests
@@ -86,9 +89,10 @@ namespace Rules.Framework.Tests
                         return false;
                 }
             }, evaluationOptions);
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
 
             // Act
             IEnumerable<Rule<ContentType, ConditionType>> actual = await sut.MatchManyAsync(contentType, matchDateTime, conditions);
@@ -156,11 +160,12 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             rulesEngineOptions.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
 
-            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
 
             // Act
             Rule<ContentType, ConditionType> actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
@@ -226,9 +231,10 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
 
             // Act
             Rule<ContentType, ConditionType> actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
@@ -290,9 +296,10 @@ namespace Rules.Framework.Tests
             };
             Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
             Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false, evaluationOptions);
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, rulesEngineOptions);
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
 
             // Act
             Rule<ContentType, ConditionType> actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
@@ -304,6 +311,113 @@ namespace Rules.Framework.Tests
                 It.IsAny<IConditionNode<ConditionType>>(),
                 It.IsAny<IEnumerable<Condition<ConditionType>>>(),
                 It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.AtLeastOnce());
+        }
+
+        [Fact]
+        public async Task SearchAsync_GivenInvalidSearchArgs_ThrowsArgumentException()
+        {
+            // Arrange
+            ContentType contentType = ContentType.Type1;
+            DateTime matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
+            SearchArgs<ContentType, ConditionType> searchArgs = new SearchArgs<ContentType, ConditionType>(contentType, matchDateTime, matchDateTime);
+
+            IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
+            {
+                new Rule<ContentType, ConditionType>
+                {
+                    ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                    DateBegin = new DateTime(2018, 01, 01),
+                    DateEnd = new DateTime(2019, 01, 01),
+                    Name = "Expected rule",
+                    Priority = 3,
+                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                },
+                new Rule<ContentType, ConditionType>
+                {
+                    ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                    DateBegin = new DateTime(2010, 01, 01),
+                    DateEnd = new DateTime(2021, 01, 01),
+                    Name = "Expected rule",
+                    Priority = 200,
+                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                }
+            };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
+            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false, evaluationOptions);
+
+            IValidator<SearchArgs<ContentType, ConditionType>> validator = Mock.Of<IValidator<SearchArgs<ContentType, ConditionType>>>();
+            Mock.Get(validator)
+                .Setup(x => x.Validate(It.IsAny<SearchArgs<ContentType, ConditionType>>()))
+                .Returns(new ValidationResult(new[] { new ValidationFailure("Prop1", "Sample error message") }));
+
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
+            Mock.Get(validatorProvider)
+                .Setup(x => x.GetValidatorFor<SearchArgs<ContentType, ConditionType>>())
+                .Returns(validator);
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
+
+            // Act
+            ArgumentException argumentException = await Assert.ThrowsAsync<ArgumentException>(() => sut.SearchAsync(searchArgs)).ConfigureAwait(false);
+
+            // Assert
+            argumentException.Should().NotBeNull();
+            argumentException.ParamName.Should().Be(nameof(searchArgs));
+            argumentException.Message.Should().StartWith($"Specified '{nameof(searchArgs)}' with invalid search values:");
+        }
+
+        [Fact]
+        public async Task SearchAsync_GivenNullSearchArgs_ThrowsArgumentNullException()
+        {
+            // Arrange
+            SearchArgs<ContentType, ConditionType> searchArgs = null;
+            ContentType contentType = ContentType.Type1;
+
+            IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
+            {
+                new Rule<ContentType, ConditionType>
+                {
+                    ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                    DateBegin = new DateTime(2018, 01, 01),
+                    DateEnd = new DateTime(2019, 01, 01),
+                    Name = "Expected rule",
+                    Priority = 3,
+                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                },
+                new Rule<ContentType, ConditionType>
+                {
+                    ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                    DateBegin = new DateTime(2010, 01, 01),
+                    DateEnd = new DateTime(2021, 01, 01),
+                    Name = "Expected rule",
+                    Priority = 200,
+                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                }
+            };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
+            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false, evaluationOptions);
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
+
+            // Act
+            ArgumentNullException argumentNullException = await Assert.ThrowsAsync<ArgumentNullException>(() => sut.SearchAsync(searchArgs)).ConfigureAwait(false);
+
+            // Assert
+            argumentNullException.Should().NotBeNull();
+            argumentNullException.ParamName.Should().Be(nameof(searchArgs));
         }
 
         private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(bool result, EvaluationOptions evaluationOptions)
