@@ -6,6 +6,8 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2
 
         RepairCostsCommercialValueRate = 2,
 
-        SelfDamageCoverage = 3
+        SelfDamageCoverage = 3,
+
+        ClaimDescription = 4
     }
 }
