@@ -18,7 +18,7 @@ namespace Rules.Framework.Builder.Validation
             this.RuleFor(c => c.DataType).Equal(DataTypes.Decimal).When(c => c.Operand is decimal);
             this.RuleFor(c => c.DataType).Equal(DataTypes.Boolean).When(c => c.Operand is bool);
             this.RuleFor(c => c.Operator).IsInEnum();
-            this.RuleFor(c => c.Operator).IsContainedOn(Operators.Equal, Operators.NotEqual).When(c => c.DataType == DataTypes.String);
+            this.RuleFor(c => c.Operator).IsContainedOn(Operators.Equal, Operators.NotEqual, Operators.Contains).When(c => c.DataType == DataTypes.String);
             this.RuleFor(c => c.Operator).IsContainedOn(Operators.Equal, Operators.NotEqual).When(c => c.DataType == DataTypes.Boolean);
         }
     }

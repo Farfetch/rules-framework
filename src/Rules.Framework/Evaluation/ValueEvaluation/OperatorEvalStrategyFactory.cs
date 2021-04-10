@@ -17,7 +17,8 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 { Operators.GreaterThan, new GreaterThanOperatorEvalStrategy() },
                 { Operators.GreaterThanOrEqual, new GreaterThanOrEqualOperatorEvalStrategy() },
                 { Operators.LesserThan, new LesserThanOperatorEvalStrategy() },
-                { Operators.LesserThanOrEqual, new LesserThanOrEqualOperatorEvalStrategy() }
+                { Operators.LesserThanOrEqual, new LesserThanOrEqualOperatorEvalStrategy() },
+                { Operators.Contains, new ContainsOperatorEvalStrategy() }
             };
         }
 
