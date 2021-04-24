@@ -6,6 +6,8 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2
 
         Pay = 2,
 
-        PayNewCar = 3
+        PayNewCar = 3,
+
+        PerformInvestigation = 4
     }
 }

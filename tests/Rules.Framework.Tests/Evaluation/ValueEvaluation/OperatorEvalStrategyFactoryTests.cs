@@ -15,6 +15,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         [InlineData(Operators.GreaterThanOrEqual, typeof(GreaterThanOrEqualOperatorEvalStrategy))]
         [InlineData(Operators.LesserThan, typeof(LesserThanOperatorEvalStrategy))]
         [InlineData(Operators.LesserThanOrEqual, typeof(LesserThanOrEqualOperatorEvalStrategy))]
+        [InlineData(Operators.Contains, typeof(ContainsOperatorEvalStrategy))]
         public void GetOperatorEvalStrategy_GivenOperator_ReturnsOperatorEvalStrategy(Operators @operator, Type type)
         {
             // Arrange

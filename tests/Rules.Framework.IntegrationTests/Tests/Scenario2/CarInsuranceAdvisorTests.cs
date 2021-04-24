@@ -15,6 +15,84 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario2/rules-framework-tests.car-insurance-advisor.json";
 
         [Fact]
+        public async Task GetCarInsuranceAdvice_ClaimDescriptionContionsAlcoholOrDrugs_ReturnsPerformInvestigation()
+        {
+            // Arrange
+            CarInsuranceAdvices expected = CarInsuranceAdvices.PerformInvestigation;
+            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            DateTime expectedMatchDate = new DateTime(2020, 06, 01);
+            Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
+            {
+                new Condition<ConditionTypes>
+                {
+                    Type = ConditionTypes.RepairCosts,
+                    Value = 800.00000m
+                },
+                new Condition<ConditionTypes>
+                {
+                    Type = ConditionTypes.RepairCostsCommercialValueRate,
+                    Value = 23.45602m
+                },
+                new Condition<ConditionTypes>
+                {
+                    Type = ConditionTypes.ClaimDescription,
+                    Value = "Driver A claims that Driver B appeared to be under the effect of alcohol."
+                }
+            };
+
+            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
+                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+
+            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+                .WithContentType<ContentTypes>()
+                .WithConditionType<ConditionTypes>()
+                .SetDataSource(rulesDataSource)
+                .Configure(reo =>
+                {
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                })
+                .Build();
+
+            RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                .WithName("Car Insurance Advise on on accident under the effect of drugs or alcohol")
+                .WithDateBegin(DateTime.Parse("2020-01-01"))
+                .WithCondition(b =>
+                {
+                    return b.AsComposed()
+                        .WithLogicalOperator(LogicalOperators.Or)
+                        .AddCondition(cb =>
+                        {
+                            return cb.AsValued(ConditionTypes.ClaimDescription)
+                                .OfDataType<string>()
+                                .WithComparisonOperator(Operators.Contains)
+                                .SetOperand("alcohol")
+                                .Build();
+                        })
+                        .AddCondition(cb =>
+                        {
+                            return cb.AsValued(ConditionTypes.ClaimDescription)
+                                .OfDataType<string>()
+                                .WithComparisonOperator(Operators.Contains)
+                                .SetOperand("drugs")
+                                .Build();
+                        })
+                        .Build();
+                })
+                .WithContentContainer(new ContentContainer<ContentTypes>(expectedContent, t => CarInsuranceAdvices.PerformInvestigation))
+                .Build();
+
+            // Act
+            await rulesEngine.AddRuleAsync(ruleBuilderResult.Rule, RuleAddPriorityOption.AtBottom).ConfigureAwait(false);
+
+            Rule<ContentTypes, ConditionTypes> actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+
+            // Assert
+            actual.Should().NotBeNull();
+            CarInsuranceAdvices actualContent = actual.ContentContainer.GetContentAs<CarInsuranceAdvices>();
+            actualContent.Should().Be(expected);
+        }
+
+        [Fact]
         public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
         {
             // Arrange

@@ -33,6 +33,11 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The lesser than or equal operator.
         /// </summary>
-        LesserThanOrEqual = 6
+        LesserThanOrEqual = 6,
+
+        /// <summary>
+        /// The contains operator.
+        /// </summary>
+        Contains = 7
     }
 }
