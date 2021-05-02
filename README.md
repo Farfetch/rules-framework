@@ -236,4 +236,6 @@ For your guidance, check Mongo DB implementation: [MongoDbProviderRulesDataSourc
 
 Contributions are more than welcome! Submit comments, issues or pull requests, I promise to keep an eye on them :)
 
+Head over to [CONTRIBUTING](CONTRIBUTING.md) for further details.
+
 While I try to do the best I can, suggestions/contributions are deeply appreciated on documentation!
