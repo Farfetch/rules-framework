@@ -47,7 +47,7 @@ For Rules.Framework, a valid rule accounts for the following conditions:
 
 Bellow you can see a simple sample for demonstration purposes:
 
-![Rule Sample 1](wiki/rule-sample-1.png)
+![Rule Sample 1](docs/rule-sample-1.png)
 
 The sample rule presented:
 
@@ -59,7 +59,7 @@ The sample rule presented:
 
 Simple right? You got the basics covered, let's complicate this a bit by adding a new rule. The formula you saw on the first rule is used to calculate body mass when using kilograms and meters unit of measures, but what if we wanted to calculate using pounds and inches? Let's define a new rule for this:
 
-![Rule Sample 2](wiki/rule-sample-2.png)
+![Rule Sample 2](docs/rule-sample-2.png)
 
 Newly defined rule (Rule #2):
 
