@@ -1,4 +1,4 @@
-# Contribution guidelines for Rules.Framework
+# Contribution guidelines for Rules Framework
 
 Contribution to Rules.Framework is deeply appreciated as we evolve this project to serve the purpose of providing a easy to use, configurable and extensible rules framework for everyone, but some ground guidelines must be ensured to everyone aligned and allow the usage of some automation on top of this repository.
 
