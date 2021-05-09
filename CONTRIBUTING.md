@@ -4,7 +4,7 @@ Contribution to Rules.Framework is deeply appreciated as we evolve this project 
 
 ## Found a bug, what to do?
 
-First of all, search [existent issues](https://github.com/luispfgarces/rules-framework/issues?q=is%3Aissue+is%3Aopen+label%3Abug+) for any open issue with the bug you found, it might have been already reported. If you find a matching issue to yout bug you can subscribe notifications for it and/or complementing with additional information in the comments section.
+First of all, search [existent issues](https://github.com/luispfgarces/rules-framework/issues?q=is%3Aissue+is%3Aopen+label%3Abug+) for any open issue with the bug you found, it might have been already reported. If you find a matching issue to yout bug you can subscribe notifications for it and/or complement with additional information in the comments section.
 
 If you don't see a matching issue, please go ahead and create a new one. Make sure you include the following information on issue description:
 
@@ -90,7 +90,7 @@ To keep source code clean and comprehensive, please make sure you follow these r
 
 - Unit tests body structure must follow the *Arrange, Act & Assert* pattern.
 - Solution line coverage must be kept over 90% at all times.
-- `[ExcludeFromCodeCoverage]` can be used exceptionally where used depencies of class are difficult to test. Make sure your design makes the best effort to abstract these dependencies to promote testability.
+- `[ExcludeFromCodeCoverage]` can be used exceptionally where used dependencies of class are difficult to test. Make sure your design makes the best effort to abstract these dependencies to promote testability before considering using this attribute.
 
 ## Commit rules
 
