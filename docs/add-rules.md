@@ -1,12 +1,12 @@
 # Add rules
 
-This page focus on how to create and add rules using Rules.Framework. It disposes of a rule build fluent API, to provide a near-natural language experience for whomever is creating rule programatically.
+This page focus on how to create and add rules using Rules.Framework. It disposes of a rule build fluent API, to provide a near-natural language experience for whomever is creating rule programmatically.
 
 ## The `RuleBuilder` API
 
-The `RuleBuilder` API currently is the only way to build new rules for adding to Rules Engine. It has a fluent API in order to make rule building a development experience easy and comprehensive.
+The `RuleBuilder` API currently is the only way to build new rules for adding to Rules Engine. It has a fluent API in order to make rule building a easy and comprehensive development experience.
 
-At this point, you should have defined your content type and condition type, and built your rules engine instance. If you haven't done so, please take a look at [README](../README.md#Getting%20started) first.
+At this point, you should have defined your content type and condition type, and built your rules engine instance. If you haven't done so, please take a look at [getting started](getting-started.md) first.
 
 To start building a rule, begin by invoking:
 
@@ -38,11 +38,11 @@ or
 WithDateBegin(DateTime dateBegin)
 ```
 
-Having the last always date end setted to `null` (it means rule applies to *ad eternum*).
+The last method will always have date end setted to `null` (it means rule applies to *ad eternum*).
 
 ### Set additional conditions
 
-After a dates interval, we should set additional conditions to restrict at your discretion how it should be matched when you try to evaluate it using Rules Engine. You should start adding conditions by specifying a root condition and specifying additional ones on a tree format.
+After a dates interval, we should set additional conditions to restrict at your discretion how rule should be matched when you try to evaluate it using Rules Engine. You should start adding conditions by specifying a root condition and specifying additional ones on a tree format.
 
 ```csharp
 WithCondition(Func<IConditionNodeBuilder, IConditionNode> conditionFunc)
@@ -146,7 +146,7 @@ To build a composed condition node, you have to set the logical operator using `
 - And (`&&`)
 - Or (`||`)
 
-Then you'd add as much condition nodes as you like to the composed condition node, keeping in mind that the logical operator will apply to all equally. If you use a `LogicalOperators.And` operator, all defined condition nodes under it would need to evaluate as true, but on the other hand, using `LogicalOperators.Or`, it would only need one of the conditions to evaluate as true for the whole composed condition node evaluate as true.
+Then you'd add as much condition nodes as you like to the composed condition node, keeping in mind that the logical operator will apply to all equally. If you use a `LogicalOperators.And` operator, all defined condition nodes under it would need to evaluate as true so that final evaluation would be true, but on the other hand, using `LogicalOperators.Or`, it would only need one of the conditions to evaluate as true for the whole composed condition node evaluate as true.
 
 ### Content
 
@@ -166,7 +166,7 @@ By last, call `Build()` on your rule to finalize building it. Be aware that this
 
 ## Adding a new rule to Rules Engine
 
-Up until now, all we've dealt with was how to build a single rule considering the own rules' logic. From now on, we have to consider the implications of adding a rules to a data set and ensure consistency in the end. When addind a rule, it must be ensured that:
+Up until now, all we've dealt with was how to build a single rule considering the own rules' logic. From now on, we have to consider the implications of adding a rule to a data set and ensure consistency in the end. When addind a rule, it must be ensured that:
 
 - Rule name is unique (per each content type)
 - Priority is unique (per each content type)
@@ -192,7 +192,7 @@ The parameter `ruleAddPriorityOption` can be configured with one of the followin
     RuleAddPriorityOption.AtBottom
     ```
 
-- Add at a rules' name priority, which causes that rule and subsequent rules with larger priority to be pushed down by one priority value.
+- Add at a rules' name priority, which causes that rule and subsequent rules with larger priority to be pushed to the bottom by one priority value.
 
     ```csharp
     RuleAddPriorityOption.ByRuleName(string ruleName)
@@ -200,12 +200,12 @@ The parameter `ruleAddPriorityOption` can be configured with one of the followin
 
     If a rule name that does not exist is specified, a failure result will be returned as result of the adding operation.
 
-- Add at a specific priority number, which causes any rule existing on specified priority number and subsequent with larger priority to be pushed down by one priority value.
+- Add at a specific priority number, which causes any rule existing on specified priority number and subsequent with larger priority to be pushed to the bottom by one priority value.
 
     ```csharp
     RuleAddPriorityOption.ByPriorityNumber(int priority)
     ```
 
-    If a priority number lower than existent rules is specified, Rules Engine will fix it to be the same as the lowest existent priority (e.g. if -2 is specified, and lowest existent rule priority is 1, then Rules Engine will fix value to 1). On the other hand, if a priority number higher than existent rules plus 1 is specified, Rules Engine will fix it to be the same as the highest existent priority plus 1 (e.g. it 30 is specified and highest existent rule priority is 20, the Rules Engine will fix value to 21).
+    If a priority number lower than existent rules is specified, Rules Engine will fix it to be the same as the lowest existent priority (e.g. if -2 is specified, and lowest existent rule priority is 1, then Rules Engine will fix value to 1). On the other hand, if a priority number higher than existent rules plus 1 is specified, Rules Engine will fix it to be the same as the highest existent priority plus 1 (e.g. if 30 is specified and highest existent rule priority is 20, the Rules Engine will fix value to 21).
 
 Be sure to check on the returned `ruleOperationResult` if the operation was a success, as it may contain any errors occurred while adding rule if operation was a failure.

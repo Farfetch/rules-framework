@@ -1,10 +1,10 @@
 # Contribution guidelines for Rules Framework
 
-Contribution to Rules.Framework is deeply appreciated as we evolve this project to serve the purpose of providing a easy to use, configurable and extensible rules framework for everyone, but some ground guidelines must be ensured to everyone aligned and allow the usage of some automation on top of this repository.
+Contribution to Rules.Framework is deeply appreciated as we evolve this project to serve the purpose of providing a easy to use, configurable and extensible rules framework for everyone, but some ground guidelines must be ensured to have everyone aligned and allow the usage of some automation on top of this repository.
 
 ## Found a bug, what to do?
 
-First of all, search [existent issues](https://github.com/luispfgarces/rules-framework/issues?q=is%3Aissue+is%3Aopen+label%3Abug+) for any open issue with the bug you found, it might have been already reported. If you find a matching issue to yout bug you can subscribe notifications for it and/or complement with additional information in the comments section.
+First of all, search [existent issues](https://github.com/luispfgarces/rules-framework/issues?q=is%3Aissue+is%3Aopen+label%3Abug+) for any open issue with the bug you found, it might have been already reported. If you find a matching issue to your bug, you can subscribe notifications for it and/or complement with additional information in the comments section.
 
 If you don't see a matching issue, please go ahead and create a new one. Make sure you include the following information on issue description:
 
@@ -44,6 +44,7 @@ First of all, ensure you have appropriate .Net SDK installed (need .Net Core 3.1
     ```shell
     PS> .\run-tests.ps1
     ```
+
     Open \<your-repo-root>/coverage-outputs/report/index.html on your favorite browser to preview HTML coverage report.
 
 1. Commit your changes to codebase - make sure you use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (changelog will be supported sometime in the future, and this will be important to use automatic tooling on top of commit messages).
@@ -56,7 +57,7 @@ First of all, ensure you have appropriate .Net SDK installed (need .Net Core 3.1
 
 1. Open a pull request with your changes targeting to `luispfgarces/rules-framework:master`. Link any issues solved on pull request.
 
-1. Changes will be automatically run though Appveyor CI (build + test + SonarQube upload) for you pull request. Please make sure all checks are green on GitHub.
+1. Changes will be automatically run though Appveyor CI (build + test + SonarQube upload) for your pull request. Please make sure all checks are green on GitHub.
 
 1. Changes might be suggested or requested. If that happens, please make sure to have all tests passing after changes are done.
 

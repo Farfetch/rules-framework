@@ -1,6 +1,6 @@
 # Search rules
 
-Here it is described how to search rules base using the Rules Engine. The Rules Engine exposes a method to search rules:
+Here it is described how to search rules base using the Rules.Framework. The Rules Engine exposes a method to search rules:
 
 ```csharp
 SearchRulesAsync(SearchArgs<TContentType, TConditionType> searchArgs)
