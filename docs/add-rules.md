@@ -1,4 +1,4 @@
-# Add rules using Rules Framework
+# Add rules
 
 This page focus on how to create and add rules using Rules.Framework. It disposes of a rule build fluent API, to provide a near-natural language experience for whomever is creating rule programatically.
 
@@ -156,14 +156,56 @@ For last, you can set the rule content using the method:
 WithContentContainer(ContentContainer<TContentType> contentContainer)
 ```
 
-This method allows you to set what value the rule is actually keeping so that when you match it, you can retrieve.
+This method allows you to set what value the rule is actually keeping so that when you match it, you can retrieve its' value.
 
 The `ContentContainer<TContentType` abstraction exists so that rules content can be kept in-memory still in a serialized form, which you'll only need to concern about if you implement a new `IRulesDataSource<TContentType, TConditionType>` implementation. For most use cases, it should suffice simply doing `new ContentContainer<ContentTypes>(<your content type here>, (t) => <your content value/object here>)`.
 
 ### Completing the rule
 
-By last, call `Build()` on your rule to finalize building it. Be aware that this method returns `RuleBuilderResult<TContentType, TConditionType>`, which may be a success or failure result. In case it is a failure, it will also contain the errors occurred that led to fail to build the rule.
+By last, call `Build()` on your rule to finalize building it. Be aware that this method returns `RuleBuilderResult<TContentType, TConditionType>`, which may be a success or failure result. If result is success, it will contain the built rule. In case it is a failure, it will contain the errors occurred that led to fail to build the rule.
 
 ## Adding a new rule to Rules Engine
 
-TBC
+Up until now, all we've dealt with was how to build a single rule considering the own rules' logic. From now on, we have to consider the implications of adding a rules to a data set and ensure consistency in the end. When addind a rule, it must be ensured that:
+
+- Rule name is unique (per each content type)
+- Priority is unique (per each content type)
+- Priority values are continguous
+
+The method `AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)` ensures those conditions are respected when adding a rule, and thus ensuring rules evaluation works as supposed when requesting rule matches. So, considering a already built rule and Rules Engine, adding a rule is simple as:
+
+```csharp
+RuleOperationResult ruleOperationResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
+```
+
+The parameter `ruleAddPriorityOption` can be configured with one of the following options:
+
+- Add at top of rules, and by "top" we mean the least priority number.
+
+    ```csharp
+    RuleAddPriorityOption.AtTop
+    ```
+
+- Add at bottom of rules, where we mean the number next to the largest priority number already existent.
+
+    ```csharp
+    RuleAddPriorityOption.AtBottom
+    ```
+
+- Add at a rules' name priority, which causes that rule and subsequent rules with larger priority to be pushed down by one priority value.
+
+    ```csharp
+    RuleAddPriorityOption.ByRuleName(string ruleName)
+    ```
+
+    If a rule name that does not exist is specified, a failure result will be returned as result of the adding operation.
+
+- Add at a specific priority number, which causes any rule existing on specified priority number and subsequent with larger priority to be pushed down by one priority value.
+
+    ```csharp
+    RuleAddPriorityOption.ByPriorityNumber(int priority)
+    ```
+
+    If a priority number lower than existent rules is specified, Rules Engine will fix it to be the same as the lowest existent priority (e.g. if -2 is specified, and lowest existent rule priority is 1, then Rules Engine will fix value to 1). On the other hand, if a priority number higher than existent rules plus 1 is specified, Rules Engine will fix it to be the same as the highest existent priority plus 1 (e.g. it 30 is specified and highest existent rule priority is 20, the Rules Engine will fix value to 21).
+
+Be sure to check on the returned `ruleOperationResult` if the operation was a success, as it may contain any errors occurred while adding rule if operation was a failure.
