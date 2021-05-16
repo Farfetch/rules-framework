@@ -6,9 +6,11 @@ namespace Rules.Framework.Core.ConditionNodes
     /// Defines the template implementation for a condition node based on a value comparison.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     public abstract class ValueConditionNodeTemplate<T, TConditionType> : IValueConditionNode<TConditionType>
-        where T : IComparable<T>
+        where T : IComparable
     {
         /// <summary>
         /// Creates a new <see cref="ValueConditionNodeTemplate{T, TConditionType}"/>.

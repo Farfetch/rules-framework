@@ -8,6 +8,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.ValueEvaluation;
+    using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
     using Rules.Framework.Tests.TestStubs;
     using Xunit;
 
@@ -19,12 +20,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Arrange
             BooleanConditionNode<ConditionType> conditionNode = new BooleanConditionNode<ConditionType>(ConditionType.IsVip, Operators.NotEqual, true);
 
-            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
-            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<bool>(), It.IsAny<bool>()))
+            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
-            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
             IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
@@ -40,7 +41,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
@@ -49,8 +50,8 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Assert
             actualEvalResult.Should().BeTrue();
 
-            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
-            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<bool>(), It.IsAny<bool>()), Times.Once());
+            mockConditionEvalDispatchProvider.Verify(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
+            mockOperatorEvalStrategy.Verify(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
         }
 
         [Fact]
@@ -59,12 +60,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Arrange
             DecimalConditionNode<ConditionType> conditionNode = new DecimalConditionNode<ConditionType>(ConditionType.PluviosityRate, Operators.GreaterThan, 50);
 
-            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
-            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<decimal>(), It.IsAny<decimal>()))
+            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
-            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
             IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
@@ -80,7 +81,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
@@ -89,8 +90,8 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Assert
             actualEvalResult.Should().BeTrue();
 
-            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
-            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<decimal>(), It.IsAny<decimal>()), Times.Once());
+            mockConditionEvalDispatchProvider.Verify(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
+            mockOperatorEvalStrategy.Verify(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
         }
 
         [Fact]
@@ -99,12 +100,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Arrange
             IntegerConditionNode<ConditionType> conditionNode = new IntegerConditionNode<ConditionType>(ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
 
-            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
-            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<int>(), It.IsAny<int>()))
+            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
-            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
             IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
@@ -120,7 +121,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
@@ -129,8 +130,8 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Assert
             actualEvalResult.Should().BeTrue();
 
-            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
-            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<int>(), It.IsAny<int>()), Times.Once());
+            mockConditionEvalDispatchProvider.Verify(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
+            mockOperatorEvalStrategy.Verify(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
         }
 
         [Fact]
@@ -139,12 +140,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Arrange
             StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
-            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
-            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()))
+            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
-            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
             IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
@@ -160,7 +161,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
@@ -169,8 +170,8 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Assert
             actualEvalResult.Should().BeTrue();
 
-            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
-            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
+            mockConditionEvalDispatchProvider.Verify(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
+            mockOperatorEvalStrategy.Verify(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
         }
 
         [Fact]
@@ -179,12 +180,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Arrange
             StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
-            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
-            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()))
+            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
-            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
             IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
@@ -201,7 +202,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.Discard;
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
@@ -210,8 +211,8 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Assert
             actualEvalResult.Should().BeFalse();
 
-            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Never());
-            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+            mockConditionEvalDispatchProvider.Verify(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Never());
+            mockOperatorEvalStrategy.Verify(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Never());
         }
 
         [Fact]
@@ -220,12 +221,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Arrange
             StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
-            Mock<IOperatorEvalStrategy> mockOperatorEvalStrategy = new Mock<IOperatorEvalStrategy>();
-            mockOperatorEvalStrategy.Setup(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()))
+            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(false);
 
-            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
-            mockOperatorEvalStrategyFactory.Setup(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()))
+            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
             IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
@@ -242,7 +243,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault;
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
             Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
@@ -251,8 +252,8 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Assert
             actualEvalResult.Should().BeFalse();
 
-            mockOperatorEvalStrategyFactory.Verify(x => x.GetOperatorEvalStrategy(It.IsAny<Operators>()), Times.Once());
-            mockOperatorEvalStrategy.Verify(x => x.Eval(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
+            mockConditionEvalDispatchProvider.Verify(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
+            mockOperatorEvalStrategy.Verify(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
         }
 
         [Fact]
@@ -261,13 +262,13 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             // Arrange
             Mock<IValueConditionNode<ConditionType>> mockValueConditionNode = new Mock<IValueConditionNode<ConditionType>>();
 
-            Mock<IOperatorEvalStrategyFactory> mockOperatorEvalStrategyFactory = new Mock<IOperatorEvalStrategyFactory>();
+            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
 
             MatchModes matchMode = MatchModes.Exact;
 
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockOperatorEvalStrategyFactory.Object, rulesEngineOptions);
+            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
             NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetDeferredEvalFor(mockValueConditionNode.Object, matchMode));

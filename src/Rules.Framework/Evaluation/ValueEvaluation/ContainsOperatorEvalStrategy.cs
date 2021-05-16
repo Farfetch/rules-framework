@@ -2,10 +2,9 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
 
-    internal class ContainsOperatorEvalStrategy : IOperatorEvalStrategy
+    internal class ContainsOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
-        public bool Eval<T>(T leftOperand, T rightOperand)
-            where T : IComparable<T>
+        public bool Eval(object leftOperand, object rightOperand)
         {
             if (leftOperand is string)
             {
@@ -15,7 +14,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 return leftOperandAsString.Contains(rightOperandAsString);
             }
 
-            throw new NotSupportedException($"Unsupported 'contains' comparison between operands of type '{typeof(T).FullName}'.");
+            throw new NotSupportedException($"Unsupported 'contains' comparison between operands of type '{leftOperand?.GetType().FullName}'.");
         }
     }
 }

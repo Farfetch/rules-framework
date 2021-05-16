@@ -6,7 +6,7 @@ namespace Rules.Framework.Builder.Validation
     using Rules.Framework.Core.ConditionNodes;
 
     internal class ValueConditionNodeValidator<T, TConditionType> : AbstractValidator<ValueConditionNodeTemplate<T, TConditionType>>
-        where T : IComparable<T>
+        where T : IComparable
     {
         public ValueConditionNodeValidator()
         {

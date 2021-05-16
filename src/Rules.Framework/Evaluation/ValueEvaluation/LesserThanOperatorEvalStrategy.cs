@@ -2,11 +2,16 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
 
-    internal class LesserThanOperatorEvalStrategy : IOperatorEvalStrategy
+    internal class LesserThanOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
-        public bool Eval<T>(T leftOperand, T rightOperand) where T : IComparable<T>
+        public bool Eval(object leftOperand, object rightOperand)
         {
-            return leftOperand.CompareTo(rightOperand) < 0;
+            if (leftOperand is IComparable leftOperandComparable && rightOperand is IComparable rightOperandComparable)
+            {
+                return leftOperandComparable.CompareTo(rightOperandComparable) < 0;
+            }
+
+            throw new NotSupportedException($"Only instances implementing {nameof(IComparable)} are supported.");
         }
     }
 }
