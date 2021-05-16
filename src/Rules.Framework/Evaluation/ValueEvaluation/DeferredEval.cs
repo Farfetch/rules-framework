@@ -2,20 +2,20 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
 
     internal class DeferredEval : IDeferredEval
     {
-        private readonly IOperatorEvalStrategyFactory operatorEvalStrategyFactory;
+        private readonly IConditionEvalDispatchProvider conditionEvalDispatchProvider;
         private readonly RulesEngineOptions rulesEngineOptions;
 
         public DeferredEval(
-            IOperatorEvalStrategyFactory operatorEvalStrategyFactory,
+            IConditionEvalDispatchProvider conditionEvalDispatchProvider,
             RulesEngineOptions rulesEngineOptions)
         {
-            this.operatorEvalStrategyFactory = operatorEvalStrategyFactory;
+            this.conditionEvalDispatchProvider = conditionEvalDispatchProvider;
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
@@ -33,7 +33,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 
         private bool Eval<TConditionNode, TConditionType, T>(IEnumerable<Condition<TConditionType>> conditions, TConditionNode valueConditionNode, MatchModes matchMode)
             where TConditionNode : ValueConditionNodeTemplate<T, TConditionType>
-            where T : IComparable<T>
+            where T : IComparable
         {
             Condition<TConditionType> leftOperandCondition = conditions.FirstOrDefault(c => object.Equals(c.Type, valueConditionNode.ConditionType));
 
@@ -45,17 +45,18 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 }
                 else if (matchMode == MatchModes.Search)
                 {
-                    // When match mode is search, if condition is missing, it is not used as search criteria, so we don't filter out the rule.
+                    // When match mode is search, if condition is missing, it is not used as search
+                    // criteria, so we don't filter out the rule.
                     return true;
                 }
             }
 
-            T leftOperand = (T)Convert.ChangeType(leftOperandCondition?.Value
-                ?? this.rulesEngineOptions.DataTypeDefaults[valueConditionNode.DataType], typeof(T), CultureInfo.InvariantCulture);
-            T rightOperand = valueConditionNode.Operand;
-            IOperatorEvalStrategy operatorEvalStrategy = operatorEvalStrategyFactory.GetOperatorEvalStrategy(valueConditionNode.Operator);
+            object leftOperand = leftOperandCondition?.Value;
+            object rightOperand = valueConditionNode.Operand;
 
-            return operatorEvalStrategy.Eval(leftOperand, rightOperand);
+            IConditionEvalDispatcher conditionEvalDispatcher = this.conditionEvalDispatchProvider.GetEvalDispatcher(leftOperand, valueConditionNode.Operator, rightOperand);
+
+            return conditionEvalDispatcher.EvalDispatch(valueConditionNode.DataType, leftOperand, valueConditionNode.Operator, rightOperand);
         }
     }
 }

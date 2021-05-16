@@ -3,6 +3,7 @@ namespace Rules.Framework.Builder
     using System;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.ValueEvaluation;
+    using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
     using Rules.Framework.Validation;
 
     internal class ConfiguredRulesEngineBuilder<TContentType, TConditionType> : IConfiguredRulesEngineBuilder<TContentType, TConditionType>
@@ -19,7 +20,9 @@ namespace Rules.Framework.Builder
         public RulesEngine<TContentType, TConditionType> Build()
         {
             IOperatorEvalStrategyFactory operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
-            IDeferredEval deferredEval = new DeferredEval(operatorEvalStrategyFactory, this.rulesEngineOptions);
+            IDataTypesConfigurationProvider dataTypesConfigurationProvider = new DataTypesConfigurationProvider(this.rulesEngineOptions);
+            IConditionEvalDispatchProvider conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, dataTypesConfigurationProvider);
+            IDeferredEval deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval);
             ValidationProvider validationProvider = ValidationProvider.New()
                 .MapValidatorFor(new SearchArgsValidator<TContentType, TConditionType>());

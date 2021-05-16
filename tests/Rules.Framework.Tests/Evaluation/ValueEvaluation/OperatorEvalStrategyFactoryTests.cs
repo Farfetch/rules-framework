@@ -25,7 +25,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             OperatorEvalStrategyFactory sut = new OperatorEvalStrategyFactory();
 
             // Act
-            IOperatorEvalStrategy actual = sut.GetOperatorEvalStrategy(expectedOperator);
+            IOneToOneOperatorEvalStrategy actual = sut.GetOneToOneOperatorEvalStrategy(expectedOperator);
 
             // Assert
             actual.Should().NotBeNull().And.BeOfType(expectedType);
@@ -40,11 +40,11 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             OperatorEvalStrategyFactory sut = new OperatorEvalStrategyFactory();
 
             // Act
-            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetOperatorEvalStrategy(expectedOperator));
+            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetOneToOneOperatorEvalStrategy(expectedOperator));
 
             // Assert
             notSupportedException.Should().NotBeNull();
-            notSupportedException.Message.Should().Be("Operator evaluation is not supported for operator '-1'.");
+            notSupportedException.Message.Should().Be("Operator evaluation is not supported for operator '-1' on the context of IOneToOneOperatorEvalStrategy.");
         }
     }
 }
