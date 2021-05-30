@@ -15,24 +15,12 @@ namespace Rules.Framework.Builder.Validation
                     validationResult = conditionNodeValidationArgs.ComposedConditionNodeValidator.Validate(composedConditionNode);
                     break;
 
-                case IntegerConditionNode<TConditionType> integerConditionNode:
-                    validationResult = conditionNodeValidationArgs.IntegerConditionNodeValidator.Validate(integerConditionNode);
-                    break;
-
-                case DecimalConditionNode<TConditionType> decimalConditionNode:
-                    validationResult = conditionNodeValidationArgs.DecimalConditionNodeValidator.Validate(decimalConditionNode);
-                    break;
-
-                case StringConditionNode<TConditionType> stringConditionNode:
-                    validationResult = conditionNodeValidationArgs.StringConditionNodeValidator.Validate(stringConditionNode);
-                    break;
-
-                case BooleanConditionNode<TConditionType> booleanConditionNode:
-                    validationResult = conditionNodeValidationArgs.BooleanConditionNodeValidator.Validate(booleanConditionNode);
-                    break;
+                case null:
+                    return;
 
                 default:
-                    return;
+                    validationResult = conditionNodeValidationArgs.ValueConditionNodeValidator.Validate(conditionNode as ValueConditionNode<TConditionType>);
+                    break;
             }
 
             if (!validationResult.IsValid)

@@ -1,12 +1,10 @@
 namespace Rules.Framework.Builder.Validation
 {
-    using System;
     using FluentValidation;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal class ValueConditionNodeValidator<T, TConditionType> : AbstractValidator<ValueConditionNodeTemplate<T, TConditionType>>
-        where T : IComparable
+    internal class ValueConditionNodeValidator<TConditionType> : AbstractValidator<ValueConditionNode<TConditionType>>
     {
         public ValueConditionNodeValidator()
         {
