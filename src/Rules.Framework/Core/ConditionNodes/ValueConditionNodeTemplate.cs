@@ -9,6 +9,7 @@ namespace Rules.Framework.Core.ConditionNodes
     /// <typeparam name="TConditionType">
     /// The condition type that allows to filter rules based on a set of conditions.
     /// </typeparam>
+    [Obsolete("ValueConditionNodeTemplate is obsolete, please use ValueConditionNode instead. This type will be removed in a future major release.")]
     public abstract class ValueConditionNodeTemplate<T, TConditionType> : IValueConditionNode<TConditionType>
         where T : IComparable
     {

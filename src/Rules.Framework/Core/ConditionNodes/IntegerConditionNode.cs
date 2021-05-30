@@ -1,12 +1,16 @@
 namespace Rules.Framework.Core.ConditionNodes
 {
+    using System;
     using System.Diagnostics;
 
     /// <summary>
     /// A condition node with a integer data type.
     /// </summary>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     [DebuggerDisplay("Integer condition: <{ConditionType.ToString(),nq}> {Operator} {Operand}")]
+    [Obsolete("IntegerConditionNode is obsolete, please use ValueConditionNode instead. This type will be removed in a future major release.")]
     public class IntegerConditionNode<TConditionType> : ValueConditionNodeTemplate<int, TConditionType>
     {
         /// <summary>

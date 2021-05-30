@@ -28,11 +28,25 @@ namespace Rules.Framework.Builder
             this.conditionType = conditionType;
         }
 
-        public IValueConditionNodeBuilder<TConditionType, TDataType> WithComparisonOperator(Operators comparisonOperator)
+        public IValueConditionNode<TConditionType> Build()
         {
-            this.comparisonOperator = comparisonOperator;
+            switch (this.operand)
+            {
+                case decimal decimalOperand:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, decimalOperand);
 
-            return this;
+                case int integerOperand:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, integerOperand);
+
+                case bool booleanOperand:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, booleanOperand);
+
+                case string stringOperand:
+                    return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, stringOperand);
+
+                default:
+                    throw new NotSupportedException($"The data type is not supported: {typeof(TDataType).FullName}.");
+            }
         }
 
         public IValueConditionNodeBuilder<TConditionType, TDataType> SetOperand(TDataType value)
@@ -42,25 +56,11 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        public IValueConditionNode<TConditionType> Build()
+        public IValueConditionNodeBuilder<TConditionType, TDataType> WithComparisonOperator(Operators comparisonOperator)
         {
-            switch (this.operand)
-            {
-                case decimal decimalOperand:
-                    return new DecimalConditionNode<TConditionType>(this.conditionType, this.comparisonOperator, decimalOperand);
+            this.comparisonOperator = comparisonOperator;
 
-                case int integerOperand:
-                    return new IntegerConditionNode<TConditionType>(this.conditionType, this.comparisonOperator, integerOperand);
-
-                case bool booleanOperand:
-                    return new BooleanConditionNode<TConditionType>(this.conditionType, this.comparisonOperator, booleanOperand);
-
-                case string stringOperand:
-                    return new StringConditionNode<TConditionType>(this.conditionType, this.comparisonOperator, stringOperand);
-
-                default:
-                    throw new NotSupportedException($"The data type is not supported: {typeof(TDataType).FullName}.");
-            }
+            return this;
         }
     }
 }
