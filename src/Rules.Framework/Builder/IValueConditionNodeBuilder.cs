@@ -1,5 +1,6 @@
 namespace Rules.Framework.Builder
 {
+    using System.Collections.Generic;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
@@ -31,11 +32,20 @@ namespace Rules.Framework.Builder
         IValueConditionNode<TConditionType> Build();
 
         /// <summary>
-        /// Sets the condition node right hand operand. Remember that the rules engine input conditions will be evaluated as left hand operands.
+        /// Sets the condition node right hand operand (as a single value). Remember that the rules
+        /// engine input conditions will be evaluated as left hand operands.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
         IValueConditionNodeBuilder<TConditionType, TDataType> SetOperand(TDataType value);
+
+        /// <summary>
+        /// Sets the condition node right hand operand (as collection of values). Remember that the
+        /// rules engine input conditions will be evaluated as left hand operands.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IValueConditionNodeBuilder<TConditionType, TDataType> SetOperand(IEnumerable<TDataType> value);
 
         /// <summary>
         /// Sets the new value condition node with the specified comparison operator.

@@ -1,6 +1,7 @@
 namespace Rules.Framework.Builder
 {
     using System;
+    using System.Collections.Generic;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
@@ -21,7 +22,7 @@ namespace Rules.Framework.Builder
     {
         private readonly TConditionType conditionType;
         private Operators comparisonOperator;
-        private TDataType operand;
+        private object operand;
 
         public ValueConditionNodeBuilder(TConditionType conditionType)
         {
@@ -32,17 +33,21 @@ namespace Rules.Framework.Builder
         {
             switch (this.operand)
             {
-                case decimal decimalOperand:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, decimalOperand);
+                case decimal _:
+                case IEnumerable<decimal> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, this.operand);
 
-                case int integerOperand:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, integerOperand);
+                case int _:
+                case IEnumerable<int> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, this.operand);
 
-                case bool booleanOperand:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, booleanOperand);
+                case bool _:
+                case IEnumerable<bool> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, this.operand);
 
-                case string stringOperand:
-                    return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, stringOperand);
+                case string _:
+                case IEnumerable<string> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, this.operand);
 
                 default:
                     throw new NotSupportedException($"The data type is not supported: {typeof(TDataType).FullName}.");
@@ -50,6 +55,13 @@ namespace Rules.Framework.Builder
         }
 
         public IValueConditionNodeBuilder<TConditionType, TDataType> SetOperand(TDataType value)
+        {
+            this.operand = value;
+
+            return this;
+        }
+
+        public IValueConditionNodeBuilder<TConditionType, TDataType> SetOperand(IEnumerable<TDataType> value)
         {
             this.operand = value;
 
