@@ -21,8 +21,8 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
             DataTypeConfiguration dataTypeConfiguration = this.GetDataTypeConfiguration(dataType);
 
             IEnumerable<object> leftOperandAux = ConvertToTypedEnumerable(leftOperand, nameof(leftOperand));
-            IEnumerable<object> leftOperandConverted = leftOperandAux.Select(x => ConvertToDataType(x, dataTypeConfiguration));
-            object rightOperandConverted = ConvertToDataType(rightOperand, dataTypeConfiguration);
+            IEnumerable<object> leftOperandConverted = leftOperandAux.Select(x => ConvertToDataType(x, nameof(leftOperand), dataTypeConfiguration));
+            object rightOperandConverted = ConvertToDataType(rightOperand, nameof(rightOperand), dataTypeConfiguration);
 
             return this.operatorEvalStrategyFactory.GetManyToOneOperatorEvalStrategy(@operator).Eval(leftOperandConverted, rightOperandConverted);
         }

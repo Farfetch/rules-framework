@@ -17,8 +17,8 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
         public bool EvalDispatch(DataTypes dataType, object leftOperand, Operators @operator, object rightOperand)
         {
             DataTypeConfiguration dataTypeConfiguration = this.GetDataTypeConfiguration(dataType);
-            object leftOperandConverted = ConvertToDataType(leftOperand, dataTypeConfiguration);
-            object rightOperandConverted = ConvertToDataType(rightOperand, dataTypeConfiguration);
+            object leftOperandConverted = ConvertToDataType(leftOperand, nameof(leftOperand), dataTypeConfiguration);
+            object rightOperandConverted = ConvertToDataType(rightOperand, nameof(rightOperand), dataTypeConfiguration);
 
             return this.operatorEvalStrategyFactory.GetOneToOneOperatorEvalStrategy(@operator).Eval(leftOperandConverted, rightOperandConverted);
         }
