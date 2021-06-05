@@ -20,9 +20,9 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
         {
             DataTypeConfiguration dataTypeConfiguration = this.GetDataTypeConfiguration(dataType);
 
-            IEnumerable<object> leftOperandAux = leftOperand as IEnumerable<object>;
+            IEnumerable<object> leftOperandAux = ConvertToTypedEnumerable(leftOperand, nameof(leftOperand));
             IEnumerable<object> leftOperandConverted = leftOperandAux.Select(x => ConvertToDataType(x, dataTypeConfiguration));
-            IEnumerable<object> rightOperandAux = rightOperand as IEnumerable<object>;
+            IEnumerable<object> rightOperandAux = ConvertToTypedEnumerable(rightOperand, nameof(rightOperand));
             IEnumerable<object> rightOperandConverted = rightOperandAux.Select(x => ConvertToDataType(x, dataTypeConfiguration));
 
             return this.operatorEvalStrategyFactory.GetManyToManyOperatorEvalStrategy(@operator).Eval(leftOperandConverted, rightOperandConverted);
