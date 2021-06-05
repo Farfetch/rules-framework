@@ -16,13 +16,22 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
             this.dataTypesConfigurationProvider = dataTypesConfigurationProvider;
         }
 
-        protected static object ConvertToDataType(object value, DataTypeConfiguration dataTypeConfiguration)
-            => Convert.ChangeType(value
-                ?? dataTypeConfiguration.Default, dataTypeConfiguration.Type, CultureInfo.InvariantCulture);
-
-        protected static IEnumerable<object> ConvertToTypedEnumerable(object rightOperand, string paramName)
+        protected static object ConvertToDataType(object operand, string paramName, DataTypeConfiguration dataTypeConfiguration)
         {
-            if (rightOperand is IEnumerable enumerable)
+            try
+            {
+                return Convert.ChangeType(operand
+                    ?? dataTypeConfiguration.Default, dataTypeConfiguration.Type, CultureInfo.InvariantCulture);
+            }
+            catch (InvalidCastException ice)
+            {
+                throw new ArgumentException($"Parameter value or contained value is not convertible to {dataTypeConfiguration.Type.Name}.", paramName, ice);
+            }
+        }
+
+        protected static IEnumerable<object> ConvertToTypedEnumerable(object operand, string paramName)
+        {
+            if (operand is IEnumerable enumerable)
             {
                 return enumerable.Cast<object>();
             }
