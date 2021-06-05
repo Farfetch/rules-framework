@@ -38,6 +38,13 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The contains operator.
         /// </summary>
-        Contains = 7
+        Contains = 7,
+
+        // Number 8 reserved for "NotContains".
+
+        /// <summary>
+        /// The in operator.
+        /// </summary>
+        In = 9
     }
 }
