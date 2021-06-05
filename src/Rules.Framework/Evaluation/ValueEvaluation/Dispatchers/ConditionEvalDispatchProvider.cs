@@ -1,6 +1,7 @@
 namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
@@ -34,6 +35,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
                 $"{OneToOne}-{Operators.LesserThan}",
                 $"{OneToOne}-{Operators.LesserThanOrEqual}",
                 $"{OneToOne}-{Operators.Contains}",
+                $"{OneToMany}-{Operators.In}",
             };
         }
 
@@ -41,10 +43,10 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
         {
             string combination = leftOperand switch
             {
-                IComparable _ when rightOperand is IComparable => OneToOne,
-                IComparable _ when rightOperand is IEnumerable<IComparable> => OneToMany,
-                IEnumerable<IComparable> _ when rightOperand is IComparable => ManyToOne,
-                IEnumerable<IComparable> _ when rightOperand is IEnumerable<IComparable> => ManyToMany,
+                IEnumerable _ when !(leftOperand is string) && rightOperand is IEnumerable && !(rightOperand is string) => ManyToMany,
+                IEnumerable _ when !(leftOperand is string) => ManyToOne,
+                object _ when rightOperand is IEnumerable && !(rightOperand is string) => OneToMany,
+                object _ => OneToOne,
                 _ => throw new NotSupportedException()
             };
 
