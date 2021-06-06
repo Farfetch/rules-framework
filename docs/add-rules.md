@@ -96,6 +96,7 @@ Next step is to define a comparison operator using method `WithComparisonOperato
 - LesserThan (`<`)
 - LesserThanOrEqual (`<=`)
 - Contains
+- In
 
 Not all comparison operators are supported for all data types, some combinations of them are not valid. This will be validated by rule builder and a validation error will be returned if a invalid combination is attempted. Check the following grid to see combinations are valid or not:
 
@@ -108,8 +109,27 @@ Not all comparison operators are supported for all data types, some combinations
 |LesserThan (`<`)|:heavy_check_mark:|:heavy_check_mark:|:x:|:x:|
 |LesserThanOrEqual (`<=`)|:heavy_check_mark:|:heavy_check_mark:|:x:|:x:|
 |Contains|:x:|:x:|:x:|:heavy_check_mark:|
+|In|:heavy_check_mark:|:heavy_check_mark:|:x:|:heavy_check_mark:|
 
-At last, you should complete valued condition node build with a right hand operand with method `SetOperator(TDataType operand)`. For the case of sample above, `operand` would be set with value 18.
+You should also take into consideration the multiplicity of operands when setting value conditions on a rule. Theoretically, all multiplicity combinations are supported (one to one, one to many, many to one, many to many), but that also relies on a per-operator implementation for each multiplicity. Please refer to following combinations to see which multiplicities are supported or not:
+
+|Operator/Multiplicity|One to One (1 - 1)|One to Many (1 - *)|Many to One (\* - 1)|Many to Many (\* - \*)|
+|-|-|-|-|-|
+|Equal (`=`)|:heavy_check_mark:|:x:|:x:|:x:|
+|NotEqual (`!=` or `<>`)|:heavy_check_mark:|:x:|:x:|:x:|
+|GreaterThan (`>`)|:heavy_check_mark:|:x:|:x:|:x:|
+|GreaterThanOrEqual (`>=`)|:heavy_check_mark:|:x:|:x:|:x:|
+|LesserThan (`<`)|:heavy_check_mark:|:x:|:x:|:x:|
+|LesserThanOrEqual (`<=`)|:heavy_check_mark:|:x:|:x:|:x:|
+|Contains|:heavy_check_mark:|:x:|:x:|:x:|
+|In|:x:|:heavy_check_mark:|:x:|:x:|
+
+At last, you should complete valued condition node build with a right hand operand with following methods, according to wanted multiplicity:
+
+- `SetOperator(TDataType operand)`
+- `SetOperator(IEnumerable<TDataType> operand)`
+
+For the case of sample above, `operand` would be set with value 18.
 
 #### Composed condition nodes
 
@@ -153,10 +173,16 @@ Then you'd add as much condition nodes as you like to the composed condition nod
 For last, you can set the rule content using the method:
 
 ```csharp
-WithContentContainer(ContentContainer<TContentType> contentContainer)
+WithContent(TContentType contentType, object content)
 ```
 
 This method allows you to set what value the rule is actually keeping so that when you match it, you can retrieve its' value.
+
+You can also set the rule content using following method:
+
+```csharp
+WithContentContainer(ContentContainer<TContentType> contentContainer)
+```
 
 The `ContentContainer<TContentType` abstraction exists so that rules content can be kept in-memory still in a serialized form, which you'll only need to concern about if you implement a new `IRulesDataSource<TContentType, TConditionType>` implementation. For most use cases, it should suffice simply doing `new ContentContainer<ContentTypes>(<your content type here>, (t) => <your content value/object here>)`.
 
