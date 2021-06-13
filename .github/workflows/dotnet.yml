@@ -76,7 +76,7 @@ jobs:
           NEXT_VERSION="$CURRENT"
         fi
 
-        if [[ $BRANCH_NAME = 'refs/heads/master' ]]; then
+        if [[ $BRANCH_NAME = 'master' ]]; then
             echo '::set-output name=context::release'
         else
             NEXT_VERSION="$NEXT_VERSION-beta"
