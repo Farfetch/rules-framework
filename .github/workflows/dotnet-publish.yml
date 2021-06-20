@@ -29,13 +29,13 @@ jobs:
         informationalVersion: ${{ env.BUILD_VERSION }}
 
     - name: Pack Rules.Framework
-      run: dotnet pack src/Rules.Framework/Rules.Framework.csproj --include-symbols
+      run: dotnet pack src/Rules.Framework/Rules.Framework.csproj --include-symbols -c Release
       
     - name: Pack Rules.Framework.Providers.MongoDb
-      run: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --include-symbols
+      run: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --include-symbols -c Release
       
     - name: Pack Rules.Framework.Providers.InMemory
-      run: dotnet pack src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj --include-symbols
+      run: dotnet pack src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj --include-symbols -c Release
         
     - name: Publish NuGet packages
       uses: dansiegel/publish-nuget@v1.01
