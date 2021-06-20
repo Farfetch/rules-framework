@@ -1,4 +1,4 @@
-name: .NET
+name: .NET build
 
 on:
   push:
@@ -150,32 +150,6 @@ jobs:
         
     - name: SonarScanner analysis end
       run: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
-      
-    - name: Pack Rules.Framework
-      if: contains(steps.changed-files.outputs.all_modified_files, 'src/Rules.Framework/')
-      run: dotnet pack src/Rules.Framework/Rules.Framework.csproj --no-build --include-symbols
-      
-    - name: Pack Rules.Framework.Providers.MongoDb
-      if: contains(steps.changed-files.outputs.all_modified_files, 'src/Rules.Framework.Providers.MongoDb/')
-      run: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --no-build --include-symbols
-      
-    - name: Pack Rules.Framework.Providers.InMemory
-      if: contains(steps.changed-files.outputs.all_modified_files, 'src/Rules.Framework.Providers.InMemory/')
-      run: dotnet pack src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj --no-build --include-symbols
-      
-    - name: Verify Changed files
-      if: contains(github.ref, 'master')
-      uses: tj-actions/verify-changed-files@v6.2
-      id: verify-changed-files
-      with:
-        files: .nupkg
-        
-    - name: Publish NuGet packages
-      if: contains(github.ref, 'master') && steps.verify-changed-files.outputs.files_changed == 'true'
-      uses: dansiegel/publish-nuget@v1.01
-      with:
-        filename: '**/*.nupkg'
-        apiKey: ${{ secrets.NUGET_API_KEY }}
 
     - name: Delete build tag if exists
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
