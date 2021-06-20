@@ -5,7 +5,6 @@ namespace Rules.Framework.Providers.MongoDb.Tests
     using System.Dynamic;
     using System.Linq;
     using FluentAssertions;
-    using MongoDB.Bson;
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
@@ -16,6 +15,24 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
     public class RuleFactoryTests
     {
+        [Fact]
+        public void CreateRule_GivenNullRule_ThrowsArgumentNullException()
+        {
+            // Arrange
+            Rule<ContentType, ConditionType> rule = null;
+
+            IContentSerializationProvider<ContentType> contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
+
+            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>(contentSerializationProvider);
+
+            // Act
+            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(rule));
+
+            // Assert
+            argumentNullException.Should().NotBeNull();
+            argumentNullException.ParamName.Should().Be(nameof(rule));
+        }
+
         [Fact]
         public void CreateRule_GivenNullRuleDataModel_ThrowsArgumentNullException()
         {
@@ -85,7 +102,6 @@ namespace Rules.Framework.Providers.MongoDb.Tests
                 ContentType = "ContentTypeSample",
                 DateBegin = new System.DateTime(2020, 1, 1),
                 DateEnd = null,
-                Id = ObjectId.GenerateNewId(),
                 Name = "My rule used for testing purposes",
                 Priority = 1,
                 RootCondition = new ComposedConditionNodeDataModel
@@ -161,24 +177,6 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             booleanConditionNode.LogicalOperator.Should().Be(booleanConditionNodeDataModel.LogicalOperator);
             booleanConditionNode.Operand.Should().Be(Convert.ToBoolean(booleanConditionNodeDataModel.Operand));
             booleanConditionNode.Operator.Should().Be(booleanConditionNodeDataModel.Operator);
-        }
-
-        [Fact]
-        public void CreateRule_GivenNullRule_ThrowsArgumentNullException()
-        {
-            // Arrange
-            Rule<ContentType, ConditionType> rule = null;
-
-            IContentSerializationProvider<ContentType> contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
-
-            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>(contentSerializationProvider);
-
-            // Act
-            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(rule));
-
-            // Assert
-            argumentNullException.Should().NotBeNull();
-            argumentNullException.ParamName.Should().Be(nameof(rule));
         }
 
         [Fact]

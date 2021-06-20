@@ -1,7 +1,6 @@
 namespace Rules.Framework.Providers.MongoDb.DataModel
 {
     using System;
-    using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
 
     internal class RuleDataModel
@@ -15,8 +14,6 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
         public DateTime? DateEnd { get; set; }
 
         [BsonId]
-        public ObjectId Id { get; set; }
-
         public string Name { get; set; }
 
         public int Priority { get; set; }

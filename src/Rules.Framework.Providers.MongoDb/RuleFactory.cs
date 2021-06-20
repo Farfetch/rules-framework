@@ -4,7 +4,6 @@ namespace Rules.Framework.Providers.MongoDb
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using MongoDB.Bson;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
@@ -38,7 +37,7 @@ namespace Rules.Framework.Providers.MongoDb
 
             if (!ruleBuilderResult.IsSuccess)
             {
-                throw new InvalidRuleException($"An invalid rule was loaded from data source. Rule ID: {ruleDataModel.Id.ToString()}", ruleBuilderResult.Errors);
+                throw new InvalidRuleException($"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}", ruleBuilderResult.Errors);
             }
 
             ruleBuilderResult.Rule.Priority = ruleDataModel.Priority;
@@ -68,7 +67,6 @@ namespace Rules.Framework.Providers.MongoDb
                 ContentType = Convert.ToString(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
-                Id = ObjectId.GenerateNewId(),
                 Name = rule.Name,
                 Priority = rule.Priority,
                 RootCondition = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null
