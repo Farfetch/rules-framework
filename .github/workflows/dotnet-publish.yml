@@ -10,6 +10,8 @@ jobs:
 
     env:
       BUILD_VERSION: ${{ github.event.release.tag_name }}
+      NUGET_SOURCE: https://api.nuget.org/v3/index.json
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
     steps:
     - uses: actions/checkout@v2
@@ -38,7 +40,4 @@ jobs:
       run: dotnet pack src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj --include-symbols -c Release
         
     - name: Publish NuGet packages
-      uses: dansiegel/publish-nuget@v1.01
-      with:
-        filename: '**/*.nupkg'
-        apiKey: ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push **/*.nupkg -s $NUGET_SOURCE -k $NUGET_API_KEY --skip-duplicate
