@@ -1,0 +1,34 @@
+name: .NET publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_VERSION: ${{ github.event.release.tag_name }}
+      NUGET_SOURCE: https://api.nuget.org/v3/index.json
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Pack Rules.Framework
+      run: dotnet pack src/Rules.Framework/Rules.Framework.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
+      
+    - name: Pack Rules.Framework.Providers.MongoDb
+      run: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
+      
+    - name: Pack Rules.Framework.Providers.InMemory
+      run: dotnet pack src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
+        
+    - name: Publish NuGet packages
+      run: dotnet nuget push **/*.nupkg -s $NUGET_SOURCE -k $NUGET_API_KEY --skip-duplicate
