@@ -34,8 +34,7 @@ jobs:
       id: prev-version-tag
       uses: jimschubert/query-tag-action@v1
       with:
-        include: 'v*'
-        exclude: '*-rc*'
+        include: '*[0-9].*[0-9].*[0-9]*'
         commit-ish: 'HEAD~'
 
     - name: Find last commit message
