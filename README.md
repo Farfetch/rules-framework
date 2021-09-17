@@ -90,3 +90,7 @@ Contributions are more than welcome! Submit comments, issues or pull requests, I
 Head over to [CONTRIBUTING](CONTRIBUTING.md) for further details.
 
 While I try to do the best I can, suggestions/contributions are deeply appreciated on documentation!
+
+## License
+
+[MIT License](LICENSE.md)

@@ -111,6 +111,7 @@ All commit messages should use following rules:
 - fix: solving bugs.
 - refactor: changes to source code that do not solve a bug or add a new feature.
 - test: adding new tests or fixing failing tests.
+- chore: a change on the repository's contents that does not affect production code nor does fit on the previously described types.
 
 ## Documentation rules
 
