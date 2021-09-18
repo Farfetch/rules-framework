@@ -30,12 +30,11 @@ jobs:
     - name: Force fetch tags
       run: git fetch --tags --force
 
-    - name: Find Tag
+    - name: Find last tag
       id: prev-version-tag
-      uses: jimschubert/query-tag-action@v1
-      with:
-        include: '*[0-9].*[0-9].*[0-9]*'
-        commit-ish: 'HEAD~'
+      run: |
+        last_tag=$(git tag -l "*[0-9].*[0-9].*[0-9]*" --sort "-version:refname" | head -n 1)
+        echo "::set-output name=tag::$last_tag"
 
     - name: Find last commit message
       id: last-commit-message
