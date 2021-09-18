@@ -89,11 +89,7 @@ jobs:
 
     - name: Print build version
       run: echo "Build version will be $BUILD_VERSION"
-    
-    - name: Get changed files using defaults
-      id: changed-files
-      uses: tj-actions/changed-files@v1.1.2
-        
+
     - name: Update project version
       uses: roryprimrose/set-vs-sdk-project-version@v1
       with:
