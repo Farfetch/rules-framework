@@ -39,7 +39,7 @@ jobs:
     - name: Find last commit message
       id: last-commit-message
       run: |
-        last_commit_message=$(git log -1 --pretty=%B $BRANCH_NAME --)
+        last_commit_message=$(git log -1 --pretty=%s $BRANCH_NAME --)
         echo "Last commit message found:"
         echo " $last_commit_message"
         echo "LAST_COMMIT_MESSAGE=$last_commit_message" >> $GITHUB_ENV
