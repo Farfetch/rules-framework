@@ -33,7 +33,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Rules.Framework" Version="1.0.97" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.20.0.28934">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.28.0.36354">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

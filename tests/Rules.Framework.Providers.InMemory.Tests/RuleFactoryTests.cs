@@ -196,7 +196,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             integerConditionNodes.Should().HaveCount(1);
             IntegerConditionNode<ConditionType> integerConditionNode = integerConditionNodes.First();
             integerConditionNode.Should().NotBeNull();
-            integerConditionNode.ConditionType.Should().Match<ConditionType>(x => x == integerConditionNodeDataModel.ConditionType);
+            integerConditionNode.ConditionType.Should().Match(x => x == integerConditionNodeDataModel.ConditionType);
             integerConditionNode.DataType.Should().Be(integerConditionNodeDataModel.DataType);
             integerConditionNode.LogicalOperator.Should().Be(integerConditionNodeDataModel.LogicalOperator);
             integerConditionNode.Operand.Should().Match(x => object.Equals(x, integerConditionNodeDataModel.Operand));
@@ -206,7 +206,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             stringConditionNodes.Should().HaveCount(1);
             StringConditionNode<ConditionType> stringConditionNode = stringConditionNodes.First();
             stringConditionNode.Should().NotBeNull();
-            stringConditionNode.ConditionType.Should().Match<ConditionType>(x => x == stringConditionNodeDataModel.ConditionType);
+            stringConditionNode.ConditionType.Should().Match(x => x == stringConditionNodeDataModel.ConditionType);
             stringConditionNode.DataType.Should().Be(stringConditionNodeDataModel.DataType);
             stringConditionNode.LogicalOperator.Should().Be(stringConditionNodeDataModel.LogicalOperator);
             stringConditionNode.Operand.Should().Match(x => object.Equals(x, stringConditionNodeDataModel.Operand));
@@ -216,7 +216,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             decimalConditionNodes.Should().HaveCount(1);
             DecimalConditionNode<ConditionType> decimalConditionNode = decimalConditionNodes.First();
             decimalConditionNode.Should().NotBeNull();
-            decimalConditionNode.ConditionType.Should().Match<ConditionType>(x => x == decimalConditionNodeDataModel.ConditionType);
+            decimalConditionNode.ConditionType.Should().Match(x => x == decimalConditionNodeDataModel.ConditionType);
             decimalConditionNode.DataType.Should().Be(decimalConditionNodeDataModel.DataType);
             decimalConditionNode.LogicalOperator.Should().Be(decimalConditionNodeDataModel.LogicalOperator);
             decimalConditionNode.Operand.Should().Match(x => object.Equals(x, decimalConditionNodeDataModel.Operand));
@@ -226,7 +226,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             booleanConditionNodes.Should().HaveCount(1);
             BooleanConditionNode<ConditionType> booleanConditionNode = booleanConditionNodes.First();
             booleanConditionNode.Should().NotBeNull();
-            booleanConditionNode.ConditionType.Should().Match<ConditionType>(x => x == booleanConditionNodeDataModel.ConditionType);
+            booleanConditionNode.ConditionType.Should().Match(x => x == booleanConditionNodeDataModel.ConditionType);
             booleanConditionNode.DataType.Should().Be(booleanConditionNodeDataModel.DataType);
             booleanConditionNode.LogicalOperator.Should().Be(booleanConditionNodeDataModel.LogicalOperator);
             booleanConditionNode.Operand.Should().Be(Convert.ToBoolean(booleanConditionNodeDataModel.Operand));
@@ -301,7 +301,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             valueConditionNodeDataModels.Should().HaveCount(4);
             ValueConditionNodeDataModel<ConditionType> integerConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Integer);
             integerConditionNodeDataModel.Should().NotBeNull();
-            integerConditionNodeDataModel.ConditionType.Should().Match<ConditionType>(x => integerConditionNode.ConditionType == x);
+            integerConditionNodeDataModel.ConditionType.Should().Match(x => integerConditionNode.ConditionType == x);
             integerConditionNodeDataModel.DataType.Should().Be(integerConditionNode.DataType);
             integerConditionNodeDataModel.LogicalOperator.Should().Be(integerConditionNode.LogicalOperator);
             integerConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, integerConditionNode.Operand));
@@ -309,7 +309,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
 
             ValueConditionNodeDataModel<ConditionType> stringConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.String);
             stringConditionNodeDataModel.Should().NotBeNull();
-            stringConditionNodeDataModel.ConditionType.Should().Match<ConditionType>(x => stringConditionNode.ConditionType == x);
+            stringConditionNodeDataModel.ConditionType.Should().Match(x => stringConditionNode.ConditionType == x);
             stringConditionNodeDataModel.DataType.Should().Be(stringConditionNode.DataType);
             stringConditionNodeDataModel.LogicalOperator.Should().Be(stringConditionNode.LogicalOperator);
             stringConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, stringConditionNode.Operand));
@@ -317,7 +317,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
 
             ValueConditionNodeDataModel<ConditionType> decimalConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Decimal);
             decimalConditionNodeDataModel.Should().NotBeNull();
-            decimalConditionNodeDataModel.ConditionType.Should().Match<ConditionType>(x => decimalConditionNode.ConditionType == x);
+            decimalConditionNodeDataModel.ConditionType.Should().Match(x => decimalConditionNode.ConditionType == x);
             decimalConditionNodeDataModel.DataType.Should().Be(decimalConditionNode.DataType);
             decimalConditionNodeDataModel.LogicalOperator.Should().Be(decimalConditionNode.LogicalOperator);
             decimalConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, decimalConditionNode.Operand));
@@ -325,7 +325,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
 
             ValueConditionNodeDataModel<ConditionType> booleanConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Boolean);
             booleanConditionNodeDataModel.Should().NotBeNull();
-            booleanConditionNodeDataModel.ConditionType.Should().Match<ConditionType>(x => booleanConditionNode.ConditionType == x);
+            booleanConditionNodeDataModel.ConditionType.Should().Match(x => booleanConditionNode.ConditionType == x);
             booleanConditionNodeDataModel.DataType.Should().Be(booleanConditionNode.DataType);
             booleanConditionNodeDataModel.LogicalOperator.Should().Be(booleanConditionNode.LogicalOperator);
             booleanConditionNodeDataModel.Operand.Should().Be(Convert.ToBoolean(booleanConditionNode.Operand));

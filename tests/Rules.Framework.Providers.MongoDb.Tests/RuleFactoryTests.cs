@@ -142,7 +142,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             integerConditionNodes.Should().HaveCount(1);
             IntegerConditionNode<ConditionType> integerConditionNode = integerConditionNodes.First();
             integerConditionNode.Should().NotBeNull();
-            integerConditionNode.ConditionType.Should().Match<ConditionType>(x => x == Enum.Parse<ConditionType>(integerConditionNodeDataModel.ConditionType));
+            integerConditionNode.ConditionType.Should().Match(x => x == Enum.Parse<ConditionType>(integerConditionNodeDataModel.ConditionType));
             integerConditionNode.DataType.Should().Be(integerConditionNodeDataModel.DataType);
             integerConditionNode.LogicalOperator.Should().Be(integerConditionNodeDataModel.LogicalOperator);
             integerConditionNode.Operand.Should().Match(x => object.Equals(x, integerConditionNodeDataModel.Operand));
@@ -152,7 +152,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             stringConditionNodes.Should().HaveCount(1);
             StringConditionNode<ConditionType> stringConditionNode = stringConditionNodes.First();
             stringConditionNode.Should().NotBeNull();
-            stringConditionNode.ConditionType.Should().Match<ConditionType>(x => x == Enum.Parse<ConditionType>(stringConditionNodeDataModel.ConditionType));
+            stringConditionNode.ConditionType.Should().Match(x => x == Enum.Parse<ConditionType>(stringConditionNodeDataModel.ConditionType));
             stringConditionNode.DataType.Should().Be(stringConditionNodeDataModel.DataType);
             stringConditionNode.LogicalOperator.Should().Be(stringConditionNodeDataModel.LogicalOperator);
             stringConditionNode.Operand.Should().Match(x => object.Equals(x, stringConditionNodeDataModel.Operand));
@@ -162,7 +162,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             decimalConditionNodes.Should().HaveCount(1);
             DecimalConditionNode<ConditionType> decimalConditionNode = decimalConditionNodes.First();
             decimalConditionNode.Should().NotBeNull();
-            decimalConditionNode.ConditionType.Should().Match<ConditionType>(x => x == Enum.Parse<ConditionType>(decimalConditionNodeDataModel.ConditionType));
+            decimalConditionNode.ConditionType.Should().Match(x => x == Enum.Parse<ConditionType>(decimalConditionNodeDataModel.ConditionType));
             decimalConditionNode.DataType.Should().Be(decimalConditionNodeDataModel.DataType);
             decimalConditionNode.LogicalOperator.Should().Be(decimalConditionNodeDataModel.LogicalOperator);
             decimalConditionNode.Operand.Should().Match(x => object.Equals(x, decimalConditionNodeDataModel.Operand));
@@ -172,7 +172,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             booleanConditionNodes.Should().HaveCount(1);
             BooleanConditionNode<ConditionType> booleanConditionNode = booleanConditionNodes.First();
             booleanConditionNode.Should().NotBeNull();
-            booleanConditionNode.ConditionType.Should().Match<ConditionType>(x => x == Enum.Parse<ConditionType>(booleanConditionNodeDataModel.ConditionType));
+            booleanConditionNode.ConditionType.Should().Match(x => x == Enum.Parse<ConditionType>(booleanConditionNodeDataModel.ConditionType));
             booleanConditionNode.DataType.Should().Be(booleanConditionNodeDataModel.DataType);
             booleanConditionNode.LogicalOperator.Should().Be(booleanConditionNodeDataModel.LogicalOperator);
             booleanConditionNode.Operand.Should().Be(Convert.ToBoolean(booleanConditionNodeDataModel.Operand));
