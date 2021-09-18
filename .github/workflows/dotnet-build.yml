@@ -93,8 +93,6 @@ jobs:
     - name: Get changed files using defaults
       id: changed-files
       uses: tj-actions/changed-files@v1.1.2
-      with:
-        fetch-depth: 2
         
     - name: Update project version
       uses: roryprimrose/set-vs-sdk-project-version@v1
