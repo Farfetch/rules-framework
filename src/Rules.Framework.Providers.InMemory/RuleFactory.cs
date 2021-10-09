@@ -154,6 +154,14 @@ namespace Rules.Framework.Providers.InMemory
                         Operand = stringConditionNode.Operand,
                         Operator = stringConditionNode.Operator
                     },
+                    ValueConditionNode<TConditionType> valueConditionNode => new ValueConditionNodeDataModel<TConditionType>
+                    {
+                        ConditionType = valueConditionNode.ConditionType,
+                        LogicalOperator = LogicalOperators.Eval,
+                        DataType = valueConditionNode.DataType,
+                        Operand = valueConditionNode.Operand,
+                        Operator = valueConditionNode.Operator
+                    },
                     _ => throw new NotSupportedException($"Unsupported value condition node type: {conditionNode.GetType().FullName}."),
                 };
             }
