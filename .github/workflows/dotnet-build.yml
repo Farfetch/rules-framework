@@ -143,6 +143,9 @@ jobs:
     - name: SonarScanner analysis end
       run: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 
+    - name: Clean
+      run: dotnet clean -c Release
+
     - name: Replace Rules.Framework package references w/ project references
       run: |
         dotnet remove src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj package Rules.Framework
@@ -152,9 +155,6 @@ jobs:
 
     - name: Clear Nuget locals
       run: dotnet nuget locals all --clear
-
-    - name: Clean
-      run: dotnet clean -c Release
 
     - name: Restore dependencies w/ Rules.Framework project reference
       run: dotnet restore
