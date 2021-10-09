@@ -143,6 +143,19 @@ jobs:
     - name: SonarScanner analysis end
       run: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 
+    - name: Test w/ Rules.Framework project reference (no coverage)
+      run: |
+        dotnet add src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj reference src\Rules.Framework\Rules.Framework.csproj
+        dotnet add src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj reference src\Rules.Framework\Rules.Framework.csproj
+
+        dotnet test --verbosity normal -m:1 -c Release || true
+        EXIT_STATUS_CODE = $?
+
+        dotnet remove src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj reference src\Rules.Framework\Rules.Framework.csproj
+        dotnet remove src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj reference src\Rules.Framework\Rules.Framework.csproj
+
+        exit $EXIT_STATUS_CODE
+
     - name: Delete build tag if exists
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
       with:
