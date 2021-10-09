@@ -150,6 +150,15 @@ jobs:
         dotnet add src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj reference src/Rules.Framework/Rules.Framework.csproj
         dotnet add src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj reference src/Rules.Framework/Rules.Framework.csproj
 
+    - name: Clear Nuget locals
+      run: dotnet nuget locals all --clear
+
+    - name: Clean
+      run: dotnet clean -c Release
+
+    - name: Restore dependencies w/ Rules.Framework project reference
+      run: dotnet restore
+
     - name: Build w/ Rules.Framework project reference
       run: dotnet build --no-restore -c Release
 
