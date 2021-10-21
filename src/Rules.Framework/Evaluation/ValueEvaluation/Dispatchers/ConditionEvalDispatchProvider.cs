@@ -47,12 +47,19 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
                 IEnumerable _ when !(leftOperand is string) => ManyToOne,
                 object _ when rightOperand is IEnumerable && !(rightOperand is string) => OneToMany,
                 object _ => OneToOne,
+                null when OperatorSupportsOneMultiplicityLeftOperand(@operator) && rightOperand is IEnumerable && !(rightOperand is string) => OneToMany,
+                null when OperatorSupportsOneMultiplicityLeftOperand(@operator) => OneToOne,
                 _ => throw new NotSupportedException()
             };
 
             this.ThrowIfUnsupportedOperandsAndOperatorCombination($"{combination}-{@operator}");
 
             return this.dispatchers[combination];
+        }
+
+        private bool OperatorSupportsOneMultiplicityLeftOperand(Operators @operator)
+        {
+            return this.supportedCombinations.Where(x => x.Contains(@operator.ToString())).Any(x => x.Contains("one-to"));
         }
 
         private void ThrowIfUnsupportedOperandsAndOperatorCombination(string combination)
