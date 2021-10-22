@@ -143,6 +143,28 @@ jobs:
     - name: SonarScanner analysis end
       run: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 
+    - name: Clean
+      run: dotnet clean -c Release
+
+    - name: Replace Rules.Framework package references w/ project references
+      run: |
+        dotnet remove src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj package Rules.Framework
+        dotnet remove src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj package Rules.Framework
+        dotnet add src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj reference src/Rules.Framework/Rules.Framework.csproj
+        dotnet add src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj reference src/Rules.Framework/Rules.Framework.csproj
+
+    - name: Clear Nuget locals
+      run: dotnet nuget locals all --clear
+
+    - name: Restore dependencies w/ Rules.Framework project reference
+      run: dotnet restore
+
+    - name: Build w/ Rules.Framework project reference
+      run: dotnet build --no-restore -c Release
+
+    - name: Test w/ Rules.Framework project reference (no coverage)
+      run: dotnet test --no-build --verbosity normal -m:1 -c Release
+
     - name: Delete build tag if exists
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
       with:

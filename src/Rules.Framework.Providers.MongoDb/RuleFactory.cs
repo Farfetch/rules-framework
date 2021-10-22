@@ -170,6 +170,14 @@ namespace Rules.Framework.Providers.MongoDb
                         Operand = stringConditionNode.Operand,
                         Operator = stringConditionNode.Operator
                     },
+                    ValueConditionNode<TConditionType> valueConditionNode => new ValueConditionNodeDataModel
+                    {
+                        ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
+                        LogicalOperator = LogicalOperators.Eval,
+                        DataType = valueConditionNode.DataType,
+                        Operand = valueConditionNode.Operand,
+                        Operator = valueConditionNode.Operator
+                    },
                     _ => throw new NotSupportedException($"Unsupported value condition node type: {conditionNode.GetType().FullName}."),
                 };
             }
