@@ -12,7 +12,7 @@ namespace Rules.Framework.Providers.InMemory
     /// </summary>
     /// <typeparam name="TContentType">The type of the content type.</typeparam>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    /// <seealso cref="Rules.Framework.IRulesDataSource{TContentType, TConditionType}" />
+    /// <seealso cref="Rules.Framework.IRulesDataSource{TContentType, TConditionType}"/>
     public class InMemoryProviderRulesDataSource<TContentType, TConditionType> : IRulesDataSource<TContentType, TConditionType>
     {
         private readonly IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage;
@@ -48,7 +48,8 @@ namespace Rules.Framework.Providers.InMemory
         }
 
         /// <summary>
-        /// Gets the rules categorized with specified <paramref name="contentType" /> between <paramref name="dateBegin" /> and <paramref name="dateEnd" />.
+        /// Gets the rules categorized with specified <paramref name="contentType"/> between
+        /// <paramref name="dateBegin"/> and <paramref name="dateEnd"/>.
         /// </summary>
         /// <param name="contentType">the content type categorization.</param>
         /// <param name="dateBegin">the filtering begin date.</param>
@@ -62,7 +63,7 @@ namespace Rules.Framework.Providers.InMemory
 
                 IEnumerable<RuleDataModel<TContentType, TConditionType>> filteredByDate = ruleDataModels.Where(r =>
                     (r.DateBegin >= dateBegin && r.DateBegin < dateEnd)
-                    || (r.DateEnd is null && r.DateEnd >= dateBegin && r.DateEnd < dateEnd)
+                    || (!(r.DateEnd is null) && r.DateEnd >= dateBegin && r.DateEnd < dateEnd)
                     || (r.DateBegin < dateBegin && (r.DateEnd is null || r.DateEnd > dateEnd)));
 
                 return filteredByDate.Select(r => this.ruleFactory.CreateRule(r)).ToList().AsEnumerable();
