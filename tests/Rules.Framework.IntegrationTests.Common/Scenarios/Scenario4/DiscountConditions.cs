@@ -5,5 +5,6 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario4
         ProductBrand = 1,
         ProductRecommendedRetailPrice = 2,
         ProductTier = 3,
+        ProductColor = 4
     }
 }
