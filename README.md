@@ -4,7 +4,7 @@ Rules.Framework is a generic rules framework that allows defining and evaluating
 
 Why use rules? Most of us at some point, while developing software to support a business, have come across fast paced business logic changes. Sometimes, business needs change overnight, which requires a fast response to changes by engineering teams. By using rules, changing a calculus formula, a value mapping or simply a toggle configuration no longer requires code changes/endless CI/CD pipelines, QA validation, and so on... Business logic changes can be offloaded to configuration scenarios, instead of development scenarios.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/bhu3hh8cag509l4s/branch/master?svg=true)](https://ci.appveyor.com/project/pikenikes/rules-framework/branch/master)
+[![.NET build](https://github.com/luispfgarces/rules-framework/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/luispfgarces/rules-framework/actions/workflows/dotnet-build.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pikenikes_rules-framework&metric=alert_status)](https://sonarcloud.io/dashboard?id=pikenikes_rules-framework)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pikenikes_rules-framework&metric=coverage)](https://sonarcloud.io/dashboard?id=pikenikes_rules-framework)
 
@@ -85,11 +85,9 @@ If you request a rule for the content type "Body Mass formula" by specifying dat
 
 ## Contributing
 
-Contributions are more than welcome! Submit comments, issues or pull requests, I promise to keep an eye on them :)
+Contributions are more than welcome! Submit comments, issues or pull requests, we promise to keep an eye on them :)
 
 Head over to [CONTRIBUTING](CONTRIBUTING.md) for further details.
-
-While I try to do the best I can, suggestions/contributions are deeply appreciated on documentation!
 
 ## License
 
