@@ -1,5 +1,7 @@
 # Getting started
 
+## Setting it up
+
 1. Define your content types (suggestion: use an enum).
 
 ```csharp
@@ -9,7 +11,7 @@ internal enum ContentTypes
 }
 ```
 
-1. Define your condition types (suggestion: use an enum).
+2. Define your condition types (suggestion: use an enum).
 
 ```csharp
 internal enum ConditionTypes
@@ -19,7 +21,7 @@ internal enum ConditionTypes
 }
 ```
 
-1. Build a rules engine.
+3. Build a rules engine.
 
 ```csharp
 RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -30,6 +32,8 @@ RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.Creat
 ```
 
 ## Evaluating rules
+
+NOTE: You should add rules before proceeding with evaluation. Please refer to [add rules](add-rules.md) documentation to find out how to do that.
 
 1. Set the conditions to supply to the engine.
 
@@ -49,19 +53,19 @@ Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
 };
 ```
 
-1. Set the date at which you want the rules set to evalutated.
+2. Set the date at which you want the rules set to evalutated.
 
 ```csharp
 DateTime date = new DateTime(2019, 1, 1);
 ```
 
-1. Set the content you want to fetch.
+3. Set the content you want to fetch.
 
 ```csharp
 ContentTypes contentType = ContentTypes.BodyMassIndexFormula;
 ```
 
-1. Evalutate rule match.
+4. Evalutate rule match.
 
 ```csharp
 Rule<ContentTypes, ConditionTypes> ruleMatch = await rulesEngine.MatchOneAsync(contentType, date, conditions);

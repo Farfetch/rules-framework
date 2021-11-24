@@ -14,7 +14,7 @@ There are 2 configuration possibilities:
         .Build();
     ```
 
-2. Registering in-memory data source on dependency injection and using service provider-
+2. Registering in-memory data source on dependency injection and using service provider.
 
     ```csharp
         // Registering in-memory data source on dependency injection.
@@ -29,3 +29,5 @@ There are 2 configuration possibilities:
         .SetInMemoryDataSource(serviceProvider)
         .Build();
     ```
+
+Keep in mind that a in-memory data source is volatile, and will need you to build a rules engine and add rules everytime you start your application.
