@@ -4,6 +4,7 @@ Rules.Framework is a generic rules framework that allows defining and evaluating
 
 Why use rules? Most of us at some point, while developing software to support a business, have come across fast paced business logic changes. Sometimes, business needs change overnight, which requires a fast response to changes by engineering teams. By using rules, changing a calculus formula, a value mapping or simply a toggle configuration no longer requires code changes/endless CI/CD pipelines, QA validation, and so on... Business logic changes can be offloaded to configuration scenarios, instead of development scenarios.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8b48f4541fba4d4b8bad2e9a8563ede3)](https://app.codacy.com/gh/Farfetch/rules-framework?utm_source=github.com&utm_medium=referral&utm_content=Farfetch/rules-framework&utm_campaign=Badge_Grade_Settings)
 [![.NET build](https://github.com/luispfgarces/rules-framework/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/luispfgarces/rules-framework/actions/workflows/dotnet-build.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pikenikes_rules-framework&metric=alert_status)](https://sonarcloud.io/dashboard?id=pikenikes_rules-framework)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pikenikes_rules-framework&metric=coverage)](https://sonarcloud.io/dashboard?id=pikenikes_rules-framework)
