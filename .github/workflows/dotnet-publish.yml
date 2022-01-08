@@ -26,7 +26,7 @@ jobs:
       id: set-packages-authoring-information
       run: |
         copyright=$(grep -m 1 -P '^Copyright \(c\) [0-9]+ [a-zA-Z ,]+' LICENSE.md)
-        authors=$(grep -m 1 -Po '^Copyright \(c\) [0-9]+ \K([a-zA-Z ,]+)' LICENSE.md)
+        authors=$(grep -m 1 -Po '^Copyright \(c\) [0-9]+ \K([a-zA-Z ,]+)' LICENSE.md | sed 's@, @;@')
         echo -e "Found information:\n * Copyright message: $copyright\n * Authors: $authors\n * Repository URL: $REPOSITORY_URL"
         
         project_files=$(find ./src -type f -name "*.csproj")
