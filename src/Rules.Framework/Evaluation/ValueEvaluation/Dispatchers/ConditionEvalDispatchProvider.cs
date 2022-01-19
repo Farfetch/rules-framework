@@ -1,10 +1,10 @@
 namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
 {
+    using Rules.Framework.Core;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Rules.Framework.Core;
 
     internal class ConditionEvalDispatchProvider : IConditionEvalDispatchProvider
     {
@@ -36,6 +36,8 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
                 $"{OneToOne}-{Operators.LesserThanOrEqual}",
                 $"{OneToOne}-{Operators.Contains}",
                 $"{OneToMany}-{Operators.In}",
+                $"{OneToOne}-{Operators.StartsWith}",
+                $"{OneToOne}-{Operators.EndsWith}",
             };
         }
 

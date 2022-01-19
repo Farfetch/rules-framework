@@ -1,9 +1,9 @@
 namespace Rules.Framework.Builder.Validation
 {
-    using System.Collections.Generic;
     using FluentValidation;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
+    using System.Collections.Generic;
 
     internal class ValueConditionNodeValidator<TConditionType> : AbstractValidator<ValueConditionNode<TConditionType>>
     {
@@ -19,7 +19,7 @@ namespace Rules.Framework.Builder.Validation
             this.RuleFor(c => c.Operator).IsInEnum();
 
             this.RuleFor(c => c.Operator)
-                .IsContainedOn(Operators.Equal, Operators.NotEqual, Operators.Contains, Operators.In)
+                .IsContainedOn(Operators.Equal, Operators.NotEqual, Operators.Contains, Operators.In, Operators.StartsWith, Operators.EndsWith)
                 .When(c => c.DataType == DataTypes.String)
                 .WithMessage(cn => $"Condition nodes with data type '{cn.DataType}' can't define a operator of type '{cn.Operator}'.");
 
