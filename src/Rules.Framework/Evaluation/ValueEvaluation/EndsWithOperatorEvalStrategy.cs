@@ -6,7 +6,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
     {
         public bool Eval(object leftOperand, object rightOperand)
         {
-            if (leftOperand is string)
+            if (leftOperand is string && rightOperand is string)
             {
                 string leftOperandAsString = leftOperand as string;
                 string rightOperandAsString = rightOperand as string;
@@ -14,7 +14,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 return leftOperandAsString.EndsWith(rightOperandAsString);
             }
 
-            throw new NotSupportedException($"Unsupported 'startswith' comparison between operands of type '{leftOperand?.GetType().FullName}'.");
+            throw new NotSupportedException($"Unsupported 'endswith' comparison between operands of type '{leftOperand?.GetType().FullName}' and '{rightOperand?.GetType().FullName}'.");
         }
     }
 }
