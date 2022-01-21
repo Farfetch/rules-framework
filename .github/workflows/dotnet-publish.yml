@@ -12,6 +12,7 @@ jobs:
       BUILD_VERSION: ${{ github.event.release.tag_name }}
       NUGET_SOURCE: https://api.nuget.org/v3/index.json
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
 
     steps:
     - uses: actions/checkout@v2
@@ -20,6 +21,18 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
+
+    - name: Set packages authoring information
+      id: set-packages-authoring-information
+      run: |
+        copyright=$(grep -m 1 -P '^Copyright \(c\) [0-9]+ [A-zÀ-ú ,]+' LICENSE.md)
+        authors=$(grep -m 1 -Po '^Copyright \(c\) [0-9]+ \K([A-zÀ-ú ,]+)' LICENSE.md | sed 's@, @;@')
+        echo -e "Found information:\n * Copyright message: $copyright\n * Authors: $authors\n * Repository URL: $REPOSITORY_URL"
+        
+        project_files=$(find ./src -type f -name "*.csproj")
+        find ./src -type f -name "*.csproj" -print0 | xargs -0 sed -i 's@<RepositoryUrl>.*</RepositoryUrl>@<RepositoryUrl>'"$REPOSITORY_URL"'</RepositoryUrl>@; s@<Authors>.*</Authors>@<Authors>'"$authors"'</Authors>@; s@<Copyright>.*</Copyright>@<Copyright>'"$copyright"'</Copyright>@'
+
+        echo -e "Replaced *.csproj files:\n$project_files"
 
     - name: Pack Rules.Framework
       run: dotnet pack src/Rules.Framework/Rules.Framework.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION

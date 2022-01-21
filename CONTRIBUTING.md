@@ -4,7 +4,7 @@ Contribution to Rules.Framework is deeply appreciated as we evolve this project 
 
 ## Found a bug, what to do?
 
-First of all, search [existent issues](https://github.com/luispfgarces/rules-framework/issues?q=is%3Aissue+is%3Aopen+label%3Abug+) for any open issue with the bug you found, it might have been already reported. If you find a matching issue to your bug, you can subscribe notifications for it and/or complement with additional information in the comments section.
+First of all, search [existent issues](https://github.com/luispfgarces/rules-framework/issues?q=is%3Aissue+is%3Aopen+label%3Abug+) for any open issue with the bug you found, it might have been already reported. If you find a matching issue for your bug, you can subscribe notifications for it and/or complement with additional information in the comments section.
 
 If you don't see a matching issue, please go ahead and create a new one. Make sure you include the following information on issue description:
 
@@ -17,7 +17,7 @@ If you don't see a matching issue, please go ahead and create a new one. Make su
 
 It might a good idea to first take a look at [all open issues w/ enhancement tag](https://github.com/luispfgarces/rules-framework/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement+) before opening a new feature request or improvement. If you are:
 
-- **Requesting a new feature with widespread impacts on whole solution and you want to implement it** - please submit a new issue with a design proposal so that we can discuss it before proceeding with implementation.
+- **Requesting a new feature with widespread impacts on whole solution and you want to implement it** - please submit a new issue with a design proposal so that we can discuss it before proceeding with the implementation.
 - **Requesting a new feature with small changes on codebase or a improvement** - please submit a new issue and you can provide a implementation for it.
 - **Only requesting a new feature or a improvement** - please submit a new issue.
 
@@ -55,9 +55,9 @@ First of all, ensure you have appropriate .Net SDK installed (need .Net Core 3.1
     $ git push origin my-branch
     ```
 
-1. Open a pull request with your changes targeting to `luispfgarces/rules-framework:master`. Link any issues solved on pull request.
+1. Open a pull request with your changes targeting to `Farfetch/rules-framework:master`. Link any issues solved on the pull request.
 
-1. Changes will be automatically run though Appveyor CI (build + test + SonarQube upload) for your pull request. Please make sure all checks are green on GitHub.
+1. Changes will automatically run through GitHub actions build (build + test) for your pull request. Also, Codacy will detect the pull request and subsequent changes, and will perform static analysis on changes. Please make sure all checks are green on pull request.
 
 1. Changes might be suggested or requested. If that happens, please make sure to have all tests passing after changes are done.
 
@@ -69,7 +69,7 @@ First of all, ensure you have appropriate .Net SDK installed (need .Net Core 3.1
     $ git push --force origin master
     ```
 
-After all designated reviewers accept the changes (a contributor will set the reviewers), changes will be merged master.
+After all designated reviewers accept the changes (a contributor will set the reviewers), changes will be merged to master.
 
 ## Code rules
 

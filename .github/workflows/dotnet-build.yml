@@ -103,10 +103,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
-        
-    - name: Setup SonarScanner
-      run: dotnet tool install --global dotnet-sonarscanner
-      
+
     - name: Setup Report Generator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
       
@@ -121,10 +118,7 @@ jobs:
       uses: supercharge/mongodb-github-action@1.6.0
       with:
         mongodb-version: '4.4'
-        
-    - name: SonarScanner analysis begin
-      run: dotnet sonarscanner begin /k:pikenikes_rules-framework /v:$BUILD_VERSION /o:pikenikes-github /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866 /d:sonar.coverage.exclusions="tests/*Tests/**" /d:sonar.coverageReportPaths="../../coverage-outputs/SonarQube.xml" /d:sonar.branch.name=$BRANCH_NAME
-      
+
     - name: Restore dependencies
       run: dotnet restore
       
@@ -139,9 +133,6 @@ jobs:
         reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:SonarQube
         rm -rfv ../../coverage-outputs/*/
         ls -la ../../coverage-outputs
-        
-    - name: SonarScanner analysis end
-      run: dotnet sonarscanner end /d:sonar.login=8f9e9412fb5ebcf5ea6f9a6b285b288e4645f866
 
     - name: Clean
       run: dotnet clean -c Release
