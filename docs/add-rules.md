@@ -97,6 +97,8 @@ Next step is to define a comparison operator using method `WithComparisonOperato
 - LesserThanOrEqual (`<=`)
 - Contains
 - In
+- StartsWith
+- EndsWith
 
 Not all comparison operators are supported for all data types, some combinations of them are not valid. This will be validated by rule builder and a validation error will be returned if a invalid combination is attempted. Check the following grid to see combinations are valid or not:
 
@@ -110,6 +112,8 @@ Not all comparison operators are supported for all data types, some combinations
 |LesserThanOrEqual (`<=`)|:heavy_check_mark:|:heavy_check_mark:|:x:|:x:|
 |Contains|:x:|:x:|:x:|:heavy_check_mark:|
 |In|:heavy_check_mark:|:heavy_check_mark:|:x:|:heavy_check_mark:|
+|StartsWith|:x:|:x:|:x:|:heavy_check_mark:|
+|EndsWith|:x:|:x:|:x:|:heavy_check_mark:|
 
 You should also take into consideration the multiplicity of operands when setting value conditions on a rule. Theoretically, all multiplicity combinations are supported (one to one, one to many, many to one, many to many), but that also relies on a per-operator implementation for each multiplicity. Please refer to following combinations to see which multiplicities are supported or not:
 
@@ -123,6 +127,8 @@ You should also take into consideration the multiplicity of operands when settin
 |LesserThanOrEqual (`<=`)|:heavy_check_mark:|:x:|:x:|:x:|
 |Contains|:heavy_check_mark:|:x:|:x:|:x:|
 |In|:x:|:heavy_check_mark:|:x:|:x:|
+|StartsWith|:heavy_check_mark:|:x:|:x:|:x:|
+|EndsWith|:heavy_check_mark:|:x:|:x:|:x:|
 
 At last, you should complete valued condition node build with a right hand operand with following methods, according to wanted multiplicity:
 

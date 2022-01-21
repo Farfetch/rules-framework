@@ -45,6 +45,16 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The in operator.
         /// </summary>
-        In = 9
+        In = 9,
+
+        /// <summary>
+        /// The starts with operator.
+        /// </summary>
+        StartsWith = 10,
+
+        /// <summary>
+        /// The ends with operator.
+        /// </summary>
+        EndsWith = 11
     }
 }
