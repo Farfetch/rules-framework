@@ -30,15 +30,15 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
+        public IEnumerable<RuleDataModel<TContentType, TConditionType>> GetAllRules()
+            => this.rulesByContentType.SelectMany(kvp => kvp.Value).ToList().AsReadOnly();
+
         public IEnumerable<RuleDataModel<TContentType, TConditionType>> GetRulesBy(TContentType contentType)
         {
             List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(contentType);
 
-            return contentTypeRules.ToList().AsReadOnly();
+            return contentTypeRules.AsReadOnly();
         }
-
-        private List<RuleDataModel<TContentType, TConditionType>> GetRulesCollectionByContentType(TContentType contentType) => this.rulesByContentType
-                        .GetOrAdd(contentType, (ct) => new List<RuleDataModel<TContentType, TConditionType>>());
 
         public void UpdateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
         {
@@ -57,7 +57,7 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        public IEnumerable<RuleDataModel<TContentType, TConditionType>> GetAllRules()
-            => this.rulesByContentType.SelectMany(kvp => kvp.Value).ToList().AsReadOnly();
+        private List<RuleDataModel<TContentType, TConditionType>> GetRulesCollectionByContentType(TContentType contentType) => this.rulesByContentType
+                                .GetOrAdd(contentType, (ct) => new List<RuleDataModel<TContentType, TConditionType>>());
     }
 }

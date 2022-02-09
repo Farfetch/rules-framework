@@ -66,7 +66,7 @@ namespace Rules.Framework.Providers.InMemory
                     || (!(r.DateEnd is null) && r.DateEnd >= dateBegin && r.DateEnd < dateEnd)
                     || (r.DateBegin < dateBegin && (r.DateEnd is null || r.DateEnd > dateEnd)));
 
-                return filteredByDate.Select(r => this.ruleFactory.CreateRule(r)).ToList().AsEnumerable();
+                return filteredByDate.Select(r => this.ruleFactory.CreateRule(r)).AsEnumerable();
             });
         }
 
@@ -104,7 +104,7 @@ namespace Rules.Framework.Providers.InMemory
                     filtered = filtered.Where(r => r.Priority == rulesFilterArgs.Priority);
                 }
 
-                return filtered.Select(r => this.ruleFactory.CreateRule(r)).ToList().AsEnumerable();
+                return filtered.Select(r => this.ruleFactory.CreateRule(r)).AsEnumerable();
             });
         }
 
