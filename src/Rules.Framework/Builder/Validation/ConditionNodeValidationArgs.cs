@@ -1,11 +1,11 @@
 namespace Rules.Framework.Builder.Validation
 {
-    using FluentValidation.Validators;
+    using FluentValidation;
 
-    internal class ConditionNodeValidationArgs<TConditionType>
+    internal class ConditionNodeValidationArgs<TConditionType, TValidationContext>
     {
         public ComposedConditionNodeValidator<TConditionType> ComposedConditionNodeValidator { get; set; }
-        public CustomContext CustomContext { get; set; }
+        public ValidationContext<TValidationContext> ValidationContext { get; set; }
         public ValueConditionNodeValidator<TConditionType> ValueConditionNodeValidator { get; set; }
     }
 }

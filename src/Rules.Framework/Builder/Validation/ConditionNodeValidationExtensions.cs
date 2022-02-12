@@ -6,7 +6,7 @@ namespace Rules.Framework.Builder.Validation
 
     internal static class ConditionNodeValidationExtensions
     {
-        public static void PerformValidation<TConditionType>(this IConditionNode<TConditionType> conditionNode, ConditionNodeValidationArgs<TConditionType> conditionNodeValidationArgs)
+        public static void PerformValidation<TConditionType, TValidationContext>(this IConditionNode<TConditionType> conditionNode, ConditionNodeValidationArgs<TConditionType, TValidationContext> conditionNodeValidationArgs)
         {
             ValidationResult validationResult;
             switch (conditionNode)
@@ -27,7 +27,7 @@ namespace Rules.Framework.Builder.Validation
             {
                 foreach (ValidationFailure validationFailure in validationResult.Errors)
                 {
-                    conditionNodeValidationArgs.CustomContext.AddFailure(validationFailure);
+                    conditionNodeValidationArgs.ValidationContext.AddFailure(validationFailure);
                 }
             }
         }
