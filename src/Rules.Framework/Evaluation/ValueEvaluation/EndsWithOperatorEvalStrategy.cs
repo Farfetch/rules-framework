@@ -1,6 +1,7 @@
 namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
+    using System.Globalization;
 
     internal class EndsWithOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
@@ -11,7 +12,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 string leftOperandAsString = leftOperand as string;
                 string rightOperandAsString = rightOperand as string;
 
-                return leftOperandAsString.EndsWith(rightOperandAsString);
+                return leftOperandAsString.EndsWith(rightOperandAsString, ignoreCase: true, culture: CultureInfo.InvariantCulture);
             }
 
             throw new NotSupportedException($"Unsupported 'endswith' comparison between operands of type '{leftOperand?.GetType().FullName}' and '{rightOperand?.GetType().FullName}'.");

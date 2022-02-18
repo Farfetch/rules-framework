@@ -1,8 +1,8 @@
 namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 {
+    using System;
     using FluentAssertions;
     using Rules.Framework.Evaluation.ValueEvaluation;
-    using System;
     using Xunit;
 
     public class StartsWithOperatorEvalStrategyTests
@@ -24,13 +24,13 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             notSupportedException.Message.Should().Contain("System.Int32");
         }
 
-        [Fact]
-        public void Eval_GivenStringsTheQuickBrownFoxJumpsOverTheLazyDogAndFox_ReturnsTrue()
+        [Theory]
+        [InlineData("The quick brown fox jumps over the lazy dog", "The")]
+        [InlineData("The quick brown fox jumps over the lazy dog", "the")]
+        [InlineData("the quick brown fox jumps over the lazy Dog", "The")]
+        public void Eval_GivenStringsTheQuickBrownFoxJumpsOverTheLazyDogAndFox_IgnoringCase_ReturnsTrue(string expectedLeftOperand, string expectedRightOperand)
         {
             // Arrange
-            string expectedLeftOperand = "The quick brown fox jumps over the lazy dog";
-            string expectedRightOperand = "The";
-
             StartsWithOperatorEvalStrategy sut = new StartsWithOperatorEvalStrategy();
 
             // Act
