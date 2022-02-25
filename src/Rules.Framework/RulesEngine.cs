@@ -228,7 +228,8 @@ namespace Rules.Framework
                     break;
 
                 case PriorityOptions.AtBottom:
-                    rule.Priority = existentRules.Max(r => r.Priority) + 1;
+
+                    rule.Priority = !existentRules.Any() ? 1 : existentRules.Max(r => r.Priority) + 1;
 
                     await ManagementOperations.Manage(existentRules)
                         .UsingDataSource(this.rulesDataSource)

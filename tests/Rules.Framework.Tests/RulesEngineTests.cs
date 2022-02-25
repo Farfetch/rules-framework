@@ -17,6 +17,49 @@ namespace Rules.Framework.Tests
     public class RulesEngineTests
     {
         [Fact]
+        public async Task AddRuleAsync_GivenEmptyRuleDataSource_AddsRuleSuccesfully()
+        {
+            // Arrange
+            ContentType contentType = ContentType.Type1;
+
+            Rule<ContentType, ConditionType> testRule = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = new DateTime(2018, 01, 01),
+                DateEnd = new DateTime(2019, 01, 01),
+                Name = "Test rule",
+                Priority = 3,
+                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
+            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = new Mock<IRulesDataSource<ContentType, ConditionType>>();
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+
+            rulesEngineOptions.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
+
+            // Act
+            var actual = await sut.AddRuleAsync(testRule, RuleAddPriorityOption.AtBottom);
+
+            // Assert
+            actual.IsSuccess.Should().BeTrue();
+            actual.Errors.Should().BeEmpty();
+
+            mockRulesDataSource.Verify(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never());
+            mockConditionsEvalEngine.Verify(x => x.Eval(
+                It.IsAny<IConditionNode<ConditionType>>(),
+                It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.Never());
+        }
+
+        [Fact]
         public async Task MatchManyAsync_GivenContentTypeDateAndConditions_FetchesRulesForDayEvalsAndReturnsAllMatches()
         {
             // Arrange
