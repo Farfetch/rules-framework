@@ -1,8 +1,8 @@
 namespace Rules.Framework.Evaluation.ValueEvaluation
 {
-    using Rules.Framework.Core;
     using System;
     using System.Collections.Generic;
+    using Rules.Framework.Core;
 
     internal class OperatorEvalStrategyFactory : IOperatorEvalStrategyFactory
     {
@@ -22,6 +22,8 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 { Operators.In, new InOperatorEvalStrategy() },
                 { Operators.StartsWith, new StartsWithOperatorEvalStrategy() },
                 { Operators.EndsWith, new EndsWithOperatorEvalStrategy() },
+                { Operators.CaseInsensitiveStartsWith, new CaseInsensitiveStartsWithOperatorEvalStrategy() },
+                { Operators.CaseInsensitiveEndsWith, new CaseInsensitiveEndsWithOperatorEvalStrategy() }
             };
         }
 
