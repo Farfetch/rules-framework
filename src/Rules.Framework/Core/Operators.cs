@@ -55,6 +55,16 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The ends with operator.
         /// </summary>
-        EndsWith = 11
+        EndsWith = 11,
+
+        /// <summary>
+        /// The starts with operator.
+        /// </summary>
+        CaseInsensitiveStartsWith = 12,
+
+        /// <summary>
+        /// The ends with operator.
+        /// </summary>
+        CaseInsensitiveEndsWith = 13
     }
 }
