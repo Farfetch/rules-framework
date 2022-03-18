@@ -65,6 +65,39 @@ namespace Rules.Framework
         }
 
         /// <summary>
+        /// PGet the unique condition types associated with rules of a specific content type/>.
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <param name="dateBegin"></param>
+        /// <param name="dateEnd"></param>
+        /// <remarks>
+        /// <para>
+        /// A set of rules is requested to rules data source and all conditions are evaluated
+        /// against them to provide a set of matches.
+        /// </para>
+        /// <para>All rules matching supplied conditions are returned.</para>
+        /// </remarks>
+        /// <returns>the matched rule; otherwise, null.</returns>
+        public async Task<IEnumerable<IConditionNode<TConditionType>>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
+        {
+            var matchedRules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd).ConfigureAwait(false);
+
+            var conditionTypes = new List<IConditionNode<TConditionType>>();
+
+            if (!matchedRules.Any())
+            {
+                return conditionTypes;
+            }
+
+            foreach (var rule in matchedRules)
+            {
+                conditionTypes.Add(rule.RootCondition);
+            }
+
+            return conditionTypes;
+        }
+
+        /// <summary>
         /// Provides all rule matches (if any) to the given content type at the specified <paramref
         /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>

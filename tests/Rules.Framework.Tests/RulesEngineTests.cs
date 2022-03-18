@@ -2,6 +2,7 @@ namespace Rules.Framework.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
     using FluentValidation;
@@ -57,6 +58,85 @@ namespace Rules.Framework.Tests
                 It.IsAny<IConditionNode<ConditionType>>(),
                 It.IsAny<IEnumerable<Condition<ConditionType>>>(),
                 It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.Never());
+        }
+
+        [Fact]
+        public async Task GetUniqueConditionTypesAsync_GivenThereAreRulesInDataSource_ReturnsAllRequiredConditionTypes()
+        {
+            // Arrange
+
+            DateTime dateBegin = new DateTime(2018, 01, 01);
+            DateTime dateEnd = new DateTime(2019, 01, 01);
+
+            ContentType contentType = ContentType.Type1;
+
+            Rule<ContentType, ConditionType> rule1 = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = dateBegin,
+                DateEnd = dateEnd,
+                Name = "Rule 1",
+                Priority = 3,
+                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            };
+
+            Rule<ContentType, ConditionType> rule2 = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = new DateTime(2020, 01, 01),
+                DateEnd = new DateTime(2021, 01, 01),
+                Name = "Rule 2",
+                Priority = 200,
+                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            };
+
+            Rule<ContentType, ConditionType> rule3 = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = dateBegin,
+                DateEnd = dateEnd,
+                Name = "Rule 3",
+                Priority = 1,
+                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "CHE")
+            };
+
+            IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
+            {
+                rule1,
+                rule3
+            };
+
+            EvaluationOptions evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
+
+            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
+
+            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
+            {
+                switch (rootConditionNode)
+                {
+                    case StringConditionNode<ConditionType> stringConditionNode:
+                        return stringConditionNode.Operand == "USA";
+
+                    default:
+                        return false;
+                }
+            }, evaluationOptions);
+
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
+
+            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+
+            RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesDataSource.Object, validatorProvider, rulesEngineOptions);
+
+            // Act
+            var actual = await sut.GetUniqueConditionTypesAsync(ContentType.Type1, dateBegin, dateEnd);
+
+            // Assert
+            actual.Should().NotBeNull();
+            actual.ToList().Count.Should().Be(2);
         }
 
         [Fact]
