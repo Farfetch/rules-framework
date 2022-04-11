@@ -1,8 +1,10 @@
 namespace Rules.Framework
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
 
     /// <summary>
     /// Extracts Conditions Types from a Group of Rules.
@@ -36,15 +38,39 @@ namespace Rules.Framework
 
             foreach (var rule in matchedRules)
             {
-                var conditionType = rule.ContentContainer.GetContentAs<TConditionType>();
+                var rootCondtion = rule.RootCondition;
 
-                if (!conditionTypes.Contains(conditionType))
-                {
-                    conditionTypes.Add(conditionType);
-                }
+                VisitConditionNode(rootCondtion, conditionTypes);
             }
 
             return conditionTypes;
+        }
+
+        private static void VisitConditionNode(IConditionNode<TConditionType> conditionNode, List<TConditionType> conditionTypes)
+        {
+            switch (conditionNode)
+            {
+                case IValueConditionNode<TConditionType> valueConditionNode:
+
+                    if (!conditionTypes.Contains(valueConditionNode.ConditionType))
+                    {
+                        conditionTypes.Add(valueConditionNode.ConditionType);
+                    }
+
+                    break;
+
+                case ComposedConditionNode<TConditionType> composedConditionNode:
+
+                    foreach (IConditionNode<TConditionType> childConditionNode in composedConditionNode.ChildConditionNodes)
+                    {
+                        VisitConditionNode(childConditionNode, conditionTypes);
+                    }
+
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Unsupported condition node: '{conditionNode.GetType().Name}'.");
+            }
         }
     }
 }

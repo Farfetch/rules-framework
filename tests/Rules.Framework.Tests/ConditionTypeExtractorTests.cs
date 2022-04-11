@@ -15,12 +15,12 @@ namespace Rules.Framework.Tests
         {
             // Arrange
 
-            DateTime dateBegin = new DateTime(2018, 01, 01);
-            DateTime dateEnd = new DateTime(2019, 01, 01);
+            var dateBegin = new DateTime(2018, 01, 01);
+            var dateEnd = new DateTime(2019, 01, 01);
 
-            ContentType contentType = ContentType.Type1;
+            var contentType = ContentType.Type1;
 
-            Rule<ContentType, ConditionType> rule1 = new Rule<ContentType, ConditionType>
+            var rule1 = new Rule<ContentType, ConditionType>
             {
                 ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
                 DateBegin = dateBegin,
@@ -30,7 +30,7 @@ namespace Rules.Framework.Tests
                 RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
-            Rule<ContentType, ConditionType> rule2 = new Rule<ContentType, ConditionType>
+            var rule2 = new Rule<ContentType, ConditionType>
             {
                 ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
                 DateBegin = new DateTime(2020, 01, 01),
@@ -40,7 +40,7 @@ namespace Rules.Framework.Tests
                 RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
-            Rule<ContentType, ConditionType> rule3 = new Rule<ContentType, ConditionType>
+            var rule3 = new Rule<ContentType, ConditionType>
             {
                 ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
                 DateBegin = dateBegin,
@@ -50,18 +50,57 @@ namespace Rules.Framework.Tests
                 RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR")
             };
 
+            var rule4 = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = dateBegin,
+                DateEnd = dateEnd,
+                Name = "Rule 4",
+                Priority = 1,
+                RootCondition = new ComposedConditionNode<ConditionType>(
+                LogicalOperators.And,
+                new IConditionNode<ConditionType>[]
+                {
+                    new StringConditionNode<ConditionType>(ConditionType.IsVip, Operators.Equal, "true"),
+                    new StringConditionNode<ConditionType>(ConditionType.PluviosityRate, Operators.Equal, "15"),
+                    new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "JPY")
+                }
+                )
+            };
+
             var matchRules = new[]
             {
                 rule1,
                 rule2,
-                rule3
+                rule3,
+                rule4
             };
 
             var expectedConditionTypeList = new List<ConditionType>()
             {
                 ConditionType.IsoCurrency,
-                ConditionType.IsoCountryCode
+                ConditionType.IsoCountryCode,
+                ConditionType.IsVip,
+                ConditionType.PluviosityRate
             };
+
+            var conditionTypeExtractor = new ConditionTypeExtractor<ContentType, ConditionType>();
+
+            // Act
+            var actual = conditionTypeExtractor.GetConditionTypes(matchRules);
+
+            // Assert
+            actual.Should().BeEquivalentTo(expectedConditionTypeList);
+        }
+
+        [Fact]
+        public void GetConditionTypes_WithEmptyMatchRules_ReturnsEmptyListConditionTypes()
+        {
+            // Arrange
+
+            var matchRules = new List<Rule<ContentType, ConditionType>>();
+
+            var expectedConditionTypeList = new List<ConditionType>();
 
             var conditionTypeExtractor = new ConditionTypeExtractor<ContentType, ConditionType>();
 
