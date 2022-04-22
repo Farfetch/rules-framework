@@ -27,7 +27,7 @@ namespace Rules.Framework.Tests
                 DateEnd = dateEnd,
                 Name = "Rule 1",
                 Priority = 3,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             var rule2 = new Rule<ContentType, ConditionType>
@@ -37,7 +37,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Rule 2",
                 Priority = 200,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             var rule3 = new Rule<ContentType, ConditionType>
@@ -47,7 +47,7 @@ namespace Rules.Framework.Tests
                 DateEnd = dateEnd,
                 Name = "Rule 3",
                 Priority = 1,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.Equal, "EUR")
             };
 
             var rule4 = new Rule<ContentType, ConditionType>
@@ -61,9 +61,9 @@ namespace Rules.Framework.Tests
                 LogicalOperators.And,
                 new IConditionNode<ConditionType>[]
                 {
-                    new StringConditionNode<ConditionType>(ConditionType.IsVip, Operators.Equal, "true"),
-                    new StringConditionNode<ConditionType>(ConditionType.PluviosityRate, Operators.Equal, "15"),
-                    new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "JPY")
+                    new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsVip, Operators.Equal, "true"),
+                    new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.PluviosityRate, Operators.Equal, "15"),
+                    new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsoCurrency, Operators.Equal, "JPY")
                 }
                 )
             };
