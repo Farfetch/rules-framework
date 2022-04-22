@@ -102,23 +102,17 @@ namespace Rules.Framework.Tests
                 RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "CHE")
             };
 
-            IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
-            {
-                rule1,
-                rule3
-            };
-
             EvaluationOptions evaluationOptions = new EvaluationOptions
             {
                 MatchMode = MatchModes.Exact
             };
 
-            var expectedCondtionTypes = new List<ConditionType>() { ConditionType.IsoCountryCode };
+            var expectedCondtionTypes = new List<ConditionType> { ConditionType.IsoCountryCode };
 
             mockCondtionTypeExtractor.Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule<ContentType, ConditionType>>>()))
                 .Returns(expectedCondtionTypes);
 
-            this.SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
+            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, evalOptions) =>
             {
                 switch (rootConditionNode)
                 {

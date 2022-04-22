@@ -22,7 +22,7 @@ namespace Rules.Framework.Tests
 
             var rule1 = new Rule<ContentType, ConditionType>
             {
-                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                ContentContainer = new ContentContainer<ContentType>(contentType, _ => new object()),
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
                 Name = "Rule 1",
@@ -32,7 +32,7 @@ namespace Rules.Framework.Tests
 
             var rule2 = new Rule<ContentType, ConditionType>
             {
-                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                ContentContainer = new ContentContainer<ContentType>(contentType, _ => new object()),
                 DateBegin = new DateTime(2020, 01, 01),
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Rule 2",
@@ -42,7 +42,7 @@ namespace Rules.Framework.Tests
 
             var rule3 = new Rule<ContentType, ConditionType>
             {
-                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                ContentContainer = new ContentContainer<ContentType>(contentType, _ => new object()),
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
                 Name = "Rule 3",
@@ -52,7 +52,7 @@ namespace Rules.Framework.Tests
 
             var rule4 = new Rule<ContentType, ConditionType>
             {
-                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                ContentContainer = new ContentContainer<ContentType>(contentType, _ => new object()),
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
                 Name = "Rule 4",
@@ -76,7 +76,7 @@ namespace Rules.Framework.Tests
                 rule4
             };
 
-            var expectedConditionTypeList = new List<ConditionType>()
+            var expectedConditionTypeList = new List<ConditionType>
             {
                 ConditionType.IsoCurrency,
                 ConditionType.IsoCountryCode,
