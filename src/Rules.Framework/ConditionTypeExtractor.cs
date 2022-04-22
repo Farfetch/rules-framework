@@ -38,9 +38,9 @@ namespace Rules.Framework
 
             foreach (var rule in matchedRules)
             {
-                var rootCondtion = rule.RootCondition;
+                var rootCondition = rule.RootCondition;
 
-                VisitConditionNode(rootCondtion, conditionTypes);
+                VisitConditionNode(rootCondition, conditionTypes);
             }
 
             return conditionTypes;

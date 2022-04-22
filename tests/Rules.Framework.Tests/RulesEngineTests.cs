@@ -30,7 +30,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Test rule",
                 Priority = 3,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             EvaluationOptions evaluationOptions = new EvaluationOptions
@@ -78,17 +78,7 @@ namespace Rules.Framework.Tests
                 DateEnd = dateEnd,
                 Name = "Rule 1",
                 Priority = 3,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
-            };
-
-            Rule<ContentType, ConditionType> rule2 = new Rule<ContentType, ConditionType>
-            {
-                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
-                DateBegin = new DateTime(2020, 01, 01),
-                DateEnd = new DateTime(2021, 01, 01),
-                Name = "Rule 2",
-                Priority = 200,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             Rule<ContentType, ConditionType> rule3 = new Rule<ContentType, ConditionType>
@@ -98,7 +88,7 @@ namespace Rules.Framework.Tests
                 DateEnd = dateEnd,
                 Name = "Rule 3",
                 Priority = 1,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "CHE")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "CHE")
             };
 
             IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
@@ -124,8 +114,8 @@ namespace Rules.Framework.Tests
             {
                 switch (rootConditionNode)
                 {
-                    case StringConditionNode<ConditionType> stringConditionNode:
-                        return stringConditionNode.Operand == "USA";
+                    case ValueConditionNode<ConditionType> stringConditionNode:
+                        return stringConditionNode.Operand.ToString() == "USA";
 
                     default:
                         return false;
@@ -174,7 +164,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule 1",
                 Priority = 3,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             Rule<ContentType, ConditionType> expected2 = new Rule<ContentType, ConditionType>
@@ -184,7 +174,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule 2",
                 Priority = 200,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             Rule<ContentType, ConditionType> notExpected = new Rule<ContentType, ConditionType>
@@ -194,7 +184,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Not expected rule",
                 Priority = 1, // Topmost rule, should be the one that wins if options are set to topmost wins.
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "CHE")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "CHE")
             };
 
             IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
@@ -213,8 +203,8 @@ namespace Rules.Framework.Tests
             {
                 switch (rootConditionNode)
                 {
-                    case StringConditionNode<ConditionType> stringConditionNode:
-                        return stringConditionNode.Operand == "USA";
+                    case ValueConditionNode<ConditionType> stringConditionNode:
+                        return stringConditionNode.Operand.ToString() == "USA";
 
                     default:
                         return false;
@@ -269,7 +259,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule",
                 Priority = 3,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             Rule<ContentType, ConditionType> expected = new Rule<ContentType, ConditionType>
@@ -279,7 +269,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule",
                 Priority = 200,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
@@ -341,7 +331,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule",
                 Priority = 3,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             Rule<ContentType, ConditionType> other = new Rule<ContentType, ConditionType>
@@ -351,7 +341,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule",
                 Priority = 200,
-                RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
             };
 
             IEnumerable<Rule<ContentType, ConditionType>> rules = new[]
@@ -414,7 +404,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Expected rule",
                     Priority = 3,
-                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 },
                 new Rule<ContentType, ConditionType>
                 {
@@ -423,7 +413,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2021, 01, 01),
                     Name = "Expected rule",
                     Priority = 200,
-                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 }
             };
 
@@ -470,7 +460,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Expected rule",
                     Priority = 3,
-                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 },
                 new Rule<ContentType, ConditionType>
                 {
@@ -479,7 +469,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2021, 01, 01),
                     Name = "Expected rule",
                     Priority = 200,
-                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 }
             };
 
@@ -531,7 +521,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Expected rule",
                     Priority = 3,
-                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 },
                 new Rule<ContentType, ConditionType>
                 {
@@ -540,7 +530,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2021, 01, 01),
                     Name = "Expected rule",
                     Priority = 200,
-                    RootCondition = new StringConditionNode<ConditionType>(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String,ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 }
             };
 
