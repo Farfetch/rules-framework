@@ -17,6 +17,17 @@ namespace Rules.Framework.Tests
 
     public class RulesEngineTests
     {
+        private readonly Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine;
+        private readonly Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor;
+        private readonly Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource;
+
+        public RulesEngineTests()
+        {
+            this.mockRulesDataSource = new Mock<IRulesDataSource<ContentType, ConditionType>>();
+            this.mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+            this.mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
+        }
+
         [Fact]
         public async Task AddRuleAsync_GivenEmptyRuleDataSource_AddsRuleSuccesfully()
         {
@@ -37,9 +48,9 @@ namespace Rules.Framework.Tests
             {
                 MatchMode = MatchModes.Exact
             };
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = new Mock<IRulesDataSource<ContentType, ConditionType>>();
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+
+            this.SetupMockForConditionsEvalEngine(true, evaluationOptions);
+
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -104,13 +115,10 @@ namespace Rules.Framework.Tests
 
             var expectedCondtionTypes = new List<ConditionType>() { ConditionType.IsoCountryCode };
 
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
             mockCondtionTypeExtractor.Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule<ContentType, ConditionType>>>()))
                 .Returns(expectedCondtionTypes);
 
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
+            this.SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
             {
                 switch (rootConditionNode)
                 {
@@ -198,8 +206,9 @@ namespace Rules.Framework.Tests
             {
                 MatchMode = MatchModes.Exact
             };
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
+            this.SetupMockForRulesDataSource(rules);
+
+            this.SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
             {
                 switch (rootConditionNode)
                 {
@@ -210,9 +219,8 @@ namespace Rules.Framework.Tests
                         return false;
                 }
             }, evaluationOptions);
-            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
 
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+            IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
 
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -282,9 +290,11 @@ namespace Rules.Framework.Tests
             {
                 MatchMode = MatchModes.Exact
             };
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+
+            this.SetupMockForRulesDataSource(rules);
+
+            this.SetupMockForConditionsEvalEngine(true, evaluationOptions);
+
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -354,10 +364,11 @@ namespace Rules.Framework.Tests
             {
                 MatchMode = MatchModes.Exact
             };
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(true, evaluationOptions);
 
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+            this.SetupMockForRulesDataSource(rules);
+
+            this.SetupMockForConditionsEvalEngine(true, evaluationOptions);
+
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -421,10 +432,10 @@ namespace Rules.Framework.Tests
             {
                 MatchMode = MatchModes.Exact
             };
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false, evaluationOptions);
 
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+            this.SetupMockForRulesDataSource(rules);
+
+            this.SetupMockForConditionsEvalEngine(false, evaluationOptions);
 
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
@@ -478,10 +489,9 @@ namespace Rules.Framework.Tests
                 MatchMode = MatchModes.Exact
             };
 
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+            this.SetupMockForRulesDataSource(rules);
 
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false, evaluationOptions);
+            this.SetupMockForConditionsEvalEngine(false, evaluationOptions);
 
             IValidator<SearchArgs<ContentType, ConditionType>> validator = Mock.Of<IValidator<SearchArgs<ContentType, ConditionType>>>();
             Mock.Get(validator)
@@ -539,10 +549,9 @@ namespace Rules.Framework.Tests
                 MatchMode = MatchModes.Exact
             };
 
-            Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+            this.SetupMockForRulesDataSource(rules);
 
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = SetupMockForRulesDataSource(rules);
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = SetupMockForConditionsEvalEngine(false, evaluationOptions);
+            this.SetupMockForConditionsEvalEngine(false, evaluationOptions);
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -556,34 +565,28 @@ namespace Rules.Framework.Tests
             argumentNullException.ParamName.Should().Be(nameof(searchArgs));
         }
 
-        private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(bool result, EvaluationOptions evaluationOptions)
+        private void SetupMockForConditionsEvalEngine(Func<IConditionNode<ConditionType>, IEnumerable<Condition<ConditionType>>, EvaluationOptions, bool> evalFunc, EvaluationOptions evaluationOptions)
         {
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
-            mockConditionsEvalEngine.Setup(x => x.Eval(
-                    It.IsAny<IConditionNode<ConditionType>>(),
-                    It.IsAny<IEnumerable<Condition<ConditionType>>>(),
-                    It.Is<EvaluationOptions>(eo => eo == evaluationOptions)))
-                .Returns(result);
-            return mockConditionsEvalEngine;
-        }
-
-        private static Mock<IConditionsEvalEngine<ConditionType>> SetupMockForConditionsEvalEngine(Func<IConditionNode<ConditionType>, IEnumerable<Condition<ConditionType>>, EvaluationOptions, bool> evalFunc, EvaluationOptions evaluationOptions)
-        {
-            Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
-            mockConditionsEvalEngine.Setup(x => x.Eval(
+            this.mockConditionsEvalEngine.Setup(x => x.Eval(
                     It.IsAny<IConditionNode<ConditionType>>(),
                     It.IsAny<IEnumerable<Condition<ConditionType>>>(),
                     It.Is<EvaluationOptions>(eo => eo == evaluationOptions)))
                 .Returns(evalFunc);
-            return mockConditionsEvalEngine;
         }
 
-        private static Mock<IRulesDataSource<ContentType, ConditionType>> SetupMockForRulesDataSource(IEnumerable<Rule<ContentType, ConditionType>> rules)
+        private void SetupMockForConditionsEvalEngine(bool result, EvaluationOptions evaluationOptions)
         {
-            Mock<IRulesDataSource<ContentType, ConditionType>> mockRulesDataSource = new Mock<IRulesDataSource<ContentType, ConditionType>>();
-            mockRulesDataSource.Setup(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            this.mockConditionsEvalEngine.Setup(x => x.Eval(
+                    It.IsAny<IConditionNode<ConditionType>>(),
+                    It.IsAny<IEnumerable<Condition<ConditionType>>>(),
+                    It.Is<EvaluationOptions>(eo => eo == evaluationOptions)))
+                .Returns(result);
+        }
+
+        private void SetupMockForRulesDataSource(IEnumerable<Rule<ContentType, ConditionType>> rules)
+        {
+            this.mockRulesDataSource.Setup(x => x.GetRulesAsync(It.IsAny<ContentType>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(rules);
-            return mockRulesDataSource;
         }
     }
 }
