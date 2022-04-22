@@ -80,28 +80,6 @@ namespace Rules.Framework.Tests
             DateTime dateBegin = new DateTime(2018, 01, 01);
             DateTime dateEnd = new DateTime(2019, 01, 01);
 
-            ContentType contentType = ContentType.Type1;
-
-            Rule<ContentType, ConditionType> rule1 = new Rule<ContentType, ConditionType>
-            {
-                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
-                DateBegin = dateBegin,
-                DateEnd = dateEnd,
-                Name = "Rule 1",
-                Priority = 3,
-                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
-            };
-
-            Rule<ContentType, ConditionType> rule3 = new Rule<ContentType, ConditionType>
-            {
-                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
-                DateBegin = dateBegin,
-                DateEnd = dateEnd,
-                Name = "Rule 3",
-                Priority = 1,
-                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "CHE")
-            };
-
             EvaluationOptions evaluationOptions = new EvaluationOptions
             {
                 MatchMode = MatchModes.Exact
@@ -112,7 +90,7 @@ namespace Rules.Framework.Tests
             mockCondtionTypeExtractor.Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule<ContentType, ConditionType>>>()))
                 .Returns(expectedCondtionTypes);
 
-            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, evalOptions) =>
+            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, __) =>
             {
                 switch (rootConditionNode)
                 {
@@ -202,7 +180,7 @@ namespace Rules.Framework.Tests
             };
             this.SetupMockForRulesDataSource(rules);
 
-            this.SetupMockForConditionsEvalEngine((rootConditionNode, inputConditions, evalOptions) =>
+            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, __) =>
             {
                 switch (rootConditionNode)
                 {
