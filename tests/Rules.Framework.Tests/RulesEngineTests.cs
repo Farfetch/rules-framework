@@ -90,7 +90,7 @@ namespace Rules.Framework.Tests
             mockCondtionTypeExtractor.Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule<ContentType, ConditionType>>>()))
                 .Returns(expectedCondtionTypes);
 
-            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, __) =>
+            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, _) =>
             {
                 switch (rootConditionNode)
                 {
@@ -180,7 +180,7 @@ namespace Rules.Framework.Tests
             };
             this.SetupMockForRulesDataSource(rules);
 
-            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, __) =>
+            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, _) =>
             {
                 switch (rootConditionNode)
                 {
