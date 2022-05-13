@@ -13,7 +13,7 @@ namespace Rules.Framework
     public interface IConditionTypeExtractor<TContentType, TConditionType>
     {
         /// <summary>
-        /// Get the unique condition types associated with rules of a specific content type/>.
+        /// Get the unique condition types associated with rules of a specific content type.
         /// </summary>
         /// <param name="matchedRules"></param>
         /// <remarks>

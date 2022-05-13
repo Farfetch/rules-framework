@@ -110,5 +110,39 @@ namespace Rules.Framework.Tests
             // Assert
             actual.Should().BeEquivalentTo(expectedConditionTypeList);
         }
+
+        [Fact]
+        public void GetConditionTypes_WithNullRootCondition_ReturnsEmptyListConditionTypes()
+        {
+            // Arrange
+
+            var dateBegin = new DateTime(2018, 01, 01);
+            var dateEnd = new DateTime(2019, 01, 01);
+
+            var contentType = ContentType.Type1;
+
+            var matchRules = new List<Rule<ContentType, ConditionType>>()
+            {
+                   new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, _ => new object()),
+                DateBegin = dateBegin,
+                DateEnd = dateEnd,
+                Name = "Rule 3",
+                Priority = 1,
+                RootCondition = null
+            }
+            };
+
+            var expectedConditionTypeList = new List<ConditionType>();
+
+            var conditionTypeExtractor = new ConditionTypeExtractor<ContentType, ConditionType>();
+
+            // Act
+            var actual = conditionTypeExtractor.GetConditionTypes(matchRules);
+
+            // Assert
+            actual.Should().BeEquivalentTo(expectedConditionTypeList);
+        }
     }
 }

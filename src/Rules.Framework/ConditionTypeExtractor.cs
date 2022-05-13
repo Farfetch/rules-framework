@@ -15,8 +15,14 @@ namespace Rules.Framework
     /// </typeparam>
     public class ConditionTypeExtractor<TContentType, TConditionType> : IConditionTypeExtractor<TContentType, TConditionType>
     {
+        private readonly List<Type> allowedExceptions = new List<Type>()
+        {
+            typeof(NotSupportedException),
+            typeof(NullReferenceException)
+        };
+
         /// <summary>
-        /// Get the unique condition types associated with rules of a specific content type/>.
+        /// Get the unique condition types associated with rules of a specific content type.
         /// </summary>
         /// <param name="matchedRules"></param>
         /// <remarks>
@@ -29,7 +35,7 @@ namespace Rules.Framework
         /// <returns>the matched rule; otherwise, null.</returns>
         public IEnumerable<TConditionType> GetConditionTypes(IEnumerable<Rule<TContentType, TConditionType>> matchedRules)
         {
-            var conditionTypes = new List<TConditionType>();
+            var conditionTypes = new HashSet<TConditionType>();
 
             if (!matchedRules.Any())
             {
@@ -40,23 +46,31 @@ namespace Rules.Framework
             {
                 var rootCondition = rule.RootCondition;
 
-                VisitConditionNode(rootCondition, conditionTypes);
+                try
+                {
+                    VisitConditionNode(rootCondition, conditionTypes);
+                }
+                catch (Exception ex)
+                {
+                    if (allowedExceptions.Contains(ex.GetType()))
+                    {
+                        continue;
+                    }
+
+                    throw;
+                }
             }
 
             return conditionTypes;
         }
 
-        private static void VisitConditionNode(IConditionNode<TConditionType> conditionNode, List<TConditionType> conditionTypes)
+        private static void VisitConditionNode(IConditionNode<TConditionType> conditionNode, HashSet<TConditionType> conditionTypes)
         {
             switch (conditionNode)
             {
                 case IValueConditionNode<TConditionType> valueConditionNode:
 
-                    if (!conditionTypes.Contains(valueConditionNode.ConditionType))
-                    {
-                        conditionTypes.Add(valueConditionNode.ConditionType);
-                    }
-
+                    conditionTypes.Add(valueConditionNode.ConditionType);
                     break;
 
                 case ComposedConditionNode<TConditionType> composedConditionNode:

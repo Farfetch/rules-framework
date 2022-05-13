@@ -68,7 +68,7 @@ namespace Rules.Framework
         }
 
         /// <summary>
-        /// Get the unique condition types associated with rules of a specific content type/>.
+        /// Get the unique condition types associated with rules of a specific content type.
         /// </summary>
         /// <param name="contentType"></param>
         /// <param name="dateBegin"></param>
