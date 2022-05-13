@@ -15,7 +15,7 @@ namespace Rules.Framework
     /// </typeparam>
     public class ConditionTypeExtractor<TContentType, TConditionType> : IConditionTypeExtractor<TContentType, TConditionType>
     {
-        private readonly List<Type> allowedExceptions = new List<Type>()
+        private readonly List<Type> allowedExceptions = new List<Type>
         {
             typeof(NotSupportedException),
             typeof(NullReferenceException)

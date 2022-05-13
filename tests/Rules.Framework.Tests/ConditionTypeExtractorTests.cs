@@ -121,7 +121,7 @@ namespace Rules.Framework.Tests
 
             var contentType = ContentType.Type1;
 
-            var matchRules = new List<Rule<ContentType, ConditionType>>()
+            var matchRules = new List<Rule<ContentType, ConditionType>>
             {
                    new Rule<ContentType, ConditionType>
             {
