@@ -80,6 +80,7 @@ If you request a rule for the content type "Body Mass formula" by specifying dat
 1. [Add rules](docs/add-rules.md)
 1. [Update rules](docs/update-rules.md)
 1. [Search rules](docs/search-rules.md)
+1. [Get Unique Condition Types](get-unique-condition-types.md)
 1. [In-memory data source provider](docs/using-in-memory-data-source.md)
 1. [MongoDB data source provider](docs/using-mongo-db-data-source.md)
 1. [New data source provider - How To](docs/new-data-source-how-to.md)

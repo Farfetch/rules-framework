@@ -80,7 +80,7 @@ namespace Rules.Framework
         /// </para>
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
+        /// <returns>the matched rule; otherwise, empty.</returns>
         public async Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
         {
             var matchedRules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd).ConfigureAwait(false);

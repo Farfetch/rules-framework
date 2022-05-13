@@ -32,7 +32,7 @@ namespace Rules.Framework
         /// </para>
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
+        /// <returns>the matched rule; otherwise, empty.</returns>
         public IEnumerable<TConditionType> GetConditionTypes(IEnumerable<Rule<TContentType, TConditionType>> matchedRules)
         {
             var conditionTypes = new HashSet<TConditionType>();
