@@ -76,14 +76,14 @@ If you request a rule for the content type "Body Mass formula" by specifying dat
 
 ## Using the framework
 
-1. [Getting started](docs/getting-started.md)
-2. [Add rules](docs/add-rules.md)
-3. [Update rules](docs/update-rules.md)
-4. [Search rules](docs/search-rules.md)
-5. [Get Unique Condition Types](get-unique-condition-types.md)
-6. [In-memory data source provider](docs/using-in-memory-data-source.md)
-7. [MongoDB data source provider](docs/using-mongo-db-data-source.md)
-8. [New data source provider - How To](docs/new-data-source-how-to.md)
+1.  [Getting started](docs/getting-started.md)
+2.  [Add rules](docs/add-rules.md)
+3.  [Update rules](docs/update-rules.md)
+4.  [Search rules](docs/search-rules.md)
+5.  [Get Unique Condition Types](get-unique-condition-types.md)
+6.  [In-memory data source provider](docs/using-in-memory-data-source.md)
+7.  [MongoDB data source provider](docs/using-mongo-db-data-source.md)
+8.  [New data source provider - How To](docs/new-data-source-how-to.md)
 
 ## Contributing
 
