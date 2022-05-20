@@ -15,12 +15,6 @@ namespace Rules.Framework
     /// </typeparam>
     public class ConditionTypeExtractor<TContentType, TConditionType> : IConditionTypeExtractor<TContentType, TConditionType>
     {
-        private readonly List<Type> allowedExceptions = new List<Type>
-        {
-            typeof(NotSupportedException),
-            typeof(NullReferenceException)
-        };
-
         /// <summary>
         /// Get the unique condition types associated with rules of a specific content type.
         /// </summary>
@@ -46,19 +40,12 @@ namespace Rules.Framework
             {
                 var rootCondition = rule.RootCondition;
 
-                try
+                if (rootCondition is null)
                 {
-                    VisitConditionNode(rootCondition, conditionTypes);
+                    continue;
                 }
-                catch (Exception ex)
-                {
-                    if (allowedExceptions.Contains(ex.GetType()))
-                    {
-                        continue;
-                    }
 
-                    throw;
-                }
+                VisitConditionNode(rootCondition, conditionTypes);
             }
 
             return conditionTypes;
