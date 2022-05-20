@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29025.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework", "src\Rules.Framework\Rules.Framework.csproj", "{3193A341-094C-4808-9972-173418268894}"
 EndProject
@@ -26,11 +26,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.Providers.M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.Providers.InMemory", "src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj", "{D3A17A64-CC74-4EA0-95EA-9E141913BF70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rules.Framework.IntegrationTests.Common", "tests\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj", "{7C04ECEF-6504-453D-ABD8-FD3D5A2CF7F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.IntegrationTests.Common", "tests\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj", "{7C04ECEF-6504-453D-ABD8-FD3D5A2CF7F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rules.Framework.Providers.InMemory.IntegrationTests", "tests\Rules.Framework.Providers.InMemory.IntegrationTests\Rules.Framework.Providers.InMemory.IntegrationTests.csproj", "{69BBA04D-116C-48EA-A8FD-ECC8CA0D57BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.Providers.InMemory.IntegrationTests", "tests\Rules.Framework.Providers.InMemory.IntegrationTests\Rules.Framework.Providers.InMemory.IntegrationTests.csproj", "{69BBA04D-116C-48EA-A8FD-ECC8CA0D57BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rules.Framework.Providers.InMemory.Tests", "tests\Rules.Framework.Providers.InMemory.Tests\Rules.Framework.Providers.InMemory.Tests.csproj", "{BB319C5B-9BF5-4DDB-B522-CFC64D7272C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.Providers.InMemory.Tests", "tests\Rules.Framework.Providers.InMemory.Tests\Rules.Framework.Providers.InMemory.Tests.csproj", "{BB319C5B-9BF5-4DDB-B522-CFC64D7272C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rules.Framework.Providers.SqlServer", "src\Rules.Framework.Providers.SqlServer\Rules.Framework.Providers.SqlServer.csproj", "{6741F54A-5043-4022-998D-C9C6557BECBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +80,10 @@ Global
 		{BB319C5B-9BF5-4DDB-B522-CFC64D7272C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB319C5B-9BF5-4DDB-B522-CFC64D7272C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB319C5B-9BF5-4DDB-B522-CFC64D7272C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6741F54A-5043-4022-998D-C9C6557BECBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6741F54A-5043-4022-998D-C9C6557BECBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6741F54A-5043-4022-998D-C9C6557BECBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6741F54A-5043-4022-998D-C9C6557BECBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +99,7 @@ Global
 		{7C04ECEF-6504-453D-ABD8-FD3D5A2CF7F6} = {74E24C97-8EE4-4B69-AECD-4765FD2C751F}
 		{69BBA04D-116C-48EA-A8FD-ECC8CA0D57BE} = {74E24C97-8EE4-4B69-AECD-4765FD2C751F}
 		{BB319C5B-9BF5-4DDB-B522-CFC64D7272C4} = {74E24C97-8EE4-4B69-AECD-4765FD2C751F}
+		{6741F54A-5043-4022-998D-C9C6557BECBB} = {AEE746EC-CEAA-4892-8C29-0CAAB97A23A8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FA9D4C31-972B-49C2-9F63-C56ED766DAB0}
