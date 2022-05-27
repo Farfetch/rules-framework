@@ -1,0 +1,75 @@
+namespace Rules.Framework.Providers.SqlServer
+{
+    using System;
+    using System.Globalization;
+    using Rules.Framework.Builder;
+    using Core = Rules.Framework.Core;
+    using Model = Rules.Framework.SqlServer.Models;
+
+    public class RuleFactory<TContentType, TConditionType> : IRuleFactory<TContentType, TConditionType>
+    {
+        public Core.Rule<TContentType, TConditionType> CreateRule(Model.Rule ruleDataModel)
+        {
+            if (ruleDataModel is null)
+            {
+                throw new ArgumentNullException(nameof(ruleDataModel));
+            }
+
+            TContentType contentType = Parse<TContentType>(ruleDataModel.ContentType.Code.ToString());
+
+            RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
+                .WithName(ruleDataModel.Name)
+                .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
+                //.WithCondition(cnb => ruleDataModel.RootCondition is { } ? this.ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
+                //.WithSerializedContent(contentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
+                .Build();
+
+            if (!ruleBuilderResult.IsSuccess)
+            {
+                throw new InvalidRuleException($"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}", ruleBuilderResult.Errors);
+            }
+
+            ruleBuilderResult.Rule.Priority = ruleDataModel.Priority;
+
+            if (ruleBuilderResult.Rule.Priority <= 0)
+            {
+                throw new InvalidRuleException(
+                    $"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}",
+                    new[] { $"Loaded rule priority number is invalid: {ruleBuilderResult.Rule.Priority}." });
+            }
+
+            return ruleBuilderResult.Rule;
+        }
+
+        public Model.Rule CreateRule(Core.Rule<TContentType, TConditionType> rule)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            dynamic content = rule.ContentContainer.GetContentAs<dynamic>();
+
+            Model.Rule ruleDataModel = new Model.Rule
+            {
+                Content = content,
+                //ContentTypeCode = Convert.ToString(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
+                DateBegin = rule.DateBegin,
+                DateEnd = rule.DateEnd,
+                Name = rule.Name,
+                Priority = rule.Priority,
+                //RootCondition = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null
+            };
+
+            return ruleDataModel;
+        }
+
+        //TODO: move to a common place
+        private static T Parse<T>(string value)
+           => (T)Parse(value, typeof(T));
+
+        //TODO: move to a common place
+        private static object Parse(string value, Type type)
+            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+    }
+}
