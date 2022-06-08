@@ -23,6 +23,7 @@ namespace Rules.Framework
     {
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
+        private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
         private readonly RulesEngineOptions rulesEngineOptions;
         private readonly IValidatorProvider validatorProvider;
@@ -31,12 +32,14 @@ namespace Rules.Framework
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
             IRulesDataSource<TContentType, TConditionType> rulesDataSource,
             IValidatorProvider validatorProvider,
-            RulesEngineOptions rulesEngineOptions)
+            RulesEngineOptions rulesEngineOptions,
+            IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;
             this.rulesDataSource = rulesDataSource;
             this.validatorProvider = validatorProvider;
             this.rulesEngineOptions = rulesEngineOptions;
+            this.conditionTypeExtractor = conditionTypeExtractor;
         }
 
         /// <summary>
@@ -62,6 +65,27 @@ namespace Rules.Framework
             }
 
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
+        }
+
+        /// <summary>
+        /// Get the unique condition types associated with rules of a specific content type.
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <param name="dateBegin"></param>
+        /// <param name="dateEnd"></param>
+        /// <remarks>
+        /// <para>
+        /// A set of rules is requested to rules data source and all conditions are evaluated
+        /// against them to provide a set of matches.
+        /// </para>
+        /// <para>All rules matching supplied conditions are returned.</para>
+        /// </remarks>
+        /// <returns>the matched rule; otherwise, empty.</returns>
+        public async Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
+        {
+            var matchedRules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd).ConfigureAwait(false);
+
+            return this.conditionTypeExtractor.GetConditionTypes(matchedRules);
         }
 
         /// <summary>
