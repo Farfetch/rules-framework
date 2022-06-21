@@ -112,7 +112,7 @@ namespace Rules.Framework
             };
 
             DateTime dateBegin = matchDateTime.Date;
-            DateTime dateEnd = matchDateTime.Date.AddDays(1);
+            DateTime dateEnd = matchDateTime.Date;
 
             return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
         }
