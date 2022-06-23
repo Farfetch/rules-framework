@@ -21,8 +21,6 @@ namespace Rules.Framework.InMemory.Sample
 
             while (true)
             {
-                Console.WriteLine("Hello World!");
-
                 Console.WriteLine("Type a number and see the rule and value configured it for or use 0 to exit");
                 var input = Console.ReadLine().ToLower(CultureInfo.InvariantCulture);
 

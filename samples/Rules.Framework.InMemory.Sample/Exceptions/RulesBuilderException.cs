@@ -7,7 +7,7 @@ namespace Rules.Framework.InMemory.Sample.Exceptions
 
     [Serializable]
     [ExcludeFromCodeCoverage]
-    internal class RulesBuilderException : Exception
+    public class RulesBuilderException : Exception
     {
         public RulesBuilderException()
         {

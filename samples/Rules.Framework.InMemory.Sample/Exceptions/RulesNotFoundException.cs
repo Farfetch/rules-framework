@@ -6,7 +6,7 @@ namespace Rules.Framework.InMemory.Sample.Exceptions
 
     [Serializable]
     [ExcludeFromCodeCoverage]
-    internal class RulesNotFoundException : Exception
+    public class RulesNotFoundException : Exception
     {
         public RulesNotFoundException()
         {
