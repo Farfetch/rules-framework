@@ -11,21 +11,28 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - name: Find branch name
-      id: extract-branch-name
+    - name: Determine Git Checkout information
+      id: checkout-info
       run: |
         if [ $GITHUB_EVENT_NAME == 'pull_request' ]; then
-          BRANCH_NAME=$(echo ${GITHUB_HEAD_REF})
+          BRANCH_NAME=$(echo ${{ github.event.pull_request.head.ref }})
+          REPOSITORY_NAME=$(echo ${{ github.event.pull_request.head.repo.full_name }})
         else
           BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})
+          REPOSITORY_NAME=$(echo ${{ github.repository }})
         fi
 
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-        echo "Extracted branch name: $BRANCH_NAME"
+        echo "REPOSITORY_NAME=$REPOSITORY_NAME" >> $GITHUB_ENV
+        echo "Git checkout information:"
+        echo "Branch name: $BRANCH_NAME"
+        echo "Repository name: $REPOSITORY_NAME"
 
-    - uses: actions/checkout@v2
+    - name: Git Checkout
+      uses: actions/checkout@v2
       with:
-        ref: ${{ env.BRANCH_NAME }}
+        ref: ${{github.event.pull_request.head.ref}}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
 
     - name: Force fetch tags
       run: git fetch --tags --force
@@ -158,6 +165,7 @@ jobs:
 
     - name: Delete build tag if exists
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      continue-on-error: true
       with:
         delete_release: false
         tag_name: ${{ env.BUILD_VERSION }}
@@ -166,6 +174,7 @@ jobs:
 
     - name: Set build tag
       uses: anothrNick/github-tag-action@1.26.0
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DEFAULT_BUMP: none
