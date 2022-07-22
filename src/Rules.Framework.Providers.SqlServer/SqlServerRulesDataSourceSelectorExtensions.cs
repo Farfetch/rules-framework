@@ -21,6 +21,7 @@ namespace Rules.Framework.Providers.SqlServer
             this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector,
             string sqlServerConnection)
         {
+            //TODO: check if we use Guard
             if (rulesDataSourceSelector is null)
             {
                 throw new ArgumentNullException(nameof(rulesDataSourceSelector));

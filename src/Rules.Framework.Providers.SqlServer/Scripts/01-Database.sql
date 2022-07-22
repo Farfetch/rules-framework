@@ -97,7 +97,7 @@ GO
 CREATE TABLE [dbo].[Operators](
 	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
-	[Symbol] [nvarchar](20) NOT NULL,
+	[Symbol] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_Operators] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC
