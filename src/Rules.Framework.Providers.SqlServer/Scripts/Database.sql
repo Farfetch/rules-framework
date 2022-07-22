@@ -53,7 +53,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ConditionTypes](
-	[ConditionTypeCode] [int] NOT NULL,
+	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
  CONSTRAINT [PK_ConditionTypes] PRIMARY KEY CLUSTERED 
 (
@@ -110,7 +110,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Rules](
-	[Id] [bigint] NOT NULL,
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
 	[Content] [nvarchar](100) NOT NULL,
 	[ContentTypeCode] [int] NOT NULL,
 	[DateBegin] [datetime2](7) NOT NULL,

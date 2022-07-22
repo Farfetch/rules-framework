@@ -2,6 +2,7 @@ namespace Rules.Framework.IntegrationTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -117,7 +118,7 @@ namespace Rules.Framework.IntegrationTests
                     return conditionNodeBuilder.AsValued(integrationTestsConditionType)
                         .OfDataType<decimal>()
                         .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand))
+                        .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                         .Build();
 
                 case DataTypes.String:
