@@ -2,17 +2,13 @@ USE [rules-framework-sample]
 
 IF (NOT EXISTS (SELECT * 
                  FROM [dbo].[ConditionNodeTypes] 
-                 WHERE [Code] IN (1, 2, 3, 4, 5, 6, 7)))
+                 WHERE [Code] IN (1, 2)))
 BEGIN
 
 INSERT INTO [dbo].[ConditionNodeTypes] 
     VALUES
-    (1, 'Boolean'),
-    (2, 'Composed'),
-    (3, 'Decimal'),
-    (4, 'Integer'),
-    (5, 'String'),
-    (7, 'Value')
+    (1, 'ValueConditionNode'),
+    (2, 'ComposedConditionNode')
 
 END
 
@@ -34,7 +30,7 @@ END
 
 IF (NOT EXISTS (SELECT * 
                  FROM [dbo].[Operators] 
-                 WHERE [Code] IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)))
+                 WHERE [Code] IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)))
 BEGIN
 
 INSERT INTO [dbo].[Operators] 
@@ -50,9 +46,19 @@ INSERT INTO [dbo].[Operators]
     (9, 'StartsWith', 'STARTSWITH'),
     (10, 'EndsWith', 'ENDSWITH'),
     (11, 'CaseInsensitiveStartsWith', 'CASEINSENSITIVESTARTSWITH'),
-    (12, 'CaseInsensitiveEndsWith', 'CASEINSENSITIVEENDSWITH'),
-    (13, 'And', 'AND'),
-    (14, 'Or', 'OR'),
-    (15, 'Eval', 'EVAL')
+    (12, 'CaseInsensitiveEndsWith', 'CASEINSENSITIVEENDSWITH')
+
+END
+
+IF (NOT EXISTS (SELECT * 
+                 FROM [dbo].[LogicalOperators] 
+                 WHERE [Code] IN (1, 2, 3)))
+BEGIN
+
+INSERT INTO [dbo].[LogicalOperators] 
+    VALUES
+    (1, 'And', 'AND'),
+    (2, 'Or', 'OR'),
+    (3, 'Eval', 'EVAL')
 
 END 
