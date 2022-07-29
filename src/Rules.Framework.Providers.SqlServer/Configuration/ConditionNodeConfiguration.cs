@@ -18,17 +18,19 @@ namespace Rules.Framework.SqlServer.Models
             builder.ToTable("ConditionNodes", "dbo");
             builder.HasKey(x => x.Id).HasName("PK_ConditionNodes").IsClustered();
 
-            builder.Property(x => x.Id).HasColumnName(@"Id").HasColumnType("bigint").IsRequired().ValueGeneratedNever();
+            builder.Property(x => x.Id).HasColumnName(@"Id").HasColumnType("bigint").IsRequired().ValueGeneratedOnAdd().UseIdentityColumn();
             builder.Property(x => x.ConditionNodeTypeCode).HasColumnName(@"ConditionNodeTypeCode").HasColumnType("int").IsRequired();
             builder.Property(x => x.ConditionTypeCode).HasColumnName(@"ConditionTypeCode").HasColumnType("int").IsRequired();
             builder.Property(x => x.DataTypeCode).HasColumnName(@"DataTypeCode").HasColumnType("int").IsRequired();
-            builder.Property(x => x.OperatorCode).HasColumnName(@"OperatorCode").HasColumnType("int").IsRequired();
-            builder.Property(x => x.Operand).HasColumnName(@"Operand").HasColumnType("nvarchar(50)").IsRequired().HasMaxLength(50);
+            builder.Property(x => x.OperatorCode).HasColumnName(@"OperatorCode").HasColumnType("int").IsRequired(false);
+            builder.Property(x => x.Operand).HasColumnName(@"Operand").HasColumnType("nvarchar(50)").IsRequired(false).HasMaxLength(50);
+            builder.Property(x => x.LogicalOperatorCode).HasColumnName(@"LogicalOperatorCode").HasColumnType("int").IsRequired(false);
 
             // Foreign keys
             builder.HasOne(a => a.ConditionNodeType).WithMany(b => b.ConditionNodes).HasForeignKey(c => c.ConditionNodeTypeCode).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_ConditionNodes_ConditionNodeTypes");
             builder.HasOne(a => a.ConditionType).WithMany(b => b.ConditionNodes).HasForeignKey(c => c.ConditionTypeCode).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_ConditionNodes_ConditionTypes");
             builder.HasOne(a => a.DataType).WithMany(b => b.ConditionNodes).HasForeignKey(c => c.DataTypeCode).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_ConditionNodes_DataTypes");
+            builder.HasOne(a => a.LogicalOperator).WithMany(b => b.ConditionNodes).HasForeignKey(c => c.LogicalOperatorCode).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_ConditionNodes_LogicalOperators");
             builder.HasOne(a => a.Operator).WithMany(b => b.ConditionNodes).HasForeignKey(c => c.OperatorCode).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_ConditionNodes_Operators");
         }
     }

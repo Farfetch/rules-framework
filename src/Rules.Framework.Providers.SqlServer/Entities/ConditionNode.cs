@@ -19,8 +19,9 @@ namespace Rules.Framework.SqlServer.Models
         public int ConditionNodeTypeCode { get; set; } // ConditionNodeTypeCode
         public int ConditionTypeCode { get; set; } // ConditionTypeCode
         public int DataTypeCode { get; set; } // DataTypeCode
-        public int OperatorCode { get; set; } // OperatorCode
+        public int? OperatorCode { get; set; } // OperatorCode
         public string Operand { get; set; } // Operand (length: 50)
+        public int? LogicalOperatorCode { get; set; } // LogicalOperatorCode
 
         // Reverse navigation
 
@@ -55,6 +56,11 @@ namespace Rules.Framework.SqlServer.Models
         /// Parent DataType pointed by [ConditionNodes].([DataTypeCode]) (FK_ConditionNodes_DataTypes)
         /// </summary>
         public virtual DataType DataType { get; set; } // FK_ConditionNodes_DataTypes
+
+        /// <summary>
+        /// Parent LogicalOperator pointed by [ConditionNodes].([LogicalOperatorCode]) (FK_ConditionNodes_LogicalOperators)
+        /// </summary>
+        public virtual LogicalOperator LogicalOperator { get; set; } // FK_ConditionNodes_LogicalOperators
 
         /// <summary>
         /// Parent Operator pointed by [ConditionNodes].([OperatorCode]) (FK_ConditionNodes_Operators)

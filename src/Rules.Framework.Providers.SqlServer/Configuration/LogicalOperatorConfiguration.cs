@@ -6,16 +6,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Rules.Framework.SqlServer.Models
 {
-    // ConditionTypes
-    public class ConditionTypeConfiguration : IEntityTypeConfiguration<ConditionType>
+    // LogicalOperators
+    public class LogicalOperatorConfiguration : IEntityTypeConfiguration<LogicalOperator>
     {
-        public void Configure(EntityTypeBuilder<ConditionType> builder)
+        public void Configure(EntityTypeBuilder<LogicalOperator> builder)
         {
-            builder.ToTable("ConditionTypes", "dbo");
-            builder.HasKey(x => x.Code).HasName("PK_ConditionTypes").IsClustered();
+            builder.ToTable("LogicalOperators", "dbo");
+            builder.HasKey(x => x.Code).HasName("PK_LogicalOperators").IsClustered();
 
             builder.Property(x => x.Code).HasColumnName(@"Code").HasColumnType("int").IsRequired().ValueGeneratedNever();
             builder.Property(x => x.Name).HasColumnName(@"Name").HasColumnType("nvarchar(100)").IsRequired().HasMaxLength(100);
+            builder.Property(x => x.Symbol).HasColumnName(@"Symbol").HasColumnType("nvarchar(50)").IsRequired().HasMaxLength(50);
         }
     }
 

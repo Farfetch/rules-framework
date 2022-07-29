@@ -1,4 +1,5 @@
-USE [rules-framework-sample]
+USE @dbname
+
 GO
 /****** Object:  Table [dbo].[ConditionNodeRelations]    Script Date: 29/07/2022 15:14:37 ******/
 SET ANSI_NULLS ON

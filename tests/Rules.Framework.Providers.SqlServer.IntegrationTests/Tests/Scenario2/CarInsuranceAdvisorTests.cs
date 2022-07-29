@@ -17,10 +17,13 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
 
     public sealed class CarInsuranceAdvisorTests : IDisposable
     {
+        //TODO: read from seetings
+        private const string DataBaseName = "rules-framework-sample";
+
         private RulesFrameworkDbContext rulesFrameworkDbContext;
 
         //TODO: get connection from settings
-        private string sqlConnection = "Server=localhost;Database=rules-framework-sample;Trusted_Connection=True; Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true; Application Name=Order Transaction Service; encrypt=true; trustServerCertificate=true";
+        private string sqlConnection = $"Server=localhost;Database={DataBaseName};Trusted_Connection=True; Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true; Application Name=Order Transaction Service; encrypt=true; trustServerCertificate=true";
 
         public CarInsuranceAdvisorTests()
         {
@@ -29,11 +32,9 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
 
             string script = File.ReadAllText(@"E:\Project Docs\MX462-PD\MX756_ModMappings1.sql");
 
-            SqlConnection conn = new SqlConnection(sqlConnectionString);
-
-            Server server = new Server(new ServerConnection(conn));
-
-            server.ConnectionContext.ExecuteNonQuery(script);
+            SqlServerDbDataProviderFactory sqlServerDbDataProviderFactory = new SqlServerDbDataProviderFactory();
+            var rulesSchemaCreator = sqlServerDbDataProviderFactory.CreateSchemaCreator(new SqlServerDbSettings(sqlConnection, DataBaseName));
+            rulesSchemaCreator.CreateOrUpdateSchemaAsync(DataBaseName);
 
             //TODO: change Model.Rule to RuleDataMOdel
             IEnumerable<Model.Rule> rules;
@@ -51,6 +52,8 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
 
             rulesFrameworkDbContext.AddRange(rules);
         }
+
+        public IRulesSchemaCreator RulesSchemaCreator { get; }
 
         public void Dispose()
         {

@@ -26,6 +26,7 @@ namespace Rules.Framework.SqlServer.Models
         DbSet<ConditionType> ConditionTypes { get; set; } // ConditionTypes
         DbSet<ContentType> ContentTypes { get; set; } // ContentTypes
         DbSet<DataType> DataTypes { get; set; } // DataTypes
+        DbSet<LogicalOperator> LogicalOperators { get; set; } // LogicalOperators
         DbSet<Operator> Operators { get; set; } // Operators
         DbSet<Rule> Rules { get; set; } // Rules
 

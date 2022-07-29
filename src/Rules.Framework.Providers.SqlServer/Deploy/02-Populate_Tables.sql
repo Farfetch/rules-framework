@@ -1,4 +1,4 @@
-USE [rules-framework-sample]
+USE @dbname
 
 IF (NOT EXISTS (SELECT * 
                  FROM [dbo].[ConditionNodeTypes] 

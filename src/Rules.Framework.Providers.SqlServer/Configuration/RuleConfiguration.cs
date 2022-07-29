@@ -14,7 +14,7 @@ namespace Rules.Framework.SqlServer.Models
             builder.ToTable("Rules", "dbo");
             builder.HasKey(x => x.Id).HasName("PK_Rules").IsClustered();
 
-            builder.Property(x => x.Id).HasColumnName(@"Id").HasColumnType("bigint").IsRequired().ValueGeneratedNever();
+            builder.Property(x => x.Id).HasColumnName(@"Id").HasColumnType("bigint").IsRequired().ValueGeneratedOnAdd().UseIdentityColumn();
             builder.Property(x => x.Content).HasColumnName(@"Content").HasColumnType("nvarchar(100)").IsRequired().HasMaxLength(100);
             builder.Property(x => x.ContentTypeCode).HasColumnName(@"ContentTypeCode").HasColumnType("int").IsRequired();
             builder.Property(x => x.DateBegin).HasColumnName(@"DateBegin").HasColumnType("datetime2").IsRequired();

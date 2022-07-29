@@ -16,7 +16,7 @@ namespace Rules.Framework.SqlServer.Models
 
             builder.Property(x => x.Code).HasColumnName(@"Code").HasColumnType("int").IsRequired().ValueGeneratedNever();
             builder.Property(x => x.Name).HasColumnName(@"Name").HasColumnType("nvarchar(100)").IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Symbol).HasColumnName(@"Symbol").HasColumnType("nvarchar(20)").IsRequired().HasMaxLength(20);
+            builder.Property(x => x.Symbol).HasColumnName(@"Symbol").HasColumnType("nvarchar(50)").IsRequired().HasMaxLength(50);
         }
     }
 

@@ -35,6 +35,7 @@ namespace Rules.Framework.SqlServer.Models
         public DbSet<ConditionType> ConditionTypes { get; set; } // ConditionTypes
         public DbSet<ContentType> ContentTypes { get; set; } // ContentTypes
         public DbSet<DataType> DataTypes { get; set; } // DataTypes
+        public DbSet<LogicalOperator> LogicalOperators { get; set; } // LogicalOperators
         public DbSet<Operator> Operators { get; set; } // Operators
         public DbSet<Rule> Rules { get; set; } // Rules
 
@@ -65,6 +66,7 @@ namespace Rules.Framework.SqlServer.Models
             modelBuilder.ApplyConfiguration(new ConditionTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ContentTypeConfiguration());
             modelBuilder.ApplyConfiguration(new DataTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new LogicalOperatorConfiguration());
             modelBuilder.ApplyConfiguration(new OperatorConfiguration());
             modelBuilder.ApplyConfiguration(new RuleConfiguration());
         }

@@ -13,7 +13,7 @@ namespace Rules.Framework.SqlServer.Models
     {
         public int Code { get; set; } // Code (Primary key)
         public string Name { get; set; } // Name (length: 100)
-        public string Symbol { get; set; } // Symbol (length: 20)
+        public string Symbol { get; set; } // Symbol (length: 50)
 
         // Reverse navigation
 

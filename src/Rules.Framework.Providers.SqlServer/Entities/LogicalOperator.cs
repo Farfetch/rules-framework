@@ -8,20 +8,21 @@ using System.Threading.Tasks;
 
 namespace Rules.Framework.SqlServer.Models
 {
-    // ConditionTypes
-    public class ConditionType
+    // LogicalOperators
+    public class LogicalOperator
     {
         public int Code { get; set; } // Code (Primary key)
         public string Name { get; set; } // Name (length: 100)
+        public string Symbol { get; set; } // Symbol (length: 50)
 
         // Reverse navigation
 
         /// <summary>
-        /// Child ConditionNodes where [ConditionNodes].[ConditionTypeCode] point to this entity (FK_ConditionNodes_ConditionTypes)
+        /// Child ConditionNodes where [ConditionNodes].[LogicalOperatorCode] point to this entity (FK_ConditionNodes_LogicalOperators)
         /// </summary>
-        public virtual ICollection<ConditionNode> ConditionNodes { get; set; } // ConditionNodes.FK_ConditionNodes_ConditionTypes
+        public virtual ICollection<ConditionNode> ConditionNodes { get; set; } // ConditionNodes.FK_ConditionNodes_LogicalOperators
 
-        public ConditionType()
+        public LogicalOperator()
         {
             ConditionNodes = new List<ConditionNode>();
         }
