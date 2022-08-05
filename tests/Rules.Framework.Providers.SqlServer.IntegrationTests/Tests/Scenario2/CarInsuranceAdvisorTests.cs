@@ -1,63 +1,47 @@
 namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Reflection;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Newtonsoft.Json;
     using Rules.Framework;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
-    using Rules.Framework.SqlServer.Models;
+    using Rules.Framework.Providers.SqlServer.IntegrationTests.Database;
     using Xunit;
-
-    using Model = Rules.Framework.SqlServer.Models;
 
     public sealed class CarInsuranceAdvisorTests : IDisposable
     {
         //TODO: read from seetings
         private const string DataBaseName = "rules-framework-sample";
 
-        private RulesFrameworkDbContext rulesFrameworkDbContext;
+        private readonly DatabaseHelper databaseHelper;
 
         //TODO: get connection from settings
-        private string sqlConnection = $"Server=localhost;Database={DataBaseName};Trusted_Connection=True; Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true; Application Name=Order Transaction Service; encrypt=true; trustServerCertificate=true";
+        private readonly string sqlConnection = $"Server=localhost;Database={DataBaseName};Trusted_Connection=True; Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true; Application Name=Order Transaction Service; encrypt=true; trustServerCertificate=true";
+
+        private readonly SqlServerDbSettings sqlServerDbSettings;
 
         public CarInsuranceAdvisorTests()
         {
-            var rulesFile = Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2.rules-framework-tests.car-insurance-advisor.json");
-
-            string script = File.ReadAllText(@"E:\Project Docs\MX462-PD\MX756_ModMappings1.sql");
+            sqlServerDbSettings = new SqlServerDbSettings(sqlConnection, DataBaseName);
 
             SqlServerDbDataProviderFactory sqlServerDbDataProviderFactory = new SqlServerDbDataProviderFactory();
-            var rulesSchemaCreator = sqlServerDbDataProviderFactory.CreateSchemaCreator(new SqlServerDbSettings(sqlConnection, DataBaseName));
+            var rulesSchemaCreator = sqlServerDbDataProviderFactory.CreateSchemaCreator(sqlServerDbSettings);
             rulesSchemaCreator.CreateOrUpdateSchemaAsync(DataBaseName);
 
+            databaseHelper = new DatabaseHelper();
+            var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2.rules-framework-tests-car-insurance-advisor.sql";
+            databaseHelper.ExecuteScriptAsync(sqlServerDbSettings, testeResource).GetAwaiter().GetResult(); //TODO change this
+
             //TODO: change Model.Rule to RuleDataMOdel
-            IEnumerable<Model.Rule> rules;
-            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
-            {
-                string json = streamReader.ReadToEnd();
-
-                rules = JsonConvert.DeserializeObject<IEnumerable<Model.Rule>>(json, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-
-            rulesFrameworkDbContext = new RulesFrameworkDbContext();
-
-            rulesFrameworkDbContext.AddRange(rules);
         }
 
         public IRulesSchemaCreator RulesSchemaCreator { get; }
 
         public void Dispose()
         {
-            rulesFrameworkDbContext.Dispose();
+            var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Database.Cleanup.Clean-database.sql";
+            databaseHelper.ExecuteScriptAsync(sqlServerDbSettings, testeResource).GetAwaiter().GetResult(); //TODO change this
         }
 
         [Fact]

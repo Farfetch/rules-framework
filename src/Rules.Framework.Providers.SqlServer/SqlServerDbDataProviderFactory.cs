@@ -38,10 +38,19 @@ namespace Rules.Framework.Providers.SqlServer
         {
             Assembly thisAssembly = Assembly.GetExecutingAssembly();
 
+            Script createDatabase;
             Script createTables;
             Script populateTables;
 
-            using (Stream s = thisAssembly.GetManifestResourceStream("Rules.Framework.Providers.SqlServer.Deploy.01 - Create_Tables.sql"))
+            using (Stream s = thisAssembly.GetManifestResourceStream("Rules.Framework.Providers.SqlServer.Deploy.00-Create_Database.sql"))
+            {
+                using (StreamReader sr = new StreamReader(s))
+                {
+                    createDatabase = new Script(sr.ReadToEnd());
+                }
+            }
+
+            using (Stream s = thisAssembly.GetManifestResourceStream("Rules.Framework.Providers.SqlServer.Deploy.01-Create_Tables.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -49,7 +58,7 @@ namespace Rules.Framework.Providers.SqlServer
                 }
             }
 
-            using (Stream s = thisAssembly.GetManifestResourceStream("Rules.Framework.Providers.SqlServer.Deploy.02 - Populate_Tables.sql"))
+            using (Stream s = thisAssembly.GetManifestResourceStream("Rules.Framework.Providers.SqlServer.Deploy.02-Populate_Tables.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -57,7 +66,7 @@ namespace Rules.Framework.Providers.SqlServer
                 }
             }
 
-            return new[] { createTables, populateTables };
+            return new[] { createDatabase, createTables, populateTables };
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Rules.Framework.Providers.SqlServer
         public RulesSchemaCreator(SqlServerDbSettings sqlServerDbSettings, IEnumerable<Script> schemaScripts)
         {
             this.sqlServerDbSettings = sqlServerDbSettings ?? throw new ArgumentNullException(nameof(sqlServerDbSettings)); ;
-            this.schemaScripts = schemaScripts ?? throw new ArgumentNullException(nameof(schemaScripts)); ;
+            this.schemaScripts = schemaScripts ?? throw new ArgumentNullException(nameof(schemaScripts));
         }
 
         public async Task CreateOrUpdateSchemaAsync(string databaseName)

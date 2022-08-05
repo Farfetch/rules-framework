@@ -1,11 +1,12 @@
-USE @dbname
-
+USE [@dbname]
 GO
-/****** Object:  Table [dbo].[ConditionNodeRelations]    Script Date: 29/07/2022 15:14:37 ******/
+/****** Object:  Table [dbo].[ConditionNodeRelations]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ConditionNodeRelations]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[ConditionNodeRelations](
 	[OwnerId] [bigint] NOT NULL,
 	[ChildId] [bigint] NOT NULL,
@@ -13,14 +14,17 @@ CREATE TABLE [dbo].[ConditionNodeRelations](
 (
 	[OwnerId] ASC,
 	[ChildId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[ConditionNodes]    Script Date: 29/07/2022 15:14:37 ******/
+/****** Object:  Table [dbo].[ConditionNodes]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ConditionNodes]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[ConditionNodes](
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
 	[ConditionNodeTypeCode] [int] NOT NULL,
@@ -32,70 +36,85 @@ CREATE TABLE [dbo].[ConditionNodes](
  CONSTRAINT [PK_ConditionNodes] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[ConditionNodeTypes]    Script Date: 29/07/2022 15:14:37 ******/
+/****** Object:  Table [dbo].[ConditionNodeTypes]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ConditionNodeTypes]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[ConditionNodeTypes](
 	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
  CONSTRAINT [PK_ConditionNodeTypes] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[ConditionTypes]    Script Date: 29/07/2022 15:14:38 ******/
+/****** Object:  Table [dbo].[ConditionTypes]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ConditionTypes]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[ConditionTypes](
 	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
  CONSTRAINT [PK_ConditionTypes] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[ContentTypes]    Script Date: 29/07/2022 15:14:38 ******/
+/****** Object:  Table [dbo].[ContentTypes]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ContentTypes]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[ContentTypes](
 	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
  CONSTRAINT [PK_ContentTypes] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[DataTypes]    Script Date: 29/07/2022 15:14:38 ******/
+/****** Object:  Table [dbo].[DataTypes]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DataTypes]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[DataTypes](
 	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
  CONSTRAINT [PK_DataTypes] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[LogicalOperators]    Script Date: 29/07/2022 15:14:38 ******/
+/****** Object:  Table [dbo].[LogicalOperators]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LogicalOperators]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[LogicalOperators](
 	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
@@ -103,14 +122,17 @@ CREATE TABLE [dbo].[LogicalOperators](
  CONSTRAINT [PK_LogicalOperators] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[Operators]    Script Date: 29/07/2022 15:14:39 ******/
+/****** Object:  Table [dbo].[Operators]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Operators]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[Operators](
 	[Code] [int] NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
@@ -118,14 +140,17 @@ CREATE TABLE [dbo].[Operators](
  CONSTRAINT [PK_Operators] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
-/****** Object:  Table [dbo].[Rules]    Script Date: 29/07/2022 15:14:39 ******/
+/****** Object:  Table [dbo].[Rules]    Script Date: 2022-08-05 14:49:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Rules]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[Rules](
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
 	[Content] [nvarchar](100) NOT NULL,
@@ -138,51 +163,70 @@ CREATE TABLE [dbo].[Rules](
  CONSTRAINT [PK_Rules] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ChildConditionNodeRelations_ConditionNodes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodeRelations]'))
 ALTER TABLE [dbo].[ConditionNodeRelations]  WITH CHECK ADD  CONSTRAINT [FK_ChildConditionNodeRelations_ConditionNodes] FOREIGN KEY([ChildId])
 REFERENCES [dbo].[ConditionNodes] ([Id])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ChildConditionNodeRelations_ConditionNodes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodeRelations]'))
 ALTER TABLE [dbo].[ConditionNodeRelations] CHECK CONSTRAINT [FK_ChildConditionNodeRelations_ConditionNodes]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_OwnerConditionNodeRelations_ConditionNodes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodeRelations]'))
 ALTER TABLE [dbo].[ConditionNodeRelations]  WITH CHECK ADD  CONSTRAINT [FK_OwnerConditionNodeRelations_ConditionNodes] FOREIGN KEY([OwnerId])
 REFERENCES [dbo].[ConditionNodes] ([Id])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_OwnerConditionNodeRelations_ConditionNodes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodeRelations]'))
 ALTER TABLE [dbo].[ConditionNodeRelations] CHECK CONSTRAINT [FK_OwnerConditionNodeRelations_ConditionNodes]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_ConditionNodeTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes]  WITH CHECK ADD  CONSTRAINT [FK_ConditionNodes_ConditionNodeTypes] FOREIGN KEY([ConditionNodeTypeCode])
 REFERENCES [dbo].[ConditionNodeTypes] ([Code])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_ConditionNodeTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes] CHECK CONSTRAINT [FK_ConditionNodes_ConditionNodeTypes]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_ConditionTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes]  WITH CHECK ADD  CONSTRAINT [FK_ConditionNodes_ConditionTypes] FOREIGN KEY([ConditionTypeCode])
 REFERENCES [dbo].[ConditionTypes] ([Code])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_ConditionTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes] CHECK CONSTRAINT [FK_ConditionNodes_ConditionTypes]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_DataTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes]  WITH CHECK ADD  CONSTRAINT [FK_ConditionNodes_DataTypes] FOREIGN KEY([DataTypeCode])
 REFERENCES [dbo].[DataTypes] ([Code])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_DataTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes] CHECK CONSTRAINT [FK_ConditionNodes_DataTypes]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_LogicalOperators]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes]  WITH CHECK ADD  CONSTRAINT [FK_ConditionNodes_LogicalOperators] FOREIGN KEY([LogicalOperatorCode])
 REFERENCES [dbo].[LogicalOperators] ([Code])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_LogicalOperators]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes] CHECK CONSTRAINT [FK_ConditionNodes_LogicalOperators]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_Operators]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes]  WITH CHECK ADD  CONSTRAINT [FK_ConditionNodes_Operators] FOREIGN KEY([OperatorCode])
 REFERENCES [dbo].[Operators] ([Code])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ConditionNodes_Operators]') AND parent_object_id = OBJECT_ID(N'[dbo].[ConditionNodes]'))
 ALTER TABLE [dbo].[ConditionNodes] CHECK CONSTRAINT [FK_ConditionNodes_Operators]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Rules_ConditionNodes]') AND parent_object_id = OBJECT_ID(N'[dbo].[Rules]'))
 ALTER TABLE [dbo].[Rules]  WITH CHECK ADD  CONSTRAINT [FK_Rules_ConditionNodes] FOREIGN KEY([ConditionNodeId])
 REFERENCES [dbo].[ConditionNodes] ([Id])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Rules_ConditionNodes]') AND parent_object_id = OBJECT_ID(N'[dbo].[Rules]'))
 ALTER TABLE [dbo].[Rules] CHECK CONSTRAINT [FK_Rules_ConditionNodes]
 GO
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Rules_ContentTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[Rules]'))
 ALTER TABLE [dbo].[Rules]  WITH CHECK ADD  CONSTRAINT [FK_Rules_ContentTypes] FOREIGN KEY([ContentTypeCode])
 REFERENCES [dbo].[ContentTypes] ([Code])
 GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Rules_ContentTypes]') AND parent_object_id = OBJECT_ID(N'[dbo].[Rules]'))
 ALTER TABLE [dbo].[Rules] CHECK CONSTRAINT [FK_Rules_ContentTypes]
 GO

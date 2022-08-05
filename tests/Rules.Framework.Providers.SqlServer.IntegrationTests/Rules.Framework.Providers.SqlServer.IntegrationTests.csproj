@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Database\Cleanup\Clean-database.sql" />
+    <None Remove="Tests\Scenario2\rules-framework-tests-car-insurance-advisor.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Database\Cleanup\Clean-database.sql" />
+    <EmbeddedResource Include="Tests\Scenario2\rules-framework-tests-car-insurance-advisor.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />

@@ -40,7 +40,7 @@ namespace Rules.Framework.Providers.SqlServer
                 throw new ArgumentNullException(nameof(contentType));
             }
 
-            var fetchedRules = rulesFrameworkDbContext.Rules.Where(rule => rule.ContentTypeCode == int.Parse(contentType.ToString())); //todo: optimize
+            var fetchedRules = rulesFrameworkDbContext.Rules.Where(rule => rule.ContentTypeCode == Convert.ToInt32(contentType)); //todo: optimize
 
             fetchedRules.Where(rule =>
                    (rule.DateBegin >= dateBegin && rule.DateBegin < dateEnd)  // To fetch rules that begin during filtered interval but end after it.

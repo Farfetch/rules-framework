@@ -1,4 +1,4 @@
-use [rules-framework-sample]
+use [@dbname]
 
 insert into ContentTypes values (1, 'CarInsuranceAdvice')
 

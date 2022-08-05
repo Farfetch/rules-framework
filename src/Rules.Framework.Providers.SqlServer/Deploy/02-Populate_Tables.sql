@@ -1,4 +1,4 @@
-USE @dbname
+USE [@dbname]
 
 IF (NOT EXISTS (SELECT * 
                  FROM [dbo].[ConditionNodeTypes] 
