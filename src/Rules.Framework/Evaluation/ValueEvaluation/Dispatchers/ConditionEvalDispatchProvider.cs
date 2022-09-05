@@ -35,6 +35,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
                 $"{OneToOne}-{Operators.LesserThan}",
                 $"{OneToOne}-{Operators.LesserThanOrEqual}",
                 $"{OneToOne}-{Operators.Contains}",
+                $"{OneToOne}-{Operators.NotContains}",
                 $"{OneToMany}-{Operators.In}",
                 $"{OneToOne}-{Operators.StartsWith}",
                 $"{OneToOne}-{Operators.EndsWith}",

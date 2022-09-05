@@ -40,7 +40,10 @@ namespace Rules.Framework.Core
         /// </summary>
         Contains = 7,
 
-        // Number 8 reserved for "NotContains".
+        /// <summary>
+        /// The not contains operator.
+        /// </summary>
+        NotContains = 8,
 
         /// <summary>
         /// The in operator.
