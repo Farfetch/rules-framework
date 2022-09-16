@@ -3,6 +3,7 @@ namespace Rules.Framework.Providers.SqlServer
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Mime;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.SqlServer.Models;
@@ -42,7 +43,7 @@ namespace Rules.Framework.Providers.SqlServer
 
             var fetchedRules = rulesFrameworkDbContext.Rules.Where(rule => rule.ContentTypeCode == Convert.ToInt32(contentType)); //todo: optimize
 
-            fetchedRules.Where(rule =>
+            fetchedRules = fetchedRules.Where(rule =>
                    (rule.DateBegin >= dateBegin && rule.DateBegin < dateEnd)  // To fetch rules that begin during filtered interval but end after it.
                 || (rule.DateEnd != null && rule.DateBegin >= dateBegin && rule.DateBegin < dateEnd) // To fetch rules that begun before filtered interval but end during it.
                 || (rule.DateBegin < dateBegin || (rule.DateEnd == null && rule.DateEnd > dateEnd))); // To fetch rules that begun before and end after filtered interval.
@@ -50,8 +51,28 @@ namespace Rules.Framework.Providers.SqlServer
             return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
         }
 
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs) => throw new NotImplementedException();
+        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs)
+        {
+            if (rulesFilterArgs is null)
+            {
+                throw new ArgumentNullException(nameof(rulesFilterArgs));
+            }
 
-        public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule) => throw new NotImplementedException();
+            var fetchedRules = rulesFrameworkDbContext.Rules.Where(rule => rule.ContentTypeCode == Convert.ToInt32(rulesFilterArgs.ContentType)); //todo: optimize
+
+            if (!string.IsNullOrWhiteSpace(rulesFilterArgs.Name))
+            {
+                fetchedRules = fetchedRules.Where(rule => rule.Name == rulesFilterArgs.Name);
+            }
+            if (rulesFilterArgs.Priority.HasValue)
+            {
+                fetchedRules = fetchedRules.Where(rule => rule.Priority == rulesFilterArgs.Priority.Value);
+            }
+
+            return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule)) ;
+        }
+
+
+        public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule) => throw new NotImplementedException(); //TODO: implement this method
     }
 }
