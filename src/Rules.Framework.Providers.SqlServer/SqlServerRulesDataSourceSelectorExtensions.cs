@@ -2,6 +2,8 @@ namespace Rules.Framework.Providers.SqlServer
 {
     using System;
     using Rules.Framework.Builder;
+    using Rules.Framework.Providers.SqlServer.Serialization;
+    using Rules.Framework.Serialization;
 
     /// <summary>
     /// Rules data source selector extensions from SQL Server database provider.
@@ -32,7 +34,8 @@ namespace Rules.Framework.Providers.SqlServer
                 throw new ArgumentNullException(nameof(sqlServerConnection));
             }
 
-            IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>();
+            IContentSerializationProvider<TContentType> contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<TContentType>();
+            IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>(contentSerializationProvider);
             SqlServerProviderRulesDataSource<TContentType, TConditionType> mongoDbProviderRulesDataSource
                 = new SqlServerProviderRulesDataSource<TContentType, TConditionType>(
                     sqlServerConnection,

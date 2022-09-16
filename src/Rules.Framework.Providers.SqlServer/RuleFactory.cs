@@ -5,12 +5,20 @@ namespace Rules.Framework.Providers.SqlServer
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.SqlServer.Models;
+    using Rules.Framework.Serialization;
 
     using Core = Rules.Framework.Core;
     using Model = Rules.Framework.SqlServer.Models;
 
     public class RuleFactory<TContentType, TConditionType> : IRuleFactory<TContentType, TConditionType>
     {
+        private readonly IContentSerializationProvider<TContentType> contentSerializationProvider;
+
+        public RuleFactory(IContentSerializationProvider<TContentType> contentSerializationProvider)
+        {
+            this.contentSerializationProvider = contentSerializationProvider;
+        }
+
         public Core.Rule<TContentType, TConditionType> CreateRule(Model.Rule ruleDataModel)
         {
             if (ruleDataModel is null)
@@ -56,12 +64,12 @@ namespace Rules.Framework.Providers.SqlServer
             Model.Rule ruleDataModel = new Model.Rule
             {
                 Content = content,
-                //ContentTypeCode = Convert.ToString(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
+                ContentTypeCode = Convert.ToInt32(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
-                //RootCondition = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null
+                //RootCondition = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null //TODO: check this
             };
 
             return ruleDataModel;
@@ -69,27 +77,28 @@ namespace Rules.Framework.Providers.SqlServer
 
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNode conditionNodeDataModel) //TODO replace conditionNode by ValueConditionNodeDataModel
         {
-            TConditionType conditionType = Parse<TConditionType>(conditionNodeDataModel.ConditionTypeCode);
-            return conditionNodeDataModel.DataType switch
+            TConditionType conditionType = Parse<TConditionType>(conditionNodeDataModel.ConditionTypeCode.ToString());
+            return conditionNodeDataModel.DataType.Code switch
             {
-                DataTypes.Integer => conditionNodeBuilder.AsValued(conditionType)
+                //TODO: replace numbers by Enum
+                1 => conditionNodeBuilder.AsValued(conditionType)
                     .OfDataType<int>()
-                    .WithComparisonOperator(conditionNodeDataModel.OperatorCode)
+                    .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                     .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                     .Build(),
-                DataTypes.Decimal => conditionNodeBuilder.AsValued(conditionType)
+                2 => conditionNodeBuilder.AsValued(conditionType)
                    .OfDataType<decimal>()
-                   .WithComparisonOperator(conditionNodeDataModel.OperatorCode)
+                   .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                    .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                    .Build(),
-                DataTypes.String => conditionNodeBuilder.AsValued(conditionType)
+                3 => conditionNodeBuilder.AsValued(conditionType)
                    .OfDataType<string>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
+                   .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                    .SetOperand(Convert.ToString(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                    .Build(),
-                DataTypes.Boolean => conditionNodeBuilder.AsValued(conditionType)
+                4 => conditionNodeBuilder.AsValued(conditionType)
                    .OfDataType<bool>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
+                   .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                    .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                     .Build(),
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
@@ -108,18 +117,18 @@ namespace Rules.Framework.Providers.SqlServer
         {
             if (conditionNodeDataModel.LogicalOperatorCode == (int)LogicalOperators.Eval)
             {
-                return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel as ValueConditionNodeDataModel); //TODO: replace conditionNode by ValueConditionNodeDataModel
+                return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel); //TODO: replace conditionNode by ValueConditionNodeDataModel
             }
             else
             {
-                ComposedConditionNodeDataModel composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
+                //ComposedConditionNodeDataModel composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
 
                 IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
-                    .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
+                    .WithLogicalOperator((LogicalOperators)conditionNodeDataModel.LogicalOperatorCode);
 
-                foreach (ConditionNodeDataModel child in composedConditionNodeDataModel.ChildConditionNodes)
+                foreach (ConditionNodeRelation conditionNodeRelation in conditionNodeDataModel.ConditionNodeRelations_ChildId)
                 {
-                    composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, child));
+                    composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, conditionNodeRelation.Child));
                 }
 
                 return composedConditionNodeBuilder.Build();
