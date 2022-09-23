@@ -10,8 +10,10 @@ namespace Rules.Framework.Tests.Builder
 
     public class RuleBuilderTests
     {
-        [Fact]
-        public void NewRule_GivenRuleWithIntegerConditionTypeAndContainsOperator_ReturnsInvalidRuleResult()
+        [Theory]
+        [InlineData(Operators.Contains)]
+        [InlineData(Operators.NotContains)]
+        public void NewRule_GivenRuleWithIntegerConditionTypeAndContainsOperator_ReturnsInvalidRuleResult(Operators containsOperator)
         {
             // Arrange
             string ruleName = "Rule 1";
@@ -20,7 +22,7 @@ namespace Rules.Framework.Tests.Builder
             string content = "Content";
             const ConditionType conditionType = ConditionType.NumberOfSales;
             const int conditionValue = 40;
-            const Operators conditionOperator = Operators.Contains;
+            Operators conditionOperator = containsOperator;
             const DataTypes dataType = DataTypes.Integer;
 
             // Act
@@ -47,8 +49,10 @@ namespace Rules.Framework.Tests.Builder
             ruleBuilderResult.Errors.Should().ContainMatch($"*{dataType}*{conditionOperator}*");
         }
 
-        [Fact]
-        public void NewRule_GivenRuleWithStringConditionTypeAndContainsOperator_BuildsAndReturnsRule()
+        [Theory]
+        [InlineData(Operators.Contains)]
+        [InlineData(Operators.NotContains)]
+        public void NewRule_GivenRuleWithStringConditionTypeAndContainsOperator_BuildsAndReturnsRule(Operators containsOperator)
         {
             // Arrange
             string ruleName = "Rule 1";
@@ -57,7 +61,7 @@ namespace Rules.Framework.Tests.Builder
             string content = "Content";
             const ConditionType conditionType = ConditionType.IsoCountryCode;
             const string conditionValue = "PT";
-            const Operators conditionOperator = Operators.Contains;
+            Operators conditionOperator = containsOperator;
             const LogicalOperators logicalOperator = LogicalOperators.Eval;
             const DataTypes dataType = DataTypes.String;
 

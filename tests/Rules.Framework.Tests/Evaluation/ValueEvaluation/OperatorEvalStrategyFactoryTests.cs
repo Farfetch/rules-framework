@@ -160,6 +160,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         [InlineData(Operators.LesserThan, typeof(LesserThanOperatorEvalStrategy))]
         [InlineData(Operators.LesserThanOrEqual, typeof(LesserThanOrEqualOperatorEvalStrategy))]
         [InlineData(Operators.Contains, typeof(ContainsOperatorEvalStrategy))]
+        [InlineData(Operators.NotContains, typeof(NotContainsOperatorEvalStrategy))]
         public void GetOneToOneOperatorEvalStrategy_GivenOperator_ReturnsOperatorEvalStrategy(Operators @operator, Type type)
         {
             // Arrange
