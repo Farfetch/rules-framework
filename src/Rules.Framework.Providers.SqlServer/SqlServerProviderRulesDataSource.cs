@@ -3,7 +3,6 @@ namespace Rules.Framework.Providers.SqlServer
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Mime;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.SqlServer.Models;
@@ -58,7 +57,12 @@ namespace Rules.Framework.Providers.SqlServer
                 throw new ArgumentNullException(nameof(rulesFilterArgs));
             }
 
-            var fetchedRules = rulesFrameworkDbContext.Rules.Where(rule => rule.ContentTypeCode == Convert.ToInt32(rulesFilterArgs.ContentType)); //todo: optimize
+            var fetchedRules = rulesFrameworkDbContext.Rules.AsQueryable();
+
+            if (!EqualityComparer<TContentType>.Default.Equals(rulesFilterArgs.ContentType, default(TContentType)))
+            {
+                fetchedRules = fetchedRules.Where(rule => rule.ContentTypeCode == Convert.ToInt32(rulesFilterArgs.ContentType)); //todo: optimize
+            }
 
             if (!string.IsNullOrWhiteSpace(rulesFilterArgs.Name))
             {
@@ -69,10 +73,38 @@ namespace Rules.Framework.Providers.SqlServer
                 fetchedRules = fetchedRules.Where(rule => rule.Priority == rulesFilterArgs.Priority.Value);
             }
 
-            return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule)) ;
+            foreach (var rule in fetchedRules)
+            {
+                await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode).LoadAsync(); // TODO: Evaluate performance
+                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.DataType).LoadAsync(); // TODO: Evaluate performance
+                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.ConditionType).LoadAsync(); // TODO: Evaluate performance
+                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.LogicalOperator).LoadAsync(); // TODO: Evaluate performance
+                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.Operator).LoadAsync(); // TODO: Evaluate performance
+                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.ConditionNodeType).LoadAsync(); // TODO: Evaluate performance
+            }
+
+            return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
         }
 
+        public async Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            Rule ruleDataModel = this.ruleFactory.CreateRule(rule);
 
-        public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule) => throw new NotImplementedException(); //TODO: implement this method
+            var fetchedRule = rulesFrameworkDbContext.Rules.FirstOrDefault(r => r.Name == rule.Name);
+
+            if (fetchedRule is null)
+            {
+                return;
+            }
+
+            fetchedRule.Content = ruleDataModel.Content;
+            fetchedRule.ContentTypeCode = ruleDataModel.ContentTypeCode;
+            fetchedRule.DateBegin = ruleDataModel.DateBegin;
+            fetchedRule.DateEnd = ruleDataModel.DateEnd;
+            fetchedRule.Priority = ruleDataModel.Priority;
+            fetchedRule.ConditionNodeId = ruleDataModel.ConditionNodeId;
+
+            await rulesFrameworkDbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
     }
 }
