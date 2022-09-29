@@ -161,6 +161,12 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         [InlineData(Operators.LesserThanOrEqual, typeof(LesserThanOrEqualOperatorEvalStrategy))]
         [InlineData(Operators.Contains, typeof(ContainsOperatorEvalStrategy))]
         [InlineData(Operators.NotContains, typeof(NotContainsOperatorEvalStrategy))]
+        [InlineData(Operators.StartsWith, typeof(StartsWithOperatorEvalStrategy))]
+        [InlineData(Operators.EndsWith, typeof(EndsWithOperatorEvalStrategy))]
+        [InlineData(Operators.CaseInsensitiveStartsWith, typeof(CaseInsensitiveStartsWithOperatorEvalStrategy))]
+        [InlineData(Operators.CaseInsensitiveEndsWith, typeof(CaseInsensitiveEndsWithOperatorEvalStrategy))]
+        [InlineData(Operators.NotStartsWith, typeof(NotStartsWithOperatorEvalStrategy))]
+        [InlineData(Operators.NotEndsWith, typeof(NotEndsWithOperatorEvalStrategy))]
         public void GetOneToOneOperatorEvalStrategy_GivenOperator_ReturnsOperatorEvalStrategy(Operators @operator, Type type)
         {
             // Arrange

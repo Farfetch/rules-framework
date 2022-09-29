@@ -40,7 +40,9 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
                 $"{OneToOne}-{Operators.StartsWith}",
                 $"{OneToOne}-{Operators.EndsWith}",
                 $"{OneToOne}-{Operators.CaseInsensitiveStartsWith}",
-                $"{OneToOne}-{Operators.CaseInsensitiveEndsWith}"
+                $"{OneToOne}-{Operators.CaseInsensitiveEndsWith}",
+                $"{OneToOne}-{Operators.NotStartsWith}",
+                $"{OneToOne}-{Operators.NotEndsWith}"
             };
         }
 
