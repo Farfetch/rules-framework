@@ -80,7 +80,7 @@ namespace Rules.Framework.Providers.SqlServer
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNode conditionNodeDataModel) //TODO replace conditionNode by ValueConditionNodeDataModel
         {
             TConditionType conditionType = Parse<TConditionType>(conditionNodeDataModel.ConditionTypeCode.ToString());
-            return conditionNodeDataModel.DataType.Code switch
+            return conditionNodeDataModel.DataTypeCode switch
             {
                 //TODO: replace numbers by Enum
                 1 => conditionNodeBuilder.AsValued(conditionType)

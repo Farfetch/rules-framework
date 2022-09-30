@@ -2,6 +2,7 @@ namespace Rules.Framework.Providers.SqlServer
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
@@ -75,12 +76,12 @@ namespace Rules.Framework.Providers.SqlServer
 
             foreach (var rule in fetchedRules)
             {
-                await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode).LoadAsync(); // TODO: Evaluate performance
-                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.DataType).LoadAsync(); // TODO: Evaluate performance
-                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.ConditionType).LoadAsync(); // TODO: Evaluate performance
-                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.LogicalOperator).LoadAsync(); // TODO: Evaluate performance
-                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.Operator).LoadAsync(); // TODO: Evaluate performance
-                //await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode.ConditionNodeType).LoadAsync(); // TODO: Evaluate performance
+                if (rule.ConditionNodeId.HasValue)
+                {
+                    await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode).LoadAsync(); // TODO: Evaluate performance
+
+                    await LoadConditionNodeRecursiveAsync(rule.ConditionNode).ConfigureAwait(false);
+                }
             }
 
             return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
@@ -88,7 +89,7 @@ namespace Rules.Framework.Providers.SqlServer
 
         public async Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
         {
-            Rule ruleDataModel = this.ruleFactory.CreateRule(rule);
+            var ruleDataModel = this.ruleFactory.CreateRule(rule);
 
             var fetchedRule = rulesFrameworkDbContext.Rules.FirstOrDefault(r => r.Name == rule.Name);
 
@@ -105,6 +106,33 @@ namespace Rules.Framework.Providers.SqlServer
             fetchedRule.ConditionNodeId = ruleDataModel.ConditionNodeId;
 
             await rulesFrameworkDbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        private async Task LoadConditionNodeRecursiveAsync(ConditionNode conditionNode)
+        {
+            if (conditionNode is null)
+            {
+                return;
+            }
+
+            await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.DataType).LoadAsync(); // TODO: Evaluate performance
+            await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.ConditionType).LoadAsync(); // TODO: Evaluate performance
+            if (conditionNode.LogicalOperatorCode.HasValue)
+            {
+                await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.LogicalOperator).LoadAsync(); // TODO: Evaluate performance
+            }
+            if (conditionNode.OperatorCode.HasValue)
+            {
+                await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.Operator).LoadAsync(); // TODO: Evaluate performance
+            }
+            await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.ConditionNodeType).LoadAsync(); // TODO: Evaluate performance
+
+            await rulesFrameworkDbContext.Entry(conditionNode).Collection(r => r.ConditionNodeRelations_ChildId).LoadAsync(); // TODO: Evaluate performance
+
+            foreach (var child in conditionNode.ConditionNodeRelations_ChildId)
+            {
+                await LoadConditionNodeRecursiveAsync(child.Child).ConfigureAwait(false);
+            }
         }
     }
 }
