@@ -35,7 +35,13 @@ jobs:
         repository: ${{github.event.pull_request.head.repo.full_name}}
 
     - name: Force fetch tags
-      run: git fetch --tags --force
+      run: |
+        # get current repository tags
+        git fetch --tags --force
+
+        # deal with forked repositories
+        git remote add upstream $REPOSITORY_NAME
+        git fetch --tags upstream
 
     - name: Find last tag
       id: prev-version-tag
