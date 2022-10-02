@@ -1,0 +1,380 @@
+namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
+{
+    using Rules.Framework.Builder;
+    using Rules.Framework.Core;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    internal partial class Benchmark3Data
+    {
+        private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetStraightRules()
+        {
+            return new[]
+            {
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight 6, 5, 4, 3, 2")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfDeuces)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfTreys)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfFours)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfFives)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSixes)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight 7, 6, 5, 4, 3")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfTreys)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfFours)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfFives)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSixes)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSevens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight 8, 7, 6, 5, 4")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfFours)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfFives)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSixes)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSevens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfEigths)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight 9, 8, 7, 6, 5")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfFives)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSixes)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSevens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfEigths)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfNines)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight 10, 9, 8, 7, 6")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSixes)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSevens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfEigths)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfNines)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfTens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight Jack, 10, 9, 8, 7")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfSevens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfEigths)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfNines)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfTens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfJacks)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight Queen, Jack, 10, 9, 8")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfEigths)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfNines)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfTens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfJacks)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfQueens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                    .WithName("Benchmark 3 - Straight King, Queen, Jack, 10, 9")
+                    .WithDateBegin(DateTime.Parse("2000-01-01"))
+                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
+                    .WithCondition(x =>
+                        x.AsComposed()
+                            .WithLogicalOperator(LogicalOperators.And)
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfNines)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfTens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfJacks)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfQueens)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .AddCondition(c =>
+                                c.AsValued(ConditionTypes.NumberOfKings)
+                                    .OfDataType<int>()
+                                    .WithComparisonOperator(Operators.GreaterThanOrEqual)
+                                    .SetOperand(1)
+                                    .Build()
+                            )
+                            .Build()
+                        )
+                    .Build().Rule,
+            };
+        }
+    }
+}
