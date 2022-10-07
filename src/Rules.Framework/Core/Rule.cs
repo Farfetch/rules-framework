@@ -6,9 +6,16 @@ namespace Rules.Framework.Core
     /// Defines a rule.
     /// </summary>
     /// <typeparam name="TContentType">The content type that allows to categorize rules.</typeparam>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     public class Rule<TContentType, TConditionType>
     {
+        /// <summary>
+        /// Gets the ConditionNodeId container which contains the rule content.
+        /// </summary>
+        public long? ConditionNodeId { get; set; }
+
         /// <summary>
         /// Gets the content container which contains the rule content.
         /// </summary>

@@ -33,7 +33,6 @@ namespace Rules.Framework.Providers.SqlServer
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
                 .WithCondition(cnb => ruleDataModel.ConditionNode is { } ? this.ConvertConditionNode(cnb, ruleDataModel.ConditionNode) : null) //TODO: replace ruleDataModel.ConditionNode by ruleDataModel.RootCondition
                 .WithSerializedContent(contentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
-                .WithPriority(ruleDataModel.Priority)
                 .Build();
 
             if (!ruleBuilderResult.IsSuccess)
@@ -42,6 +41,7 @@ namespace Rules.Framework.Providers.SqlServer
             }
 
             ruleBuilderResult.Rule.Priority = ruleDataModel.Priority;
+            ruleBuilderResult.Rule.ConditionNodeId = ruleDataModel.ConditionNodeId;
 
             if (ruleBuilderResult.Rule.Priority <= 0)
             {
@@ -70,7 +70,7 @@ namespace Rules.Framework.Providers.SqlServer
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
-                //ConditionNodeId = rule.RootCondition //TODO: check this
+                ConditionNodeId = rule.ConditionNodeId
                 //RootCondition = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null //TODO: check this
             };
 

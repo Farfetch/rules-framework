@@ -21,7 +21,7 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         private readonly DatabaseHelper databaseHelper;
 
         //TODO: get connection from settings
-        private readonly string sqlConnection = $"Server=localhost;Database={DataBaseName};Trusted_Connection=True; Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true; Application Name=Order Transaction Service; encrypt=true; trustServerCertificate=true";
+        private readonly string sqlConnection = $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;";
 
         private readonly SqlServerDbSettings sqlServerDbSettings;
 

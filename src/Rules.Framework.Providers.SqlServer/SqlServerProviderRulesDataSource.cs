@@ -74,15 +74,15 @@ namespace Rules.Framework.Providers.SqlServer
                 fetchedRules = fetchedRules.Where(rule => rule.Priority == rulesFilterArgs.Priority.Value);
             }
 
-            foreach (var rule in fetchedRules)
-            {
-                if (rule.ConditionNodeId.HasValue)
-                {
-                    await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode).LoadAsync(); // TODO: Evaluate performance
+            //foreach (var rule in fetchedRules)
+            //{
+            //    if (rule.ConditionNodeId.HasValue)
+            //    {
+            //        await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode).LoadAsync(); // TODO: Evaluate performance
 
-                    await LoadConditionNodeRecursiveAsync(rule.ConditionNode).ConfigureAwait(false);
-                }
-            }
+            //        await LoadConditionNodeRecursiveAsync(rule.ConditionNode).ConfigureAwait(false);
+            //    }
+            //}
 
             return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
         }
