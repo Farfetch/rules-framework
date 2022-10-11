@@ -6,8 +6,9 @@ namespace Rules.Framework.Admin.Dashboard.Sample.Engine
     using System.Threading.Tasks;
     using global::Rules.Framework.Admin.Dashboard.Sample.Enums;
     using global::Rules.Framework.Admin.Dashboard.Sample.Exceptions;
+    using global::Rules.Framework.Admin.WebApi;
 
-    public class RulesService
+    public class RulesService : IRulesService
     {
         private readonly RulesEngineProvider rulesEngineProvider;
 
@@ -16,8 +17,32 @@ namespace Rules.Framework.Admin.Dashboard.Sample.Engine
             this.rulesEngineProvider = new RulesEngineProvider(new RulesBuilder(contentTypes));
         }
 
+        public async Task<List<dynamic>> FindRulesAsync(string contentType, DateTime dateTime)
+        {
+            var rulesEngine = await
+                rulesEngineProvider
+                .GetRulesEngineAsync()
+            .ConfigureAwait(false);
+
+            if (Enum.TryParse(contentType, out ContentTypes contentTypes))
+            {
+                var list = await rulesEngine
+                .SearchAsync(new SearchArgs<ContentTypes, ConditionTypes>(contentTypes, dateTime, dateTime))
+                .ConfigureAwait(false);
+
+                return list.ToList<dynamic>();
+            }
+
+            return new List<dynamic>();
+        }
+
+        public IEnumerable<string> ListContents()
+        {
+            return Enum.GetNames(typeof(ContentTypes)).ToList();
+        }
+
         public async Task<T> MatchOneAsync<T>(
-            ContentTypes contentType,
+                    ContentTypes contentType,
             DateTime dateTime,
             IDictionary<ConditionTypes, object> conditions)
         {

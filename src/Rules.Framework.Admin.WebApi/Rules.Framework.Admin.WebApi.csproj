@@ -12,9 +12,9 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <ProjectReference Include="..\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj" />
+	  <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
 	</ItemGroup>
 </Project>

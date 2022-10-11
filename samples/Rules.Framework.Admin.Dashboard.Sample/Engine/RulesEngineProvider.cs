@@ -8,11 +8,11 @@ namespace Rules.Framework.Admin.Dashboard.Sample.Engine
 
     public class RulesEngineProvider
     {
-        private readonly Lazy<Task<IRulesEngine<ContentTypes, ConditionTypes>>> lazyRulesEngine;
+        private readonly Lazy<Task<RulesEngine<ContentTypes, ConditionTypes>>> lazyRulesEngine;
 
         public RulesEngineProvider(RulesBuilder rulesBuilder)
         {
-            lazyRulesEngine = new Lazy<Task<IRulesEngine<ContentTypes, ConditionTypes>>>(async () =>
+            lazyRulesEngine = new Lazy<Task<RulesEngine<ContentTypes, ConditionTypes>>>(async () =>
             {
                 var rulesEngine = RulesEngineBuilder
                     .CreateRulesEngine()
@@ -28,7 +28,7 @@ namespace Rules.Framework.Admin.Dashboard.Sample.Engine
             }, LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        public Task<IRulesEngine<ContentTypes, ConditionTypes>> GetRulesEngineAsync()
+        public Task<RulesEngine<ContentTypes, ConditionTypes>> GetRulesEngineAsync()
             => lazyRulesEngine.Value;
     }
 }

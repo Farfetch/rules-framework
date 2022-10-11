@@ -197,7 +197,7 @@
                     $("#loading").show();
                     $.ajax({
                         url:
-                            "Rule/List",
+                            "Rule/" + selectedConditionType + "/List",
                         success: function (response) {
                             rules = response;
                             let trHTML = '';

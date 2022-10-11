@@ -1,22 +1,17 @@
 using Rules.Framework.Admin.Dashboard.Sample.Engine;
 using Rules.Framework.Admin.Dashboard.Sample.Rules;
 using Rules.Framework.Admin.UI;
+using Rules.Framework.Admin.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton(d => new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
+builder.Services.AddSingleton<IRulesService>(new RulesService(new List<IContentTypes>()
             {
                 new TestNumberRules()
-            })));
-
-builder.Services.AddSingleton(d => d
-.GetRequiredService<RulesEngineProvider>()
-.GetRulesEngineAsync()
-.GetAwaiter()
-.GetResult());
+            }));
 
 var app = builder.Build();
 
