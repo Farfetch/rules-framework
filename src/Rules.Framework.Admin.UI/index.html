@@ -38,30 +38,31 @@
             flex-shrink: 0;
             width: 1.5rem;
             height: 100vh;
-        }
+        }        
     </style>
 </head>
 <body>
 
     <main class="d-flex flex-nowrap">
+
         <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
             <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 <span class="fs-4 glyphicon glyphicon-knight" aria-hidden="true"></span>
                 &nbsp; <span class="fs-4"> %(DocumentTitle)</span>
             </a>
             <hr>
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
+            <ul class="main nav nav-pills flex-column mb-auto">
+                <li class="main nav-item">
                     <a href="#" id="index" class="nav-link active" aria-current="page">
                         Home
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="main nav-item">
                     <a href="#" id="contentTypes" class="nav-link text-white">
                         Content Types
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="main nav-item">
                     <a href="#" id="rules" class="nav-link text-white">
                         Rules
                     </a>
@@ -77,6 +78,8 @@
             <div class="py-5 text-center">
                 <h2>%(DocumentTitle)</h2>
             </div>
+
+            
 
             <center>
                 <div id="index" class="content">
@@ -173,16 +176,121 @@
                     return r.id == e.target.id;
                 });
 
-                conditions = rule.conditions;
+                $('#string-tab-pane').html('');
+                $('#json-tab-pane').html('');
+                $('#tree-tab-pane').html('');
 
-                if (conditions) {
-                    let trHTML = '';
-                    $.each(conditions, function (i, item) {
-                        trHTML += '<tr><td>' + item.condition + ' </td><td>' + item.operator + '</td><td>' + item.value + '</td></tr>';
-                    });
-                    $('#conditions_table').html(trHTML);
+                if (rule.conditionsAsJson) {
+                    jsonObj = JSON.parse(rule.conditionsAsJson);
+                    $('#string-tab-pane').html(setStringView(jsonObj));
+                    $('#json-tab-pane').html(setJsonView(jsonObj));
+                    $('#tree-tab-pane').html(setTreeView(jsonObj));
                 }
             });
+        }
+
+        function setJsonView(node) {
+
+            let jsonPretty = JSON.stringify(node, null, '\t');
+
+            return '<pre>' + jsonPretty + '</prep>';
+        }
+
+        function setStringView(node)
+        {   
+            let html = recursiveStringView(node);
+
+            console.log(html);
+
+            return html;
+        }
+
+        function recursiveStringView(node)
+        {
+            let html = '';
+
+            if (!node) {
+                return html;
+            }
+
+            if (node.ConditionType) {
+                html += ' <i>' + node.ConditionType + '</i> (';
+
+                html += node.Operator;
+                html += ' ' + node.Operand;
+
+                html += ')';
+
+                return html;
+            }
+
+            if (node.LogicalOperator) {
+                html += ' <b>' + node.LogicalOperator + '</b> ';
+
+                if (node.ChildConditionNodes) {
+                    html += ' (';
+
+                    for (var i = 0; i < node.ChildConditionNodes.length; i++) {
+                        html += recursiveStringView(node.ChildConditionNodes[i]);
+                    }
+
+                    html += ')';
+                }
+
+                return html;
+            }
+
+            return html;
+        }
+
+        function setTreeView(node) {
+            let html = '<ul>';
+
+            html += recursiveTreeView(node);
+
+            html += '</ul>';
+
+            return html;
+        }
+
+        function recursiveTreeView(node)
+        {
+            let html = '';
+
+            if (!node) {                
+                return html;
+            }
+
+            if (node.ConditionType) {
+                html += '<li><span class="caret">' + node.ConditionType + '</span>';
+
+                html += '<ul class="nested">';
+
+                html += '<li>' + node.Operator + '</li>';
+                html += '<li>' + node.Operand + '</li>';
+
+                html += '</ul></li>';
+
+                return html;
+            }
+
+            if (node.LogicalOperator) {                
+                html += '<li><span class="caret"><b>' + node.LogicalOperator + '</b></span>';
+
+                if (node.ChildConditionNodes) {
+                    html += '<ul class="nested">';
+
+                    for (var i = 0; i < node.ChildConditionNodes.length; i++) {
+                        html += recursiveTreeView(node.ChildConditionNodes[i]);
+                    }
+
+                    html += '</ul></li>';
+                }
+
+                return html;
+            }
+
+            return html;
         }
 
         function setConditionTypesEvent()
@@ -212,7 +320,7 @@
                                 trHTML += 'Conditions';
                                 trHTML += '</button></td>';
                                 trHTML += '<td><div class="form-check form-switch">';
-                                trHTML += '<input class="form-check-input" type="checkbox" id="mySwitch" disabled name="darkmode" value="yes" ' + checked + '>';
+                                trHTML += '<input class="form-check-input" type="checkbox" id="' + item.id + '" disabled name="darkmode" value="yes" ' + checked + '>';
                                 trHTML += '</div></td></tr>';
 
                             });
@@ -237,11 +345,11 @@
             rules = [];
             conditionTypes = [];
             conditions = [];
-            $('.nav-link').on('click', function (d) {
+            $('.main .nav-link').on('click', function (d) {
 
-                $('.nav-link.active').removeClass('active');
+                $('.main .nav-link.active').removeClass('active');
 
-                $('.nav-link').addClass('text-white');
+                $('.main .nav-link').addClass('text-white');
 
                 $(this).addClass('active');
                 $(this).addClass('text-white');
@@ -330,23 +438,30 @@
                 <div class="modal-header">
                     <h4 class="modal-title">Conditions</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    
                 </div>
 
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Condition</th>
-                                    <th scope="col">Operator</th>
-                                    <th scope="col">Value</th>
-                                </tr>
-                            </thead>
-                            <tbody id="conditions_table">                                                                
-                            </tbody>
-                        </table>
+                    <ul class="nav nav-tabs" role="tablist">                        
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" aria-current="page" data-bs-target="#string-tab-pane" data-bs-toggle="tab" href="#">String</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="#" data-bs-target="#json-tab-pane" data-bs-toggle="tab">Json</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="#" data-bs-target="#tree-tab-pane" data-bs-toggle="tab">Tree</a>
+                        </li>
+                    </ul>
+
+                    <div class="row"></div>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="string-tab-pane" role="tabpanel" aria-labelledby="string-tab" tabindex="0"></div>
+                        <div class="tab-pane fade" id="json-tab-pane" role="tabpanel" aria-labelledby="json-tab" tabindex="1"></div>
+                        <div class="tab-pane fade" id="tree-tab-pane" role="tabpanel" aria-labelledby="tree-tab" tabindex="2"></div>                        
                     </div>
+                    <br />                    
                 </div>
 
                 <!-- Modal footer -->

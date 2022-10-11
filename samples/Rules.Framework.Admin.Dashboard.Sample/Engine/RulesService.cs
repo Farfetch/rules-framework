@@ -30,7 +30,7 @@ namespace Rules.Framework.Admin.Dashboard.Sample.Engine
                 .SearchAsync(new SearchArgs<ContentTypes, ConditionTypes>(contentTypes, dateTime, dateTime))
                 .ConfigureAwait(false);
 
-                return list.ToList<dynamic>();
+                return list.OrderBy(d => d.Priority).ToList<dynamic>();
             }
 
             return new List<dynamic>();
