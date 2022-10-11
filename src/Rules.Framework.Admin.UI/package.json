@@ -1,0 +1,10 @@
+{
+  "name": "rules.framework.ui",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "glyphicons-only-bootstrap": "1.0.1"
+  },
+  "scripts": {
+  }
+}

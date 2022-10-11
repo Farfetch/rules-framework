@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>	
+	<Description>Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application</Description>
+	<PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<NoWarn>$(NoWarn);1591</NoWarn>
+	<SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
+	<TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0</TargetFrameworks>	
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <EmbeddedResource Include="node_modules/glyphicons-only-bootstrap/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
+	  <EmbeddedResource Include="index.html" />
+  </ItemGroup>
+	
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+		<PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
+		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.9" />
+		<PackageReference Include="System.Text.Json" Version="6.0.6" />
+	</ItemGroup>
+
+
+	<ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+	<!-- Ensure Node.js is installed -->
+	<Exec Command="node --version" ContinueOnError="true">
+		<Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+	</Exec>
+	<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+	<Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+	<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+  </Target>
+
+	<Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds">
+		<Exec Command="npm install" ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+		</Exec>
+		<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project." />
+	</Target>
+	
+</Project>
