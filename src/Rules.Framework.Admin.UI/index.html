@@ -176,13 +176,15 @@
                     return r.id == e.target.id;
                 });
 
-                $('#string-tab-pane').html('');
-                $('#json-tab-pane').html('');
-                $('#tree-tab-pane').html('');
+                const brs = '<br /><br />';
 
-                if (rule.conditionsAsJson) {
-                    jsonObj = JSON.parse(rule.conditionsAsJson);
-                    $('#string-tab-pane').html(setStringView(jsonObj));
+                $('#string-tab-pane').html(brs + ' - No existing conditions - ');
+                $('#json-tab-pane').html(brs + ' - No existing conditions - ');
+                $('#tree-tab-pane').html(brs + ' - No existing conditions - ');
+
+                if (rule.conditions) {
+                    jsonObj = JSON.parse(rule.conditions);
+                    $('#string-tab-pane').html(brs + setStringView(jsonObj));
                     $('#json-tab-pane').html(setJsonView(jsonObj));
                     $('#tree-tab-pane').html(setTreeView(jsonObj));
                 }

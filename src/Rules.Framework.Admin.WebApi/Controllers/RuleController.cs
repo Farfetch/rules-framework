@@ -51,9 +51,7 @@ namespace Rules.Framework.Admin.WebApi.Controllers
                         DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString("dd/MM/yyyy HH:mm:ss"),
                         DateStart = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString("dd/MM/yyyy HH:mm:ss"),
                         Active = true,
-                        Conditions = new List<ConditionDto>(),
-                        ConditionsAsJson = conditions is null ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings),
-                        ConditionsAsTree = "",
+                        Conditions = conditions is null ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
                     });
                 }
             }
