@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Models
+namespace Rules.Framework.Admin.UI.Sample.Models
 {
     public class ErrorViewModel
     {

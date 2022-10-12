@@ -1,6 +1,6 @@
-using Rules.Framework.Admin.Dashboard.Sample.Engine;
-using Rules.Framework.Admin.Dashboard.Sample.Rules;
 using Rules.Framework.Admin.UI;
+using Rules.Framework.Admin.UI.Sample.Engine;
+using Rules.Framework.Admin.UI.Sample.Rules;
 using Rules.Framework.Admin.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);

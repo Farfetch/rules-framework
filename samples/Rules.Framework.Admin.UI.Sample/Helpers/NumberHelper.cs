@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Helper
+namespace Rules.Framework.Admin.UI.Sample.Helper
 {
     using System;
     using System.Linq;

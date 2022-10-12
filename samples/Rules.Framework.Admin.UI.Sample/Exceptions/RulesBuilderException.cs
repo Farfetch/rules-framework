@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Exceptions
+namespace Rules.Framework.Admin.UI.Sample.Exceptions
 {
     using System;
     using System.Collections.Generic;

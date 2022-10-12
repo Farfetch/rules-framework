@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Controllers
+namespace Rules.Framework.Admin.UI.Sample.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
 

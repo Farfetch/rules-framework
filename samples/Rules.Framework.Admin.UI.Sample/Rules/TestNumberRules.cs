@@ -1,9 +1,9 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Rules
+namespace Rules.Framework.Admin.UI.Sample.Rules
 {
     using System;
     using System.Collections.Generic;
-    using global::Rules.Framework.Admin.Dashboard.Sample.Engine;
-    using global::Rules.Framework.Admin.Dashboard.Sample.Enums;
+    using global::Rules.Framework.Admin.UI.Sample.Engine;
+    using global::Rules.Framework.Admin.UI.Sample.Enums;
     using global::Rules.Framework.Builder;
     using global::Rules.Framework.Core;
 

@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Engine
+namespace Rules.Framework.Admin.UI.Sample.Engine
 {
     using System.Collections.Generic;
 

@@ -1,11 +1,11 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Engine
+namespace Rules.Framework.Admin.UI.Sample.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using global::Rules.Framework.Admin.Dashboard.Sample.Enums;
-    using global::Rules.Framework.Admin.Dashboard.Sample.Exceptions;
+    using global::Rules.Framework.Admin.UI.Sample.Enums;
+    using global::Rules.Framework.Admin.UI.Sample.Exceptions;
     using global::Rules.Framework.Admin.WebApi;
 
     public class RulesService : IRulesService

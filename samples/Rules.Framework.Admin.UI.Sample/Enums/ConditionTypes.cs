@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.Dashboard.Sample.Enums
+namespace Rules.Framework.Admin.UI.Sample.Enums
 {
     public enum ConditionTypes
     {
