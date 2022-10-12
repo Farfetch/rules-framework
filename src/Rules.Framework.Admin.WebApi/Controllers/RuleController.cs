@@ -47,7 +47,7 @@ namespace Rules.Framework.Admin.WebApi.Controllers
                     {
                         Id = priority,
                         Name = name,
-                        Value = (contentContainer as dynamic).GetContentAs<string>(),
+                        Value = (contentContainer as dynamic).GetContentAs<string>(), //TODO GetContentAs can be anything
                         DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString("dd/MM/yyyy HH:mm:ss"),
                         DateStart = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString("dd/MM/yyyy HH:mm:ss"),
                         Active = true,
