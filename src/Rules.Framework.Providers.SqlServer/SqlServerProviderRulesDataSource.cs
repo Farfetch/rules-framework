@@ -74,16 +74,6 @@ namespace Rules.Framework.Providers.SqlServer
                 fetchedRules = fetchedRules.Where(rule => rule.Priority == rulesFilterArgs.Priority.Value);
             }
 
-            //foreach (var rule in fetchedRules)
-            //{
-            //    if (rule.ConditionNodeId.HasValue)
-            //    {
-            //        await rulesFrameworkDbContext.Entry(rule).Reference(r => r.ConditionNode).LoadAsync(); // TODO: Evaluate performance
-
-            //        await LoadConditionNodeRecursiveAsync(rule.ConditionNode).ConfigureAwait(false);
-            //    }
-            //}
-
             return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
         }
 
@@ -105,34 +95,23 @@ namespace Rules.Framework.Providers.SqlServer
             fetchedRule.Priority = ruleDataModel.Priority;
             fetchedRule.ConditionNodeId = ruleDataModel.ConditionNodeId;
 
+            //TODO: add update for each conditionNode (relations)
+            //var conditionNode = rulesFrameworkDbContext.ConditionNodes.FirstOrDefault(cn => cn.Id == ruleDataModel.ConditionNode.Id);
+            //if (conditionNode is object)
+            //{
+            //    conditionNode.DataTypeCode = ruleDataModel.ConditionNode.DataTypeCode;
+            //    conditionNode.ConditionNodeTypeCode = ruleDataModel.ConditionNode.ConditionNodeTypeCode;
+            //    conditionNode.ConditionTypeCode = ruleDataModel.ConditionNode.ConditionTypeCode;
+            //    conditionNode.DataTypeCode = ruleDataModel.ConditionNode.DataTypeCode;
+            //    conditionNode.Operand = ruleDataModel.ConditionNode.Operand;
+            //    conditionNode.LogicalOperatorCode = ruleDataModel.ConditionNode.LogicalOperatorCode;
+
+            //    foreach (var item in conditionNode.ConditionNodeRelations_ChildId.)
+            //    {
+            //    }
+            //}
+
             await rulesFrameworkDbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        private async Task LoadConditionNodeRecursiveAsync(ConditionNode conditionNode)
-        {
-            if (conditionNode is null)
-            {
-                return;
-            }
-
-            await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.DataType).LoadAsync(); // TODO: Evaluate performance
-            await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.ConditionType).LoadAsync(); // TODO: Evaluate performance
-            if (conditionNode.LogicalOperatorCode.HasValue)
-            {
-                await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.LogicalOperator).LoadAsync(); // TODO: Evaluate performance
-            }
-            if (conditionNode.OperatorCode.HasValue)
-            {
-                await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.Operator).LoadAsync(); // TODO: Evaluate performance
-            }
-            await rulesFrameworkDbContext.Entry(conditionNode).Reference(r => r.ConditionNodeType).LoadAsync(); // TODO: Evaluate performance
-
-            await rulesFrameworkDbContext.Entry(conditionNode).Collection(r => r.ConditionNodeRelations_ChildId).LoadAsync(); // TODO: Evaluate performance
-
-            foreach (var child in conditionNode.ConditionNodeRelations_ChildId)
-            {
-                await LoadConditionNodeRecursiveAsync(child.Child).ConfigureAwait(false);
-            }
         }
     }
 }

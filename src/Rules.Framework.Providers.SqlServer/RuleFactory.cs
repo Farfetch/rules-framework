@@ -4,6 +4,7 @@ namespace Rules.Framework.Providers.SqlServer
     using System.Globalization;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Serialization;
     using Rules.Framework.SqlServer.Models;
 
@@ -70,8 +71,8 @@ namespace Rules.Framework.Providers.SqlServer
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
-                ConditionNodeId = rule.ConditionNodeId
-                //RootCondition = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null //TODO: check this
+                ConditionNodeId = rule.ConditionNodeId,
+                ConditionNode = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null //TODO: check this
             };
 
             return ruleDataModel;
@@ -87,21 +88,25 @@ namespace Rules.Framework.Providers.SqlServer
                     .OfDataType<int>()
                     .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                     .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
+                    .WithInternalId(conditionNodeDataModel.Id)
                     .Build(),
                 2 => conditionNodeBuilder.AsValued(conditionType)
                    .OfDataType<decimal>()
                    .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                    .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
+                   .WithInternalId(conditionNodeDataModel.Id)
                    .Build(),
                 3 => conditionNodeBuilder.AsValued(conditionType)
                    .OfDataType<string>()
                    .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                    .SetOperand(Convert.ToString(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
+                   .WithInternalId(conditionNodeDataModel.Id)
                    .Build(),
                 4 => conditionNodeBuilder.AsValued(conditionType)
                    .OfDataType<bool>()
                    .WithComparisonOperator((Operators)conditionNodeDataModel.OperatorCode)
                    .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
+                   .WithInternalId(conditionNodeDataModel.Id)
                     .Build(),
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
             };
@@ -114,6 +119,42 @@ namespace Rules.Framework.Providers.SqlServer
         //TODO: move to a common place
         private static object Parse(string value, Type type)
             => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+
+        private ConditionNode ConvertConditionNode(IConditionNode<TConditionType> rootCondition)
+        {
+            ConditionNode conditionNode = new ConditionNode();
+            conditionNode.LogicalOperatorCode = (int)rootCondition.LogicalOperator;
+
+            if (rootCondition.LogicalOperator == LogicalOperators.Eval)
+            {
+                var ValueConditionNode = rootCondition as ValueConditionNode<TConditionType>;
+
+                conditionNode.Id = (long)ValueConditionNode.InternalId;
+                conditionNode.DataTypeCode = (int)ValueConditionNode.DataType;
+                conditionNode.ConditionTypeCode = Convert.ToInt32(ValueConditionNode.ConditionType, CultureInfo.InvariantCulture);
+                conditionNode.Operand = Convert.ToString(ValueConditionNode.Operand, CultureInfo.InvariantCulture);
+                conditionNode.OperatorCode = (int)ValueConditionNode.Operator;
+            }
+
+            var composedConditionNode = rootCondition as ComposedConditionNode<TConditionType>;
+
+            if (composedConditionNode is object)
+            {
+                foreach (var childConditionNode in composedConditionNode.ChildConditionNodes)
+                {
+                    var child = ConvertConditionNode(childConditionNode);
+
+                    conditionNode.ConditionNodeRelations_ChildId
+                        .Add(new ConditionNodeRelation
+                        {
+                            Child = child,
+                            Owner = conditionNode
+                        });
+                }
+            }
+
+            return conditionNode;
+        }
 
         private IConditionNode<TConditionType> ConvertConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNode conditionNodeDataModel) //TODO: replace conditionNode by ConditionNodeDataModel
         {

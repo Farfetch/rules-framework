@@ -53,5 +53,7 @@ namespace Rules.Framework.Builder
         /// <param name="comparisonOperator">The comparison operator.</param>
         /// <returns></returns>
         IValueConditionNodeBuilder<TConditionType, TDataType> WithComparisonOperator(Operators comparisonOperator);
+
+        IValueConditionNodeBuilder<TConditionType, TDataType> WithInternalId(object internalId);
     }
 }

@@ -38,7 +38,9 @@ namespace Rules.Framework.SqlServer.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Data Source=sqlserver.docker.internal;User ID=sa; Password=Finance123.; Initial Catalog=rules-framework-sample; MultipleActiveResultSets=True")
+                //@"Data Source=sqlserver.docker.internal;User ID=sa; Password=Finance123.; Initial Catalog=rules-framework-sample; MultipleActiveResultSets=True"
+                //@"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True"
+                optionsBuilder.UseSqlServer(@"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True")
                     .UseLazyLoadingProxies();
             }
         }

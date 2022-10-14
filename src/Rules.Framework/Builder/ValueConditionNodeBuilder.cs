@@ -22,6 +22,7 @@ namespace Rules.Framework.Builder
     {
         private readonly TConditionType conditionType;
         private Operators comparisonOperator;
+        private object internalId;
         private object operand;
 
         public ValueConditionNodeBuilder(TConditionType conditionType)
@@ -35,19 +36,19 @@ namespace Rules.Framework.Builder
             {
                 case decimal _:
                 case IEnumerable<decimal> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, this.operand);
+                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
 
                 case int _:
                 case IEnumerable<int> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, this.operand);
+                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
 
                 case bool _:
                 case IEnumerable<bool> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, this.operand);
+                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
 
                 case string _:
                 case IEnumerable<string> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, this.operand);
+                    return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
 
                 default:
                     throw new NotSupportedException($"The data type is not supported: {typeof(TDataType).FullName}.");
@@ -71,6 +72,13 @@ namespace Rules.Framework.Builder
         public IValueConditionNodeBuilder<TConditionType, TDataType> WithComparisonOperator(Operators comparisonOperator)
         {
             this.comparisonOperator = comparisonOperator;
+
+            return this;
+        }
+
+        public IValueConditionNodeBuilder<TConditionType, TDataType> WithInternalId(object internalId)
+        {
+            this.internalId = internalId;
 
             return this;
         }

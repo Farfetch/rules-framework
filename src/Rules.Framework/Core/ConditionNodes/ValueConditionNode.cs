@@ -19,12 +19,14 @@ namespace Rules.Framework.Core.ConditionNodes
         /// <param name="conditionType">Type of the condition.</param>
         /// <param name="operator">The operator.</param>
         /// <param name="operand">The operand.</param>
-        public ValueConditionNode(DataTypes dataType, TConditionType conditionType, Operators @operator, object operand)
+        /// <param name="internalId">The internal identificator</param>
+        public ValueConditionNode(DataTypes dataType, TConditionType conditionType, Operators @operator, object operand, object internalId = null)
         {
             this.ConditionType = conditionType;
             this.DataType = dataType;
             this.Operand = operand;
             this.Operator = @operator;
+            this.InternalId = internalId;
         }
 
         /// <summary>
@@ -36,6 +38,11 @@ namespace Rules.Framework.Core.ConditionNodes
         /// Gets the condition node data type.
         /// </summary>
         public DataTypes DataType { get; }
+
+        /// <summary>
+        /// the internal identifier associated with this value condition node
+        /// </summary>
+        public object InternalId { get; }
 
         /// <summary>
         /// Gets the logical operator to apply to condition node.

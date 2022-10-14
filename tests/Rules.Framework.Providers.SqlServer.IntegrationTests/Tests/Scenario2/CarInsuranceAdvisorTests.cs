@@ -21,7 +21,9 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         private readonly DatabaseHelper databaseHelper;
 
         //TODO: get connection from settings
-        private readonly string sqlConnection = $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;";
+        // $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;"
+        // $"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True"
+        private readonly string sqlConnection = $"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True";
 
         private readonly SqlServerDbSettings sqlServerDbSettings;
 
@@ -33,15 +35,9 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
             var rulesSchemaCreator = sqlServerDbDataProviderFactory.CreateSchemaCreator(sqlServerDbSettings);
             rulesSchemaCreator.CreateOrUpdateSchemaAsync(DataBaseName);
 
-            try
-            {
-                databaseHelper = new DatabaseHelper();
-                var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2.rules-framework-tests-car-insurance-advisor.sql";
-                databaseHelper.ExecuteScriptAsync(sqlServerDbSettings, testeResource).GetAwaiter().GetResult(); //TODO change this
-            }
-            catch (Exception)
-            {
-            }
+            databaseHelper = new DatabaseHelper();
+            var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2.rules-framework-tests-car-insurance-advisor.sql";
+            databaseHelper.ExecuteScriptAsync(sqlServerDbSettings, testeResource).GetAwaiter().GetResult(); //TODO change this
 
             //TODO: change Model.Rule to RuleDataMOdel
         }
