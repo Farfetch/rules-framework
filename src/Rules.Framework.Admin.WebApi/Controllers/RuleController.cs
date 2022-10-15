@@ -52,7 +52,7 @@ namespace Rules.Framework.Admin.WebApi.Controllers
                     DateTime? dateBegin = GetProperty(rule, "DateBegin") as DateTime?;
                     var name = GetProperty(rule, "Name") as string;
                     var contentContainer = GetProperty(rule, "ContentContainer");
-                    var conditions = GetProperty(rule, "RootCondition") as string;
+                    var conditions = GetProperty(rule, "RootCondition");
 
                     list.Add(new RuleDto
                     {
@@ -62,7 +62,7 @@ namespace Rules.Framework.Admin.WebApi.Controllers
                         DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString(dateFormat),
                         DateBegin = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString(dateFormat),
                         Status = GetRuleStatus(dateBegin, dateEnd).ToString(),
-                        Conditions = string.IsNullOrWhiteSpace(conditions) ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
+                        Conditions = conditions is null ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
                     });
                 }
             }
