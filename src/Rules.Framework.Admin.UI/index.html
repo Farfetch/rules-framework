@@ -103,9 +103,10 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Name</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
-                                <tbody id="conditionTypes_table">
+                                <tbody id="contentTypes_table">
                                 </tbody>
                             </table>
                         </div>
@@ -119,10 +120,10 @@
                         <form novalidate>
                             <div class="form-group row g-2 align-items-left">
                                 <div class="col-sm-2">
-                                    <label for="conditionTypesSelect" class="form-label">Condition Type</label>
+                                    <label for="contentTypesSelect" class="form-label">Condition Type</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <select class="form-select" id="conditionTypesSelect" required>
+                                    <select class="form-select" id="contentTypesSelect" required>
                                         <option value="">Loading...</option>
                                     </select>
                                 </div>
@@ -134,7 +135,7 @@
                             <div class="col-lg-4">
                                 <em>Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>                                                  
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="glyphicon glyphicon-cog"></span>
                                     </button>
                                     <ul class="dropdown-menu">
@@ -175,10 +176,31 @@
 
     <script>
 
+        rules = [];
+        contentTypes = [];
+        contentType = '';
+        options = '';
+        conditions = [];
+
         function openError(error)
         {
             $('#errorModal').modal('show');
             $('#errorBody').html('<p>' + JSON.stringify(error) + '</p>');
+        }
+
+        function setContentTypesEvent()
+        {
+            $('.rules').on('click', function (e) {
+                const contentTypeClicked = e.target.id;
+
+                console.log(contentTypeClicked);
+
+                if (contentTypeClicked)
+                {
+                    contentType = contentTypeClicked;
+                    $('#rules').click();
+                }
+            });
         }
 
         function setConditionsEvent()
@@ -310,19 +332,20 @@
             return html;
         }
 
-        function setConditionTypesEvent()
+        function setContentTypesSelectEvent()
         {
-            $("#conditionTypesSelect").on('change', function ()
+            $("#contentTypesSelect").on('change', function ()
             {
                 $('#rules_table').html('');
-                var selectedConditionType = $(this).children("option:selected").val();
+                let contentTypeSelected = $(this).children("option:selected").val();
+                contentType = '';
 
-                if (selectedConditionType)
+                if (contentTypeSelected)
                 {
                     $("#loading").show();
                     $.ajax({
                         url:
-                            "Rule/" + selectedConditionType + "/List",
+                            "Rule/" + contentTypeSelected + "/List",
                         success: function (response) {
                             rules = response;
                             let trHTML = '';
@@ -357,7 +380,7 @@
                                 trHTML += item.status;
                                 trHTML += ' <span class="' + icon + '"></span> '
                                 trHTML += '</span></td>';
-                                trHTML += '<td><button type="button" class="btn btn-secondary conditions"  ';
+                                trHTML += '<td><button type="button" class="btn btn-dark conditions"  ';
                                 trHTML += 'data-bs-toggle="modal" data-bs-target="#conditionsModal" title="Conditions" id="b' + item.priority + '">';
                                 trHTML += '<span class="glyphicon glyphicon-tasks" id="' + item.priority + '"></span>';
                                 trHTML += '</button></td></tr>';
@@ -381,10 +404,7 @@
         }
 
         $(document).ready(() => {
-            rules = [];
-            conditionTypes = [];
-            options = "";
-            conditions = [];
+            
             $('.download').on('click', function ()
             {
                 const rulesToExport = rules;
@@ -423,19 +443,37 @@
                 $('.content').hide();
                 $('div[id=' + d.currentTarget.id + ']').show();
 
+                $('#rulesOptions').html('Loading...');
+                $.ajax({
+                    url:
+                        "Rule/Options",
+                    success: function (response) {
+                        $('#rulesOptions').html(response);
+                    },
+                    error: function (error) {
+                        openError(error);
+                    }
+                });
+
                 if (d.currentTarget.id == "contentTypes") {
                     $("#loading").show();
                     $.ajax({
                         url:
                             "ContentType/List",
                         success: function (response) {
-                            conditionTypes = response;
+                            contentTypes = response;
                             let trHTML = '';
                             $.each(response, function (i, item) {
-                                trHTML += '<tr><th scope="row">' + i + ' </th><td>' + item.name + '</td></tr>';
+                                trHTML += '<tr><th scope="row">' + i + ' </th><td>' + item.name + '</td>';
+                                trHTML += '<td><button type="button" class="btn btn-dark rules"  ';
+                                trHTML += 'title="Rules" id="b' + item.name + '">';
+                                trHTML += '<span class="glyphicon glyphicon-search" id="' + item.name + '"></span> Rules';
+                                trHTML += '</button></td>';
+                                trHTML += '</tr>';
                             });
-                            $('#conditionTypes_table').html(trHTML);
+                            $('#contentTypes_table').html(trHTML);
                             $("#loading").hide();
+                            setContentTypesEvent();
                         },
                         error: function (error) {
                             openError(error);
@@ -446,31 +484,38 @@
 
                 if (d.currentTarget.id == "rules") {
                     $('#rules_table').html('');
-                    setConditionTypesEvent();
-                    let $dropdown = $("#conditionTypesSelect");
-                    $dropdown.html('<option value="">Loading...</option>'); 
+                    setContentTypesSelectEvent();
+
+                    
+                    let $dropdown = $("#contentTypesSelect");
+                    $dropdown.html('<option value="">Loading...</option>');
                     $.ajax({
                         url:
                             "ContentType/List",
                         success: function (response) {
-                            conditionTypes = response;                            
-                            $dropdown.html('<option value="">Choose ContentType...</option>');                            
-                            $.each(response, function (i, item) {
-                                $dropdown.append($("<option />").val(item.name).text(item.name));
+                            contentTypes = response;
+                            $dropdown.html('<option value="">Choose ContentType...</option>');
+                            $.each(response, function (i, item) {                                
+                                if (contentType == item.name || contentType == 'b' + item.name) {
+                                    $dropdown.append($("<option>", {
+                                        value: item.name,
+                                        text: item.name,
+                                        selected: 'selected'
+                                    }));
+                                }
+                                else
+                                {
+                                    $dropdown.append($("<option>", {
+                                        value: item.name,
+                                        text: item.name                                        
+                                    }));
+                                }
                             });
-                        },
-                        error: function (error) {
-                            openError(error);
-                        }
-                    });
 
-                    
-                    $('#rulesOptions').html('Loading...');
-                    $.ajax({
-                        url:
-                            "Rule/Options",
-                        success: function (response) {
-                            $('#rulesOptions').html(response);
+                            if (contentType)
+                            {
+                                $dropdown.change();
+                            }
                         },
                         error: function (error) {
                             openError(error);
