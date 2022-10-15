@@ -64,6 +64,19 @@ namespace Rules.Framework.Admin.WebApi.Controllers
                         Conditions = conditions is null ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
                     });
                 }
+
+                for (int i = 0; i < 100; i++)
+                {
+                    list.Add(new RuleDto
+                    {
+                        Priority = i,
+                        Name = $"name{i}",
+                        Value = $"value{i}",
+                        DateBegin = DateTime.UtcNow.ToString(dateFormat),
+                        Status = "Inactive",
+                        Conditions = String.Empty
+                    });
+                }
             }
 
             return Ok(list);
