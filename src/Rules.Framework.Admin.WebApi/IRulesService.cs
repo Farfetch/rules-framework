@@ -1,13 +1,14 @@
 namespace Rules.Framework.Admin.WebApi
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    //TODO (we need to instaciate it for the client)
+    //TODO (we need to create a instance for the client)
     public interface IRulesService
     {
-        Task<List<dynamic>> FindRulesAsync(string contentType, DateTime dateTime);
+        Task<IEnumerable<dynamic>> FindRulesAsync(string contentType);
+
+        Task<string?> GetRulePriorityOptionAsync();
 
         IEnumerable<string> ListContents();
     }

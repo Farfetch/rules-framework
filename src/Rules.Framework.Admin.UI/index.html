@@ -116,31 +116,44 @@
             <div id="rules" class="content" style="display:none">
                 <div class="row g-5">
                     <div class="col-12">
-                        <h4 class="mb-3">Rules</h4>
                         <form novalidate>
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="form-group row g-2 align-items-left">
+                                <div class="col-sm-2">
+                                    <label for="conditionTypesSelect" class="form-label">Condition Type</label>
+                                </div>
+                                <div class="col-sm-4">
                                     <select class="form-select" id="conditionTypesSelect" required>
                                         <option value="">Loading...</option>
                                     </select>
                                 </div>
                             </div>
-
                             <hr class="my-4">
-
                         </form>
-
+                        <div class="row">
+                            <div class="col-lg-8"><h4 class="mb-3">Rules</h4></div>
+                            <div class="col-lg-4">
+                                <em>Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>                                                  
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item download" href="#"><span class="glyphicon glyphicon-cloud-download"></span> Export JSON</a></li>                                        
+                                    </ul>
+                                </div>                                                  
+                            </div>
+                        </div>                         
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col">#</th>
+                                        <th scope="col">Priority</th>
                                         <th scope="col">Name</th>
-                                        <th scope="col">Date Start</th>
+                                        <th scope="col">Date Begin</th>
                                         <th scope="col">Date End</th>
                                         <th scope="col">Value</th>
+                                        <th scope="col">Status</th>
                                         <th scope="col"></th>
-                                        <th scope="col">Active</th>
                                     </tr>
                                 </thead>
                                 <tbody id="rules_table">
@@ -170,10 +183,10 @@
 
         function setConditionsEvent()
         {
-            $('.conditions').on('click', function (e) {                                
+            $('.conditions').on('click', function (e) {
                 let rule = rules.find(function (r)
                 {
-                    return r.id == e.target.id;
+                    return r.priority == e.target.id || 'b' + r.priority == e.target.id;
                 });
 
                 const brs = '<br />';
@@ -315,23 +328,45 @@
                             let trHTML = '';
                             $.each(response, function (i, item) {
 
-                                let checked = item.active ? 'checked' : '';
+                                let labelColor = '';
+                                let style = '';
+                                let icon = '';
 
-                                trHTML += '<tr><th scope="row">' + item.id + ' </th><td>' + item.name + '</td>';
-                                trHTML += '<td>' + item.dateStart + '</td><td> ' + item.dateEnd + '</td>';
+                                switch (item.status.toLowerCase()) {
+
+                                    case 'active':
+                                        labelColor = 'badge text-bg-success';
+                                        style = 'color: #1c6c09 !important;background-color: #d9fbd0 !important;'
+                                        icon = 'glyphicon glyphicon-ok';
+                                        break;
+                                    case 'pending':
+                                        labelColor = 'badge text-bg-info';
+                                        style = 'color: #bc3803 !important;background-color: #ffefca !important;'
+                                        icon = 'glyphicon glyphicon-time';
+                                        break;
+                                    default:
+                                        labelColor = 'badge text-bg-danger';
+                                        style = 'color: #AF0000 !important;background-color: #FFC8C8 !important;'
+                                        icon = 'glyphicon glyphicon-exclamation-sign';
+                                }
+
+                                trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.name + '</td>';
+                                trHTML += '<td>' + item.dateBegin + '</td><td> ' + item.dateEnd + '</td>';
                                 trHTML += '<td>' + item.value + '</td>';
-                                trHTML += '<td><button type="button" class="btn btn-primary conditions" id="' + item.id + '" data-bs-toggle="modal" data-bs-target="#conditionsModal">';
-                                trHTML += 'Conditions';
-                                trHTML += '</button></td>';
-                                trHTML += '<td><div class="form-check form-switch">';
-                                trHTML += '<input class="form-check-input" type="checkbox" id="' + item.id + '" disabled name="darkmode" value="yes" ' + checked + '>';
-                                trHTML += '</div></td></tr>';
+                                trHTML += '<td><span class="' + labelColor + '" style="' + style + '"> ';                                
+                                trHTML += item.status;
+                                trHTML += ' <span class="' + icon + '"></span> '
+                                trHTML += '</span></td>';
+                                trHTML += '<td><button type="button" class="btn btn-secondary conditions"  ';
+                                trHTML += 'data-bs-toggle="modal" data-bs-target="#conditionsModal" title="Conditions" id="b' + item.priority + '">';
+                                trHTML += '<span class="glyphicon glyphicon-tasks" id="' + item.priority + '"></span>';
+                                trHTML += '</button></td></tr>';
 
                             });
                             $('#rules_table').html(trHTML);
-
-                            setConditionsEvent();
+                                                        
                             $("#loading").hide();
+                            setConditionsEvent();
                         },
                         error: function (error) {
                             $('#loading').hide();
@@ -348,7 +383,33 @@
         $(document).ready(() => {
             rules = [];
             conditionTypes = [];
+            options = "";
             conditions = [];
+            $('.download').on('click', function ()
+            {
+                const rulesToExport = rules;
+                for (var i = 0; i < rulesToExport.length; i++) {
+                    let conditionsToExport = rulesToExport[i].conditions;
+                                        
+                    if (conditionsToExport) {
+                        rulesToExport[i].conditions = JSON.parse(conditionsToExport);
+                    }
+                }
+                const filename = "rules_as_json";
+                const jsonStr = JSON.stringify(rulesToExport);
+
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonStr));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            });
+
             $('.main .nav-link').on('click', function (d) {
 
                 $('.main .nav-link.active').removeClass('active');
@@ -401,7 +462,21 @@
                         error: function (error) {
                             openError(error);
                         }
-                    });                    
+                    });
+
+                    
+                    $('#rulesOptions').html('Loading...');
+                    $.ajax({
+                        url:
+                            "Rule/Options",
+                        success: function (response) {
+                            $('#rulesOptions').html(response);
+                        },
+                        error: function (error) {
+                            openError(error);
+                        }
+                    });
+                    
                 }            
             });            
 

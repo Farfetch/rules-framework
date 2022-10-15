@@ -21,24 +21,25 @@ namespace Rules.Framework
     /// </typeparam>
     public class RulesEngine<TContentType, TConditionType>
     {
+        public readonly IRulesEngineOptions RulesEngineOptions;
+
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
-        private readonly RulesEngineOptions rulesEngineOptions;
         private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
             IRulesDataSource<TContentType, TConditionType> rulesDataSource,
             IValidatorProvider validatorProvider,
-            RulesEngineOptions rulesEngineOptions,
+            IRulesEngineOptions rulesEngineOptions,
             IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;
             this.rulesDataSource = rulesDataSource;
             this.validatorProvider = validatorProvider;
-            this.rulesEngineOptions = rulesEngineOptions;
+            this.RulesEngineOptions = rulesEngineOptions;
             this.conditionTypeExtractor = conditionTypeExtractor;
         }
 
@@ -326,7 +327,7 @@ namespace Rules.Framework
 
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
-            return this.rulesEngineOptions.PriotityCriteria switch
+            return this.RulesEngineOptions.PriotityCriteria switch
             {
                 PriorityCriterias.BottommostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
                 _ => rules.OrderBy(r => r.Priority).First(),

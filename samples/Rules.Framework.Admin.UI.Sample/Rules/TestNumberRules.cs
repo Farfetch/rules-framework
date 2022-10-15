@@ -39,7 +39,7 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
                              .NewRule<ContentTypes, ConditionTypes>()
                              .WithName("Default rule for test number")
                              .WithContent(ContentTypes.TestNumber, ":| default nothing special about this number")
-                             .WithDateBegin(new DateTime(2019, 01, 01))
+                             .WithDatesInterval(new DateTime(2019, 01, 01), new DateTime(2022, 10, 01))
                              .Build();
 
         private RuleBuilderResult<ContentTypes, ConditionTypes> CreateRuleForCoolNumbers() =>
@@ -76,7 +76,7 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
                              .NewRule<ContentTypes, ConditionTypes>()
                              .WithName("Rule for so so numbers")
                              .WithContent(ContentTypes.TestNumber, ":) this number is so so")
-                             .WithDateBegin(new DateTime(2019, 01, 01))
+                             .WithDatesInterval(new DateTime(2023, 01, 01), new DateTime(2023, 10, 01))
                              .WithCondition(cnb => cnb.AsComposed()
                                     .WithLogicalOperator(LogicalOperators.Or)
                                         .AddCondition(condition => condition

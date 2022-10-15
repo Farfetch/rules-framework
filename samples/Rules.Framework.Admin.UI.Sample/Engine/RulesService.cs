@@ -17,7 +17,7 @@ namespace Rules.Framework.Admin.UI.Sample.Engine
             this.rulesEngineProvider = new RulesEngineProvider(new RulesBuilder(contentTypes));
         }
 
-        public async Task<List<dynamic>> FindRulesAsync(string contentType, DateTime dateTime)
+        public async Task<IEnumerable<dynamic>> FindRulesAsync(string contentType)
         {
             var rulesEngine = await
                 rulesEngineProvider
@@ -27,13 +27,28 @@ namespace Rules.Framework.Admin.UI.Sample.Engine
             if (Enum.TryParse(contentType, out ContentTypes contentTypes))
             {
                 var list = await rulesEngine
-                .SearchAsync(new SearchArgs<ContentTypes, ConditionTypes>(contentTypes, dateTime, dateTime))
+                .SearchAsync(new SearchArgs<ContentTypes, ConditionTypes>(contentTypes, DateTime.MinValue, DateTime.MaxValue))
                 .ConfigureAwait(false);
 
-                return list.OrderBy(d => d.Priority).ToList<dynamic>();
+                if (rulesEngine.RulesEngineOptions.PriotityCriteria == PriorityCriterias.TopmostRuleWins)
+                {
+                    return list.OrderBy(d => d.Priority).ToList<dynamic>();
+                }
+
+                return list.OrderByDescending(d => d.Priority).ToList<dynamic>();
             }
 
             return new List<dynamic>();
+        }
+
+        public async Task<string?> GetRulePriorityOptionAsync()
+        {
+            var rulesEngine = await
+                rulesEngineProvider
+                .GetRulesEngineAsync()
+            .ConfigureAwait(false);
+
+            return Enum.GetName(rulesEngine.RulesEngineOptions.PriotityCriteria);
         }
 
         public IEnumerable<string> ListContents()

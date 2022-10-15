@@ -8,6 +8,7 @@ namespace Rules.Framework.Admin.WebApi.Controllers
 
     public class RuleController : Controller
     {
+        private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
         private readonly JsonSerializerSettings jsonSerializerSettings;
         private readonly IRulesService rulesService;
 
@@ -24,13 +25,22 @@ namespace Rules.Framework.Admin.WebApi.Controllers
             return Microsoft.VisualBasic.CompilerServices.Versioned.CallByName(target, name, method);
         }
 
+        [Route("rules/{controller}/options")]
+        public async Task<IActionResult> GetOptions()
+        {
+            var priorityOption = await this.rulesService
+                .GetRulePriorityOptionAsync();
+
+            return Ok(priorityOption);
+        }
+
         [Route("rules/{controller}/{conditionType}/list")]
         public async Task<IActionResult> List([FromRoute] string conditionType)
         {
             var list = new List<RuleDto>();
 
             var rules = await this.rulesService
-                .FindRulesAsync(conditionType, DateTime.UtcNow);
+                .FindRulesAsync(conditionType);
 
             if (rules != null)
             {
@@ -45,18 +55,43 @@ namespace Rules.Framework.Admin.WebApi.Controllers
 
                     list.Add(new RuleDto
                     {
-                        Id = priority,
+                        Priority = priority,
                         Name = name,
-                        Value = (contentContainer as dynamic).GetContentAs<string>(), //TODO GetContentAs can be anything
-                        DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString("dd/MM/yyyy HH:mm:ss"),
-                        DateStart = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString("dd/MM/yyyy HH:mm:ss"),
-                        Active = true,
+                        Value = contentContainer is null ? "" : JsonConvert.SerializeObject(contentContainer.GetContentAs<dynamic>(), jsonSerializerSettings),
+                        DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString(dateFormat),
+                        DateBegin = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString(dateFormat),
+                        Status = GetRuleStatus(dateBegin, dateEnd).ToString(),
                         Conditions = conditions is null ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
                     });
                 }
             }
 
             return Ok(list);
+        }
+
+        private static RuleStatus GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)
+        {
+            if (!dateBegin.HasValue)
+            {
+                return RuleStatus.Inactive;
+            }
+
+            if (dateBegin.Value > DateTime.UtcNow)
+            {
+                return RuleStatus.Pending;
+            }
+
+            if (!dateEnd.HasValue)
+            {
+                return RuleStatus.Active;
+            }
+
+            if (dateEnd.Value <= DateTime.UtcNow)
+            {
+                return RuleStatus.Inactive;
+            }
+
+            return RuleStatus.Active;
         }
     }
 }
