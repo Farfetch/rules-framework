@@ -20,7 +20,7 @@ namespace Rules.Framework.Admin.WebApi.Controllers
             jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
         }
 
-        public static object GetProperty(object target, string name, CallType method = CallType.Get)
+        public static object? GetProperty(object target, string name, CallType method = CallType.Get)
         {
             return Microsoft.VisualBasic.CompilerServices.Versioned.CallByName(target, name, method);
         }
@@ -46,35 +46,22 @@ namespace Rules.Framework.Admin.WebApi.Controllers
             {
                 foreach (var rule in rules)
                 {
-                    var priority = GetProperty(rule, "Priority");
-                    var name = GetProperty(rule, "Name");
+                    var priority = GetProperty(rule, "Priority") as int?;
+                    var name = GetProperty(rule, "Name") as string;
                     var contentContainer = GetProperty(rule, "ContentContainer");
                     var dateEnd = GetProperty(rule, "DateEnd") as DateTime?;
                     var dateBegin = GetProperty(rule, "DateBegin") as DateTime?;
-                    var conditions = GetProperty(rule, "RootCondition");
+                    var conditions = GetProperty(rule, "RootCondition") as string;
 
                     list.Add(new RuleDto
                     {
-                        Priority = priority,
-                        Name = name,
+                        Priority = priority.HasValue ? priority.Value : 0,
+                        Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name,
                         Value = contentContainer is null ? "" : JsonConvert.SerializeObject(contentContainer.GetContentAs<dynamic>(), jsonSerializerSettings),
                         DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString(dateFormat),
                         DateBegin = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString(dateFormat),
                         Status = GetRuleStatus(dateBegin, dateEnd).ToString(),
-                        Conditions = conditions is null ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
-                    });
-                }
-
-                for (int i = 0; i < 100; i++)
-                {
-                    list.Add(new RuleDto
-                    {
-                        Priority = i,
-                        Name = $"name{i}",
-                        Value = $"value{i}",
-                        DateBegin = DateTime.UtcNow.ToString(dateFormat),
-                        Status = "Inactive",
-                        Conditions = String.Empty
+                        Conditions = string.IsNullOrWhiteSpace(conditions) ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
                     });
                 }
             }

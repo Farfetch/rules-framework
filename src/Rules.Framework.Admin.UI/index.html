@@ -74,23 +74,18 @@
 
         <div class="b-example-divider b-example-vr"></div>
 
-        <div class="container" style="overflow-y:auto">
-            <div class="py-5 text-center">
-                <h2>%(DocumentTitle)</h2>
-            </div>
-
+        <div class="container" style="overflow-y:auto; padding-top:30px">
             
-
             <center>
                 <div id="index" class="content">
-                    <p class="lead">Welcome to Rules.Framework UI. Allows you to see what are the content types and rules configured in this application.</p>
+                    <br />
+                    <p class="lead">Welcome to Rules.Framework UI.<br /> Allows you to see what are the content types and rules configured in this application.</p>
                 </div>
             </center>
 
             <div id="contentTypes" class="content" style="display:none">
                 <div class="row">
                     <div class="col-12">
-
                         <form novalidate>
                             <div class="form-group row g-2 align-items-left">
                                 <div class="col-sm-2">
@@ -102,14 +97,14 @@
                             </div>
                             <hr class="my-4">
                         </form>
-                        <h4 class="mb-3">Content Types</h4>
+                        <h5 class="mb-3">Content Types</h5>
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm">
-                                <thead>
+                            <table class="table table-hover table-sm" style="font-size: .875rem;">
+                                <thead style="border-bottom: 2px solid currentcolor">
                                     <tr>
                                         <th scope="col" width="10%">#</th>
                                         <th scope="col" width="70%">Name</th>
-                                        <th scope="col" width="20%"></th>
+                                        <th scope="col" width="20%">Rules</th>
                                     </tr>
                                 </thead>
                                 <tbody id="contentTypes_table">
@@ -138,7 +133,9 @@
                             <hr class="my-4">
                         </form>
                         <div class="row">
-                            <div class="col-lg-8"><h4 class="mb-3">Rules</h4></div>
+                            <div class="col-lg-8">
+                            <h5 class="mb-3">Rules</h5>
+                            </div>
                             <div class="col-lg-4">
                                 <em>Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>
                                 <div class="btn-group" role="group">
@@ -152,16 +149,16 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm">
-                                <thead>
+                            <table class="table table-hover table-sm" style="font-size: .875rem;">
+                                <thead style="border-bottom: 2px solid currentcolor">
                                     <tr>
                                         <th scope="col" width="1%">Priority</th>
-                                        <th scope="col" width="35%">Name</th>
-                                        <th scope="col" width="15%">Date Begin</th>
-                                        <th scope="col" width="15%">Date End</th>
-                                        <th scope="col" width="35%">Value</th>
-                                        <th scope="col" width="1%">Status</th>
-                                        <th scope="col" width="1%"></th>
+                                        <th scope="col" width="25%">Name</th>
+                                        <th scope="col" width="1%" nowrap>Date Begin</th>
+                                        <th scope="col" width="1%" nowrap>Date End</th>
+                                        <th scope="col" width="42%">Value</th>
+                                        <th scope="col" width="10%">Status</th>
+                                        <th scope="col" width="10%">Conditions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="rules_table">
@@ -240,13 +237,13 @@
                 }
 
                 trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.name + '</td>';
-                trHTML += '<td>' + item.dateBegin + '</td><td> ' + item.dateEnd + '</td>';
+                trHTML += '<td nowrap>' + item.dateBegin + '</td><td nowrap> ' + item.dateEnd + '</td>';
                 trHTML += '<td>' + item.value + '</td>';
                 trHTML += '<td><span class="' + labelColor + '" style="' + style + '"> ';
                 trHTML += item.status;
                 trHTML += ' <span class="' + icon + '"></span> '
                 trHTML += '</span></td>';
-                trHTML += '<td><button type="button" class="btn btn-dark conditions"  ';
+                trHTML += '<td nowrap><button style="font-size:.875rem" type="button" class="btn btn-dark conditions"  ';
                 trHTML += 'data-bs-toggle="modal" data-bs-target="#conditionsModal" title="Conditions" id="b' + item.priority + '">';
                 trHTML += '<span class="glyphicon glyphicon-tasks" id="' + item.priority + '"></span>';
                 trHTML += '</button></td></tr>';
@@ -263,9 +260,9 @@
             let trHTML = '';
             $.each(dataSource, function (i, item) {
                 trHTML += '<tr><th scope="row">' + i + ' </th><td>' + item.name + '</td>';
-                trHTML += '<td><button type="button" class="btn btn-dark rules"  ';
+                trHTML += '<td><button style="font-size:.875rem" type="button" class="btn btn-dark rules"  ';
                 trHTML += 'title="Rules" id="b' + item.name + '">';
-                trHTML += '<span class="glyphicon glyphicon-search" id="' + item.name + '"></span> Rules';
+                trHTML += '<span class="glyphicon glyphicon-search" id="' + item.name + '"></span>';
                 trHTML += '</button></td>';
                 trHTML += '</tr>';
             });
