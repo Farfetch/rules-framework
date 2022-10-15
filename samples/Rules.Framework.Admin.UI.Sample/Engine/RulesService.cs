@@ -41,7 +41,7 @@ namespace Rules.Framework.Admin.UI.Sample.Engine
             return new List<dynamic>();
         }
 
-        public async Task<string?> GetRulePriorityOptionAsync()
+        public async Task<string> GetRulePriorityOptionAsync()
         {
             var rulesEngine = await
                 rulesEngineProvider

@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rules.Framework.Admin.UI\Rules.Framework.Admin.UI.csproj" />
-    <ProjectReference Include="..\..\src\Rules.Framework.Admin.WebApi\Rules.Framework.Admin.WebApi.csproj" />
     <ProjectReference Include="..\..\src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj" />
   </ItemGroup>
 

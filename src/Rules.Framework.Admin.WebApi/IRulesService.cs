@@ -8,7 +8,7 @@ namespace Rules.Framework.Admin.WebApi
     {
         Task<IEnumerable<dynamic>> FindRulesAsync(string contentType);
 
-        Task<string?> GetRulePriorityOptionAsync();
+        Task<string> GetRulePriorityOptionAsync();
 
         IEnumerable<string> ListContents();
     }

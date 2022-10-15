@@ -11,6 +11,7 @@ namespace Rules.Framework.Admin.UI
 
     using Microsoft.Extensions.FileProviders;
     using System.Reflection;
+    using Rules.Framework.Admin.WebApi;
 
 #endif
 

@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-using Rules.Framework.Admin.WebApi.Response;
-
 namespace Rules.Framework.Admin.WebApi.Controllers
 {
+    using Microsoft.AspNetCore.Mvc;
+    using Rules.Framework.Admin.WebApi.Response;
+
     public class ContentTypeController : Controller
     {
         private readonly IRulesService rulesService;

@@ -2,7 +2,6 @@ namespace Rules.Framework.Admin.WebApi.Controllers
 {
     using System;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.VisualBasic;
     using Newtonsoft.Json;
     using Rules.Framework.Admin.WebApi.Response;
 
@@ -20,9 +19,11 @@ namespace Rules.Framework.Admin.WebApi.Controllers
             jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
         }
 
-        public static object? GetProperty(object target, string name, CallType method = CallType.Get)
+        public static object GetProperty(object instance, string strPropertyName)
         {
-            return Microsoft.VisualBasic.CompilerServices.Versioned.CallByName(target, name, method);
+            Type type = instance.GetType();
+            System.Reflection.PropertyInfo propertyInfo = type.GetProperty(strPropertyName);
+            return propertyInfo.GetValue(instance, null);
         }
 
         [Route("rules/{controller}/options")]
@@ -46,17 +47,17 @@ namespace Rules.Framework.Admin.WebApi.Controllers
             {
                 foreach (var rule in rules)
                 {
-                    var priority = GetProperty(rule, "Priority") as int?;
+                    int? priority = GetProperty(rule, "Priority") as int?;
+                    DateTime? dateEnd = GetProperty(rule, "DateEnd") as DateTime?;
+                    DateTime? dateBegin = GetProperty(rule, "DateBegin") as DateTime?;
                     var name = GetProperty(rule, "Name") as string;
                     var contentContainer = GetProperty(rule, "ContentContainer");
-                    var dateEnd = GetProperty(rule, "DateEnd") as DateTime?;
-                    var dateBegin = GetProperty(rule, "DateBegin") as DateTime?;
                     var conditions = GetProperty(rule, "RootCondition") as string;
 
                     list.Add(new RuleDto
                     {
-                        Priority = priority.HasValue ? priority.Value : 0,
-                        Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name,
+                        Priority = !priority.HasValue ? 0 : priority.Value,
+                        Name = name,
                         Value = contentContainer is null ? "" : JsonConvert.SerializeObject(contentContainer.GetContentAs<dynamic>(), jsonSerializerSettings),
                         DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString(dateFormat),
                         DateBegin = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString(dateFormat),
