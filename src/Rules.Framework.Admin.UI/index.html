@@ -100,11 +100,11 @@
                         <h5 class="mb-3">Content Types</h5>
                         <div class="table-responsive">
                             <table class="table table-hover table-sm" style="font-size: .875rem;">
-                                <thead style="border-bottom: 2px solid currentcolor">
+                                <thead style="border-bottom: 2px solid currentcolor;">
                                     <tr>
                                         <th scope="col" width="10%">#</th>
                                         <th scope="col" width="70%">Name</th>
-                                        <th scope="col" width="20%">Rules</th>
+                                        <th scope="col" width="20%" style="text-align: center;">Rules</th>
                                     </tr>
                                 </thead>
                                 <tbody id="contentTypes_table">
@@ -150,15 +150,15 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover table-sm" style="font-size: .875rem;">
-                                <thead style="border-bottom: 2px solid currentcolor">
+                                <thead style="border-bottom: 2px solid currentcolor;">
                                     <tr>
                                         <th scope="col" width="1%">Priority</th>
                                         <th scope="col" width="25%">Name</th>
-                                        <th scope="col" width="1%" nowrap>Date Begin</th>
-                                        <th scope="col" width="1%" nowrap>Date End</th>
+                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date Begin</th>
+                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date End</th>
                                         <th scope="col" width="42%">Value</th>
-                                        <th scope="col" width="10%">Status</th>
-                                        <th scope="col" width="10%">Conditions</th>
+                                        <th scope="col" width="10%" style="text-align: center;">Status</th>
+                                        <th scope="col" width="10%" style="text-align: center;">Conditions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="rules_table">
@@ -194,6 +194,8 @@
             $('#contentTypes_pagination').pagination({
                 dataSource: dataSource,
                 pageSize: pageSize,
+                showNavigator: true,
+                formatNavigator: '<span style="color: black"> Total: <%= totalNumber %> </span>',
                 callback: function (data, pagination) {
                     populateContentTypes(data)
                 }
@@ -204,6 +206,8 @@
             $('#rules_pagination').pagination({
                 dataSource: dataSource,
                 pageSize: pageSize,
+                showNavigator: true,
+                formatNavigator: '<span style="color: black"> Total: <%= totalNumber %> </span>',
                 callback: function (data, pagination) {
                     populateRules(data)
                 }
@@ -239,11 +243,11 @@
                 trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.name + '</td>';
                 trHTML += '<td nowrap>' + item.dateBegin + '</td><td nowrap> ' + item.dateEnd + '</td>';
                 trHTML += '<td>' + item.value + '</td>';
-                trHTML += '<td><span class="' + labelColor + '" style="' + style + '"> ';
+                trHTML += '<td style="text-align: center;"><span class="' + labelColor + '" style="' + style + '"> ';
                 trHTML += item.status;
                 trHTML += ' <span class="' + icon + '"></span> '
                 trHTML += '</span></td>';
-                trHTML += '<td nowrap><button style="font-size:.875rem" type="button" class="btn btn-dark conditions"  ';
+                trHTML += '<td nowrap style="text-align: center;"><button style="font-size:.875rem" type="button" class="btn btn-dark conditions"  ';
                 trHTML += 'data-bs-toggle="modal" data-bs-target="#conditionsModal" title="Conditions" id="b' + item.priority + '">';
                 trHTML += '<span class="glyphicon glyphicon-tasks" id="' + item.priority + '"></span>';
                 trHTML += '</button></td></tr>';
@@ -260,7 +264,7 @@
             let trHTML = '';
             $.each(dataSource, function (i, item) {
                 trHTML += '<tr><th scope="row">' + i + ' </th><td>' + item.name + '</td>';
-                trHTML += '<td><button style="font-size:.875rem" type="button" class="btn btn-dark rules"  ';
+                trHTML += '<td style="text-align: center;"><button style="font-size:.875rem" type="button" class="btn btn-dark rules"  ';
                 trHTML += 'title="Rules" id="b' + item.name + '">';
                 trHTML += '<span class="glyphicon glyphicon-search" id="' + item.name + '"></span>';
                 trHTML += '</button></td>';
@@ -274,7 +278,9 @@
         function openError(error)
         {
             $('#errorModal').modal('show');
-            $('#errorBody').html('<p>' + JSON.stringify(error) + '</p>');
+            $('#errorBody').html('<pre>' + JSON.stringify(error, null, '\t').
+                replace(/\\r/g, '\r').
+                replace(/\\n/g, '\n') + '</pre>');
         }
 
         function setContentTypesEvent()
@@ -438,7 +444,7 @@
                         error: function (error) {
                             $('#loading').hide();
                             $('#errorModal').modal('show');
-                            $('#errorBody').html('<p>' + JSON.stringify(error) + '</p>');
+                            $('#errorBody').html('<pre>' + JSON.stringify(error, null, '\t') + '</pre>');
                         }
                     });
                 }
