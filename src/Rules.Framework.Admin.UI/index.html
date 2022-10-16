@@ -48,10 +48,10 @@
 
     <main class="d-flex flex-nowrap">
 
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
+        <div class="d-flex flex-column flex-shrink-0 p-2 text-bg-dark" style="width: 220px; padding-top:15px !important; padding-right:10px !important">
             <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                <span class="fs-4 glyphicon glyphicon-knight" aria-hidden="true"></span>
-                &nbsp; <span class="fs-4"> %(DocumentTitle)</span>
+                <span class="fs-5 glyphicon glyphicon-knight" aria-hidden="true"></span>
+                &nbsp; <span class="fs-5"> %(DocumentTitle)</span>
             </a>
             <hr>
             <ul class="main nav nav-pills flex-column mb-auto">
@@ -150,7 +150,7 @@
                             <h5 class="mb-3">Rules</h5>
                             </div>
                             <div class="col-lg-4">
-                                <em>Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>
+                                <em style="font-size:small">Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="glyphicon glyphicon-cog"></span>
@@ -221,23 +221,7 @@
         }
 
         function setRulesPagination(dataSource) {
-            if (ruleFilter.name) {
-                dataSource = dataSource.filter(function (r) {
-                    return r.name.toLowerCase().includes(ruleFilter.name.toLowerCase());
-                });
-            }
-
-            if (ruleFilter.status) {
-                dataSource = dataSource.filter(function (r) {
-                    return r.status.toLowerCase() == ruleFilter.status.toLowerCase();
-                });
-            }
-
-            if (ruleFilter.value) {
-                dataSource = dataSource.filter(function (r) {
-                    return r.value.toLowerCase().includes(ruleFilter.value.toLowerCase());
-                });
-            }
+            dataSource = applyRulesFilter(dataSource);
 
             $('#rules_pagination').pagination({
                 dataSource: dataSource,
@@ -459,10 +443,30 @@
             return html;
         }
 
-        function setContentTypesSelectEvent()
-        {
-            $("#contentTypesSelect").on('change', function ()
-            {
+        function applyRulesFilter(dataSource) {
+            if (ruleFilter.name) {
+                dataSource = dataSource.filter(function (r) {
+                    return r.name.toLowerCase().includes(ruleFilter.name.toLowerCase());
+                });
+            }
+
+            if (ruleFilter.status) {
+                dataSource = dataSource.filter(function (r) {
+                    return r.status.toLowerCase() == ruleFilter.status.toLowerCase();
+                });
+            }
+
+            if (ruleFilter.value) {
+                dataSource = dataSource.filter(function (r) {
+                    return r.value.toLowerCase().includes(ruleFilter.value.toLowerCase());
+                });
+            }
+
+            return dataSource;
+        }
+
+        function setContentTypesSelectEvent(){
+            $("#contentTypesSelect").on('change', function (){
                 $('#rules_table').html('');
                 let contentTypeSelected = $(this).children("option:selected").val();
                 contentType = '';
@@ -519,17 +523,27 @@
                 
             });
 
-            $('.download').on('click', function (){
-                const rulesToExport = rules;
-                for (var i = 0; i < rulesToExport.length; i++) {
-                    let conditionsToExport = rulesToExport[i].conditions;
+            $('.download').on('click', function () {
+                let dataSource = rules;
+
+                dataSource = applyRulesFilter(dataSource);
+                
+                for (var i = 0; i < dataSource.length; i++) {
+                    let conditionsToExport = dataSource[i].conditions;
                                         
                     if (conditionsToExport) {
-                        rulesToExport[i].conditions = JSON.parse(conditionsToExport);
+                        dataSource[i].conditions = JSON.parse(conditionsToExport);
                     }
+                }                
+
+
+                let filename = 'rules_as_json';
+                const contentTypeSelected = $('#contentTypesSelect').children("option:selected").val();
+                if (contentTypeSelected) {
+                    filename += '_' + contentTypeSelected;
                 }
-                const filename = "rules_as_json";
-                const jsonStr = JSON.stringify(rulesToExport);
+
+                const jsonStr = JSON.stringify(dataSource);
 
                 let element = document.createElement('a');
                 element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonStr));
@@ -590,6 +604,7 @@
                     $('#rules_table').html('');
                     setRulesPagination([]);
                     setContentTypesSelectEvent();
+                    
                     
                     let $dropdown = $("#contentTypesSelect");
                     $dropdown.html('<option value="">Loading...</option>');
