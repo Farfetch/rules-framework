@@ -88,13 +88,9 @@
                 <div class="row">
                     <div class="col-12">
                         <form novalidate>
-                            <div class="form-group row g-2 align-items-left">
-                                <div class="col-sm-2">
-                                    <label for="contentTypeSearch" class="form-label">Search</label>
-                                </div>
-                                <div class="col-sm-4">
-                                    <input class="form-control" id="contentTypeSearch" />
-                                </div>
+                            <div class="col-md-4">
+                                <label for="contentTypeSearch" class="form-label">Search</label>
+                                <input class="form-control" id="contentTypeSearch" />
                             </div>
                             <hr class="my-4">
                         </form>
@@ -120,17 +116,33 @@
             <div id="rules" class="content" style="display:none">
                 <div class="row">
                     <div class="col-12">
-                        <form novalidate>
-                            <div class="form-group row g-2 align-items-left">
-                                <div class="col-sm-2">
-                                    <label for="contentTypesSelect" class="form-label">Content Type</label>
-                                </div>
-                                <div class="col-sm-4">
-                                    <select class="form-select" id="contentTypesSelect" required>
-                                        <option value="">Loading...</option>
-                                    </select>
-                                </div>
+                        <form class="row g-3">
+                            <div class="col-md-3">
+                                <label for="contentTypesSelect" class="form-label">Content Type</label>
+                                <select class="form-select" id="contentTypesSelect" required>
+                                    <option value="">Loading...</option>
+                                </select>
                             </div>
+                            <div class="col-md-3">
+                                <label for="ruleNameSearch" class="form-label">Name</label>
+                                <input class="form-control" id="ruleNameSearch" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="ruleValueSearch" class="form-label">Value</label>
+                                <input class="form-control" id="ruleValueSearch" />
+                            </div>
+
+                            <div class="col-md-2">
+                                <label for="ruleStatusesSelect" class="form-label">Status</label>
+                                <select class="form-select" id="ruleStatusesSelect">
+                                    <option value="">Choose Status...</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                            </div>
+
                             <hr class="my-4">
                         </form>
                         <div class="row">
@@ -190,13 +202,18 @@
         options = '';
         conditions = [];
         pageSize = 10;
+        ruleFilter = {
+            status: '',
+            name: '',
+            value: ''
+        };
 
         function setContentTypesPagination(dataSource) {
             $('#contentTypes_pagination').pagination({
                 dataSource: dataSource,
                 pageSize: pageSize,
                 showNavigator: true,
-                formatNavigator: '<span style="color: black"> Total: <%= totalNumber %> </span>',
+                formatNavigator: '<span style="color: black"> Total of content types: <%= totalNumber %> </span>',
                 callback: function (data, pagination) {
                     populateContentTypes(data)
                 }
@@ -204,15 +221,33 @@
         }
 
         function setRulesPagination(dataSource) {
+            if (ruleFilter.name) {
+                dataSource = dataSource.filter(function (r) {
+                    return r.name.toLowerCase().includes(ruleFilter.name.toLowerCase());
+                });
+            }
+
+            if (ruleFilter.status) {
+                dataSource = dataSource.filter(function (r) {
+                    return r.status.toLowerCase() == ruleFilter.status.toLowerCase();
+                });
+            }
+
+            if (ruleFilter.value) {
+                dataSource = dataSource.filter(function (r) {
+                    return r.value.toLowerCase().includes(ruleFilter.value.toLowerCase());
+                });
+            }
+
             $('#rules_pagination').pagination({
                 dataSource: dataSource,
                 pageSize: pageSize,
                 showNavigator: true,
-                formatNavigator: '<span style="color: black"> Total: <%= totalNumber %> </span>',
+                formatNavigator: '<span style="color: black"> Total of rules: <%= totalNumber %> </span>',
                 callback: function (data, pagination) {
                     populateRules(data)
                 }
-            })
+            });
         }
 
         function populateRules(dataSource) {
@@ -455,6 +490,21 @@
         }
 
         $(document).ready(() => {
+            $('#ruleStatusesSelect').on('change', function (e) {                    
+                ruleFilter.status = $(this).children("option:selected").val();
+                setRulesPagination(rules);
+            });
+
+            $('#ruleNameSearch').on('input', function (e) {
+                ruleFilter.name = $(this).val();                
+                setRulesPagination(rules);
+            });
+
+            $('#ruleValueSearch').on('input', function (e) {
+                ruleFilter.value = $(this).val();
+                setRulesPagination(rules);
+            });
+
             $('#contentTypeSearch').on('input', function (e) {
                 const contentTypeValue = $(this).val();
                 if (contentTypeValue) {
@@ -469,8 +519,7 @@
                 
             });
 
-            $('.download').on('click', function ()
-            {
+            $('.download').on('click', function (){
                 const rulesToExport = rules;
                 for (var i = 0; i < rulesToExport.length; i++) {
                     let conditionsToExport = rulesToExport[i].conditions;
