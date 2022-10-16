@@ -25,8 +25,8 @@ namespace Rules.Framework.Admin.UI
     public class UIMiddleware
     {
         private readonly UIOptions _options;
-        private readonly StaticFileMiddleware _staticFileMiddlewareGlyphicons;
-        private readonly StaticFileMiddleware _staticFileMiddlewareJQuery;
+
+        private readonly IEnumerable<StaticFileMiddleware> _staticFileMiddlewares;
 
         public UIMiddleware(
             RequestDelegate next,
@@ -36,8 +36,12 @@ namespace Rules.Framework.Admin.UI
         {
             _options = options ?? new UIOptions();
 
-            _staticFileMiddlewareGlyphicons = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "glyphicons_only_bootstrap");
-            _staticFileMiddlewareJQuery = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "jquery.dist");
+            _staticFileMiddlewares = new List<StaticFileMiddleware>
+            {
+                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "glyphicons_only_bootstrap"),
+                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "jquery.dist"),
+                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "paginationjs.dist")
+            };
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -63,8 +67,10 @@ namespace Rules.Framework.Admin.UI
                 return;
             }
 
-            await _staticFileMiddlewareGlyphicons.Invoke(httpContext);
-            await _staticFileMiddlewareJQuery.Invoke(httpContext);
+            foreach (var staticFileMiddleware in _staticFileMiddlewares)
+            {
+                await staticFileMiddleware.Invoke(httpContext);
+            }
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(

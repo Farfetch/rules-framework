@@ -12,6 +12,7 @@
   <ItemGroup>	  
 	  <EmbeddedResource Include="node_modules/glyphicons-only-bootstrap/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
 	  <EmbeddedResource Include="node_modules/jquery/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
+	  <EmbeddedResource Include="node_modules/paginationjs/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
 	  
 	  <EmbeddedResource Include="index.html" />
   </ItemGroup>
