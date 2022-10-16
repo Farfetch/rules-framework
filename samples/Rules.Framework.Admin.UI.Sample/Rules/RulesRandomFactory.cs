@@ -20,24 +20,31 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
 
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
         {
+            int currentYear = DateTime.UtcNow.Year;
+
             for (int i = 1; i < gen.Next(10, 30); i++)
             {
-                Add(CreateMultipleRule(ContentTypes.TestDecimal, i, RandomDayFunc(2019)(), RandomDayFunc(2025)()), RuleAddPriorityOption.ByPriorityNumber(i));
+                var dateBegin = CreateRandomDateBegin(currentYear);
+
+                Add(CreateMultipleRule(ContentTypes.TestDecimal, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
             }
 
             for (int i = 1; i < gen.Next(10, 30); i++)
             {
-                Add(CreateMultipleRule(ContentTypes.TestBoolean, i, RandomDayFunc(2019)(), RandomDayFunc(2025)()), RuleAddPriorityOption.ByPriorityNumber(i));
+                var dateBegin = CreateRandomDateBegin(currentYear);
+                Add(CreateMultipleRule(ContentTypes.TestBoolean, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
             }
 
             for (int i = 1; i < gen.Next(10, 30); i++)
             {
-                Add(CreateMultipleRule(ContentTypes.TestString, i, RandomDayFunc(2019)(), RandomDayFunc(2025)()), RuleAddPriorityOption.ByPriorityNumber(i));
+                var dateBegin = CreateRandomDateBegin(currentYear);
+                Add(CreateMultipleRule(ContentTypes.TestString, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
             }
 
             for (int i = 1; i < gen.Next(10, 30); i++)
             {
-                Add(CreateMultipleRule(ContentTypes.TestShort, i, RandomDayFunc(2019)(), RandomDayFunc(2025)()), RuleAddPriorityOption.ByPriorityNumber(i));
+                var dateBegin = CreateRandomDateBegin(currentYear);
+                Add(CreateMultipleRule(ContentTypes.TestShort, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
             }
 
             return this.rulesSpecifications;
@@ -53,7 +60,7 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
                 });
 
         private RuleBuilderResult<ContentTypes, ConditionTypes> CreateMultipleRule(ContentTypes contentTypes, int value, DateTime dateBegin,
-            DateTime dateEnd) =>
+            DateTime? dateEnd) =>
                                      RuleBuilder
                              .NewRule<ContentTypes, ConditionTypes>()
                              .WithName($"Multi rule for test {contentTypes} {value}")
@@ -66,12 +73,22 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
                                             .Build())
                             .Build();
 
-        private Func<DateTime> RandomDayFunc(int year)
+        private DateTime CreateRandomDateBegin(int year)
         {
-            DateTime start = new DateTime(year, 1, 1);
+            int months = gen.Next(1, 11);
+            year = gen.Next(0, 1) + year;
+            return new DateTime(year, 1, 1).AddMonths(months);
+        }
 
-            int range = gen.Next(1, 6);
-            return () => start.AddYears(range);
+        private DateTime? CreateRandomDateEnd(DateTime dateBegin)
+        {
+            int months = gen.Next(0, 13);
+            if (months == 13)
+            {
+                return null;
+            }
+
+            return dateBegin.AddMonths(months).AddDays(1);
         }
     }
 }

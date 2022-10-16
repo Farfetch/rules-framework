@@ -25,7 +25,8 @@ namespace Rules.Framework.Admin.UI
     public class UIMiddleware
     {
         private readonly UIOptions _options;
-        private readonly StaticFileMiddleware _staticFileMiddleware;
+        private readonly StaticFileMiddleware _staticFileMiddlewareGlyphicons;
+        private readonly StaticFileMiddleware _staticFileMiddlewareJQuery;
 
         public UIMiddleware(
             RequestDelegate next,
@@ -35,7 +36,8 @@ namespace Rules.Framework.Admin.UI
         {
             _options = options ?? new UIOptions();
 
-            _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
+            _staticFileMiddlewareGlyphicons = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "glyphicons_only_bootstrap");
+            _staticFileMiddlewareJQuery = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "jquery.dist");
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -61,18 +63,22 @@ namespace Rules.Framework.Admin.UI
                 return;
             }
 
-            await _staticFileMiddleware.Invoke(httpContext);
+            await _staticFileMiddlewareGlyphicons.Invoke(httpContext);
+            await _staticFileMiddlewareJQuery.Invoke(httpContext);
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            UIOptions options)
+            UIOptions options,
+            string path)
         {
             var asssembly = typeof(UIMiddleware).GetTypeInfo().Assembly;
 
-            var provider = new EmbeddedFileProvider(asssembly, asssembly.GetName().Name + ".node_modules.glyphicons_only_bootstrap");
+            var provider = new EmbeddedFileProvider(asssembly, asssembly.GetName().Name + ".node_modules." + path);
+
+            var d = provider.GetDirectoryContents("");
 
             var staticFileOptions = new StaticFileOptions
             {
