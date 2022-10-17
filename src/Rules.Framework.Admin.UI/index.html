@@ -75,7 +75,7 @@
 
         <div class="b-example-divider b-example-vr"></div>
 
-        <div class="container" style="overflow-y:auto; padding-top:30px">
+        <div style="overflow-y:auto; padding-top:30px; width:80%">
             
             <center>
                 <div id="index" class="content">
@@ -475,8 +475,7 @@
                 {
                     $("#loading").show();
                     $.ajax({
-                        url:
-                            "Rule/" + contentTypeSelected + "/List",
+                        url: "Rule/" + contentTypeSelected + "/List",
                         success: function (response) {
                             rules = response;
                             setRulesPagination(response);                            
@@ -586,8 +585,7 @@
                     setContentTypesPagination([]);
                     $("#loading").show();
                     $.ajax({
-                        url:
-                            "ContentType/List",
+                        url: "ContentType/List",
                         success: function (response) {
                             contentTypes = response;
                             setContentTypesPagination(response)
@@ -609,8 +607,7 @@
                     let $dropdown = $("#contentTypesSelect");
                     $dropdown.html('<option value="">Loading...</option>');
                     $.ajax({
-                        url:
-                            "ContentType/List",
+                        url: "ContentType/List",
                         success: function (response) {
                             contentTypes = response;
                             $dropdown.html('<option value="">Choose ContentType...</option>');
