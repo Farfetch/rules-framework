@@ -22,7 +22,6 @@ namespace Rules.Framework
     public class RulesEngine<TContentType, TConditionType>
     {
         public readonly IRulesEngineOptions RulesEngineOptions;
-
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
