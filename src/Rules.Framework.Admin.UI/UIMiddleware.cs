@@ -66,10 +66,7 @@ namespace Rules.Framework.Admin.UI
                 return;
             }
 
-            foreach (var staticFileMiddleware in _staticFileMiddlewares)
-            {
-                await staticFileMiddleware.Invoke(httpContext);
-            }
+            await Task.WhenAll(_staticFileMiddlewares.Select(s => s.Invoke(httpContext)));
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
@@ -82,8 +79,6 @@ namespace Rules.Framework.Admin.UI
             var asssembly = typeof(UIMiddleware).GetTypeInfo().Assembly;
 
             var provider = new EmbeddedFileProvider(asssembly, asssembly.GetName().Name + ".node_modules." + path);
-
-            var d = provider.GetDirectoryContents("");
 
             var staticFileOptions = new StaticFileOptions
             {

@@ -3,6 +3,7 @@ namespace Rules.Framework.Admin.WebApi.Controllers
     using System;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
     using Rules.Framework.Admin.WebApi.Response;
 
     public class RuleController : Controller
@@ -14,16 +15,8 @@ namespace Rules.Framework.Admin.WebApi.Controllers
         public RuleController(IRulesService rulesService)
         {
             this.rulesService = rulesService;
-
             this.jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-        }
-
-        public static object GetProperty(object instance, string strPropertyName)
-        {
-            Type type = instance.GetType();
-            System.Reflection.PropertyInfo propertyInfo = type.GetProperty(strPropertyName);
-            return propertyInfo.GetValue(instance, null);
+            this.jsonSerializerSettings.Converters.Add(new StringEnumConverter());
         }
 
         [Route("rules/{controller}/options")]
@@ -68,6 +61,13 @@ namespace Rules.Framework.Admin.WebApi.Controllers
             }
 
             return Ok(list);
+        }
+
+        private static object GetProperty(object instance, string strPropertyName)
+        {
+            Type type = instance.GetType();
+            System.Reflection.PropertyInfo propertyInfo = type.GetProperty(strPropertyName);
+            return propertyInfo.GetValue(instance, null);
         }
 
         private static RuleStatus GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)

@@ -15,22 +15,8 @@
     <script src="jquery.min.js"></script>
 
     <script src="pagination.min.js"></script>
-    <style>
-        body {
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-        }
-
-        html {
-            height: -webkit-fill-available;
-        }
-
-        main {
-            height: 100vh;
-            height: -webkit-fill-available;
-            max-height: 100vh;
-            overflow-x: auto;
-            overflow-y: hidden;
+    <style>        
+        main {                        
         }
 
         .b-example-divider {
@@ -41,6 +27,21 @@
             flex-shrink: 0;
             width: 1.5rem;
             height: 100vh;
+        }
+
+        fieldset {
+            border: solid 1px gray;
+            padding-right: 12px;
+            padding-bottom: 15px;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            float: none;
+            width: inherit;
+            font-weight: 500;
+            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -75,25 +76,26 @@
 
         <div class="b-example-divider b-example-vr"></div>
 
-        <div style="padding-top:30px; width:75%">
+        <div style="padding-top:20px; width:75%">
             
             <center>
                 <div id="index" class="content">
                     <br />
-                    <p class="lead">Welcome to Rules.Framework UI.<br /> Allows you to see what are the content types and rules configured in this application.</p>
+                    <p class="lead">Welcome to Rules.Framework UI.<br /> Allows you to see what are rules configured in your application.</p>
                 </div>
             </center>
 
             <div id="contentTypes" class="content" style="display:none">
                 <div class="row">
                     <div class="col-12">
-                        <form novalidate>
-                            <div class="col-md-4">
-                                <label for="contentTypeSearch" class="form-label">Search</label>
-                                <input class="form-control" id="contentTypeSearch" />
-                            </div>
-                            <hr class="my-4">
-                        </form>
+                        <fieldset class="reset"><legend class="reset">Filters</legend>
+                            <form novalidate>
+                                <div class="col-md-4">
+                                    <label for="contentTypeSearch" class="col-form-label-sm">Name</label>
+                                    <input class="form-control form-control-sm" id="contentTypeSearch" />
+                                </div>                                
+                            </form>
+                        </fieldset>
                         <h5 class="mb-3">Content Types</h5>
                         <div class="table-responsive">
                             <table class="table table-hover table-sm" style="font-size: .875rem;">
@@ -116,70 +118,71 @@
             <div id="rules" class="content" style="display:none">
                 <div class="row">
                     <div class="col-12">
-                        <form class="row g-3">
-                            <div class="col-md-3">
-                                <label for="contentTypesSelect" class="form-label">Content Type</label>
-                                <select class="form-select" id="contentTypesSelect" required>
-                                    <option value="">Loading...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="ruleNameSearch" class="form-label">Name</label>
-                                <input class="form-control" id="ruleNameSearch" />
-                            </div>
+                        <fieldset class="reset">
+                            <legend class="reset">Filters</legend>
+                            <form class="row g-3" novalidate>
+                                <div class="col-md-3">
+                                    <label for="contentTypesSelect" class="col-form-label-sm">Content Type</label>
+                                    <select class="form-select form-select-sm" id="contentTypesSelect" required>
+                                        <option value="">Loading...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="ruleNameSearch" class="col-form-label-sm">Name</label>
+                                    <input class="form-control form-control-sm" id="ruleNameSearch" />
+                                </div>
 
-                            <div class="col-md-3">
-                                <label for="ruleValueSearch" class="form-label">Value</label>
-                                <input class="form-control" id="ruleValueSearch" />
-                            </div>
+                                <div class="col-md-3">
+                                    <label for="ruleValueSearch" class="col-form-label-sm">Value</label>
+                                    <input class="form-control form-control-sm" id="ruleValueSearch" />
+                                </div>
 
-                            <div class="col-md-2">
-                                <label for="ruleStatusesSelect" class="form-label">Status</label>
-                                <select class="form-select" id="ruleStatusesSelect">
-                                    <option value="">Choose Status...</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="pending">Pending</option>
-                                </select>
-                            </div>
-
-                            <hr class="my-4">
-                        </form>
-                        <div class="row">
-                            <div class="col-lg-8">
-                            <h5 class="mb-3">Rules</h5>
-                            </div>
-                            <div class="col-lg-4">
-                                <em style="font-size:small">Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="glyphicon glyphicon-cog"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item download" href="#"><span class="glyphicon glyphicon-cloud-download"></span> Export JSON</a></li>
-                                    </ul>
+                                <div class="col-md-2">
+                                    <label for="ruleStatusesSelect" class="col-form-label-sm">Status</label>
+                                    <select class="form-select form-select-sm" id="ruleStatusesSelect">
+                                        <option value="">Choose Status...</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                </div>
+                            </form>
+                            </fieldset>
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <h5 class="mb-3">Rules</h5>
+                                </div>
+                                <div class="col-lg-4" style="text-align:right">
+                                    <em style="font-size:small">Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="glyphicon glyphicon-cog"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item download" href="#"><span class="glyphicon glyphicon-cloud-download"></span> Export JSON</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm" style="font-size: .875rem;">
-                                <thead style="border-bottom: 2px solid currentcolor;">
-                                    <tr>
-                                        <th scope="col" width="1%">Priority</th>
-                                        <th scope="col" width="25%">Name</th>
-                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date Begin</th>
-                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date End</th>
-                                        <th scope="col" width="42%">Value</th>
-                                        <th scope="col" width="10%" style="text-align: center;">Status</th>
-                                        <th scope="col" width="10%" style="text-align: center;">Conditions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="rules_table">
-                                </tbody>
-                            </table>
-                            <div id="rules_pagination"></div>
-                        </div>                                           
-                    </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm" style="font-size: .875rem;">
+                                    <thead style="border-bottom: 2px solid currentcolor;">
+                                        <tr>
+                                            <th scope="col" width="1%">Priority</th>
+                                            <th scope="col" width="25%">Name</th>
+                                            <th scope="col" width="1%" nowrap style="text-align: center;">Date Begin</th>
+                                            <th scope="col" width="1%" nowrap style="text-align: center;">Date End</th>
+                                            <th scope="col" width="42%">Value</th>
+                                            <th scope="col" width="10%" style="text-align: center;">Status</th>
+                                            <th scope="col" width="10%" style="text-align: center;">Conditions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rules_table">
+                                    </tbody>
+                                </table>
+                                <div id="rules_pagination"></div>
+                            </div>
+</div>
                 </div>
             </div>
 
