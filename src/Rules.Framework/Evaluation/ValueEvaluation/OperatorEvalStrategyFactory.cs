@@ -24,7 +24,9 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 { Operators.StartsWith, new StartsWithOperatorEvalStrategy() },
                 { Operators.EndsWith, new EndsWithOperatorEvalStrategy() },
                 { Operators.CaseInsensitiveStartsWith, new CaseInsensitiveStartsWithOperatorEvalStrategy() },
-                { Operators.CaseInsensitiveEndsWith, new CaseInsensitiveEndsWithOperatorEvalStrategy() }
+                { Operators.CaseInsensitiveEndsWith, new CaseInsensitiveEndsWithOperatorEvalStrategy() },
+                { Operators.NotStartsWith, new NotStartsWithOperatorEvalStrategy() },
+                { Operators.NotEndsWith, new NotEndsWithOperatorEvalStrategy() }
             };
         }
 

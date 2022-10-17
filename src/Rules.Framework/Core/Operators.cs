@@ -68,6 +68,16 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The ends with operator.
         /// </summary>
-        CaseInsensitiveEndsWith = 13
+        CaseInsensitiveEndsWith = 13,
+
+        /// <summary>
+        /// The not starts with operator.
+        /// </summary>
+        NotStartsWith = 14,
+
+        /// <summary>
+        /// The not ends with operator.
+        /// </summary>
+        NotEndsWith = 15
     }
 }
