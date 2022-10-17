@@ -31,16 +31,15 @@ namespace Rules.Framework.Admin.UI
         public UIMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
-            ILoggerFactory loggerFactory,
-            UIOptions options)
+            ILoggerFactory loggerFactory)
         {
-            _options = options ?? new UIOptions();
+            _options = new UIOptions();
 
             _staticFileMiddlewares = new List<StaticFileMiddleware>
             {
-                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "glyphicons_only_bootstrap"),
-                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "jquery.dist"),
-                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, "paginationjs.dist")
+                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, "glyphicons_only_bootstrap"),
+                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, "jquery.dist"),
+                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, "paginationjs.dist")
             };
         }
 
