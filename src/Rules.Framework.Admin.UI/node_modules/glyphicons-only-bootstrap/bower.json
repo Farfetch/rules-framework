@@ -1,0 +1,20 @@
+{
+  "name": "glyphicons-only-bootstrap",
+  "version": "0.0.1",
+  "description": "Glyphicons-only-bootstrap contains only glyphicon components out of entire Bootstrap. Even if Bootstrap allows a functionality to customize their source code, the source always comes up with normalize.css. For some users who do not want to use normalize.css in Bootstrap, I deleted normalize.css part and this package provides only glyphicons!",
+  "homepage": "https://github.com/ohpyupi/glyphicons-only-bootstrap",
+  "authors": [
+    "ohpyupi <ohpyupi@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "keywords": [
+    "Glyphicons"
+  ],
+  "license": "Bootstrap",
+  "ignore": [
+    ".gitignore",
+    "README.md",
+    "bower.json"
+  ]
+}
