@@ -2,10 +2,10 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
 {
     using System;
     using System.Collections.Generic;
-    using global::Rules.Framework.Admin.UI.Sample.Engine;
     using global::Rules.Framework.Admin.UI.Sample.Enums;
     using global::Rules.Framework.Builder;
     using global::Rules.Framework.Core;
+    using global::Rules.Framework.UI.Sample;
 
     internal class RulesRandomFactory : IContentTypes
     {

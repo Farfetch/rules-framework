@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj" />
+    <PackageReference Include="Rules.Framework.Providers.InMemory" Version="1.5.0" />
   </ItemGroup>
 
 </Project>

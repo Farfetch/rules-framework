@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.UI
+namespace Rules.Framework.UI
 {
     using System.Collections.Generic;
     using System.IO;

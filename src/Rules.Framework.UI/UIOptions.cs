@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.UI
+namespace Rules.Framework.UI
 {
     using System;
     using System.IO;
@@ -20,7 +20,7 @@ namespace Rules.Framework.Admin.UI
         /// Gets or sets a Stream function for retrieving the ui page
         /// </summary>
         public Func<Stream> IndexStream { get; } = () => typeof(UIOptions).GetTypeInfo().Assembly
-            .GetManifestResourceStream("Rules.Framework.Admin.UI.index.html");
+            .GetManifestResourceStream("Rules.Framework.UI.index.html");
 
         /// <summary>
         /// Gets or sets a route prefix for accessing the ui

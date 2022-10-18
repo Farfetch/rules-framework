@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.UI.Sample.Engine
+namespace Rules.Framework.UI.Sample
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@ namespace Rules.Framework.Admin.UI.Sample.Engine
     using System.Threading.Tasks;
     using global::Rules.Framework.Admin.UI.Sample.Enums;
     using global::Rules.Framework.Admin.UI.Sample.Exceptions;
-    using global::Rules.Framework.Admin.WebApi;
+    using Rules.Framework.WebApi;
 
     public class RulesService : IRulesService
     {

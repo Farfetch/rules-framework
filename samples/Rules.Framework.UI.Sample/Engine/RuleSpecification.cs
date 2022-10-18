@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.UI.Sample.Engine
+namespace Rules.Framework.UI.Sample
 {
     using global::Rules.Framework;
     using global::Rules.Framework.Admin.UI.Sample.Enums;

@@ -1,10 +1,10 @@
-namespace Rules.Framework.Admin.WebApi.Controllers
+namespace Rules.Framework.WebApi.Controllers
 {
     using System;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
-    using Rules.Framework.Admin.WebApi.Response;
+    using Rules.Framework.WebApi.Response;
 
     public class RuleController : Controller
     {
@@ -70,29 +70,29 @@ namespace Rules.Framework.Admin.WebApi.Controllers
             return propertyInfo.GetValue(instance, null);
         }
 
-        private static RuleStatus GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)
+        private static RuleStatusDto GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)
         {
             if (!dateBegin.HasValue)
             {
-                return RuleStatus.Inactive;
+                return RuleStatusDto.Inactive;
             }
 
             if (dateBegin.Value > DateTime.UtcNow)
             {
-                return RuleStatus.Pending;
+                return RuleStatusDto.Pending;
             }
 
             if (!dateEnd.HasValue)
             {
-                return RuleStatus.Active;
+                return RuleStatusDto.Active;
             }
 
             if (dateEnd.Value <= DateTime.UtcNow)
             {
-                return RuleStatus.Inactive;
+                return RuleStatusDto.Inactive;
             }
 
-            return RuleStatus.Active;
+            return RuleStatusDto.Active;
         }
     }
 }

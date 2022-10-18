@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>	
-	<Description>Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application</Description>	
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<NoWarn>$(NoWarn);1591</NoWarn>
+  <PropertyGroup>		
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>	
 	<SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
 	<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 	<Authors></Authors>
@@ -16,7 +14,7 @@
 	<PackageProjectUrl></PackageProjectUrl>
 	<RepositoryUrl></RepositoryUrl>
 	<RepositoryType>Git</RepositoryType>
-	<PackageTags>rules rulesframework</PackageTags>
+	<PackageTags>rules rulesframework ui</PackageTags>
 	<Description>A rules framework ui that allows you to see what are rules configured in your application</Description>
 	<Copyright></Copyright>
   </PropertyGroup>
@@ -40,8 +38,8 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Rules.Framework.Admin.WebApi\Rules.Framework.Admin.WebApi.csproj" />
+	<ItemGroup>	  
+	  <ProjectReference Include="..\Rules.Framework.WebApi\Rules.Framework.WebApi.csproj" />
 	</ItemGroup>
 
 

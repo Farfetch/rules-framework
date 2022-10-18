@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.UI.Sample.Engine
+namespace Rules.Framework.UI.Sample
 {
     using System;
     using System.Threading;

@@ -1,7 +1,7 @@
-namespace Rules.Framework.Admin.WebApi.Controllers
+namespace Rules.Framework.WebApi.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
-    using Rules.Framework.Admin.WebApi.Response;
+    using Rules.Framework.WebApi.Response;
 
     public class ContentTypeController : Controller
     {

@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.WebApi.Response
+namespace Rules.Framework.WebApi.Response
 {
     public class ContentTypeDto
     {

@@ -1,4 +1,4 @@
-namespace Rules.Framework.Admin.UI
+namespace Rules.Framework.UI
 {
     using Microsoft.AspNetCore.Builder;
 
@@ -9,7 +9,7 @@ namespace Rules.Framework.Admin.UI
 
     using Microsoft.Extensions.FileProviders;
     using System.Reflection;
-    using Rules.Framework.Admin.WebApi;
+    using Rules.Framework.WebApi;
 
 #endif
 
