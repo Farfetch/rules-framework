@@ -10,7 +10,6 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<IRulesService>(new RulesService(new List<IContentTypes>()
             {
-                new TestNumberRules(),
                 new RulesRandomFactory()
             }));
 
