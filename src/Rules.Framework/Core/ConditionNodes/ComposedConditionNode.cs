@@ -1,6 +1,7 @@
 namespace Rules.Framework.Core.ConditionNodes
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.Linq;
 
@@ -20,6 +21,7 @@ namespace Rules.Framework.Core.ConditionNodes
         {
             this.LogicalOperator = logicalOperator;
             this.ChildConditionNodes = childConditionNodes;
+            this.Properties = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -33,10 +35,15 @@ namespace Rules.Framework.Core.ConditionNodes
         public LogicalOperators LogicalOperator { get; }
 
         /// <summary>
+        /// Gets the condition node properties.
+        /// </summary>
+        public IDictionary<string, object> Properties { get; }
+
+        /// <summary>
         /// Clones the condition node into a different instance.
         /// </summary>
         /// <returns></returns>
         public IConditionNode<TConditionNode> Clone()
-            => new ComposedConditionNode<TConditionNode>(this.LogicalOperator, this.ChildConditionNodes?.Select(cn => cn.Clone()));
+            => new ComposedConditionNode<TConditionNode>(this.LogicalOperator, this.ChildConditionNodes?.Select(cn => cn.Clone()).ToList().AsReadOnly());
     }
 }

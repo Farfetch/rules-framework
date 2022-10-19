@@ -1,0 +1,57 @@
+namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
+{
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation;
+
+    internal class ConditionEvalDispatchProvider : IConditionEvalDispatchProvider
+    {
+        private readonly Dictionary<string, IConditionEvalDispatcher> dispatchers;
+        private readonly IMultiplicityEvaluator multiplicityEvaluator;
+
+        public ConditionEvalDispatchProvider(
+            IOperatorEvalStrategyFactory operatorEvalStrategyFactory,
+            IMultiplicityEvaluator multiplicityEvaluator,
+            IDataTypesConfigurationProvider dataTypesConfigurationProvider)
+        {
+            this.dispatchers = new Dictionary<string, IConditionEvalDispatcher>
+            {
+                { Multiplicities.OneToOne, new OneToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
+                { Multiplicities.OneToMany, new OneToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
+                { Multiplicities.ManyToOne, new ManyToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
+                { Multiplicities.ManyToMany, new ManyToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) }
+            };
+            this.multiplicityEvaluator = multiplicityEvaluator;
+        }
+
+        public IConditionEvalDispatcher GetEvalDispatcher(object leftOperand, Operators @operator, object rightOperand)
+        {
+            string multiplicity = this.multiplicityEvaluator.EvaluateMultiplicity(leftOperand, @operator, rightOperand);
+
+            this.ThrowIfUnsupportedOperandsAndOperatorCombination($"{multiplicity}-{@operator}");
+
+            return this.dispatchers[multiplicity];
+        }
+
+        private bool OperatorSupportsOneMultiplicityLeftOperand(Operators @operator)
+        {
+            if (OperatorsMetadata.AllByOperator.TryGetValue(@operator, out var operatorMetadata))
+            {
+                return operatorMetadata.SupportedMultiplicities.Any(x => x.Contains("one-to"));
+            }
+
+            return false;
+        }
+
+        private void ThrowIfUnsupportedOperandsAndOperatorCombination(string combination)
+        {
+            if (!OperatorsMetadata.AllBySupportedCombination.ContainsKey(combination))
+            {
+                throw new NotSupportedException($"The combination '{combination}' is not supported.");
+            }
+        }
+    }
+}

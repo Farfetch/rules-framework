@@ -4,8 +4,11 @@ namespace Rules.Framework.Builder
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Evaluation;
-    using Rules.Framework.Evaluation.ValueEvaluation;
-    using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
+    using Rules.Framework.Evaluation.Classic;
+    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
+    using Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers;
+    using Rules.Framework.Evaluation.Compiled;
+    using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
     using Rules.Framework.Source;
     using Rules.Framework.Validation;
 
@@ -23,16 +26,26 @@ namespace Rules.Framework.Builder
         public RulesEngine<TContentType, TConditionType> Build()
         {
             var rulesSourceMiddlewares = new List<IRulesSourceMiddleware<TContentType, TConditionType>>();
-            var operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
             var dataTypesConfigurationProvider = new DataTypesConfigurationProvider(this.rulesEngineOptions);
             var multiplicityEvaluator = new MultiplicityEvaluator();
-            var conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
 
-            var conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
+            IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
-            var deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
-
-            var conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
+            if (this.rulesEngineOptions.EnableCompilation)
+            {
+                var conditionExpressionBuilderProvider = new ConditionExpressionBuilderProvider();
+                var valueConditionNodeCompilerProvider = new ValueConditionNodeCompilerProvider(conditionExpressionBuilderProvider, dataTypesConfigurationProvider);
+                var conditionsTreeCompiler = new ConditionsTreeCompiler<TConditionType>(valueConditionNodeCompilerProvider);
+                conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(conditionsTreeCompiler, multiplicityEvaluator, this.rulesEngineOptions);
+            }
+            else
+            {
+                var operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
+                var conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
+                var deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
+                var conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
+                conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
+            }
 
             var conditionTypeExtractor = new ConditionTypeExtractor<TContentType, TConditionType>();
 

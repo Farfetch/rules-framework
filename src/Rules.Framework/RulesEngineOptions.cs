@@ -52,6 +52,8 @@ namespace Rules.Framework
         /// </summary>
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }
 
+        public bool EnableCompilation { get; set; }
+
         /// <summary>
         /// <para>Gets or sets the rules engine behavior when no condition with a specific type is provided to rules engine to match with a rule's condition with the same type.</para>
         /// <para>e.g. a rule with a condition of type "Age" is under evaluation but no condition of type "Age" was supplied.</para>

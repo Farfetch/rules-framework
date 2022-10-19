@@ -19,8 +19,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
             White = 2
         }
 
-        [Fact]
-        public async Task DiscountsWeekend_Adding15PercentRulePerBrandAndEvaluatingOneOfTheBrands_Returns15PercentDiscountRate()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task DiscountsWeekend_Adding15PercentRulePerBrandAndEvaluatingOneOfTheBrands_Returns15PercentDiscountRate(bool enableCompilation)
         {
             // Arrange
             IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
@@ -30,6 +32,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act 1 - Create rule with "in" operator
@@ -93,8 +99,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
             actual.Should().BeEquivalentTo(rule);
         }
 
-        [Fact]
-        public async Task DiscountsWeekend_Adding20PercentRulePerProductTierAndEvaluatingOneOfTheTiers_Returns20PercentDiscountRate()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task DiscountsWeekend_Adding20PercentRulePerProductTierAndEvaluatingOneOfTheTiers_Returns20PercentDiscountRate(bool enableCompilation)
         {
             // Arrange
             IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
@@ -104,6 +112,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act 1 - Create rule with "in" operator
@@ -172,8 +184,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
             actual.Should().BeEquivalentTo(rule);
         }
 
-        [Fact]
-        public async Task DiscountsWeekend_Adding5PercentRuleWithNotContainsTestConditionAndInputWithMatchingConditions_Return5PercentDiscountRate()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task DiscountsWeekend_Adding5PercentRuleWithNotContainsTestConditionAndInputWithMatchingConditions_Return5PercentDiscountRate(bool enableCompilation)
         {
             // Arrange
             IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
@@ -183,6 +197,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act 1 - Create rule with "not contains" operator
@@ -233,8 +251,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
             actual.Should().BeEquivalentTo(rule);
         }
 
-        [Fact]
-        public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithMatchingConditions_ReturnNotNull()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithMatchingConditions_ReturnNotNull(bool enableCompilation)
         {
             // Arrange
             IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
@@ -244,6 +264,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act 1 - Create rule with "equal" operator
@@ -294,8 +318,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
             actual.Should().BeEquivalentTo(rule);
         }
 
-        [Fact]
-        public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutConditions_ReturnNull()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutConditions_ReturnNull(bool enableCompilation)
         {
             // Arrange
             IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
@@ -305,6 +331,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act 1 - Create rule with "equal" operator
@@ -347,8 +377,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
             actual.Should().BeNull();
         }
 
-        [Fact]
-        public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutMatchingConditions_ReturnNull()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutMatchingConditions_ReturnNull(bool enableCompilation)
         {
             // Arrange
             IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
@@ -358,6 +390,10 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario4
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act 1 - Create rule with "equal" operator

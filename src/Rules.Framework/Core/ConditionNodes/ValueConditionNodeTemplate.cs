@@ -1,6 +1,7 @@
 namespace Rules.Framework.Core.ConditionNodes
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Defines the template implementation for a condition node based on a value comparison.
@@ -24,6 +25,7 @@ namespace Rules.Framework.Core.ConditionNodes
             this.ConditionType = conditionType;
             this.Operand = operand;
             this.Operator = @operator;
+            this.Properties = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -50,6 +52,11 @@ namespace Rules.Framework.Core.ConditionNodes
         /// Gets the condition's operator to perform value comparison.
         /// </summary>
         public Operators Operator { get; }
+
+        /// <summary>
+        /// Gets the condition node properties.
+        /// </summary>
+        public IDictionary<string, object> Properties { get; }
 
         /// <summary>
         /// Clones the condition node into a different instance.

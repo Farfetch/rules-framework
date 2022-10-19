@@ -152,7 +152,8 @@ namespace Rules.Framework.Tests.Extensions
             var genericValueRootCondition = genericRule.RootCondition as GenericValueConditionNode;
             genericValueRootCondition.Should().BeEquivalentTo(expectedRootCondition, config => config
                 .Excluding(r => r.ConditionType)
-                .Excluding(r => r.LogicalOperator));
+                .Excluding(r => r.LogicalOperator)
+                .Excluding(r => r.Properties));
             genericValueRootCondition.ConditionTypeName.Should().Be(expectedRootCondition.ConditionType.ToString());
         }
     }

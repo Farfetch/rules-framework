@@ -1,5 +1,6 @@
 namespace Rules.Framework.Core.ConditionNodes
 {
+    using System.Collections.Generic;
     using System.Diagnostics;
 
     /// <summary>
@@ -20,11 +21,25 @@ namespace Rules.Framework.Core.ConditionNodes
         /// <param name="operator">The operator.</param>
         /// <param name="operand">The operand.</param>
         public ValueConditionNode(DataTypes dataType, TConditionType conditionType, Operators @operator, object operand)
+            : this(dataType, conditionType, @operator, operand, new Dictionary<string, object>())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValueConditionNode{TConditionType}" /> class.
+        /// </summary>
+        /// <param name="dataType">Type of the data.</param>
+        /// <param name="conditionType">Type of the condition.</param>
+        /// <param name="operator">The operator.</param>
+        /// <param name="operand">The operand.</param>
+        /// <param name="properties">The properties.</param>
+        public ValueConditionNode(DataTypes dataType, TConditionType conditionType, Operators @operator, object operand, IDictionary<string, object> properties)
         {
             this.ConditionType = conditionType;
             this.DataType = dataType;
             this.Operand = operand;
             this.Operator = @operator;
+            this.Properties = properties;
         }
 
         /// <summary>
@@ -54,10 +69,15 @@ namespace Rules.Framework.Core.ConditionNodes
         public Operators Operator { get; }
 
         /// <summary>
+        /// Gets the condition node properties.
+        /// </summary>
+        public IDictionary<string, object> Properties { get; }
+
+        /// <summary>
         /// Clones the condition node into a different instance.
         /// </summary>
         /// <returns></returns>
         public IConditionNode<TConditionType> Clone()
-            => new ValueConditionNode<TConditionType>(this.DataType, this.ConditionType, this.Operator, this.Operand);
+            => new ValueConditionNode<TConditionType>(this.DataType, this.ConditionType, this.Operator, this.Operand, new Dictionary<string, object>(this.Properties));
     }
 }

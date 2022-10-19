@@ -8,10 +8,14 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
     using System.Linq;
     using System.Threading.Tasks;
 
+    [SkewnessColumn, KurtosisColumn]
     public class Benchmark1 : IBenchmark
     {
         private readonly Benchmark1Data benchmarkData = new Benchmark1Data();
         private RulesEngine<ContentTypes, ConditionTypes> rulesEngine;
+
+        [ParamsAllValues]
+        public bool EnableCompilation { get; set; }
 
         [Benchmark]
         public async Task RunAsync()
@@ -26,6 +30,10 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(new InMemoryRulesDataSource<ContentTypes, ConditionTypes>(Enumerable.Empty<Rule<ContentTypes, ConditionTypes>>()))
+                .Configure(options =>
+                {
+                    options.EnableCompilation = this.EnableCompilation;
+                })
                 .Build();
 
             foreach (var rule in this.benchmarkData.Rules)
