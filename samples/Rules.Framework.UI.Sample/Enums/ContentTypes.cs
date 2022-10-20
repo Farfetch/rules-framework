@@ -4,9 +4,6 @@ namespace Rules.Framework.Admin.UI.Sample.Enums
     {
         None = 0,
 
-        /// <summary>
-        /// this content verifies if number is cool or not
-        /// </summary>
         TestNumber = 1,
 
         TestString = 2,
@@ -16,5 +13,11 @@ namespace Rules.Framework.Admin.UI.Sample.Enums
         TestDecimal = 4,
 
         TestShort = 5,
+
+        TestDateTime = 6,
+
+        TestLong = 7,
+
+        TestBlob = 8
     }
 }

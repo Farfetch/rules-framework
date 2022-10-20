@@ -1,3 +1,5 @@
+using Rules.Framework;
+using Rules.Framework.Admin.UI.Sample.Enums;
 using Rules.Framework.Admin.UI.Sample.Rules;
 using Rules.Framework.UI;
 using Rules.Framework.UI.Sample;
@@ -8,10 +10,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<IRulesService>(new RulesService(new List<IContentTypes>()
+builder.Services.AddSingleton<RulesEngineProvider>(
+    new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
             {
                 new RulesRandomFactory()
-            }));
+            }))
+    );
+
+builder.Services.AddSingleton<RulesEngine<ContentTypes, ConditionTypes>>(d =>
+    d.GetRequiredService<RulesEngineProvider>().GetRulesEngineAsync()
+    .GetAwaiter()
+    .GetResult());
+
+builder.Services.AddSingleton<IRulesService>(d => new RulesService(
+    d.GetRequiredService<RulesEngineProvider>()));
+
+var d = builder.Services.FirstOrDefault(d =>
+d.ServiceType.IsGenericType &&
+d.ServiceType.GetGenericTypeDefinition() == typeof(RulesEngine<,>));
 
 var app = builder.Build();
 

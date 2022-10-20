@@ -10,9 +10,13 @@ namespace Rules.Framework.UI
     using Microsoft.Extensions.FileProviders;
     using System.Reflection;
     using Rules.Framework.WebApi;
+    using System.Linq;
 
 #endif
 
+    /// <summary>
+    /// IApplicationBuilder extension for Rules Framework UI
+    /// </summary>
     public static class UIBuilderExtensions
     {
         /// <summary>

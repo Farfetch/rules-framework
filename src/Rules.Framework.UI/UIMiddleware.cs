@@ -22,7 +22,7 @@ namespace Rules.Framework.UI
 
 #endif
 
-    public class UIMiddleware
+    internal sealed class UIMiddleware
     {
         private readonly UIOptions _options;
 

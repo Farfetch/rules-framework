@@ -10,6 +10,8 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
     internal class RulesRandomFactory : IContentTypes
     {
         public readonly List<RuleSpecification> rulesSpecifications;
+        private readonly int finalNumber = 50;
+        private readonly int intialNumber = 10;
         private readonly Random random;
 
         public RulesRandomFactory()
@@ -22,36 +24,14 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
         {
             int currentYear = DateTime.UtcNow.Year;
 
-            for (int i = 1; i < random.Next(10, 30); i++)
+            foreach (int contentType in Enum.GetValues(typeof(ContentTypes)))
             {
-                var dateBegin = CreateRandomDateBegin(currentYear);
+                for (int i = 1; i < random.Next(intialNumber, finalNumber); i++)
+                {
+                    var dateBegin = CreateRandomDateBegin(currentYear);
 
-                Add(CreateMultipleRule(ContentTypes.TestDecimal, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
-            }
-
-            for (int i = 1; i < random.Next(10, 30); i++)
-            {
-                var dateBegin = CreateRandomDateBegin(currentYear);
-                Add(CreateMultipleRule(ContentTypes.TestBoolean, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
-            }
-
-            for (int i = 1; i < random.Next(10, 30); i++)
-            {
-                var dateBegin = CreateRandomDateBegin(currentYear);
-                Add(CreateMultipleRule(ContentTypes.TestString, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
-            }
-
-            for (int i = 1; i < random.Next(10, 30); i++)
-            {
-                var dateBegin = CreateRandomDateBegin(currentYear);
-                Add(CreateMultipleRule(ContentTypes.TestShort, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
-            }
-
-            for (int i = 1; i < random.Next(10, 30); i++)
-            {
-                var dateBegin = CreateRandomDateBegin(currentYear);
-
-                Add(CreateMultipleRule(ContentTypes.TestNumber, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
+                    Add(CreateMultipleRule((ContentTypes)contentType, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
+                }
             }
 
             return this.rulesSpecifications;

@@ -5,11 +5,23 @@ namespace Rules.Framework.WebApi.Controllers
 
     public class ContentTypeController : Controller
     {
+        private readonly dynamic rulesEngine;
         private readonly IRulesService rulesService;
 
-        public ContentTypeController(IRulesService rulesService)
+        public ContentTypeController(IRulesService rulesService, IServiceProvider serviceProvider)
         {
             this.rulesService = rulesService;
+
+            //TODO
+            var tead = System.Reflection.Assembly
+                .GetAssembly(typeof(RulesEngine<,>))
+                .GetTypes();
+
+            this.rulesEngine = tead
+                .FirstOrDefault(x => x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(RulesEngine<,>));
+
+            var d = serviceProvider.GetService(rulesEngine);
         }
 
         [Route("rules/{controller}/list")]

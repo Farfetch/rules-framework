@@ -4,7 +4,7 @@ namespace Rules.Framework.UI
     using System.IO;
     using System.Reflection;
 
-    public class UIOptions
+    internal sealed class UIOptions
     {
         /// <summary>
         /// Gets or sets a title for the ui page

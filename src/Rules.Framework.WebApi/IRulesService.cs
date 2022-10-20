@@ -10,19 +10,19 @@ namespace Rules.Framework.WebApi
         /// Finds the rules asynchronous.
         /// </summary>
         /// <param name="contentType">Type of the content.</param>
-        /// <returns></returns>
+        /// <returns>List rules</returns>
         Task<IEnumerable<dynamic>> FindRulesAsync(string contentType);
 
         /// <summary>
         /// Gets the rule priority option asynchronous.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Rule priority option</returns>
         Task<string> GetRulePriorityOptionAsync();
 
         /// <summary>
         /// Lists the contents.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of contents</returns>
         IEnumerable<string> ListContents();
     }
 }

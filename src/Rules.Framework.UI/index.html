@@ -88,66 +88,85 @@
             <div id="contentTypes" class="content" style="display:none">
                 <div class="row">
                     <div class="col-12">
-                        <fieldset class="reset"><legend class="reset">Filters</legend>
-                            <form novalidate>
-                                <div class="col-md-4">
-                                    <label for="contentTypeSearch" class="col-form-label-sm">Name</label>
-                                    <input class="form-control form-control-sm" id="contentTypeSearch" />
-                                </div>                                
-                            </form>
-                        </fieldset>
-                        <h5 class="mb-3">Content Types</h5>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm" style="font-size: .875rem;">
-                                <thead style="border-bottom: 2px solid currentcolor;">
-                                    <tr>
-                                        <th scope="col" width="10%">#</th>
-                                        <th scope="col" width="70%">Name</th>
-                                        <th scope="col" width="20%" style="text-align: center;">Rules</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="contentTypes_table">
-                                </tbody>
-                            </table>
-                            <div id="contentTypes_pagination"></div>
+                        
+                        <fieldset class="reset">
+                            <legend class="reset">
+                                <button type="button" class="btn btn-dark dropdown-toggle" style="font-size:.8rem" aria-expanded="false"
+                                        data-bs-toggle="collapse" data-bs-target="#filterContentTypes"
+                                        aria-controls="filterContentTypes">
+                                    <span class="glyphicon glyphicon-filter"></span> Filters
+                                </button>
+                            </legend>
+                                <div class="collapse show" id="filterContentTypes">
+                                    <form novalidate>
+                                        <div class="col-md-4">
+                                            <label for="contentTypeSearch" class="col-form-label-sm">Name</label>
+                                            <input class="form-control form-control-sm" id="contentTypeSearch" />
+                                        </div>
+                                    </form>
+                                </div>
+                            </fieldset>
+                            
+                            <h5 class="mb-3">Content Types</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm" style="font-size: .875rem;">
+                                    <thead style="border-bottom: 2px solid currentcolor;">
+                                        <tr>
+                                            <th scope="col" width="10%">#</th>
+                                            <th scope="col" width="70%">Name</th>
+                                            <th scope="col" width="20%" style="text-align: center;">Rules</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="contentTypes_table">
+                                    </tbody>
+                                </table>
+                                <div id="contentTypes_pagination"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
 
             <div id="rules" class="content" style="display:none">
                 <div class="row">
                     <div class="col-12">
                         <fieldset class="reset">
-                            <legend class="reset">Filters</legend>
-                            <form class="row g-3" novalidate>
-                                <div class="col-md-3">
-                                    <label for="contentTypesSelect" class="col-form-label-sm">Content Type</label>
-                                    <select class="form-select form-select-sm" id="contentTypesSelect" required>
-                                        <option value="">Loading...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="ruleNameSearch" class="col-form-label-sm">Name</label>
-                                    <input class="form-control form-control-sm" id="ruleNameSearch" />
-                                </div>
+                            <legend class="reset">
+                                <button type="button" class="btn btn-dark dropdown-toggle" style="font-size:.8rem" aria-expanded="false"
+                                        data-bs-toggle="collapse" data-bs-target="#filterRules"
+                                        aria-controls="filterRules">
+                                    <span class="glyphicon glyphicon-filter"></span> Filters
+                                </button>
+                            </legend>
+                            <div class="collapse show" id="filterRules">
+                                <form class="row g-3" novalidate>
+                                    <div class="col-md-3">
+                                        <label for="contentTypesSelect" class="col-form-label-sm">Content Type</label>
+                                        <select class="form-select form-select-sm" id="contentTypesSelect" required>
+                                            <option value="">Loading...</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="ruleNameSearch" class="col-form-label-sm">Name</label>
+                                        <input class="form-control form-control-sm" id="ruleNameSearch" />
+                                    </div>
 
-                                <div class="col-md-3">
-                                    <label for="ruleValueSearch" class="col-form-label-sm">Value</label>
-                                    <input class="form-control form-control-sm" id="ruleValueSearch" />
-                                </div>
+                                    <div class="col-md-3">
+                                        <label for="ruleValueSearch" class="col-form-label-sm">Value</label>
+                                        <input class="form-control form-control-sm" id="ruleValueSearch" />
+                                    </div>
 
-                                <div class="col-md-2">
-                                    <label for="ruleStatusesSelect" class="col-form-label-sm">Status</label>
-                                    <select class="form-select form-select-sm" id="ruleStatusesSelect">
-                                        <option value="">Choose Status...</option>
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
-                                        <option value="pending">Pending</option>
-                                    </select>
-                                </div>
-                            </form>
-                            </fieldset>
+                                    <div class="col-md-2">
+                                        <label for="ruleStatusesSelect" class="col-form-label-sm">Status</label>
+                                        <select class="form-select form-select-sm" id="ruleStatusesSelect">
+                                            <option value="">Choose Status...</option>
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                            <option value="pending">Pending</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </fieldset>
                             <div class="row">
                                 <div class="col-lg-8">
                                     <h5 class="mb-3">Rules</h5>

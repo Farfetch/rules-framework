@@ -12,9 +12,9 @@ namespace Rules.Framework.UI.Sample
     {
         private readonly RulesEngineProvider rulesEngineProvider;
 
-        public RulesService(IEnumerable<IContentTypes> contentTypes)
+        public RulesService(RulesEngineProvider rulesEngineProvider)
         {
-            this.rulesEngineProvider = new RulesEngineProvider(new RulesBuilder(contentTypes));
+            this.rulesEngineProvider = rulesEngineProvider;
         }
 
         public async Task<IEnumerable<dynamic>> FindRulesAsync(string contentType)
