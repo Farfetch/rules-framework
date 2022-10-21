@@ -40,7 +40,10 @@ namespace Rules.Framework.Core
         /// </summary>
         Contains = 7,
 
-        // Number 8 reserved for "NotContains".
+        /// <summary>
+        /// The not contains operator.
+        /// </summary>
+        NotContains = 8,
 
         /// <summary>
         /// The in operator.
@@ -65,6 +68,16 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The ends with operator.
         /// </summary>
-        CaseInsensitiveEndsWith = 13
+        CaseInsensitiveEndsWith = 13,
+
+        /// <summary>
+        /// The not starts with operator.
+        /// </summary>
+        NotStartsWith = 14,
+
+        /// <summary>
+        /// The not ends with operator.
+        /// </summary>
+        NotEndsWith = 15
     }
 }

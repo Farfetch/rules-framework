@@ -19,11 +19,14 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 { Operators.LesserThan, new LesserThanOperatorEvalStrategy() },
                 { Operators.LesserThanOrEqual, new LesserThanOrEqualOperatorEvalStrategy() },
                 { Operators.Contains, new ContainsOperatorEvalStrategy() },
+                { Operators.NotContains, new NotContainsOperatorEvalStrategy() },
                 { Operators.In, new InOperatorEvalStrategy() },
                 { Operators.StartsWith, new StartsWithOperatorEvalStrategy() },
                 { Operators.EndsWith, new EndsWithOperatorEvalStrategy() },
                 { Operators.CaseInsensitiveStartsWith, new CaseInsensitiveStartsWithOperatorEvalStrategy() },
-                { Operators.CaseInsensitiveEndsWith, new CaseInsensitiveEndsWithOperatorEvalStrategy() }
+                { Operators.CaseInsensitiveEndsWith, new CaseInsensitiveEndsWithOperatorEvalStrategy() },
+                { Operators.NotStartsWith, new NotStartsWithOperatorEvalStrategy() },
+                { Operators.NotEndsWith, new NotEndsWithOperatorEvalStrategy() }
             };
         }
 

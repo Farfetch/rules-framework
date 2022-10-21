@@ -20,13 +20,21 @@ namespace Rules.Framework.Builder
         public RulesEngine<TContentType, TConditionType> Build()
         {
             IOperatorEvalStrategyFactory operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
+
             IDataTypesConfigurationProvider dataTypesConfigurationProvider = new DataTypesConfigurationProvider(this.rulesEngineOptions);
+
             IConditionEvalDispatchProvider conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, dataTypesConfigurationProvider);
+
             IDeferredEval deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
+
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval);
+
+            IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor = new ConditionTypeExtractor<TContentType, TConditionType>();
+
             ValidationProvider validationProvider = ValidationProvider.New()
                 .MapValidatorFor(new SearchArgsValidator<TContentType, TConditionType>());
-            return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, this.rulesDataSource, validationProvider, this.rulesEngineOptions);
+
+            return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, this.rulesDataSource, validationProvider, this.rulesEngineOptions, conditionTypeExtractor);
         }
 
         public IConfiguredRulesEngineBuilder<TContentType, TConditionType> Configure(Action<RulesEngineOptions> configurationAction)

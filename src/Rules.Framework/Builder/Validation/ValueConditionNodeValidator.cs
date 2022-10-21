@@ -19,7 +19,7 @@ namespace Rules.Framework.Builder.Validation
             this.RuleFor(c => c.Operator).IsInEnum();
 
             this.RuleFor(c => c.Operator)
-                .IsContainedOn(Operators.Equal, Operators.NotEqual, Operators.Contains, Operators.In, Operators.StartsWith, Operators.EndsWith, Operators.CaseInsensitiveStartsWith, Operators.CaseInsensitiveEndsWith)
+                .IsContainedOn(Operators.Equal, Operators.NotEqual, Operators.Contains, Operators.NotContains, Operators.In, Operators.StartsWith, Operators.EndsWith, Operators.CaseInsensitiveStartsWith, Operators.CaseInsensitiveEndsWith, Operators.NotStartsWith, Operators.NotEndsWith)
                 .When(c => c.DataType == DataTypes.String)
                 .WithMessage(cn => $"Condition nodes with data type '{cn.DataType}' can't define a operator of type '{cn.Operator}'.");
 
