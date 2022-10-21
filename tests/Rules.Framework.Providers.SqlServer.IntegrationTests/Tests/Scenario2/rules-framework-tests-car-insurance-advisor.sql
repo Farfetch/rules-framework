@@ -34,12 +34,12 @@ values (2, 1, 2, null, null, 1)
 DECLARE @ParentNodeId AS BIGINT = (SELECT SCOPE_IDENTITY())
 
 insert into ConditionNodes ([ConditionNodeTypeCode], [ConditionTypeCode], [DataTypeCode], [OperatorCode], [Operand], [LogicalOperatorCode])
-values (1, 2, 2, 5, '1000', 3)
+values (1, 1, 2, 5, '1000', 3)
 
 DECLARE @Child1NodeId AS BIGINT = (SELECT SCOPE_IDENTITY())
 
 insert into ConditionNodes ([ConditionNodeTypeCode], [ConditionTypeCode], [DataTypeCode], [OperatorCode], [Operand], [LogicalOperatorCode])
-values (1, 1, 2, 5, '80', 3)
+values (1, 2, 2, 5, '80', 3)
 
 DECLARE @Child2NodeId AS BIGINT = (SELECT SCOPE_IDENTITY())
 

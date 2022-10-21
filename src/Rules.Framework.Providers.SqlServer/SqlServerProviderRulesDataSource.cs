@@ -46,7 +46,7 @@ namespace Rules.Framework.Providers.SqlServer
             fetchedRules = fetchedRules.Where(rule =>
                    (rule.DateBegin >= dateBegin && rule.DateBegin < dateEnd)  // To fetch rules that begin during filtered interval but end after it.
                 || (rule.DateEnd != null && rule.DateBegin >= dateBegin && rule.DateBegin < dateEnd) // To fetch rules that begun before filtered interval but end during it.
-                || (rule.DateBegin < dateBegin || (rule.DateEnd == null && rule.DateEnd > dateEnd))); // To fetch rules that begun before and end after filtered interval.
+                || (rule.DateBegin < dateBegin && (rule.DateEnd == null || rule.DateEnd > dateEnd))); // To fetch rules that begun before and end after filtered interval.
 
             return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
         }

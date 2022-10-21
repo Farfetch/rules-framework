@@ -169,7 +169,7 @@ namespace Rules.Framework.Providers.SqlServer
                 IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
                     .WithLogicalOperator((LogicalOperators)conditionNodeDataModel.LogicalOperatorCode);
 
-                foreach (ConditionNodeRelation conditionNodeRelation in conditionNodeDataModel.ConditionNodeRelations_ChildId)
+                foreach (ConditionNodeRelation conditionNodeRelation in conditionNodeDataModel.ConditionNodeRelations_OwnerId)
                 {
                     composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, conditionNodeRelation.Child));
                 }
