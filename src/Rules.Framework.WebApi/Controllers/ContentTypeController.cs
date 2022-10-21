@@ -11,17 +11,6 @@ namespace Rules.Framework.WebApi.Controllers
         public ContentTypeController(IRulesService rulesService, IServiceProvider serviceProvider)
         {
             this.rulesService = rulesService;
-
-            //TODO
-            var tead = System.Reflection.Assembly
-                .GetAssembly(typeof(RulesEngine<,>))
-                .GetTypes();
-
-            this.rulesEngine = tead
-                .FirstOrDefault(x => x.IsGenericType &&
-                x.GetGenericTypeDefinition() == typeof(RulesEngine<,>));
-
-            var d = serviceProvider.GetService(rulesEngine);
         }
 
         [Route("rules/{controller}/list")]
