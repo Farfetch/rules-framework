@@ -5,10 +5,9 @@ namespace Rules.Framework.WebApi.Controllers
 
     public class ContentTypeController : Controller
     {
-        private readonly dynamic rulesEngine;
         private readonly IRulesService rulesService;
 
-        public ContentTypeController(IRulesService rulesService, IServiceProvider serviceProvider)
+        public ContentTypeController(IRulesService rulesService)
         {
             this.rulesService = rulesService;
         }

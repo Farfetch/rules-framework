@@ -26,7 +26,7 @@ namespace Rules.Framework.UI
     {
         private readonly UIOptions _options;
 
-        private readonly IEnumerable<StaticFileMiddleware> _staticFileMiddlewares;
+        private readonly StaticFileMiddleware _staticFileMiddlewares;
 
         public UIMiddleware(
             RequestDelegate next,
@@ -35,12 +35,7 @@ namespace Rules.Framework.UI
         {
             _options = new UIOptions();
 
-            _staticFileMiddlewares = new List<StaticFileMiddleware>
-            {
-                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, "glyphicons_only_bootstrap"),
-                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, "jquery.dist"),
-                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, "paginationjs.dist")
-            };
+            _staticFileMiddlewares = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, ".node_modules");
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -66,7 +61,7 @@ namespace Rules.Framework.UI
                 return;
             }
 
-            await Task.WhenAll(_staticFileMiddlewares.Select(s => s.Invoke(httpContext)));
+            await _staticFileMiddlewares.Invoke(httpContext);
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
@@ -78,7 +73,7 @@ namespace Rules.Framework.UI
         {
             var asssembly = typeof(UIMiddleware).GetTypeInfo().Assembly;
 
-            var provider = new EmbeddedFileProvider(asssembly, asssembly.GetName().Name + ".node_modules." + path);
+            var provider = new EmbeddedFileProvider(asssembly, asssembly.GetName().Name + path);
 
             var staticFileOptions = new StaticFileOptions
             {

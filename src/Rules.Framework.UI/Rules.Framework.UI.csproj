@@ -42,11 +42,18 @@
 	  <ProjectReference Include="..\Rules.Framework.WebApi\Rules.Framework.WebApi.csproj" />
 	</ItemGroup>
 
-
-    <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds">
-	  <Exec Command="npm install" ContinueOnError="true">
-	    <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-		  </Exec>
-		<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project." />
-	</Target>	
+	<ItemGroup>
+	  <EmbeddedResource Update="node_modules\glyphicons-only-bootstrap\css\bootstrap.min.css">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="node_modules\jquery\dist\jquery.min.js">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="node_modules\paginationjs\dist\pagination.css">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="node_modules\paginationjs\dist\pagination.min.js">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
 </Project>
