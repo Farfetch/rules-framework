@@ -169,7 +169,7 @@
                                     <h5 class="mb-3">Rules</h5>
                                 </div>
                                 <div class="col-lg-4" style="text-align:right">
-                                    <em style="font-size:small">Priority Options (<span id="rulesOptions"></span>) &nbsp; </em>
+                                    <em style="font-size:small">Priority Criterias (<span id="rulesPriority"></span>) &nbsp; </em>
                                     <div class="btn-group" role="group">
                                         <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="glyphicon glyphicon-cog"></span>
@@ -218,7 +218,7 @@
         rules = [];
         contentTypes = [];
         contentType = '';
-        options = '';
+        priority = '';
         conditions = [];
         pageSize = 10;
         ruleFilter = {
@@ -588,12 +588,12 @@
                 $('.content').hide();
                 $('div[id=' + d.currentTarget.id + ']').show();
 
-                $('#rulesOptions').html('Loading...');
+                $('#rulesPriority').html('Loading...');
                 $.ajax({
-                    url:
-                        "Rule/Options",
+                    url: "Rule/Priority",
                     success: function (response) {
-                        $('#rulesOptions').html(response);
+                        $('#rulesPriority').html(response);
+                        priority = response;
                     },
                     error: function (error) {
                         openError(error);

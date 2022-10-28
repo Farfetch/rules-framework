@@ -1,6 +1,7 @@
 namespace Rules.Framework.WebApi.Controllers
 {
     using System;
+    using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -19,8 +20,8 @@ namespace Rules.Framework.WebApi.Controllers
             this.jsonSerializerSettings.Converters.Add(new StringEnumConverter());
         }
 
-        [Route("rules/{controller}/options")]
-        public async Task<IActionResult> GetOptions()
+        [Route("rules/{controller}/priority")]
+        public async Task<IActionResult> GetPriorityCriterias()
         {
             var priorityOption = this.rulesEngine
                 .GetPriorityCriterias();
@@ -34,7 +35,22 @@ namespace Rules.Framework.WebApi.Controllers
             var list = new List<RuleDto>();
 
             var rules = await this.rulesEngine
-                .SearchAsync(new SearchArgs<ContentType, ConditionType>(new ContentType { Name = conditionType }, DateTime.MinValue, DateTime.MaxValue));
+                .SearchAsync(new SearchArgs<ContentType, ConditionType>(new ContentType
+                {
+                    Name = conditionType
+                }, DateTime.MinValue, DateTime.MaxValue));
+
+            var priorityOption = this.rulesEngine
+               .GetPriorityCriterias();
+
+            if (priorityOption == PriorityCriterias.BottommostRuleWins)
+            {
+                rules = rules.OrderByDescending(r => r.Priority);
+            }
+            else
+            {
+                rules = rules.OrderBy(r => r.Priority);
+            }
 
             if (rules != null)
             {

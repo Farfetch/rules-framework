@@ -82,7 +82,7 @@ namespace Rules.Framework
 
         public PriorityCriterias GetPriorityCriterias()
         {
-            return PriorityCriterias.BottommostRuleWins;
+            return this.RulesEngineOptions.PriotityCriteria;
         }
 
         /// <summary>
