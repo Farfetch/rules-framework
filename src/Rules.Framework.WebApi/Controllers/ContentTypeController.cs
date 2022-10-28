@@ -5,23 +5,23 @@ namespace Rules.Framework.WebApi.Controllers
 
     public class ContentTypeController : Controller
     {
-        private readonly IRulesService rulesService;
+        private readonly IRulesEngine rulesEngine;
 
-        public ContentTypeController(IRulesService rulesService)
+        public ContentTypeController(IRulesEngine rulesEngine)
         {
-            this.rulesService = rulesService;
+            this.rulesEngine = rulesEngine;
         }
 
         [Route("rules/{controller}/list")]
         public IActionResult List()
         {
-            var contents = this.rulesService.ListContents();
+            var contents = this.rulesEngine.GetContentTypes();
 
             var list = new List<ContentTypeDto>();
 
             foreach (var content in contents)
             {
-                list.Add(new ContentTypeDto { Name = content });
+                list.Add(new ContentTypeDto { Name = content.Name });
             }
 
             return Ok(list);

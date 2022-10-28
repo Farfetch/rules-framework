@@ -10,11 +10,11 @@ namespace Rules.Framework.WebApi.Controllers
     {
         private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
         private readonly JsonSerializerSettings jsonSerializerSettings;
-        private readonly IRulesService rulesService;
+        private readonly IRulesEngine rulesEngine;
 
-        public RuleController(IRulesService rulesService)
+        public RuleController(IRulesEngine rulesEngine)
         {
-            this.rulesService = rulesService;
+            this.rulesEngine = rulesEngine;
             this.jsonSerializerSettings = new JsonSerializerSettings();
             this.jsonSerializerSettings.Converters.Add(new StringEnumConverter());
         }
@@ -22,10 +22,10 @@ namespace Rules.Framework.WebApi.Controllers
         [Route("rules/{controller}/options")]
         public async Task<IActionResult> GetOptions()
         {
-            var priorityOption = await this.rulesService
-                .GetRulePriorityOptionAsync();
+            var priorityOption = this.rulesEngine
+                .GetPriorityCriterias();
 
-            return Ok(priorityOption);
+            return Ok(priorityOption.ToString());
         }
 
         [Route("rules/{controller}/{conditionType}/list")]
@@ -33,8 +33,8 @@ namespace Rules.Framework.WebApi.Controllers
         {
             var list = new List<RuleDto>();
 
-            var rules = await this.rulesService
-                .FindRulesAsync(conditionType);
+            var rules = await this.rulesEngine
+                .SearchAsync(new SearchArgs<ContentType, ConditionType>(new ContentType { Name = conditionType }, DateTime.MinValue, DateTime.MaxValue));
 
             if (rules != null)
             {
@@ -44,7 +44,7 @@ namespace Rules.Framework.WebApi.Controllers
                     DateTime? dateEnd = GetProperty(rule, "DateEnd") as DateTime?;
                     DateTime? dateBegin = GetProperty(rule, "DateBegin") as DateTime?;
                     var name = GetProperty(rule, "Name") as string;
-                    var contentContainer = GetProperty(rule, "ContentContainer");
+                    var contentContainer = GetProperty(rule, "ContentContainer") as dynamic;
                     var conditions = GetProperty(rule, "RootCondition");
 
                     list.Add(new RuleDto

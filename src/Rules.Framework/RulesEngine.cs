@@ -9,6 +9,8 @@ namespace Rules.Framework
     using FluentValidation.Results;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
+    using Rules.Framework.Extensions;
+    using Rules.Framework.Generic;
     using Rules.Framework.Management;
     using Rules.Framework.Validation;
 
@@ -19,7 +21,7 @@ namespace Rules.Framework
     /// <typeparam name="TConditionType">
     /// The condition type that allows to filter rules based on a set of conditions.
     /// </typeparam>
-    public class RulesEngine<TContentType, TConditionType>
+    public class RulesEngine<TContentType, TConditionType> : IRulesEngine
     {
         public readonly IRulesEngineOptions RulesEngineOptions;
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
@@ -65,6 +67,22 @@ namespace Rules.Framework
             }
 
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
+        }
+
+        public IEnumerable<ContentType> GetContentTypes()
+        {
+            return Enum.GetValues(typeof(TContentType))
+               .Cast<TContentType>()
+               .Select(t => new ContentType
+               {
+                   Code = Enum.Parse(typeof(TContentType), t.ToString()).ToString(),
+                   Name = t.ToString()
+               });
+        }
+
+        public PriorityCriterias GetPriorityCriterias()
+        {
+            return PriorityCriterias.BottommostRuleWins;
         }
 
         /// <summary>
@@ -192,6 +210,15 @@ namespace Rules.Framework
             }
 
             return this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions);
+        }
+
+        public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> searchArgs)
+        {
+            var newSearchArgs = searchArgs.ToSearchArgs<TContentType, TConditionType>();
+
+            var result = await this.SearchAsync(newSearchArgs);
+
+            return result.Select(rule => rule.ToGenericRule());
         }
 
         /// <summary>

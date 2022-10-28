@@ -1,7 +1,7 @@
+using Rules.Framework;
 using Rules.Framework.Admin.UI.Sample.Rules;
 using Rules.Framework.UI;
 using Rules.Framework.UI.Sample;
-using Rules.Framework.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +15,7 @@ builder.Services.AddSingleton(
             }))
     );
 
-builder.Services.AddSingleton<IRulesService>(d => new RulesService(
-    d.GetRequiredService<RulesEngineProvider>()));
+builder.Services.AddSingleton<IRulesEngine>(d => d.GetRequiredService<RulesEngineProvider>().GetRulesEngineAsync().ConfigureAwait(false).GetAwaiter().GetResult());
 
 var app = builder.Build();
 
