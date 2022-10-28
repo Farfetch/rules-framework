@@ -31,6 +31,14 @@ namespace Rules.Framework.Tests.Builder
         [InlineData(DataTypes.Integer, null)]
         [InlineData(DataTypes.String, 0)]
         [InlineData(DataTypes.String, null)]
+        [InlineData(DataTypes.ArrayString, new[] { 0 })]
+        [InlineData(DataTypes.ArrayString, null)]
+        [InlineData(DataTypes.ArrayDecimal, new[] { "!a" })]
+        [InlineData(DataTypes.ArrayDecimal, null)]
+        [InlineData(DataTypes.ArrayBoolean, new[] { 10 })]
+        [InlineData(DataTypes.ArrayBoolean, null)]
+        [InlineData(DataTypes.ArrayInteger, new[] { "!a" })]
+        [InlineData(DataTypes.ArrayInteger, null)]
         public void EnsureValid_GivenOptionsWithInvalidDefaultForDataType_ThrowsInvalidRulesEngineOptionsExceptionClaimingInvalidDefault(DataTypes dataType, object defaultValue)
         {
             // Arrange

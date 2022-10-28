@@ -29,6 +29,23 @@ namespace Rules.Framework.Builder
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.String,
                 value => value is string);
+            EnsureValidDataTypeDefault(
+                rulesEngineOptions.DataTypeDefaults,
+                DataTypes.ArrayBoolean,
+                value => value is IEnumerable<bool>);
+            EnsureValidDataTypeDefault(
+                rulesEngineOptions.DataTypeDefaults,
+                DataTypes.ArrayDecimal,
+                value => value is IEnumerable<decimal>);
+            EnsureValidDataTypeDefault(
+                rulesEngineOptions.DataTypeDefaults,
+                DataTypes.ArrayInteger,
+                value => value is IEnumerable<int>);
+            EnsureValidDataTypeDefault(
+                rulesEngineOptions.DataTypeDefaults,
+                DataTypes.ArrayString,
+                value => value is IEnumerable<string>);
+
         }
 
         private static void EnsureValidDataTypeDefault(IDictionary<DataTypes, object> dataTypeDefaults, DataTypes dataType, Func<object, bool> validFunc)
