@@ -5,7 +5,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
     using System.Linq.Expressions;
     using System.Text;
 
-    internal class GreaterThanOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
+    internal sealed class GreaterThanOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
         public Expression BuildConditionExpression(
             Expression leftHandOperandExpression,

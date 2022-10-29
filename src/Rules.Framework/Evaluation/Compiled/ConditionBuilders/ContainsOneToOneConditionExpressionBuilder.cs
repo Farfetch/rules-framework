@@ -6,7 +6,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
     using System.Reflection;
     using System.Text;
 
-    internal class ContainsOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
+    internal sealed class ContainsOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
         private static readonly MethodInfo stringContainsMethodInfo = typeof(string).GetMethod("Contains", new[] { typeof(string) });
 

@@ -3,7 +3,6 @@ namespace Rules.Framework.Evaluation
     using Rules.Framework.Core;
     using System;
     using System.Collections;
-    using Rules.Framework.Core;
 
     internal sealed class MultiplicityEvaluator : IMultiplicityEvaluator
     {

@@ -7,7 +7,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
     using System.Reflection;
     using System.Text;
 
-    internal class InOneToManyConditionExpressionBuilder : IConditionExpressionBuilder
+    internal sealed class InOneToManyConditionExpressionBuilder : IConditionExpressionBuilder
     {
         private static readonly MethodInfo enumerableGenericContains = typeof(Enumerable).GetMethods().FirstOrDefault(m => m.Name == "Contains" && m.GetParameters().Length == 2);
 

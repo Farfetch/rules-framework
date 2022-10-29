@@ -5,7 +5,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
     using System.Linq.Expressions;
     using System.Text;
 
-    internal class StartsWithOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
+    internal sealed class StartsWithOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
         public Expression BuildConditionExpression(
             Expression leftHandOperandExpression,

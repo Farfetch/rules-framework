@@ -7,7 +7,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.Specification;
 
-    internal class CompiledConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
+    internal sealed class CompiledConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
         private readonly IConditionsTreeCompiler<TConditionType> conditionsTreeCompiler;
         private readonly IMultiplicityEvaluator multiplicityEvaluator;

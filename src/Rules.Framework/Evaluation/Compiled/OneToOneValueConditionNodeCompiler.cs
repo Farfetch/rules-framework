@@ -7,7 +7,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using System.Collections.Generic;
     using System.Linq.Expressions;
 
-    internal class OneToOneValueConditionNodeCompiler : ValueConditionNodeCompilerBase, IValueConditionNodeCompiler
+    internal sealed class OneToOneValueConditionNodeCompiler : ValueConditionNodeCompilerBase, IValueConditionNodeCompiler
     {
         private readonly IConditionExpressionBuilderProvider conditionExpressionBuilderProvider;
 

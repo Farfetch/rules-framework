@@ -10,7 +10,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using System.Reflection;
     using System.Text;
 
-    internal class OneToManyValueConditionNodeCompiler : ValueConditionNodeCompilerBase, IValueConditionNodeCompiler
+    internal sealed class OneToManyValueConditionNodeCompiler : ValueConditionNodeCompilerBase, IValueConditionNodeCompiler
     {
         private readonly IConditionExpressionBuilderProvider conditionExpressionBuilderProvider;
 

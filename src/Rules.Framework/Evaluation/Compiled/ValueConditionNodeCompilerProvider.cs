@@ -9,7 +9,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using System.Linq;
     using System.Text;
 
-    internal class ValueConditionNodeCompilerProvider : IValueConditionNodeCompilerProvider
+    internal sealed class ValueConditionNodeCompilerProvider : IValueConditionNodeCompilerProvider
     {
         private readonly Dictionary<string, IValueConditionNodeCompiler> compilers;
 
@@ -17,7 +17,7 @@ namespace Rules.Framework.Evaluation.Compiled
             IConditionExpressionBuilderProvider conditionExpressionBuilderProvider,
             IDataTypesConfigurationProvider dataTypesConfigurationProvider)
         {
-            this.compilers = new Dictionary<string, IValueConditionNodeCompiler>
+            this.compilers = new Dictionary<string, IValueConditionNodeCompiler>(StringComparer.Ordinal)
             {
                 { Multiplicities.OneToOne, new OneToOneValueConditionNodeCompiler(conditionExpressionBuilderProvider, dataTypesConfigurationProvider) },
                 { Multiplicities.OneToMany, new OneToManyValueConditionNodeCompiler(conditionExpressionBuilderProvider, dataTypesConfigurationProvider) },

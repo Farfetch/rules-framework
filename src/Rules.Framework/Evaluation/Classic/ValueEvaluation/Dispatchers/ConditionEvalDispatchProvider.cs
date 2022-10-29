@@ -7,7 +7,7 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
 
-    internal class ConditionEvalDispatchProvider : IConditionEvalDispatchProvider
+    internal sealed class ConditionEvalDispatchProvider : IConditionEvalDispatchProvider
     {
         private readonly Dictionary<string, IConditionEvalDispatcher> dispatchers;
         private readonly IMultiplicityEvaluator multiplicityEvaluator;
@@ -17,7 +17,7 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
             IMultiplicityEvaluator multiplicityEvaluator,
             IDataTypesConfigurationProvider dataTypesConfigurationProvider)
         {
-            this.dispatchers = new Dictionary<string, IConditionEvalDispatcher>
+            this.dispatchers = new Dictionary<string, IConditionEvalDispatcher>(StringComparer.Ordinal)
             {
                 { Multiplicities.OneToOne, new OneToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
                 { Multiplicities.OneToMany, new OneToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
@@ -34,16 +34,6 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
             this.ThrowIfUnsupportedOperandsAndOperatorCombination($"{multiplicity}-{@operator}");
 
             return this.dispatchers[multiplicity];
-        }
-
-        private bool OperatorSupportsOneMultiplicityLeftOperand(Operators @operator)
-        {
-            if (OperatorsMetadata.AllByOperator.TryGetValue(@operator, out var operatorMetadata))
-            {
-                return operatorMetadata.SupportedMultiplicities.Any(x => x.Contains("one-to"));
-            }
-
-            return false;
         }
 
         private void ThrowIfUnsupportedOperandsAndOperatorCombination(string combination)

@@ -1,5 +1,6 @@
 namespace Rules.Framework.Core.ConditionNodes
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -21,7 +22,7 @@ namespace Rules.Framework.Core.ConditionNodes
         {
             this.LogicalOperator = logicalOperator;
             this.ChildConditionNodes = childConditionNodes;
-            this.Properties = new Dictionary<string, object>();
+            this.Properties = new Dictionary<string, object>(StringComparer.Ordinal);
         }
 
         /// <summary>

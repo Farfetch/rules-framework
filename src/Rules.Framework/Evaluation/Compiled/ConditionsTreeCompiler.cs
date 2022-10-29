@@ -7,7 +7,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using System.Linq.Expressions;
     using System.Text;
 
-    internal class ConditionsTreeCompiler<TConditionType> : IConditionsTreeCompiler<TConditionType>
+    internal sealed class ConditionsTreeCompiler<TConditionType> : IConditionsTreeCompiler<TConditionType>
     {
         private static readonly Type dictionaryOfConditionTypeAndObjectType = typeof(IDictionary<TConditionType, object>);
         private readonly IValueConditionNodeCompilerProvider valueConditionNodeCompilerProvider;

@@ -25,7 +25,7 @@ namespace Rules.Framework.Core.ConditionNodes
             this.ConditionType = conditionType;
             this.Operand = operand;
             this.Operator = @operator;
-            this.Properties = new Dictionary<string, object>();
+            this.Properties = new Dictionary<string, object>(StringComparer.Ordinal);
         }
 
         /// <summary>

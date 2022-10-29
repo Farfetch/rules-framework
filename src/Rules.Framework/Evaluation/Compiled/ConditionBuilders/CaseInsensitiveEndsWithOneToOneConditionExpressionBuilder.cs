@@ -5,7 +5,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
     using System.Linq.Expressions;
     using System.Text;
 
-    internal class CaseInsensitiveEndsWithOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
+    internal sealed class CaseInsensitiveEndsWithOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
         public Expression BuildConditionExpression(
             Expression leftHandOperandExpression,
