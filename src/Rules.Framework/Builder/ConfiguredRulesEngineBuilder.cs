@@ -44,7 +44,7 @@ namespace Rules.Framework.Builder
                 var conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
                 var deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
                 var conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
-                conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
+                conditionsEvalEngine = new ClassicConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
             }
 
             var conditionTypeExtractor = new ConditionTypeExtractor<TContentType, TConditionType>();

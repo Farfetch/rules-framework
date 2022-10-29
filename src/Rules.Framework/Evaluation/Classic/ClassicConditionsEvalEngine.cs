@@ -7,12 +7,12 @@ namespace Rules.Framework.Evaluation.Classic
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.Specification;
 
-    internal sealed class ConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
+    internal sealed class ClassicConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
         private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
         private readonly IDeferredEval deferredEval;
 
-        public ConditionsEvalEngine(
+        public ClassicConditionsEvalEngine(
             IDeferredEval deferredEval,
             IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer)
         {

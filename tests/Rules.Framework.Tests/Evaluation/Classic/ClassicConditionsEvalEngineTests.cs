@@ -11,7 +11,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
     using Rules.Framework.Tests.TestStubs;
     using Xunit;
 
-    public class ConditionsEvalEngineTests
+    public class ClassicConditionsEvalEngineTests
     {
         [Fact]
         public void Eval_GivenComposedConditionNodeWithAndOperatorAndMissingConditionWithSearchMode_EvalsAndReturnsResult()
@@ -49,7 +49,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
                 .Throws(new NotImplementedException("Shouldn't have gotten any more deferred evals."));
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-            var sut = new ConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
             bool actual = sut.Eval(composedConditionNode, conditions, evaluationOptions);
@@ -95,7 +95,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
                 .Throws(new NotImplementedException("Shouldn't have gotten any more deferred evals."));
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-            var sut = new ConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
             bool actual = sut.Eval(composedConditionNode, conditions, evaluationOptions);
@@ -131,7 +131,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
             var mockDeferredEval = new Mock<IDeferredEval>();
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-            var sut = new ConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
             var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.Eval(composedConditionNode, conditions, evaluationOptions));
@@ -177,7 +177,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
                 .Throws(new NotImplementedException("Shouldn't have gotten any more deferred evals."));
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-            var sut = new ConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
             bool actual = sut.Eval(composedConditionNode, conditions, evaluationOptions);
@@ -208,7 +208,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
             var mockDeferredEval = new Mock<IDeferredEval>();
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-            var sut = new ConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
             var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.Eval(mockConditionNode.Object, conditions, evaluationOptions));
