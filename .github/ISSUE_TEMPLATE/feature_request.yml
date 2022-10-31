@@ -1,6 +1,6 @@
 name: 💡 Feature Request
 description: Suggest a new idea
-title: '[Feature Request]:'
+title: "[Feature Request]:"
 labels:
   - needs triage
   - enhancement
@@ -9,8 +9,7 @@ body:
     id: problem
     attributes:
       label: Is your request related to a problem you have?
-      description: >-
-        A description of the problem you are trying to address.
+      description: A description of the problem you are trying to address.
   - type: textarea
     id: solution
     attributes:
@@ -23,8 +22,8 @@ body:
     attributes:
       label: Are you able to help bring it to life and contribute with a Pull Request?
       options:
-        - 'No'
-        - 'Yes'
+        - "No"
+        - "Yes"
     validations:
       required: true
   - type: textarea
@@ -32,4 +31,3 @@ body:
     attributes:
       label: Additional context
       description: Add any other context or screenshots about the feature request here.
-
