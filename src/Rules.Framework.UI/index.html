@@ -374,7 +374,7 @@
             return html;
         }
 
-        function recursiveStringView(node)
+        function recursiveStringView(node, logicalOperator)
         {
             let html = '';
 
@@ -382,8 +382,12 @@
                 return html;
             }
 
-            if (node.ConditionType) {
-                html += ' <i>' + node.ConditionType + '</i> (';
+            if (node.ConditionTypeName) {
+                if (logicalOperator) {
+                    html += ' <b>' + logicalOperator + '</b> ';
+                }
+
+                html += ' <i>' + node.ConditionTypeName + '</i> (';
 
                 html += node.Operator;
                 html += ' ' + node.Operand;
@@ -400,7 +404,7 @@
                     html += ' (';
 
                     for (var i = 0; i < node.ChildConditionNodes.length; i++) {
-                        html += recursiveStringView(node.ChildConditionNodes[i]);
+                        html += recursiveStringView(node.ChildConditionNodes[i], i > 0 ? node.LogicalOperator : '');
                     }
 
                     html += ')';
@@ -430,8 +434,8 @@
                 return html;
             }
 
-            if (node.ConditionType) {
-                html += '<li><span class="caret">' + node.ConditionType + '</span>';
+            if (node.ConditionTypeName) {
+                html += '<li><span class="caret">' + node.ConditionTypeName + '</span>';
 
                 html += '<ul class="nested">';
 

@@ -55,35 +55,21 @@ namespace Rules.Framework.WebApi.Controllers
             if (rules != null)
             {
                 foreach (var rule in rules)
-                {
-                    int? priority = GetProperty(rule, "Priority") as int?;
-                    DateTime? dateEnd = GetProperty(rule, "DateEnd") as DateTime?;
-                    DateTime? dateBegin = GetProperty(rule, "DateBegin") as DateTime?;
-                    var name = GetProperty(rule, "Name") as string;
-                    var contentContainer = GetProperty(rule, "ContentContainer") as dynamic;
-                    var conditions = GetProperty(rule, "RootCondition");
-
+                {                    
                     list.Add(new RuleDto
                     {
-                        Priority = !priority.HasValue ? 0 : priority.Value,
-                        Name = name,
-                        Value = contentContainer is null ? "" : JsonConvert.SerializeObject(contentContainer.GetContentAs<dynamic>(), jsonSerializerSettings),
-                        DateEnd = !dateEnd.HasValue ? "-" : dateEnd.Value.ToString(dateFormat),
-                        DateBegin = !dateBegin.HasValue ? "-" : dateBegin.Value.ToString(dateFormat),
-                        Status = GetRuleStatus(dateBegin, dateEnd).ToString(),
-                        Conditions = conditions is null ? string.Empty : JsonConvert.SerializeObject(conditions, jsonSerializerSettings)
+                        Priority = rule.Priority,
+                        Name = rule.Name,
+                        Value = JsonConvert.SerializeObject(rule.ContentContainer, jsonSerializerSettings),
+                        DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
+                        DateBegin = rule.DateBegin.ToString(dateFormat),
+                        Status = GetRuleStatus(rule.DateBegin, rule.DateEnd).ToString(),
+                        Conditions = rule.RootCondition is null ? string.Empty : JsonConvert.SerializeObject(rule.RootCondition, jsonSerializerSettings)
                     });
                 }
             }
 
             return Ok(list);
-        }
-
-        private static object GetProperty(object instance, string strPropertyName)
-        {
-            Type type = instance.GetType();
-            System.Reflection.PropertyInfo propertyInfo = type.GetProperty(strPropertyName);
-            return propertyInfo.GetValue(instance, null);
         }
 
         private static RuleStatusDto GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)

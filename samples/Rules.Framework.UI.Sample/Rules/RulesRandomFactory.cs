@@ -63,6 +63,11 @@ namespace Rules.Framework.Admin.UI.Sample.Rules
                                                 .WithComparisonOperator(Operators.StartsWith)
                                                 .SetOperand("5")
                                                 .Build())
+                                            .AddCondition(sub => sub
+                                                .AsValued(ConditionTypes.CanNumberBeDividedBy3).OfDataType<bool>()
+                                                .WithComparisonOperator(Operators.Equal)
+                                                .SetOperand(false)
+                                                .Build())
                                             .Build())
                                         .Build())
                             .Build();

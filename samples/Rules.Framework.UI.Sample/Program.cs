@@ -15,7 +15,12 @@ builder.Services.AddSingleton(
             }))
     );
 
-builder.Services.AddSingleton<IRulesEngine>(d => d.GetRequiredService<RulesEngineProvider>().GetRulesEngineAsync().ConfigureAwait(false).GetAwaiter().GetResult());
+builder.Services.AddSingleton<IRulesEngine>(d => d
+    .GetRequiredService<RulesEngineProvider>()
+    .GetRulesEngineAsync()
+    .ConfigureAwait(false)
+    .GetAwaiter()
+    .GetResult());
 
 var app = builder.Build();
 

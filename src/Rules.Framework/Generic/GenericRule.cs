@@ -8,7 +8,7 @@ namespace Rules.Framework.Generic
         /// <summary>
         /// Gets the content container which contains the rule content.
         /// </summary>
-        public ContentContainer<ContentType> ContentContainer { get; internal set; }
+        public object ContentContainer { get; internal set; }
 
         /// <summary>
         /// Gets the date from which the rule begins being applicable.
@@ -33,21 +33,7 @@ namespace Rules.Framework.Generic
         /// <summary>
         /// Gets the rule root condition. This property is null when rule has no conditions.
         /// </summary>
-        public IConditionNode<ConditionType> RootCondition { get; internal set; }
+        public GenericConditionNode<ConditionType> RootCondition { get; internal set; }
 
-        /// <summary>
-        /// Clones the rule into a different instance.
-        /// </summary>
-        /// <returns></returns>
-        public virtual GenericRule Clone()
-            => new GenericRule
-            {
-                ContentContainer = this.ContentContainer,
-                DateBegin = this.DateBegin,
-                DateEnd = this.DateEnd,
-                Name = this.Name,
-                Priority = this.Priority,
-                RootCondition = this.RootCondition?.Clone()
-            };
     }
 }

@@ -38,7 +38,8 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
-	<ItemGroup>	  
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Rules.Framework.WebApi\Rules.Framework.WebApi.csproj" />
 	</ItemGroup>
 
