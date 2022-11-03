@@ -71,6 +71,7 @@ namespace Rules.Framework
 
         public IEnumerable<ContentType> GetContentTypes()
         {
+            //Validação por Enum - UI
             return Enum.GetValues(typeof(TContentType))
                .Cast<TContentType>()
                .Select(t => new ContentType
@@ -214,9 +215,9 @@ namespace Rules.Framework
 
         public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> searchArgs)
         {
-            var newSearchArgs = searchArgs.ToSearchArgs<TContentType, TConditionType>();
+            var genericSearchArgs = searchArgs.ToSearchArgs<TContentType, TConditionType>();
 
-            var result = await this.SearchAsync(newSearchArgs);
+            var result = await this.SearchAsync(genericSearchArgs);
 
             return result.Select(rule => rule.ToGenericRule());
         }
@@ -355,7 +356,7 @@ namespace Rules.Framework
         {
             return this.RulesEngineOptions.PriotityCriteria switch
             {
-                PriorityCriterias.BottommostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
+                PriorityCriterias.BottomMostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
                 _ => rules.OrderBy(r => r.Priority).First(),
             };
         }

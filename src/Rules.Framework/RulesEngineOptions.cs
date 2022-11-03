@@ -52,7 +52,7 @@ namespace Rules.Framework
             RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
             {
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                PriotityCriteria = PriorityCriterias.TopmostRuleWins
+                PriotityCriteria = PriorityCriterias.TopMostRuleWins
             };
 
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);

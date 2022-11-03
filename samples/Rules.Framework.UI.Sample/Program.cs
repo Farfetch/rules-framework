@@ -8,15 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton(
-    new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
+var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
             {
                 new RulesRandomFactory()
-            }))
-    );
+            }));
 
-builder.Services.AddSingleton<IRulesEngine>(d => d
-    .GetRequiredService<RulesEngineProvider>()
+builder.Services.AddSingleton(rulesProvider);
+
+builder.Services.AddSingleton<IRulesEngine>(d => rulesProvider
     .GetRulesEngineAsync()
     .ConfigureAwait(false)
     .GetAwaiter()
@@ -41,10 +40,18 @@ app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.UseAuthorization();
 
-app.UseRulesFrameworkUI();
+AddRulesFrameworkUI(app);
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+static void AddRulesFrameworkUI(IApplicationBuilder app)
+{
+    //TODO
+    var rulesEngine = app.ApplicationServices.GetRequiredService<IRulesEngine>();
+
+    app.UseRulesFrameworkUI(rulesEngine);
+}

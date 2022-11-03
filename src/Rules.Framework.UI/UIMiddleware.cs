@@ -24,48 +24,38 @@ namespace Rules.Framework.UI
 
     internal sealed class UIMiddleware
     {
-        private readonly UIOptions _options;
-
-        private readonly StaticFileMiddleware _staticFileMiddlewares;
+        private readonly IHttpRequestHandler httpRequestHandler;
+        private readonly RequestDelegate next;
+        private readonly UIOptions options;        
+        private readonly StaticFileMiddleware staticFileMiddlewares;
 
         public UIMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,            
+            IHttpRequestHandler httpRequestHandler)
         {
-            _options = new UIOptions();
+            this.options = new UIOptions();
 
-            _staticFileMiddlewares = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options, ".node_modules");
+            this.staticFileMiddlewares = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, this.options, ".node_modules");            
+            this.httpRequestHandler = httpRequestHandler;
+            this.next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext)
+        public async Task InvokeAsync(HttpContext httpContext)
         {
-            var httpMethod = httpContext.Request.Method;
-            var path = httpContext.Request.Path.Value;
+            await this.staticFileMiddlewares.Invoke(httpContext);
 
-            // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+            var handled = await this.httpRequestHandler
+                .HandleAsync(httpContext.Request, httpContext.Response);
+
+            if (!handled)
             {
-                // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
-
-                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
-                return;
+                await this.next(httpContext);
             }
-
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
-            {
-                await RespondWithIndexHtml(httpContext.Response);
-                return;
-            }
-
-            await _staticFileMiddlewares.Invoke(httpContext);
         }
 
-        private StaticFileMiddleware CreateStaticFileMiddleware(
-            RequestDelegate next,
+        private StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
             UIOptions options,
@@ -82,42 +72,6 @@ namespace Rules.Framework.UI
             };
 
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
-        }
-
-        private IDictionary<string, string> GetIndexArguments()
-        {
-            return new Dictionary<string, string>()
-            {
-                { "%(DocumentTitle)", _options.DocumentTitle },
-                { "%(HeadContent)", _options.HeadContent }
-            };
-        }
-
-        private async Task RespondWithIndexHtml(HttpResponse response)
-        {
-            response.StatusCode = 200;
-            response.ContentType = "text/html;charset=utf-8";
-
-            using (var stream = _options.IndexStream())
-            {
-                using (var reader = new StreamReader(stream))
-                {
-                    // Inject arguments before writing to response
-                    var htmlBuilder = new StringBuilder(await reader.ReadToEndAsync());
-                    foreach (var entry in GetIndexArguments())
-                    {
-                        htmlBuilder.Replace(entry.Key, entry.Value);
-                    }
-
-                    await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
-                }
-            }
-        }
-
-        private void RespondWithRedirect(HttpResponse response, string location)
-        {
-            response.StatusCode = 301;
-            response.Headers["Location"] = location;
         }
     }
 }

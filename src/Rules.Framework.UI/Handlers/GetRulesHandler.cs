@@ -1,37 +1,35 @@
-namespace Rules.Framework.WebApi.Controllers
+namespace Rules.Framework.UI.Handlers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.AspNetCore.Mvc;
+    using System.Net;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using Rules.Framework.WebApi.Response;
+    using Rules.Framework.UI.Dto;
 
-    public class RuleController : Controller
+    internal class GetRulesHandler : UIRequestHandlerBase
     {
         private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
-        private readonly JsonSerializerSettings jsonSerializerSettings;
+        private static readonly string[] resourcePath = new[] { "/rules/Rule/List" };
         private readonly IRulesEngine rulesEngine;
 
-        public RuleController(IRulesEngine rulesEngine)
+        public GetRulesHandler(IRulesEngine rulesEngine) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
-            this.jsonSerializerSettings = new JsonSerializerSettings();
-            this.jsonSerializerSettings.Converters.Add(new StringEnumConverter());
         }
 
-        [Route("rules/{controller}/priority")]
-        public async Task<IActionResult> GetPriorityCriterias()
-        {
-            var priorityOption = this.rulesEngine
-                .GetPriorityCriterias();
+        protected override HttpMethod HttpMethod => HttpMethod.GET;
 
-            return Ok(priorityOption.ToString());
-        }
-
-        [Route("rules/{controller}/{conditionType}/list")]
-        public async Task<IActionResult> List([FromRoute] string conditionType)
+        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
         {
+            if (!httpRequest.Query.TryGetValue("contentType", out var conditionType))
+            {
+                await this.WriteResponseAsync(httpResponse, new { }, (int)HttpStatusCode.BadRequest);
+                return;
+            }
+
             var list = new List<RuleDto>();
 
             var rules = await this.rulesEngine
@@ -43,7 +41,7 @@ namespace Rules.Framework.WebApi.Controllers
             var priorityOption = this.rulesEngine
                .GetPriorityCriterias();
 
-            if (priorityOption == PriorityCriterias.BottommostRuleWins)
+            if (priorityOption == PriorityCriterias.BottomMostRuleWins)
             {
                 rules = rules.OrderByDescending(r => r.Priority);
             }
@@ -55,7 +53,7 @@ namespace Rules.Framework.WebApi.Controllers
             if (rules != null)
             {
                 foreach (var rule in rules)
-                {                    
+                {
                     list.Add(new RuleDto
                     {
                         Priority = rule.Priority,
@@ -69,7 +67,7 @@ namespace Rules.Framework.WebApi.Controllers
                 }
             }
 
-            return Ok(list);
+            await this.WriteResponseAsync(httpResponse, list, (int)HttpStatusCode.OK);
         }
 
         private static RuleStatusDto GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)

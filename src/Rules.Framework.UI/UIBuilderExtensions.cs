@@ -1,18 +1,7 @@
 namespace Rules.Framework.UI
 {
     using Microsoft.AspNetCore.Builder;
-
-#if NETSTANDARD2_0
-
-    using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-    using Microsoft.AspNetCore.Internal;
-
-    using Microsoft.Extensions.FileProviders;
-    using System.Reflection;
-    using Rules.Framework.WebApi;
-    using System.Linq;
-
-#endif
+    using Rules.Framework.UI.Handlers;
 
     /// <summary>
     /// IApplicationBuilder extension for Rules Framework UI
@@ -22,9 +11,14 @@ namespace Rules.Framework.UI
         /// <summary>
         /// Register the UI middleware
         /// </summary>
-        public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app)
+        public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IRulesEngine rulesEngine)
         {
-            return app.UseMiddleware<UIMiddleware>();
+            app.UseMiddleware<UIMiddleware>(new IndexPageHandler(new UIOptions()));
+            app.UseMiddleware<UIMiddleware>(new GetPriorityCriteriasHandler(rulesEngine));
+            app.UseMiddleware<UIMiddleware>(new GetContentTypeHandler(rulesEngine));
+            app.UseMiddleware<UIMiddleware>(new GetRulesHandler(rulesEngine));
+
+            return app;
         }
     }
 }

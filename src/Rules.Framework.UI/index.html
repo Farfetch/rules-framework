@@ -498,7 +498,7 @@
                 {
                     $("#loading").show();
                     $.ajax({
-                        url: "Rule/" + contentTypeSelected + "/List",
+                        url: "Rule/List?contentType=" + contentTypeSelected,
                         success: function (response) {
                             rules = response;
                             setRulesPagination(response);                            
@@ -614,7 +614,7 @@
                             setContentTypesPagination(response)
                             
                         },
-                        error: function (error) {
+                        error: function (error, d, e) {                            
                             openError(error);
                             $('#loading').hide();
                         }

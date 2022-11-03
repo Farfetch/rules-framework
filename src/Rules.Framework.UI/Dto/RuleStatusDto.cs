@@ -1,4 +1,4 @@
-namespace Rules.Framework.WebApi.Response
+namespace Rules.Framework.UI.Dto
 {
     public enum RuleStatusDto : short
     {

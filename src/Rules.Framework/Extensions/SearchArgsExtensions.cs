@@ -6,22 +6,22 @@ namespace Rules.Framework.Extensions
     internal static class SearchArgsExtensions
     {
         public static SearchArgs<TContentType, TConditionType> ToSearchArgs<TContentType, TConditionType>(
-            this SearchArgs<ContentType, ConditionType> genericSearchArgs)
+            this SearchArgs<ContentType, ConditionType> searchArgs)
         {
-            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Name);
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), searchArgs.ContentType.Name);
 
-            var newSearchArgs = new SearchArgs<TContentType, TConditionType>(
+            var genericSearchArgs = new SearchArgs<TContentType, TConditionType>(
                 contentType,
-                genericSearchArgs.DateBegin,
-                genericSearchArgs.DateEnd);
+                searchArgs.DateBegin,
+                searchArgs.DateEnd);
 
-            newSearchArgs.Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
+            genericSearchArgs.Conditions = searchArgs.Conditions.Select(condition => new Condition<TConditionType>
             {
                 Value = condition.Value,
                 Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Code)
             });
 
-            return newSearchArgs;
+            return genericSearchArgs;
         }
     }
 }

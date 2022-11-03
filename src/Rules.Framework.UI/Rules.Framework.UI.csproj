@@ -40,7 +40,12 @@
 
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Rules.Framework.WebApi\Rules.Framework.WebApi.csproj" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
