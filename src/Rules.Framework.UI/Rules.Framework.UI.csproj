@@ -15,7 +15,7 @@
 	<RepositoryUrl></RepositoryUrl>
 	<RepositoryType>Git</RepositoryType>
 	<PackageTags>rules rulesframework ui</PackageTags>
-	<Description>A rules framework ui that allows you to see what are rules configured in your application</Description>
+	<Description>A rules framework ui that allows you to see the rules configured in your application</Description>
 	<Copyright></Copyright>
   </PropertyGroup>
 
