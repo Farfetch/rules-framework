@@ -42,6 +42,7 @@ namespace Rules.Framework.Extensions
             var composedConditionNode = rootCondition as ComposedConditionNode<TConditionType>;
 
             var conditionNodeDataModels = new List<GenericConditionNode<ConditionType>>(composedConditionNode.ChildConditionNodes.Count());
+
             foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels.Add(child.ConvertConditionNode());
