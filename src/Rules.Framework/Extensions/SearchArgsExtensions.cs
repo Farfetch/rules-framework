@@ -8,6 +8,11 @@ namespace Rules.Framework.Extensions
         public static SearchArgs<TContentType, TConditionType> ToSearchArgs<TContentType, TConditionType>(
             this SearchArgs<ContentType, ConditionType> searchArgs)
         {
+            if (!typeof(TContentType).IsEnum)
+            {
+                throw new ArgumentException("Extensions only works if TContentType is a enum");
+            }
+
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), searchArgs.ContentType.Name);
 
             var genericSearchArgs = new SearchArgs<TContentType, TConditionType>(

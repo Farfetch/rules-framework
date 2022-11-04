@@ -23,7 +23,11 @@ namespace Rules.Framework
     /// </typeparam>
     public class RulesEngine<TContentType, TConditionType> : IRulesEngine
     {
+        /// <summary>
+        /// The rules engine options
+        /// </summary>
         public readonly IRulesEngineOptions RulesEngineOptions;
+
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
@@ -69,9 +73,20 @@ namespace Rules.Framework
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
         }
 
+        /// <summary>
+        /// Gets the content types.
+        /// </summary>
+        /// <returns>List of content types</returns>
+        /// <exception cref="System.ArgumentException">
+        /// Method only works if TContentType is a enum
+        /// </exception>
         public IEnumerable<ContentType> GetContentTypes()
         {
-            //Validação por Enum - UI
+            if (!typeof(TContentType).IsEnum)
+            {
+                throw new ArgumentException("Method only works if TContentType is a enum");
+            }
+
             return Enum.GetValues(typeof(TContentType))
                .Cast<TContentType>()
                .Select(t => new ContentType
@@ -81,6 +96,10 @@ namespace Rules.Framework
                });
         }
 
+        /// <summary>
+        /// Gets the priority criterias.
+        /// </summary>
+        /// <returns>Rules engine priority criterias</returns>
         public PriorityCriterias GetPriorityCriterias()
         {
             return this.RulesEngineOptions.PriotityCriteria;
@@ -213,6 +232,11 @@ namespace Rules.Framework
             return this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions);
         }
 
+        /// <summary>
+        /// Searches the asynchronous.
+        /// </summary>
+        /// <param name="searchArgs">The search arguments.</param>
+        /// <returns>List of generic rules</returns>
         public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> searchArgs)
         {
             var genericSearchArgs = searchArgs.ToSearchArgs<TContentType, TConditionType>();
