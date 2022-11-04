@@ -214,6 +214,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 
     <script>
+        String.prototype.replaceAll = function (search, replacement) {
+            var target = this;
+            return target.split(search).join(replacement);
+        };
 
         rules = [];
         contentTypes = [];
@@ -348,6 +352,7 @@
 
                 if (rule.conditions) {
                     jsonObj = JSON.parse(rule.conditions);
+
                     $('#string-tab-pane').html(brs + setStringView(jsonObj));
                     $('#json-tab-pane').html(brs + setJsonView(jsonObj));
                     $('#tree-tab-pane').html(brs + setTreeView(jsonObj));
@@ -382,29 +387,29 @@
                 return html;
             }
 
-            if (node.ConditionTypeName) {
+            if (node.conditionTypeName) {
                 if (logicalOperator) {
                     html += ' <b>' + logicalOperator + '</b> ';
                 }
 
-                html += ' <i>' + node.ConditionTypeName + '</i> (';
+                html += ' <i>' + node.conditionTypeName + '</i> (';
 
-                html += node.Operator;
-                html += ' ' + node.Operand;
+                html += node.operator;
+                html += ' ' + node.operand;
 
                 html += ')';
 
                 return html;
             }
 
-            if (node.LogicalOperator) {
-                html += ' <b>' + node.LogicalOperator + '</b> ';
+            if (node.logicalOperator) {
+                html += ' <b>' + node.logicalOperator + '</b> ';
 
-                if (node.ChildConditionNodes) {
+                if (node.childConditionNodes) {
                     html += ' (';
 
-                    for (var i = 0; i < node.ChildConditionNodes.length; i++) {
-                        html += recursiveStringView(node.ChildConditionNodes[i], i > 0 ? node.LogicalOperator : '');
+                    for (var i = 0; i < node.childConditionNodes.length; i++) {
+                        html += recursiveStringView(node.childConditionNodes[i], i > 0 ? node.logicalOperator : '');
                     }
 
                     html += ')';
@@ -434,27 +439,27 @@
                 return html;
             }
 
-            if (node.ConditionTypeName) {
-                html += '<li><span class="caret">' + node.ConditionTypeName + '</span>';
+            if (node.conditionTypeName) {
+                html += '<li><span class="caret">' + node.conditionTypeName + '</span>';
 
                 html += '<ul class="nested">';
 
-                html += '<li>' + node.Operator + '</li>';
-                html += '<li>' + node.Operand + '</li>';
+                html += '<li>' + node.operator + '</li>';
+                html += '<li>' + node.operand + '</li>';
 
                 html += '</ul></li>';
 
                 return html;
             }
 
-            if (node.LogicalOperator) {                
-                html += '<li><span class="caret"><b>' + node.LogicalOperator + '</b></span>';
+            if (node.logicalOperator) {                
+                html += '<li><span class="caret"><b>' + node.logicalOperator + '</b></span>';
 
-                if (node.ChildConditionNodes) {
+                if (node.childConditionNodes) {
                     html += '<ul class="nested">';
 
-                    for (var i = 0; i < node.ChildConditionNodes.length; i++) {
-                        html += recursiveTreeView(node.ChildConditionNodes[i]);
+                    for (var i = 0; i < node.childConditionNodes.length; i++) {
+                        html += recursiveTreeView(node.childConditionNodes[i]);
                     }
 
                     html += '</ul></li>';
@@ -501,6 +506,10 @@
                         url: "Rule/List?contentType=" + contentTypeSelected,
                         success: function (response) {
                             rules = response;
+
+                            for (let i = 0; i < rules.length; i++) {
+                                rules[i].conditions = rules[i].conditions.replaceAll("'",'"');
+                            }                                                           
                             setRulesPagination(response);                            
                         },
                         error: function (error) {

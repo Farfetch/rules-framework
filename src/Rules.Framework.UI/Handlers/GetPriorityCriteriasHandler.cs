@@ -1,5 +1,6 @@
 namespace Rules.Framework.UI.Handlers
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
@@ -19,9 +20,16 @@ namespace Rules.Framework.UI.Handlers
 
         protected override Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
         {
-            var priorityCriterias = this.rulesEngine.GetPriorityCriterias();
+            try
+            {
+                var priorityCriterias = this.rulesEngine.GetPriorityCriterias();
 
-            return this.WriteResponseAsync(httpResponse, priorityCriterias.ToString(), (int)HttpStatusCode.OK);
+                return this.WriteResponseAsync(httpResponse, priorityCriterias.ToString(), (int)HttpStatusCode.OK);
+            }
+            catch (System.Exception ex)
+            {
+                return this.WriteResponseAsync(httpResponse, ex.Message.ToString() + Environment.NewLine + ex.InnerException.ToString(), (int)HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

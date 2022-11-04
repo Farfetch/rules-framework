@@ -61,14 +61,14 @@ namespace Rules.Framework.UI
 
         protected abstract Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse);
 
-        protected virtual async Task WriteResponseAsync<T>(HttpResponse httpResponse, T responseDto, int statusCode)
+        protected virtual Task WriteResponseAsync<T>(HttpResponse httpResponse, T responseDto, int statusCode)
         {
             var body = JsonConvert.SerializeObject(responseDto, this.jsonSerializerSettings);
             httpResponse.StatusCode = statusCode;
             httpResponse.ContentType = "application/json";
             httpResponse.Headers.ContentLength = body.Length;
 
-            await httpResponse.WriteAsync(body, Encoding.UTF8).ConfigureAwait(false);
+            return httpResponse.WriteAsync(body, Encoding.UTF8);
         }
     }
 }

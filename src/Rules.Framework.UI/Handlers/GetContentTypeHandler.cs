@@ -1,5 +1,6 @@
 namespace Rules.Framework.UI.Handlers
 {
+    using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
@@ -21,16 +22,23 @@ namespace Rules.Framework.UI.Handlers
 
         protected override Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
         {
-            var contents = this.rulesEngine.GetContentTypes();
-
-            var list = new List<ContentTypeDto>();
-
-            foreach (var content in contents)
+            try
             {
-                list.Add(new ContentTypeDto { Name = content.Name });
-            }
+                var contents = this.rulesEngine.GetContentTypes();
 
-            return this.WriteResponseAsync(httpResponse, list, (int)HttpStatusCode.OK);
+                var list = new List<ContentTypeDto>();
+
+                foreach (var content in contents)
+                {
+                    list.Add(new ContentTypeDto { Name = content.Name });
+                }
+
+                return this.WriteResponseAsync(httpResponse, list, (int)HttpStatusCode.OK);
+            }
+            catch (System.Exception ex)
+            {
+                return this.WriteResponseAsync(httpResponse, ex.Message.ToString() + Environment.NewLine + ex.InnerException.ToString(), (int)HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

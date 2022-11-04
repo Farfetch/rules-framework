@@ -24,50 +24,57 @@ namespace Rules.Framework.UI.Handlers
 
         protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
         {
-            if (!httpRequest.Query.TryGetValue("contentType", out var conditionType))
+            if (!httpRequest.Query.TryGetValue("contentType", out var contentType))
             {
                 await this.WriteResponseAsync(httpResponse, new { }, (int)HttpStatusCode.BadRequest);
                 return;
             }
 
-            var list = new List<RuleDto>();
-
-            var rules = await this.rulesEngine
-                .SearchAsync(new SearchArgs<ContentType, ConditionType>(new ContentType
-                {
-                    Name = conditionType
-                }, DateTime.MinValue, DateTime.MaxValue));
-
-            var priorityOption = this.rulesEngine
-               .GetPriorityCriterias();
-
-            if (priorityOption == PriorityCriterias.BottomMostRuleWins)
+            try
             {
-                rules = rules.OrderByDescending(r => r.Priority);
-            }
-            else
-            {
-                rules = rules.OrderBy(r => r.Priority);
-            }
+                var list = new List<RuleDto>();
 
-            if (rules != null)
-            {
-                foreach (var rule in rules)
-                {
-                    list.Add(new RuleDto
+                var rules = await this.rulesEngine
+                    .SearchAsync(new SearchArgs<ContentType, ConditionType>(new ContentType
                     {
-                        Priority = rule.Priority,
-                        Name = rule.Name,
-                        Value = JsonConvert.SerializeObject(rule.ContentContainer, jsonSerializerSettings),
-                        DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
-                        DateBegin = rule.DateBegin.ToString(dateFormat),
-                        Status = GetRuleStatus(rule.DateBegin, rule.DateEnd).ToString(),
-                        Conditions = rule.RootCondition is null ? string.Empty : JsonConvert.SerializeObject(rule.RootCondition, jsonSerializerSettings)
-                    });
-                }
-            }
+                        Name = contentType
+                    }, DateTime.MinValue, DateTime.MaxValue));
 
-            await this.WriteResponseAsync(httpResponse, list, (int)HttpStatusCode.OK);
+                var priorityOption = this.rulesEngine
+                   .GetPriorityCriterias();
+
+                if (rules != null)
+                {
+                    if (priorityOption == PriorityCriterias.BottomMostRuleWins)
+                    {
+                        rules = rules.OrderByDescending(r => r.Priority);
+                    }
+                    else
+                    {
+                        rules = rules.OrderBy(r => r.Priority);
+                    }
+
+                    foreach (var rule in rules)
+                    {
+                        list.Add(new RuleDto
+                        {
+                            Priority = rule.Priority,
+                            Name = rule.Name,
+                            Value = JsonConvert.SerializeObject(rule.ContentContainer, this.jsonSerializerSettings).Replace("\"", "\'"),
+                            DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
+                            DateBegin = rule.DateBegin.ToString(dateFormat),
+                            Status = GetRuleStatus(rule.DateBegin, rule.DateEnd).ToString(),
+                            Conditions = rule.RootCondition is null ? string.Empty : JsonConvert.SerializeObject(rule.RootCondition, this.jsonSerializerSettings).Replace("\"", "\'")
+                        });
+                    }
+                }
+
+                await this.WriteResponseAsync(httpResponse, list, (int)HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                await this.WriteResponseAsync(httpResponse, ex.Message.ToString() + Environment.NewLine + ex.InnerException.ToString(), (int)HttpStatusCode.InternalServerError);
+            }
         }
 
         private static RuleStatusDto GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)
