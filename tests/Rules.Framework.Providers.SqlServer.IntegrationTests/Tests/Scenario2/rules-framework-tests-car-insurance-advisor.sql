@@ -2,8 +2,8 @@ use [@dbname]
 
 insert into ContentTypes values (1, 'CarInsuranceAdvice')
 
-insert into ConditionTypes values (1, 'RepairCostsCommercialValueRate') 
-insert into ConditionTypes values (2, 'RepairCosts') 
+insert into ConditionTypes values (1, 'RepairCosts') 
+insert into ConditionTypes values (2, 'RepairCostsCommercialValueRate') 
 
 
 --Rule 1

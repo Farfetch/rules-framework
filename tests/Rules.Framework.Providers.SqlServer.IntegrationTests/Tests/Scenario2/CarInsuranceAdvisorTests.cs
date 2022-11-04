@@ -23,7 +23,7 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         //TODO: get connection from settings
         // $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;"
         // $"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True"
-        private readonly string sqlConnection = $"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True";
+        private readonly string sqlConnection = $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;";
 
         private readonly SqlServerDbSettings sqlServerDbSettings;
 

@@ -48,7 +48,7 @@ namespace Rules.Framework.Providers.SqlServer
                 || (rule.DateEnd != null && rule.DateBegin >= dateBegin && rule.DateBegin < dateEnd) // To fetch rules that begun before filtered interval but end during it.
                 || (rule.DateBegin < dateBegin && (rule.DateEnd == null || rule.DateEnd > dateEnd))); // To fetch rules that begun before and end after filtered interval.
 
-            return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
+            return fetchedRules.ToList().Select(rule => this.ruleFactory.CreateRule(rule));
         }
 
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs)
@@ -74,7 +74,7 @@ namespace Rules.Framework.Providers.SqlServer
                 fetchedRules = fetchedRules.Where(rule => rule.Priority == rulesFilterArgs.Priority.Value);
             }
 
-            return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule));
+            return fetchedRules.Select(rule => this.ruleFactory.CreateRule(rule)).ToList();
         }
 
         public async Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
