@@ -13,7 +13,7 @@ namespace Rules.Framework.WebUI
         /// </summary>
         public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IRulesEngine rulesEngine)
         {
-            app.UseMiddleware<WebUIMiddleware>(new IndexPageHandler(new WebUIOptions()));
+            app.UseMiddleware<WebUIMiddleware>(new GetIndexPageHandler(new WebUIOptions()));
             app.UseMiddleware<WebUIMiddleware>(new GetPriorityCriteriasHandler(rulesEngine));
             app.UseMiddleware<WebUIMiddleware>(new GetContentTypeHandler(rulesEngine));
             app.UseMiddleware<WebUIMiddleware>(new GetRulesHandler(rulesEngine));

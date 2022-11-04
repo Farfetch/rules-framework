@@ -15,12 +15,12 @@ namespace Rules.Framework.WebUI.Handlers
 
 #endif
 
-    internal class IndexPageHandler : WebUIRequestHandlerBase
+    internal class GetIndexPageHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules", "/rules/index.html" };
         private readonly WebUIOptions options;
 
-        public IndexPageHandler(WebUIOptions options) : base(resourcePath)
+        public GetIndexPageHandler(WebUIOptions options) : base(resourcePath)
         {
             this.options = options;
         }
