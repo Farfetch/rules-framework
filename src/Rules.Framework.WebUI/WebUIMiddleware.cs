@@ -39,10 +39,13 @@ namespace Rules.Framework.WebUI
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            await this.staticFileMiddlewares.Invoke(httpContext);
+            await this.staticFileMiddlewares
+                .Invoke(httpContext)
+                .ConfigureAwait(false);
 
             var handled = await this.httpRequestHandler
-                .HandleAsync(httpContext.Request, httpContext.Response);
+                .HandleAsync(httpContext.Request, httpContext.Response)
+                .ConfigureAwait(false);
 
             if (!handled)
             {
