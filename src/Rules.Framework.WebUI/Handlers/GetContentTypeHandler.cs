@@ -26,16 +26,16 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 var contents = this.rulesEngine.GetContentTypes();
 
-                var list = new List<ContentTypeDto>();
+                var contentTypes = new List<ContentTypeDto>();
 
                 foreach (var content in contents)
                 {
-                    list.Add(new ContentTypeDto { Name = content.Name });
+                    contentTypes.Add(new ContentTypeDto { Name = content.Name });
                 }
 
-                return this.WriteResponseAsync(httpResponse, list, (int)HttpStatusCode.OK);
+                return this.WriteResponseAsync(httpResponse, contentTypes, (int)HttpStatusCode.OK);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return this.WriteResponseAsync(httpResponse, ex.Message.ToString() + Environment.NewLine + ex.InnerException.ToString(), (int)HttpStatusCode.InternalServerError);
             }

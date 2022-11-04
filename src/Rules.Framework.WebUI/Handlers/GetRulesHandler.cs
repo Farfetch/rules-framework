@@ -27,36 +27,34 @@ namespace Rules.Framework.WebUI.Handlers
             if (!httpRequest.Query.TryGetValue("contentType", out var contentType))
             {
                 await this.WriteResponseAsync(httpResponse, new { }, (int)HttpStatusCode.BadRequest);
+
                 return;
             }
 
             try
             {
-                var list = new List<RuleDto>();
+                var rules = new List<RuleDto>();
 
-                var rules = await this.rulesEngine
-                    .SearchAsync(new SearchArgs<ContentType, ConditionType>(new ContentType
-                    {
-                        Name = contentType
-                    }, DateTime.MinValue, DateTime.MaxValue));
+                var genericRules = await this.rulesEngine.SearchAsync(
+                    new SearchArgs<ContentType, ConditionType>( new ContentType{ Name = contentType }, DateTime.MinValue, DateTime.MaxValue)
+                    );
 
-                var priorityOption = this.rulesEngine
-                   .GetPriorityCriterias();
+                var priorityOption = this.rulesEngine.GetPriorityCriterias();
 
-                if (rules != null)
+                if (genericRules != null)
                 {
                     if (priorityOption == PriorityCriterias.BottomMostRuleWins)
                     {
-                        rules = rules.OrderByDescending(r => r.Priority);
+                        genericRules = genericRules.OrderByDescending(r => r.Priority);
                     }
                     else
                     {
-                        rules = rules.OrderBy(r => r.Priority);
+                        genericRules = genericRules.OrderBy(r => r.Priority);
                     }
 
-                    foreach (var rule in rules)
+                    foreach (var rule in genericRules)
                     {
-                        list.Add(new RuleDto
+                        rules.Add(new RuleDto
                         {
                             Priority = rule.Priority,
                             Name = rule.Name,
@@ -69,7 +67,7 @@ namespace Rules.Framework.WebUI.Handlers
                     }
                 }
 
-                await this.WriteResponseAsync(httpResponse, list, (int)HttpStatusCode.OK);
+                await this.WriteResponseAsync(httpResponse, rules, (int)HttpStatusCode.OK);
             }
             catch (Exception ex)
             {

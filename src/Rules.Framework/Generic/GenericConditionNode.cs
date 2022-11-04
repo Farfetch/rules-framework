@@ -4,6 +4,9 @@ namespace Rules.Framework.Generic
 
     public class GenericConditionNode<ConditionType>
     {
-        public LogicalOperators LogicalOperator { get; set; }
+        /// <summary>
+        /// Gets the logical operator to apply to condition node.
+        /// </summary>
+        public LogicalOperators LogicalOperator { get; internal set; }
     }
 }

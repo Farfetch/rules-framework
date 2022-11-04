@@ -235,13 +235,13 @@ namespace Rules.Framework
         /// <summary>
         /// Searches the asynchronous.
         /// </summary>
-        /// <param name="searchArgs">The search arguments.</param>
+        /// <param name="genericSearchArgs">The search arguments.</param>
         /// <returns>List of generic rules</returns>
-        public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> searchArgs)
+        public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> genericSearchArgs)
         {
-            var genericSearchArgs = searchArgs.ToSearchArgs<TContentType, TConditionType>();
+            var searchArgs = genericSearchArgs.ToSearchArgs<TContentType, TConditionType>();
 
-            var result = await this.SearchAsync(genericSearchArgs);
+            var result = await this.SearchAsync(searchArgs);
 
             return result.Select(rule => rule.ToGenericRule());
         }

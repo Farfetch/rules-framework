@@ -29,22 +29,22 @@ namespace Rules.Framework.WebUI.Handlers
 
         protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
         {
-            var httpMethod = httpRequest.Method;
             var path = httpRequest.Path.Value;
             var httpContext = httpRequest.HttpContext;
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(this.options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
-                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
+
+                this.RespondWithRedirect(httpContext.Response, relativeIndexUrl);
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
-                await RespondWithIndexHtml(httpContext.Response);
+                await this.RespondWithIndexHtmlAsync(httpContext.Response);
             }
         }
 
@@ -57,7 +57,7 @@ namespace Rules.Framework.WebUI.Handlers
             };
         }
 
-        private async Task RespondWithIndexHtml(HttpResponse httpResponse)
+        private async Task RespondWithIndexHtmlAsync(HttpResponse httpResponse)
         {
             httpResponse.StatusCode = 200;
             httpResponse.ContentType = "text/html;charset=utf-8";
@@ -66,14 +66,14 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 using (var reader = new StreamReader(stream))
                 {
-                    // Inject arguments before writing to response
-                    var htmlBuilder = new StringBuilder(await reader.ReadToEndAsync());
-                    foreach (var entry in GetIndexArguments())
+                    var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync());
+
+                    foreach (var entry in this.GetIndexArguments())
                     {
-                        htmlBuilder.Replace(entry.Key, entry.Value);
+                        responseTextBuilder.Replace(entry.Key, entry.Value);
                     }
 
-                    await httpResponse.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
+                    await httpResponse.WriteAsync(responseTextBuilder.ToString(), Encoding.UTF8);
                 }
             }
         }

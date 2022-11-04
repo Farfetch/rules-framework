@@ -4,12 +4,24 @@ namespace Rules.Framework.Generic
 
     public class GenericValueConditionNode<ConditionType> : GenericConditionNode<ConditionType>
     {
-        public string ConditionTypeName { get; set; }
+        /// <summary>
+        /// Gets the condition node type name.
+        /// </summary>
+        public string ConditionTypeName { get; internal set; }
 
-        public DataTypes DataType { get; set; }
+        /// <summary>
+        /// Gets the condition node data type.
+        /// </summary>
+        public DataTypes DataType { get; internal set; }
 
-        public object Operand { get; set; }
+        /// <summary>
+        /// Gets the condition's operand.
+        /// </summary>
+        public object Operand { get; internal set; }
 
-        public Operators Operator { get; set; }
+        /// <summary>
+        /// Gets the condition node operator.
+        /// </summary>
+        public Operators Operator { get; internal set; }
     }
 }

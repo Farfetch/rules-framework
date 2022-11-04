@@ -26,7 +26,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                 return this.WriteResponseAsync(httpResponse, priorityCriterias.ToString(), (int)HttpStatusCode.OK);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return this.WriteResponseAsync(httpResponse, ex.Message.ToString() + Environment.NewLine + ex.InnerException.ToString(), (int)HttpStatusCode.InternalServerError);
             }

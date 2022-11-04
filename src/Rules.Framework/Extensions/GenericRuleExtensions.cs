@@ -13,7 +13,7 @@ namespace Rules.Framework.Extensions
         {
             return new GenericRule
             {
-                RootCondition = rule.RootCondition.ConvertConditionNode(),
+                RootCondition = rule.RootCondition.ToGenericConditionNode(),
                 ContentContainer = rule.ContentContainer.GetContentAs<object>(),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
@@ -22,7 +22,7 @@ namespace Rules.Framework.Extensions
             };
         }
 
-        private static GenericConditionNode<ConditionType> ConvertConditionNode<TConditionType>(this IConditionNode<TConditionType> rootCondition)
+        public static GenericConditionNode<ConditionType> ToGenericConditionNode<TConditionType>(this IConditionNode<TConditionType> rootCondition)
         {
             if (rootCondition.LogicalOperator == LogicalOperators.Eval)
             {
@@ -45,7 +45,7 @@ namespace Rules.Framework.Extensions
 
             foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
             {
-                conditionNodeDataModels.Add(child.ConvertConditionNode());
+                conditionNodeDataModels.Add(child.ToGenericConditionNode());
             }
 
             return new GenericComposedConditionNode<ConditionType>

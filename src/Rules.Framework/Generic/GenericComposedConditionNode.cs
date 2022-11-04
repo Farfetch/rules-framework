@@ -4,6 +4,9 @@ namespace Rules.Framework.Generic
 
     public class GenericComposedConditionNode<ConditionType> : GenericConditionNode<ConditionType>
     {
-        public IEnumerable<GenericConditionNode<ConditionType>> ChildConditionNodes { get; set; }
+        /// <summary>
+        /// Gets the child condition nodes.
+        /// </summary>
+        public IEnumerable<GenericConditionNode<ConditionType>> ChildConditionNodes { get; internal set; }
     }
 }

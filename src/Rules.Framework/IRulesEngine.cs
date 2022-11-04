@@ -27,8 +27,8 @@ namespace Rules.Framework
         /// <summary>
         /// Searches the asynchronous.
         /// </summary>
-        /// <param name="searchArgs">The search arguments.</param>
+        /// <param name="genericSearchArgs">The search arguments.</param>
         /// <returns>List of generic rules</returns>
-        Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> searchArgs);
+        Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> genericSearchArgs);
     }
 }
