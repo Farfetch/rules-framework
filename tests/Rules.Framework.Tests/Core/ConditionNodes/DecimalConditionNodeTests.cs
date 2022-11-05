@@ -34,5 +34,35 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
             actualLogicalOperator.Should().Be(expectedLogicalOperator);
             actualDataType.Should().Be(expectedDataType);
         }
+
+        [Fact]
+        public void Clone_NoConditions_ReturnsCloneInstance()
+        {
+            // Arrange
+            ConditionType expectedConditionType = ConditionType.PluviosityRate;
+            Operators expectedOperator = Operators.NotEqual;
+            decimal expectedOperand = 5682.2654m;
+            LogicalOperators expectedLogicalOperator = LogicalOperators.Eval;
+            DataTypes expectedDataType = DataTypes.Decimal;
+
+            DecimalConditionNode<ConditionType> sut = new DecimalConditionNode<ConditionType>(expectedConditionType, expectedOperator, expectedOperand);
+            sut.Properties["test"] = "test";
+
+            // Act
+            IConditionNode<ConditionType> actual = sut.Clone();
+
+            // Assert
+            actual.Should()
+                .NotBeNull()
+                .And
+                .BeOfType<DecimalConditionNode<ConditionType>>();
+            DecimalConditionNode<ConditionType> valueConditionNode = actual.As<DecimalConditionNode<ConditionType>>();
+            valueConditionNode.ConditionType.Should().Be(expectedConditionType);
+            valueConditionNode.DataType.Should().Be(expectedDataType);
+            valueConditionNode.LogicalOperator.Should().Be(expectedLogicalOperator);
+            valueConditionNode.Operator.Should().Be(expectedOperator);
+            valueConditionNode.Operand.Should().Be(expectedOperand);
+            valueConditionNode.Properties.Should().BeEmpty();
+        }
     }
 }
