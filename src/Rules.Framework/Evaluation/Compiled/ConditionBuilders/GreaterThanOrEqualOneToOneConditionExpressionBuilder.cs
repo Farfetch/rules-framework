@@ -1,9 +1,8 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
+    using Rules.Framework.Core;
     using System;
-    using System.Collections.Generic;
     using System.Linq.Expressions;
-    using System.Text;
 
     internal sealed class GreaterThanOrEqualOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
@@ -12,6 +11,11 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
             Expression rightHandOperatorExpression,
             DataTypeConfiguration dataTypeConfiguration)
         {
+            if (!dataTypeConfiguration.Type.HasLanguageOperator(LanguageOperator.GreaterThanOrEqual))
+            {
+                throw new NotSupportedException($"The operator '{Operators.GreaterThanOrEqual}' is not supported for data type '{dataTypeConfiguration.DataType}'.");
+            }
+
             return Expression.GreaterThanOrEqual(leftHandOperandExpression, rightHandOperatorExpression);
         }
     }

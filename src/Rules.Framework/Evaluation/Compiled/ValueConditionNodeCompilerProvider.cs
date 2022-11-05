@@ -21,8 +21,8 @@ namespace Rules.Framework.Evaluation.Compiled
             {
                 { Multiplicities.OneToOne, new OneToOneValueConditionNodeCompiler(conditionExpressionBuilderProvider, dataTypesConfigurationProvider) },
                 { Multiplicities.OneToMany, new OneToManyValueConditionNodeCompiler(conditionExpressionBuilderProvider, dataTypesConfigurationProvider) },
-                { Multiplicities.ManyToOne, null },
-                { Multiplicities.ManyToMany, null }
+                { Multiplicities.ManyToOne, new ManyToOneValueConditionNodeCompiler(conditionExpressionBuilderProvider, dataTypesConfigurationProvider) },
+                { Multiplicities.ManyToMany, new ManyToManyValueConditionNodeCompiler(conditionExpressionBuilderProvider, dataTypesConfigurationProvider) }
             };
         }
 

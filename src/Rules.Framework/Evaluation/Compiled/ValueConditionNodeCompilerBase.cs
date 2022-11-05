@@ -14,11 +14,15 @@ namespace Rules.Framework.Evaluation.Compiled
 
     internal class ValueConditionNodeCompilerBase
     {
-
+        protected static readonly MethodInfo arrayEmptyMethodInfo = typeof(Array)
+            .GetMethod(
+                nameof(Array.Empty),
+                Array.Empty<Type>());
         protected static readonly MethodInfo changeTypeMethodInfo = typeof(Convert)
-                .GetMethod(
-                    nameof(Convert.ChangeType),
-                    new[] { typeof(object), typeof(Type), typeof(IFormatProvider) });
+            .GetMethod(
+                nameof(Convert.ChangeType),
+                new[] { typeof(object), typeof(Type), typeof(IFormatProvider) });
+        protected static readonly Type enumerableType = typeof(IEnumerable<>);
         protected static readonly Type systemType = typeof(Type);
         protected static readonly Type formatProviderType = typeof(IFormatProvider);
         protected static readonly Type objectType = typeof(object);
@@ -36,22 +40,40 @@ namespace Rules.Framework.Evaluation.Compiled
                 return Convert.ChangeType(operand
                     ?? dataDefault, dataType, CultureInfo.InvariantCulture);
             }
-            catch (InvalidCastException ice)
+            catch (Exception ex)
             {
-                throw new ArgumentException($"Parameter value or contained value is not convertible to {dataType.Name}.", paramName, ice);
+                throw new ArgumentException($"Parameter value or contained value is not convertible to {dataType.Name}.", paramName, ex);
             }
         }
 
         protected static Expression CreateGetConditionExpression<TConditionType>(TConditionType conditionType, ParameterExpression parameterExpression, DataTypeConfiguration dataTypeConfiguration)
         {
-            var returnTargetExpression = Expression.Label(typeof(object));
-            var outVariableExpression = Expression.Variable(typeof(object), "conditionValue");
+            var returnTargetExpression = Expression.Label(objectType);
+            var outVariableExpression = Expression.Variable(objectType, "conditionValue");
             var dictionaryTryGetValueMethodInfo = typeof(IDictionary<TConditionType, object>).GetMethod("TryGetValue");
             var conditionTypeConstantExpression = Expression.Constant(conditionType, typeof(TConditionType));
             var testExpression = Expression.Call(parameterExpression, dictionaryTryGetValueMethodInfo, conditionTypeConstantExpression, outVariableExpression);
-            var defaultValueExpression = Expression.Constant(dataTypeConfiguration.Default, typeof(object));
+            var defaultValueExpression = Expression.Constant(dataTypeConfiguration.Default, objectType);
             var ifThenExpression = Expression.IfThen(testExpression, Expression.Return(returnTargetExpression, outVariableExpression));
             return Expression.Block(new[] { outVariableExpression }, new Expression[] { ifThenExpression, Expression.Label(returnTargetExpression, defaultValueExpression) });
+        }
+
+        protected static Expression CreateConvertedArrayExpression(Expression operandExpression, Type dataType)
+        {
+            var testExpression = Expression.NotEqual(operandExpression, Expression.Constant(null));
+            var returnTargetLabelExpression = Expression.Label(objectType);
+            var defaultValueExpression = Expression.Constant(
+                arrayEmptyMethodInfo
+                    .MakeGenericMethod(dataType)
+                    .Invoke(obj: null, parameters: null),
+                objectType);
+            var ifThenElseExpression = Expression.IfThenElse(
+                testExpression,
+                Expression.Return(returnTargetLabelExpression, operandExpression),
+                Expression.Return(returnTargetLabelExpression, defaultValueExpression));
+            var nullCoalesceBlock = Expression.Block(ifThenElseExpression, Expression.Label(returnTargetLabelExpression, defaultValueExpression));
+
+            return Expression.ConvertChecked(nullCoalesceBlock, enumerableType.MakeGenericType(dataType));
         }
 
         protected static Expression CreateConvertedArrayExpression(object operand, Type dataType)
@@ -64,7 +86,7 @@ namespace Rules.Framework.Evaluation.Compiled
         protected static Expression CreateConvertedObjectExpression(Expression operandExpression, Type dataType, object dataTypeDefault)
         {
             var testExpression = Expression.NotEqual(operandExpression, Expression.Constant(null));
-            var returnTargetLabelExpression = Expression.Label(typeof(object));
+            var returnTargetLabelExpression = Expression.Label(objectType);
             var defaultValueExpression = Expression.Constant(dataTypeDefault, objectType);
             var ifThenElseExpression = Expression.IfThenElse(
                 testExpression,
@@ -88,7 +110,7 @@ namespace Rules.Framework.Evaluation.Compiled
 
         protected static IEnumerable<object> ConvertToTypedEnumerable(object operand, string paramName, Type dataType)
         {
-            if (operand is IEnumerable enumerable)
+            if (operand is not string && operand is IEnumerable enumerable)
             {
                 return enumerable.Cast<object>().Select(o => ConvertToDataType(o, paramName, dataType, null));
             }

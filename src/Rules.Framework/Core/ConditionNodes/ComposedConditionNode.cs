@@ -45,6 +45,6 @@ namespace Rules.Framework.Core.ConditionNodes
         /// </summary>
         /// <returns></returns>
         public IConditionNode<TConditionNode> Clone()
-            => new ComposedConditionNode<TConditionNode>(this.LogicalOperator, this.ChildConditionNodes?.Select(cn => cn.Clone()).ToList().AsReadOnly());
+            => new ComposedConditionNode<TConditionNode>(this.LogicalOperator, this.ChildConditionNodes.Select(cn => cn.Clone()).ToList().AsReadOnly());
     }
 }

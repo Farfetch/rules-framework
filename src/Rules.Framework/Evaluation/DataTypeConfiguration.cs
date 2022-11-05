@@ -9,11 +9,11 @@ namespace Rules.Framework.Evaluation
         {
         }
 
-        public DataTypes DataType { get; set; }
+        public DataTypes DataType { get; private set; }
 
-        public object Default { get; set; }
+        public object Default { get; private set; }
 
-        public Type Type { get; set; }
+        public Type Type { get; private set; }
 
         public static DataTypeConfiguration Create(DataTypes dataType, Type type, object @default)
         {
@@ -26,7 +26,7 @@ namespace Rules.Framework.Evaluation
             {
                 DataType = dataType,
                 Default = @default,
-                Type = type
+                Type = type,
             };
         }
     }
