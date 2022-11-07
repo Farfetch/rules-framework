@@ -1,7 +1,9 @@
 namespace Rules.Framework.WebUI
 {
+    using System;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
@@ -60,6 +62,17 @@ namespace Rules.Framework.WebUI
         }
 
         protected abstract Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse);
+
+        protected Task WriteExceptionResponseAsync(HttpResponse httpResponse, Exception exception)
+        {
+            var error = exception.Message.ToString();
+            if (exception.InnerException != null)
+            {
+                error += Environment.NewLine + exception.InnerException.ToString();
+            }
+
+            return this.WriteResponseAsync(httpResponse, error, (int)HttpStatusCode.InternalServerError);
+        }
 
         protected virtual Task WriteResponseAsync<T>(HttpResponse httpResponse, T responseDto, int statusCode)
         {

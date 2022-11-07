@@ -37,7 +37,7 @@ namespace Rules.Framework.WebUI.Handlers
             }
             catch (Exception ex)
             {
-                return this.WriteResponseAsync(httpResponse, ex.Message.ToString() + Environment.NewLine + ex.InnerException.ToString(), (int)HttpStatusCode.InternalServerError);
+                return this.WriteExceptionResponseAsync(httpResponse, ex);
             }
         }
     }

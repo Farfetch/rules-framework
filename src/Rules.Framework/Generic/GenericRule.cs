@@ -1,7 +1,6 @@
 namespace Rules.Framework.Generic
 {
     using System;
-    using Rules.Framework.Core;
 
     public class GenericRule
     {
@@ -28,12 +27,11 @@ namespace Rules.Framework.Generic
         /// <summary>
         /// Gets the rule priority compared to other rules (preferrably it is unique).
         /// </summary>
-        public int Priority { get; set; }
+        public int Priority { get; internal set; }
 
         /// <summary>
         /// Gets the rule root condition. This property is null when rule has no conditions.
         /// </summary>
         public GenericConditionNode<ConditionType> RootCondition { get; internal set; }
-
     }
 }

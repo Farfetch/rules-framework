@@ -9,7 +9,6 @@ namespace Rules.Framework.WebUI
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.Hosting;
-    using System;
 
 #if NETSTANDARD2_0
 
@@ -27,8 +26,7 @@ namespace Rules.Framework.WebUI
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            IHttpRequestHandler httpRequestHandler,
-            IServiceProvider serviceProvider)
+            IHttpRequestHandler httpRequestHandler)
         {
             var options = new WebUIOptions();
             this.httpRequestHandler = httpRequestHandler;
