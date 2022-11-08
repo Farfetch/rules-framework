@@ -2,6 +2,9 @@ namespace Rules.Framework.Generic
 {
     using System;
 
+    /// <summary>
+    /// Generic rule
+    /// </summary>
     public class GenericRule
     {
         /// <summary>

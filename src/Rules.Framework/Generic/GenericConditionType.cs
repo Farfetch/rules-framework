@@ -1,8 +1,20 @@
 namespace Rules.Framework.Generic
 {
+    /// <summary>
+    /// Generic condition type
+    /// </summary>
     public struct GenericConditionType
     {
+        /// <summary>
+        /// Gets or sets the code.
+        /// </summary>
+        /// <value>The code.</value>
         public string Code { get; set; }
-        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
+/        public string Name { get; set; }
     }
 }
