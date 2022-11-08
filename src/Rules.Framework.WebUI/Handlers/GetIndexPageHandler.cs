@@ -1,8 +1,6 @@
 namespace Rules.Framework.WebUI.Handlers
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using System.IO;
@@ -31,20 +29,7 @@ namespace Rules.Framework.WebUI.Handlers
             var path = httpRequest.Path.Value;
             var httpContext = httpRequest.HttpContext;
 
-            if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
-            {
-                // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
-
-                this.RespondWithRedirect(httpContext.Response, relativeIndexUrl);
-            }
-
-            if (Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
-            {
-                await this.RespondWithIndexHtmlAsync(httpContext.Response, next);
-            }
+            await this.RespondWithIndexHtmlAsync(httpContext.Response, next);
         }
 
         private IDictionary<string, string> GetIndexArguments()
@@ -88,12 +73,6 @@ namespace Rules.Framework.WebUI.Handlers
 
                 httpResponse.Body = originalBody;
             }
-        }
-
-        private void RespondWithRedirect(HttpResponse httpResponse, string location)
-        {
-            httpResponse.StatusCode = 301;
-            httpResponse.Headers["Location"] = location;
         }
     }
 }
