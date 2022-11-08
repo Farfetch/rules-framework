@@ -16,7 +16,7 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal class GetIndexPageHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/rules", "/rules/index.html" };
+        private static readonly string[] resourcePath = new[] { "/rules", "/rules/", "/rules/index.html" };
         private readonly WebUIOptions options;
 
         public GetIndexPageHandler(WebUIOptions options) : base(resourcePath)
