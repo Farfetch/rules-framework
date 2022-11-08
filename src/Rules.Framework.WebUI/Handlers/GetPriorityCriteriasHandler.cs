@@ -4,14 +4,15 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using Rules.Framework.Generic;
 
     internal class GetPriorityCriteriasHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules/Rule/Priority" };
 
-        private readonly IRulesEngine rulesEngine;
+        private readonly IGenericRulesEngine rulesEngine;
 
-        public GetPriorityCriteriasHandler(IRulesEngine rulesEngine) : base(resourcePath)
+        public GetPriorityCriteriasHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
         }

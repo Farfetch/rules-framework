@@ -1,4 +1,4 @@
-using Rules.Framework;
+using Rules.Framework.Generic;
 using Rules.Framework.WebUI;
 using Rules.Framework.WebUI.Sample.Engine;
 using Rules.Framework.WebUI.Sample.Rules;
@@ -15,7 +15,7 @@ var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTy
 
 builder.Services.AddSingleton(rulesProvider);
 
-builder.Services.AddSingleton<IRulesEngine>(d => rulesProvider
+builder.Services.AddSingleton<IGenericRulesEngine>(d => rulesProvider
     .GetRulesEngineAsync()
     .ConfigureAwait(false)
     .GetAwaiter()
@@ -50,7 +50,7 @@ app.Run();
 
 static void AddRulesFrameworkUI(IApplicationBuilder app)
 {
-    var rulesEngine = app.ApplicationServices.GetRequiredService<IRulesEngine>();
+    var rulesEngine = app.ApplicationServices.GetRequiredService<IGenericRulesEngine>();
 
     app.UseRulesFrameworkUI(rulesEngine);
 }

@@ -32,6 +32,6 @@ namespace Rules.Framework.Generic
         /// <summary>
         /// Gets the rule root condition. This property is null when rule has no conditions.
         /// </summary>
-        public GenericConditionNode<ConditionType> RootCondition { get; internal set; }
+        public GenericConditionNode<GenericConditionType> RootCondition { get; internal set; }
     }
 }
