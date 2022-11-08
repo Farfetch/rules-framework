@@ -18,19 +18,19 @@ namespace Rules.Framework.WebUI.Tests
             var mockLogger = new Mock<ILogger>();
             var mockWebHostEnvironment = new Mock<IWebHostEnvironment>();
 
-            //Microsoft.Extensions.Logging.Logger`1.Microsoft.Extensions.Logging.ILogger.IsEnabled(LogLevel logLevel)
             mockLoggerFactory.Setup(d => d.CreateLogger(It.IsAny<string>())).Returns(mockLogger.Object);
             var middleware = WebUIMiddlewareFactory.Create(mockWebHostEnvironment.Object,
                 mockLoggerFactory.Object,
                 mockHttpRequestHandler.Object);
 
             var context = new DefaultHttpContext();
+            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
 
             // act
             await middleware.InvokeAsync(context);
 
             // assert
-            mockHttpRequestHandler.Verify(mock => mock.HandleAsync(context.Request, context.Response), Times.Once());
+            mockHttpRequestHandler.Verify(mock => mock.HandleAsync(It.IsAny<HttpRequest>(), It.IsAny<HttpResponse>(), It.IsAny<RequestDelegate>()), Times.Once());
         }
     }
 }

@@ -30,14 +30,14 @@ namespace Rules.Framework.WebUI
 
         protected string[] ResourcePath { get; }
 
-        public virtual async Task<bool> HandleAsync(HttpRequest httpRequest, HttpResponse httpResponse)
+        public virtual async Task<bool> HandleAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
         {
             if (!this.CanHandle(httpRequest))
             {
                 return false;
             }
 
-            await this.HandleRequestAsync(httpRequest, httpResponse).ConfigureAwait(false);
+            await this.HandleRequestAsync(httpRequest, httpResponse, next).ConfigureAwait(false);
 
             return true;
         }
@@ -61,7 +61,7 @@ namespace Rules.Framework.WebUI
             return true;
         }
 
-        protected abstract Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse);
+        protected abstract Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next);
 
         protected Task WriteExceptionResponseAsync(HttpResponse httpResponse, Exception exception)
         {

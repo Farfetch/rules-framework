@@ -1,17 +1,16 @@
 namespace Rules.Framework.WebUI.Handlers
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using System.IO;
+    using System.Text;
 
 #if NETSTANDARD2_0
 
     using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-    using System;
 
 #endif
 
@@ -27,7 +26,7 @@ namespace Rules.Framework.WebUI.Handlers
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
+        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
         {
             var path = httpRequest.Path.Value;
             var httpContext = httpRequest.HttpContext;
@@ -44,7 +43,7 @@ namespace Rules.Framework.WebUI.Handlers
 
             if (Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
-                await this.RespondWithIndexHtmlAsync(httpContext.Response);
+                await this.RespondWithIndexHtmlAsync(httpContext.Response, next);
             }
         }
 
@@ -57,13 +56,18 @@ namespace Rules.Framework.WebUI.Handlers
             };
         }
 
-        private async Task RespondWithIndexHtmlAsync(HttpResponse httpResponse)
+        private async Task RespondWithIndexHtmlAsync(HttpResponse httpResponse, RequestDelegate next)
         {
             httpResponse.StatusCode = 200;
             httpResponse.ContentType = "text/html;charset=utf-8";
 
+            var originalBody = httpResponse.Body;
+
             using (var stream = this.options.IndexStream())
             {
+                httpResponse.Body = stream;
+                await next(httpResponse.HttpContext);
+
                 using (var reader = new StreamReader(stream))
                 {
                     var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync());
@@ -73,8 +77,16 @@ namespace Rules.Framework.WebUI.Handlers
                         responseTextBuilder.Replace(entry.Key, entry.Value);
                     }
 
-                    await httpResponse.WriteAsync(responseTextBuilder.ToString(), Encoding.UTF8);
+                    byte[] byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
+                    using (var newStream = new MemoryStream(byteArray))
+                    {
+                        httpResponse.Body = originalBody;
+                        newStream.Seek(0, SeekOrigin.Begin);
+                        await newStream.CopyToAsync(httpResponse.Body);
+                    }
                 }
+
+                httpResponse.Body = originalBody;
             }
         }
 

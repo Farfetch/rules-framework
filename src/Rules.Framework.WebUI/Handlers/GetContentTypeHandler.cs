@@ -20,7 +20,7 @@ namespace Rules.Framework.WebUI.Handlers
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
+        protected override Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
         {
             try
             {

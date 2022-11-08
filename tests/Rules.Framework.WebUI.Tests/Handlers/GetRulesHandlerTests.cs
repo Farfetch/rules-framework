@@ -6,6 +6,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     using System.Net;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.AspNetCore.Http;
     using Moq;
     using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Handlers;
@@ -40,7 +41,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
             if (statusCode == HttpStatusCode.OK || statusCode == HttpStatusCode.InternalServerError)
             {
-                httpContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?contentType=1");
+                httpContext.Request.QueryString = new QueryString("?contentType=1");
 
                 if (statusCode == HttpStatusCode.OK)
                 {
@@ -56,12 +57,13 @@ namespace Rules.Framework.WebUI.Tests.Handlers
             }
             else
             {
-                httpContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString();
+                httpContext.Request.QueryString = new QueryString();
             }
+            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
 
             //Act
             var result = await this.handler
-                .HandleAsync(httpContext.Request, httpContext.Response)
+                .HandleAsync(httpContext.Request, httpContext.Response, next)
                 .ConfigureAwait(false);
 
             //Assert

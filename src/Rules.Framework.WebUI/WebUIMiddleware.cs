@@ -36,8 +36,8 @@ namespace Rules.Framework.WebUI
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            await this.ExecuteStaticFileMiddlewareAsync(httpContext).ConfigureAwait(true);
             await this.ExecuteHandlersAsync(httpContext).ConfigureAwait(false);
+            await this.ExecuteStaticFileMiddlewareAsync(httpContext).ConfigureAwait(true);
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next,
@@ -63,7 +63,7 @@ namespace Rules.Framework.WebUI
         private async Task ExecuteHandlersAsync(HttpContext httpContext)
         {
             var handled = await this.httpRequestHandler
-                            .HandleAsync(httpContext.Request, httpContext.Response)
+                            .HandleAsync(httpContext.Request, httpContext.Response, this.next)
                             .ConfigureAwait(false);
 
             if (!handled)
@@ -72,11 +72,10 @@ namespace Rules.Framework.WebUI
             }
         }
 
-        private async Task ExecuteStaticFileMiddlewareAsync(HttpContext httpContext)
+        private Task ExecuteStaticFileMiddlewareAsync(HttpContext httpContext)
         {
-            await this.staticFileMiddlewares
-                .Invoke(httpContext)
-                .ConfigureAwait(true);
+            return this.staticFileMiddlewares
+                .Invoke(httpContext);
         }
     }
 }

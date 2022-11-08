@@ -2,6 +2,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 {
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.AspNetCore.Http;
     using Rules.Framework.WebUI.Handlers;
     using Rules.Framework.WebUI.Tests.Utilities;
     using Xunit;
@@ -25,10 +26,11 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
+            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
 
             //Act
             var result = await this.handler
-                .HandleAsync(httpContext.Request, httpContext.Response)
+                .HandleAsync(httpContext.Request, httpContext.Response, next)
                 .ConfigureAwait(false);
 
             //Assert

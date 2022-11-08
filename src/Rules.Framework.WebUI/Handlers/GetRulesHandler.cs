@@ -22,7 +22,7 @@ namespace Rules.Framework.WebUI.Handlers
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse)
+        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
         {
             if (!httpRequest.Query.TryGetValue("contentType", out var contentType))
             {
