@@ -1,6 +1,7 @@
 namespace Rules.Framework.WebUI
 {
     using Microsoft.AspNetCore.Builder;
+    using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Handlers;
 
     /// <summary>
@@ -11,7 +12,7 @@ namespace Rules.Framework.WebUI
         /// <summary>
         /// Register the UI middleware
         /// </summary>
-        public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IRulesEngine rulesEngine)
+        public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IGenericRulesEngine rulesEngine)
         {
             app.UseMiddleware<WebUIMiddleware>(new GetIndexPageHandler(new WebUIOptions()));
             app.UseMiddleware<WebUIMiddleware>(new GetPriorityCriteriasHandler(rulesEngine));

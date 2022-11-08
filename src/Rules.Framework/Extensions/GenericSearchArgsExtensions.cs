@@ -2,11 +2,12 @@ namespace Rules.Framework.Extensions
 {
     using System;
     using System.Linq;
+    using Rules.Framework.Generic;
 
-    internal static class SearchArgsExtensions
+    internal static class GenericSearchArgsExtensions
     {
         public static SearchArgs<TContentType, TConditionType> ToSearchArgs<TContentType, TConditionType>(
-            this SearchArgs<ContentType, ConditionType> searchArgs)
+            this SearchArgs<GenericContentType, GenericConditionType> searchArgs)
         {
             if (!typeof(TContentType).IsEnum)
             {

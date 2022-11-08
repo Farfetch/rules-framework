@@ -1,6 +1,6 @@
-namespace Rules.Framework
+namespace Rules.Framework.Generic
 {
-    public struct ConditionType
+    public struct GenericContentType
     {
         public string Code { get; set; }
         public string Name { get; set; }

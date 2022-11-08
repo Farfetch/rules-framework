@@ -5,15 +5,16 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Dto;
 
     internal class GetContentTypeHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules/ContentType/List" };
 
-        private readonly IRulesEngine rulesEngine;
+        private readonly IGenericRulesEngine rulesEngine;
 
-        public GetContentTypeHandler(IRulesEngine rulesEngine) : base(resourcePath)
+        public GetContentTypeHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
         }

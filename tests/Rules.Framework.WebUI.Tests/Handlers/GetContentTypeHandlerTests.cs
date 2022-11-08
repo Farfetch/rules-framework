@@ -6,6 +6,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using Moq;
+    using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Handlers;
     using Rules.Framework.WebUI.Tests.Utilities;
     using Xunit;
@@ -13,11 +14,11 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     public class GetContentTypeHandlerTests
     {
         private readonly GetContentTypeHandler handler;
-        private readonly Mock<IRulesEngine> rulesEngine;
+        private readonly Mock<IGenericRulesEngine> rulesEngine;
 
         public GetContentTypeHandlerTests()
         {
-            this.rulesEngine = new Mock<IRulesEngine>();
+            this.rulesEngine = new Mock<IGenericRulesEngine>();
             this.handler = new GetContentTypeHandler(rulesEngine.Object);
         }
 

@@ -21,7 +21,7 @@ namespace Rules.Framework
     /// <typeparam name="TConditionType">
     /// The condition type that allows to filter rules based on a set of conditions.
     /// </typeparam>
-    public class RulesEngine<TContentType, TConditionType> : IRulesEngine
+    public class RulesEngine<TContentType, TConditionType> : IGenericRulesEngine
     {
         /// <summary>
         /// The rules engine options
@@ -29,7 +29,6 @@ namespace Rules.Framework
         public readonly IRulesEngineOptions RulesEngineOptions;
 
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
-
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
         private readonly IValidatorProvider validatorProvider;
@@ -80,7 +79,7 @@ namespace Rules.Framework
         /// <exception cref="System.ArgumentException">
         /// Method only works if TContentType is a enum
         /// </exception>
-        public IEnumerable<ContentType> GetContentTypes()
+        public IEnumerable<GenericContentType> GetContentTypes()
         {
             if (!typeof(TContentType).IsEnum)
             {
@@ -89,7 +88,7 @@ namespace Rules.Framework
 
             return Enum.GetValues(typeof(TContentType))
                .Cast<TContentType>()
-               .Select(t => new ContentType
+               .Select(t => new GenericContentType
                {
                    Code = Enum.Parse(typeof(TContentType), t.ToString()).ToString(),
                    Name = t.ToString()
@@ -237,7 +236,7 @@ namespace Rules.Framework
         /// </summary>
         /// <param name="genericSearchArgs">The search arguments.</param>
         /// <returns>List of generic rules</returns>
-        public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> genericSearchArgs)
+        public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
         {
             var searchArgs = genericSearchArgs.ToSearchArgs<TContentType, TConditionType>();
 

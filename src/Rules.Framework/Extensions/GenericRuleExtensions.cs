@@ -9,20 +9,7 @@ namespace Rules.Framework.Extensions
 
     internal static class GenericRuleExtensions
     {
-        public static GenericRule ToGenericRule<TContentType, TConditionType>(this Rule<TContentType, TConditionType> rule)
-        {
-            return new GenericRule
-            {
-                RootCondition = rule.RootCondition.ToGenericConditionNode(),
-                ContentContainer = rule.ContentContainer.GetContentAs<object>(),
-                DateBegin = rule.DateBegin,
-                DateEnd = rule.DateEnd,
-                Name = rule.Name,
-                Priority = rule.Priority
-            };
-        }
-
-        public static GenericConditionNode<ConditionType> ToGenericConditionNode<TConditionType>(this IConditionNode<TConditionType> rootCondition)
+        public static GenericConditionNode<GenericConditionType> ToGenericConditionNode<TConditionType>(this IConditionNode<TConditionType> rootCondition)
         {
             if (rootCondition.LogicalOperator == LogicalOperators.Eval)
             {
@@ -30,7 +17,7 @@ namespace Rules.Framework.Extensions
 
                 var conditionAsEnum = Enum.Parse(typeof(TConditionType), condition.ConditionType.ToString());
 
-                return new GenericValueConditionNode<ConditionType>
+                return new GenericValueConditionNode<GenericConditionType>
                 {
                     ConditionTypeName = conditionAsEnum.ToString(),
                     DataType = condition.DataType,
@@ -41,17 +28,30 @@ namespace Rules.Framework.Extensions
 
             var composedConditionNode = rootCondition as ComposedConditionNode<TConditionType>;
 
-            var conditionNodeDataModels = new List<GenericConditionNode<ConditionType>>(composedConditionNode.ChildConditionNodes.Count());
+            var conditionNodeDataModels = new List<GenericConditionNode<GenericConditionType>>(composedConditionNode.ChildConditionNodes.Count());
 
             foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels.Add(child.ToGenericConditionNode());
             }
 
-            return new GenericComposedConditionNode<ConditionType>
+            return new GenericComposedConditionNode<GenericConditionType>
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator
+            };
+        }
+
+        public static GenericRule ToGenericRule<TContentType, TConditionType>(this Rule<TContentType, TConditionType> rule)
+        {
+            return new GenericRule
+            {
+                RootCondition = rule.RootCondition.ToGenericConditionNode(),
+                ContentContainer = rule.ContentContainer.GetContentAs<object>(),
+                DateBegin = rule.DateBegin,
+                DateEnd = rule.DateEnd,
+                Name = rule.Name,
+                Priority = rule.Priority
             };
         }
     }

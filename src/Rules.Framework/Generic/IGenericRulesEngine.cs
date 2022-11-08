@@ -1,13 +1,12 @@
-namespace Rules.Framework
+namespace Rules.Framework.Generic
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Generic;
 
     /// <summary>
-    /// Exposes rules engine logic to provide rule matches to requests.
+    /// Exposes generic rules engine logic to provide rule matches to requests.
     /// </summary>
-    public interface IRulesEngine
+    public interface IGenericRulesEngine
     {
         /// <summary>
         /// Gets the content types.
@@ -16,7 +15,7 @@ namespace Rules.Framework
         /// <exception cref="System.ArgumentException">
         /// Method only works if TContentType is a enum
         /// </exception>
-        IEnumerable<ContentType> GetContentTypes();
+        IEnumerable<GenericContentType> GetContentTypes();
 
         /// <summary>
         /// Gets the priority criterias.
@@ -29,6 +28,6 @@ namespace Rules.Framework
         /// </summary>
         /// <param name="genericSearchArgs">The search arguments.</param>
         /// <returns>List of generic rules</returns>
-        Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<ContentType, ConditionType> genericSearchArgs);
+        Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs);
     }
 }

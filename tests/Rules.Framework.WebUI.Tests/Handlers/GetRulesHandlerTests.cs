@@ -16,11 +16,11 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     public class GetRulesHandlerTests
     {
         private readonly GetRulesHandler handler;
-        private readonly Mock<IRulesEngine> rulesEngine;
+        private readonly Mock<IGenericRulesEngine> rulesEngine;
 
         public GetRulesHandlerTests()
         {
-            this.rulesEngine = new Mock<IRulesEngine>();
+            this.rulesEngine = new Mock<IGenericRulesEngine>();
             this.handler = new GetRulesHandler(rulesEngine.Object);
         }
 
@@ -45,13 +45,13 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
                 if (statusCode == HttpStatusCode.OK)
                 {
-                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<ContentType, ConditionType>>()))
+                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()))
                         .ReturnsAsync(genericRule);
                 }
 
                 if (statusCode == HttpStatusCode.InternalServerError)
                 {
-                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<ContentType, ConditionType>>()))
+                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()))
                         .Throws(new Exception("message", new Exception("inner")));
                 }
             }

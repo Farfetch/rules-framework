@@ -7,15 +7,16 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
+    using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Dto;
 
     internal class GetRulesHandler : WebUIRequestHandlerBase
     {
         private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
         private static readonly string[] resourcePath = new[] { "/rules/Rule/List" };
-        private readonly IRulesEngine rulesEngine;
+        private readonly IGenericRulesEngine rulesEngine;
 
-        public GetRulesHandler(IRulesEngine rulesEngine) : base(resourcePath)
+        public GetRulesHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
         }
@@ -36,7 +37,7 @@ namespace Rules.Framework.WebUI.Handlers
                 var rules = new List<RuleDto>();
 
                 var genericRules = await this.rulesEngine.SearchAsync(
-                    new SearchArgs<ContentType, ConditionType>(new ContentType { Name = contentType }, DateTime.MinValue, DateTime.MaxValue)
+                    new SearchArgs<GenericContentType, GenericConditionType>(new GenericContentType { Name = contentType }, DateTime.MinValue, DateTime.MaxValue)
                     );
 
                 var priorityOption = this.rulesEngine.GetPriorityCriterias();
