@@ -232,10 +232,10 @@ namespace Rules.Framework
         }
 
         /// <summary>
-        /// Searches the asynchronous.
+        /// Searches for generic rules that match on supplied <paramref name="genericSearchArgs"/>.
         /// </summary>
-        /// <param name="genericSearchArgs">The search arguments.</param>
-        /// <returns>List of generic rules</returns>
+        /// <param name="genericSearchArgs"></param>
+        /// <returns>the set of generic rules matching the conditions.</returns>
         public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
         {
             var searchArgs = genericSearchArgs.ToSearchArgs<TContentType, TConditionType>();
