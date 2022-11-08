@@ -1,7 +1,7 @@
 namespace Rules.Framework.Generic
 {
     /// <summary>
-    /// Generic content type
+    /// Defines generic content type
     /// </summary>
     public struct GenericContentType
     {

@@ -1,7 +1,7 @@
 namespace Rules.Framework.Generic
 {
     /// <summary>
-    /// Generic condition type
+    /// Defines generic condition type
     /// </summary>
     public struct GenericConditionType
     {

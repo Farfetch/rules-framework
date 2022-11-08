@@ -3,7 +3,7 @@ namespace Rules.Framework.Generic
     using System;
 
     /// <summary>
-    /// Generic rule
+    /// Defines a generic rule
     /// </summary>
     public class GenericRule
     {
