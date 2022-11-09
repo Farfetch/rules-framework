@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>%(DocumentTitle)</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous" />
     <link rel='stylesheet' href='glyphicons_only_bootstrap/css/bootstrap.min.css' />
-    <link href="paginationjs/dist/pagination.css" rel="stylesheet">
-
+    <link href="paginationjs/dist/pagination.css" rel="stylesheet" />
+    <link rel="shortcut icon" type="image/x-icon" href="rules_list.ico" />
     %(HeadContent)
 
     <script src="jquery/dist/jquery.min.js"></script>
@@ -39,6 +39,20 @@
             width: inherit;
             font-weight: 500;
             font-size: 1.2rem;
+        }
+
+        .paginationjs .paginationjs-pages li.active > a {
+            background: #373b3e !important;
+        }
+
+        .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+            color: #212529 !important;
+            background-color: #ffffff !important;
+        }
+
+        .conditions-tab {
+            --tab-left: 4em;
+            padding-left: var(--tab-left, 4em);
         }
     </style>
 </head>
@@ -74,7 +88,7 @@
         <div class="b-example-divider b-example-vr"></div>
 
         <div style="padding-top:20px; width:75%">
-            
+
             <center>
                 <div id="index" class="content">
                     <br />
@@ -85,7 +99,7 @@
             <div id="contentTypes" class="content" style="display:none">
                 <div class="row">
                     <div class="col-12">
-                        
+
                         <fieldset class="reset">
                             <legend class="reset">
                                 <button type="button" class="btn btn-dark dropdown-toggle" style="font-size:.8rem" aria-expanded="false"
@@ -94,33 +108,33 @@
                                     <span class="glyphicon glyphicon-filter"></span> Filters
                                 </button>
                             </legend>
-                                <div class="collapse show" id="filterContentTypes">
-                                    <form novalidate>
-                                        <div class="col-md-4">
-                                            <label for="contentTypeSearch" class="col-form-label-sm">Name</label>
-                                            <input class="form-control form-control-sm" id="contentTypeSearch" />
-                                        </div>
-                                    </form>
-                                </div>
-                            </fieldset>
-                            
-                            <h5 class="mb-3">Content Types</h5>
-                            <div class="table-responsive">
-                                <table class="table table-hover table-sm" style="font-size: .875rem;">
-                                    <thead style="border-bottom: 2px solid currentcolor;">
-                                        <tr>
-                                            <th scope="col" width="10%">#</th>
-                                            <th scope="col" width="70%">Name</th>
-                                            <th scope="col" width="20%" style="text-align: center;">Rules</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="contentTypes_table">
-                                    </tbody>
-                                </table>
-                                <div id="contentTypes_pagination"></div>
+                            <div class="collapse show" id="filterContentTypes">
+                                <form novalidate>
+                                    <div class="col-md-4">
+                                        <label for="contentTypeSearch" class="col-form-label-sm">Name</label>
+                                        <input class="form-control form-control-sm" id="contentTypeSearch" />
+                                    </div>
+                                </form>
                             </div>
+                        </fieldset>
+
+                        <h5 class="mb-3">Content Types</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm" style="font-size: .875rem;">
+                                <thead style="border-bottom: 2px solid currentcolor;">
+                                    <tr>
+                                        <th scope="col" width="10%">#</th>
+                                        <th scope="col" width="70%">Name</th>
+                                        <th scope="col" width="20%" style="text-align: center;">Rules</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contentTypes_table">
+                                </tbody>
+                            </table>
+                            <div id="contentTypes_pagination"></div>
                         </div>
                     </div>
+                </div>
             </div>
 
             <div id="rules" class="content" style="display:none">
@@ -164,41 +178,41 @@
                                 </form>
                             </div>
                         </fieldset>
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <h5 class="mb-3">Rules</h5>
-                                </div>
-                                <div class="col-lg-4" style="text-align:right">
-                                    <em style="font-size:small">Priority Criterias (<span id="rulesPriority"></span>) &nbsp; </em>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="glyphicon glyphicon-cog"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item download" href="#"><span class="glyphicon glyphicon-cloud-download"></span> Export JSON</a></li>
-                                        </ul>
-                                    </div>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h5 class="mb-3">Rules</h5>
+                            </div>
+                            <div class="col-lg-4" style="text-align:right">
+                                <em style="font-size:small">Priority Criterias (<span id="rulesPriority"></span>) &nbsp; </em>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item download" href="#"><span class="glyphicon glyphicon-cloud-download"></span> Export JSON</a></li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-hover table-sm" style="font-size: .875rem;">
-                                    <thead style="border-bottom: 2px solid currentcolor;">
-                                        <tr>
-                                            <th scope="col" width="1%">Priority</th>
-                                            <th scope="col" width="25%">Name</th>
-                                            <th scope="col" width="1%" nowrap style="text-align: center;">Date Begin</th>
-                                            <th scope="col" width="1%" nowrap style="text-align: center;">Date End</th>
-                                            <th scope="col" width="42%">Value</th>
-                                            <th scope="col" width="10%" style="text-align: center;">Status</th>
-                                            <th scope="col" width="10%" style="text-align: center;">Conditions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rules_table">
-                                    </tbody>
-                                </table>
-                                <div id="rules_pagination"></div>
-                            </div>
-</div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm" style="font-size: .875rem;">
+                                <thead style="border-bottom: 2px solid currentcolor;">
+                                    <tr>
+                                        <th scope="col" width="1%">Priority</th>
+                                        <th scope="col" width="25%">Name</th>
+                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date Begin</th>
+                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date End</th>
+                                        <th scope="col" width="42%">Value</th>
+                                        <th scope="col" width="10%" style="text-align: center;">Status</th>
+                                        <th scope="col" width="10%" style="text-align: center;">Conditions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rules_table">
+                                </tbody>
+                            </table>
+                            <div id="rules_pagination"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -372,27 +386,31 @@
             return '<pre>' + jsonPretty + '</prep>';
         }
 
-        function setStringView(node)
-        {   
-            let html = recursiveStringView(node);
+        function setStringView(node) {
+            let html = recursiveStringView(node, null, 0);
 
             return html;
         }
 
-        function recursiveStringView(node, logicalOperator)
+        function recursiveStringView(node, logicalOperator, tabs)
         {
             let html = '';
-
+            let tabsLeft = 1;
+            let tabsLeftChild = 1;
             if (!node) {
                 return html;
             }
 
             if (node.conditionTypeName) {
                 if (logicalOperator) {
-                    html += ' <b>' + logicalOperator + '</b> ';
+                    if (tabs) {
+                        tabsLeft = 4 * tabs;
+                    }
+
+                    html += '<br/><span class="conditions-tab" style="--tab-left: ' + tabsLeft + 'em"><b>' + logicalOperator + '</b></span> ';
                 }
 
-                html += ' <i>' + node.conditionTypeName + '</i> (';
+                html += '<i>' + node.conditionTypeName + '</i> (';
 
                 html += node.operator;
                 html += ' ' + node.operand;
@@ -403,16 +421,27 @@
             }
 
             if (node.logicalOperator) {
-                html += ' <b>' + node.logicalOperator + '</b> ';
+                if (tabs) {
+                    tabsLeft = 4 * tabs;
+                    html += '<br/>';
+                }
+
+                html += '<span class="conditions-tab" style="--tab-left: ' + tabsLeft + 'em"> <b>' + node.logicalOperator + '</b></span>';
+
 
                 if (node.childConditionNodes) {
-                    html += ' (';
-
-                    for (var i = 0; i < node.childConditionNodes.length; i++) {
-                        html += recursiveStringView(node.childConditionNodes[i], i > 0 ? node.logicalOperator : '');
+                    tabs++;
+                    if (tabs) {
+                        tabsLeftChild = 4 * tabs;
                     }
 
-                    html += ')';
+                    html += ' (<br/><span class="conditions-tab" style="--tab-left: ' + tabsLeftChild + 'em">';
+
+                    for (var i = 0; i < node.childConditionNodes.length; i++) {
+                        html += recursiveStringView(node.childConditionNodes[i], i > 0 ? node.logicalOperator : '', tabs);
+                    }
+
+                    html += '<br/></span><span class="conditions-tab" style="--tab-left: ' + tabsLeft + 'em">)</span>';
                 }
 
                 return html;
@@ -435,7 +464,7 @@
         {
             let html = '';
 
-            if (!node) {                
+            if (!node) {
                 return html;
             }
 
@@ -452,7 +481,7 @@
                 return html;
             }
 
-            if (node.logicalOperator) {                
+            if (node.logicalOperator) {
                 html += '<li><span class="caret"><b>' + node.logicalOperator + '</b></span>';
 
                 if (node.childConditionNodes) {
@@ -509,8 +538,8 @@
 
                             for (let i = 0; i < rules.length; i++) {
                                 rules[i].conditions = rules[i].conditions.replaceAll("'",'"');
-                            }                                                           
-                            setRulesPagination(response);                            
+                            }
+                            setRulesPagination(response);
                         },
                         error: function (error) {
                             $('#loading').hide();
@@ -521,17 +550,17 @@
                 }
             });
 
-            
+
         }
 
         $(document).ready(() => {
-            $('#ruleStatusesSelect').on('change', function (e) {                    
+            $('#ruleStatusesSelect').on('change', function (e) {
                 ruleFilter.status = $(this).children("option:selected").val();
                 setRulesPagination(rules);
             });
 
             $('#ruleNameSearch').on('input', function (e) {
-                ruleFilter.name = $(this).val();                
+                ruleFilter.name = $(this).val();
                 setRulesPagination(rules);
             });
 
@@ -551,21 +580,21 @@
                     return;
                 }
                 setContentTypesPagination(contentTypes);
-                
+
             });
 
             $('.download').on('click', function () {
                 let dataSource = rules;
 
                 dataSource = applyRulesFilter(dataSource);
-                
+
                 for (var i = 0; i < dataSource.length; i++) {
                     let conditionsToExport = dataSource[i].conditions;
-                                        
+
                     if (conditionsToExport) {
                         dataSource[i].conditions = JSON.parse(conditionsToExport);
                     }
-                }                
+                }
 
 
                 let filename = 'rules_as_json';
@@ -621,21 +650,21 @@
                         success: function (response) {
                             contentTypes = response;
                             setContentTypesPagination(response)
-                            
+
                         },
-                        error: function (error, d, e) {                            
+                        error: function (error, d, e) {
                             openError(error);
                             $('#loading').hide();
                         }
-                    });                    
+                    });
                 }
 
                 if (d.currentTarget.id == "rules") {
                     $('#rules_table').html('');
                     setRulesPagination([]);
                     setContentTypesSelectEvent();
-                    
-                    
+
+
                     let $dropdown = $("#contentTypesSelect");
                     $dropdown.html('<option value="">Loading...</option>');
                     $.ajax({
@@ -643,7 +672,7 @@
                         success: function (response) {
                             contentTypes = response;
                             $dropdown.html('<option value="">Choose ContentType...</option>');
-                            $.each(response, function (i, item) {                                
+                            $.each(response, function (i, item) {
                                 if (contentType == item.name || contentType == 'b' + item.name) {
                                     $dropdown.append($("<option>", {
                                         value: item.name,
@@ -655,7 +684,7 @@
                                 {
                                     $dropdown.append($("<option>", {
                                         value: item.name,
-                                        text: item.name                                        
+                                        text: item.name
                                     }));
                                 }
                             });
@@ -669,9 +698,9 @@
                             openError(error);
                         }
                     });
-                    
-                }            
-            });            
+
+                }
+            });
 
 
         });
@@ -688,7 +717,7 @@
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body">                    
+                <div class="modal-body">
                     <p><div id="errorBody"></div></p>
                 </div>
 
@@ -710,12 +739,12 @@
                 <div class="modal-header">
                     <h4 class="modal-title">Conditions</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    
+
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body"> 
-                    <ul class="nav nav-tabs" role="tablist">                        
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active" aria-current="page" data-bs-target="#string-tab-pane" data-bs-toggle="tab" href="#">String</a>
                         </li>
@@ -731,9 +760,9 @@
                     <div class="tab-content" id="myTabContent" style="max-height: 500px; overflow-y: auto; ">
                         <div class="tab-pane fade show active" id="string-tab-pane" role="tabpanel" aria-labelledby="string-tab" tabindex="0"></div>
                         <div class="tab-pane fade" id="json-tab-pane" role="tabpanel" aria-labelledby="json-tab" tabindex="1"></div>
-                        <div class="tab-pane fade" id="tree-tab-pane" role="tabpanel" aria-labelledby="tree-tab" tabindex="2"></div>                        
+                        <div class="tab-pane fade" id="tree-tab-pane" role="tabpanel" aria-labelledby="tree-tab" tabindex="2"></div>
                     </div>
-                                    
+
                 </div>
 
                 <!-- Modal footer -->

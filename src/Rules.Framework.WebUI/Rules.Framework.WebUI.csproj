@@ -22,8 +22,9 @@
   <ItemGroup>	  
 	  <EmbeddedResource Include="node_modules/glyphicons-only-bootstrap/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
 	  <EmbeddedResource Include="node_modules/jquery/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
-	  <EmbeddedResource Include="node_modules/paginationjs/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />	  
-	  <EmbeddedResource Include="index.html" />
+	  <EmbeddedResource Include="node_modules/paginationjs/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />	    
+	  <EmbeddedResource Include="index.html" />	  
+	  <EmbeddedResource Include="node_modules/rules_list.ico" />
   </ItemGroup>
 	
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

@@ -1,12 +1,12 @@
 namespace Rules.Framework.WebUI.Handlers
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using System.IO;
     using System.Text;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
 #if NETSTANDARD2_0
 
@@ -16,7 +16,7 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal class GetIndexPageHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/rules", "/rules/index.html" };
+        private static readonly string[] resourcePath = new[] { "/rules", "/rules/", "/rules/index.html" };
         private readonly WebUIOptions options;
 
         public GetIndexPageHandler(WebUIOptions options) : base(resourcePath)
@@ -58,42 +58,52 @@ namespace Rules.Framework.WebUI.Handlers
 
         private async Task RespondWithIndexHtmlAsync(HttpResponse httpResponse, RequestDelegate next)
         {
-            httpResponse.StatusCode = 200;
-            httpResponse.ContentType = "text/html;charset=utf-8";
-
-            var originalBody = httpResponse.Body;
-
-            using (var stream = this.options.IndexStream())
+            if (!httpResponse.HasStarted)
             {
-                httpResponse.Body = stream;
-                await next(httpResponse.HttpContext);
+                httpResponse.StatusCode = 200;
+                httpResponse.ContentType = "text/html;charset=utf-8";
 
-                using (var reader = new StreamReader(stream))
+                var originalBody = httpResponse.Body;
+
+                using (var stream = this.options.IndexStream())
                 {
-                    var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync());
+                    httpResponse.Body = stream;
+                    await next(httpResponse.HttpContext);
 
-                    foreach (var entry in this.GetIndexArguments())
+                    using (var reader = new StreamReader(stream))
                     {
-                        responseTextBuilder.Replace(entry.Key, entry.Value);
+                        var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync());
+
+                        foreach (var entry in this.GetIndexArguments())
+                        {
+                            responseTextBuilder.Replace(entry.Key, entry.Value);
+                        }
+
+                        byte[] byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
+                        using (var newStream = new MemoryStream(byteArray))
+                        {
+                            httpResponse.Body = originalBody;
+                            newStream.Seek(0, SeekOrigin.Begin);
+                            await newStream.CopyToAsync(httpResponse.Body);
+                        }
                     }
 
-                    byte[] byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
-                    using (var newStream = new MemoryStream(byteArray))
-                    {
-                        httpResponse.Body = originalBody;
-                        newStream.Seek(0, SeekOrigin.Begin);
-                        await newStream.CopyToAsync(httpResponse.Body);
-                    }
+                    httpResponse.Body = originalBody;
                 }
-
-                httpResponse.Body = originalBody;
+            }
+            else
+            {
+                await httpResponse.WriteAsync(string.Empty);
             }
         }
 
         private void RespondWithRedirect(HttpResponse httpResponse, string location)
         {
-            httpResponse.StatusCode = 301;
-            httpResponse.Headers["Location"] = location;
+            if (!httpResponse.HasStarted)
+            {
+                httpResponse.StatusCode = 301;
+                httpResponse.Headers["Location"] = location;
+            }
         }
     }
 }
