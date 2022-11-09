@@ -16,7 +16,7 @@
 	<RepositoryType>Git</RepositoryType>
 	<PackageTags>rules rulesframework web ui</PackageTags>
 	<Description>A rules framework web ui that allows you to see the rules configured in your application</Description>
-	<Copyright></Copyright>
+	<Copyright></Copyright>	  
   </PropertyGroup>
 
   <ItemGroup>	  
@@ -34,16 +34,9 @@
 		<PackageReference Include="System.Text.Json" Version="6.0.6" />
 	</ItemGroup>
 
-
 	<ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
-
-
-	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	</ItemGroup>
-
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />

@@ -40,7 +40,7 @@ namespace Rules.Framework
         /// </summary>
         /// <remarks>
         /// <para>MissingConditionBehavior = UseDataTypeDefault</para>
-        /// <para>PriotityCriteria = TopmostRuleWins</para>
+        /// <para>PriotityCriteria = TopMostRuleWins</para>
         /// <para>DataTypes.Boolean default = default(bool)</para>
         /// <para>DataTypes.Decimal default = default(decimal)</para>
         /// <para>DataTypes.Integer default = default(int)</para>

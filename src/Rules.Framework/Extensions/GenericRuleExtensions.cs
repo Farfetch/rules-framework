@@ -30,7 +30,8 @@ namespace Rules.Framework.Extensions
 
             var conditionNodeDataModels = new List<GenericConditionNode<GenericConditionType>>(composedConditionNode.ChildConditionNodes.Count());
 
-            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
+            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes
+                .Where(condition => condition != null))
             {
                 conditionNodeDataModels.Add(child.ToGenericConditionNode());
             }
@@ -46,7 +47,7 @@ namespace Rules.Framework.Extensions
         {
             return new GenericRule
             {
-                RootCondition = rule.RootCondition.ToGenericConditionNode(),
+                RootCondition = rule.RootCondition?.ToGenericConditionNode(),
                 ContentContainer = rule.ContentContainer.GetContentAs<object>(),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,

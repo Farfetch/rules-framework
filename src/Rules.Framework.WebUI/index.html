@@ -123,9 +123,11 @@
                             <table class="table table-hover table-sm" style="font-size: .875rem;">
                                 <thead style="border-bottom: 2px solid currentcolor;">
                                     <tr>
-                                        <th scope="col" width="10%">#</th>
-                                        <th scope="col" width="70%">Name</th>
-                                        <th scope="col" width="20%" style="text-align: center;">Rules</th>
+                                        <th scope="col" width="4%">#</th>
+                                        <th scope="col" width="36%">Name</th>
+                                        <th scope="col" width="25%" style="text-align: center;">Rules Quantity</th>
+                                        <th scope="col" width="25%" style="text-align: center;">Active Rules Quantity</th>
+                                        <th scope="col" width="10%" style="text-align: center;">Rules</th>
                                     </tr>
                                 </thead>
                                 <tbody id="contentTypes_table">
@@ -321,6 +323,8 @@
             let trHTML = '';
             $.each(dataSource, function (i, item) {
                 trHTML += '<tr><th scope="row">' + i + ' </th><td>' + item.name + '</td>';
+                trHTML += '<td style="text-align: center;"><span class="badge bg-primary" style="font-size:1em!important; color: #373b3e !important;background-color: #cdced7 !important;">' + item.rulesCount + '<span></td>';
+                trHTML += '<td style="text-align: center;"><span class="badge bg-success" style="font-size:1em!important; color: #1c6c09 !important;background-color: #d9fbd0 !important;">' + item.activeRulesCount + '<span></td>';
                 trHTML += '<td style="text-align: center;"><button style="font-size:.875rem" type="button" class="btn btn-dark rules"  ';
                 trHTML += 'title="Rules" id="b' + item.name + '">';
                 trHTML += '<span class="glyphicon glyphicon-search" id="' + item.name + '"></span>';

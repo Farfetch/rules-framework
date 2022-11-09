@@ -5,25 +5,30 @@ namespace Rules.Framework.WebUI
     using System.Linq;
     using System.Net;
     using System.Text;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using Newtonsoft.Json.Serialization;
 
     internal abstract class WebUIRequestHandlerBase : IHttpRequestHandler
     {
-        protected JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
+        /*protected JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
         {
             DateTimeZoneHandling = DateTimeZoneHandling.Utc,
             TypeNameHandling = TypeNameHandling.None
+        };*/
+
+        protected JsonSerializerOptions SerializerOptions = new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+            IncludeFields = true
         };
 
         protected WebUIRequestHandlerBase(string[] resourcePath)
         {
             this.ResourcePath = resourcePath;
-            this.jsonSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            this.jsonSerializerSettings.Converters.Add(new StringEnumConverter());
+            this.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }
 
         protected abstract HttpMethod HttpMethod { get; }
@@ -78,7 +83,7 @@ namespace Rules.Framework.WebUI
         {
             if (!httpResponse.HasStarted)
             {
-                var body = JsonConvert.SerializeObject(responseDto, this.jsonSerializerSettings);
+                var body = JsonSerializer.Serialize(responseDto, this.SerializerOptions);
                 httpResponse.StatusCode = statusCode;
                 httpResponse.ContentType = "application/json";
                 httpResponse.Headers.ContentLength = body.Length;

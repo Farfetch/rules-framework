@@ -4,11 +4,12 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Newtonsoft.Json;
     using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Dto;
+    using Rules.Framework.WebUI.Utitlies;
 
     internal class GetRulesHandler : WebUIRequestHandlerBase
     {
@@ -19,6 +20,7 @@ namespace Rules.Framework.WebUI.Handlers
         public GetRulesHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
+            this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<GenericConditionNode<GenericConditionType>>());
         }
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
@@ -37,8 +39,11 @@ namespace Rules.Framework.WebUI.Handlers
                 var rules = new List<RuleDto>();
 
                 var genericRules = await this.rulesEngine.SearchAsync(
-                    new SearchArgs<GenericContentType, GenericConditionType>(new GenericContentType { Name = contentType }, DateTime.MinValue, DateTime.MaxValue)
-                    );
+                    new SearchArgs<GenericContentType, GenericConditionType>(new GenericContentType
+                    {
+                        Name = contentType
+                    },
+                    DateTime.MinValue, DateTime.MaxValue));
 
                 var priorityOption = this.rulesEngine.GetPriorityCriterias();
 
@@ -55,15 +60,18 @@ namespace Rules.Framework.WebUI.Handlers
 
                     foreach (var rule in genericRules)
                     {
+                        var value = JsonSerializer.Serialize(rule.ContentContainer, this.SerializerOptions);
+                        var conditions = rule.RootCondition is null ? string.Empty : JsonSerializer.Serialize(rule.RootCondition, this.SerializerOptions);
+
                         rules.Add(new RuleDto
                         {
                             Priority = rule.Priority,
                             Name = rule.Name,
-                            Value = JsonConvert.SerializeObject(rule.ContentContainer, this.jsonSerializerSettings).Replace("\"", "\'"),
+                            Value = value,
                             DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
                             DateBegin = rule.DateBegin.ToString(dateFormat),
                             Status = GetRuleStatus(rule.DateBegin, rule.DateEnd).ToString(),
-                            Conditions = rule.RootCondition is null ? string.Empty : JsonConvert.SerializeObject(rule.RootCondition, this.jsonSerializerSettings).Replace("\"", "\'")
+                            Conditions = conditions
                         });
                     }
                 }
