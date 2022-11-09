@@ -64,7 +64,7 @@ namespace Rules.Framework.WebUI.Handlers
                             Value = JsonConvert.SerializeObject(rule.ContentContainer, this.jsonSerializerSettings).Replace("\"", "\'"),
                             DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
                             DateBegin = rule.DateBegin.ToString(dateFormat),
-                            Status = this.ruleStatusDtoAnalyzer.AnalyzeStatus(rule.DateBegin, rule.DateEnd).ToString(),
+                            Status = this.ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
                             Conditions = rule.RootCondition is null ? string.Empty : JsonConvert.SerializeObject(rule.RootCondition, this.jsonSerializerSettings).Replace("\"", "\'")
                         });
                     }

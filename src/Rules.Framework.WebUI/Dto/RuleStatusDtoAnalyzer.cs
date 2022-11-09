@@ -4,7 +4,7 @@ namespace Rules.Framework.WebUI.Dto
 
     internal class RuleStatusDtoAnalyzer : IRuleStatusDtoAnalyzer
     {
-        public RuleStatusDto AnalyzeStatus(DateTime? dateBegin, DateTime? dateEnd)
+        public RuleStatusDto Analyze(DateTime? dateBegin, DateTime? dateEnd)
         {
             if (!dateBegin.HasValue)
             {
