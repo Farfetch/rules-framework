@@ -9,6 +9,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     using Microsoft.AspNetCore.Http;
     using Moq;
     using Rules.Framework.Generic;
+    using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Handlers;
     using Rules.Framework.WebUI.Tests.Utilities;
     using Xunit;
@@ -17,11 +18,13 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     {
         private readonly GetRulesHandler handler;
         private readonly Mock<IGenericRulesEngine> rulesEngine;
+        private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
         public GetRulesHandlerTests()
         {
             this.rulesEngine = new Mock<IGenericRulesEngine>();
-            this.handler = new GetRulesHandler(rulesEngine.Object);
+            this.ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
+            this.handler = new GetRulesHandler(rulesEngine.Object, this.ruleStatusDtoAnalyzer);
         }
 
         [Theory]

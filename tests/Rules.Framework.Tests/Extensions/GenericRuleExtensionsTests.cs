@@ -14,7 +14,7 @@ namespace Rules.Framework.Tests.Extensions
     public class GenericRuleExtensionsTests
     {
         [Fact]
-        public void GenericRuleExtensions_ToGenericRule_WithComposedCondition_Success()
+        public void GenericRuleExtensions_ToGenericRule_WithComposedConditions_Success()
         {
             var expectedRuleContent = "Type1";
 
@@ -121,6 +121,7 @@ namespace Rules.Framework.Tests.Extensions
             genericRule.Should().BeEquivalentTo(rule, config => config.Excluding(r => r.ContentContainer));
             genericRule.ContentContainer.Should().BeOfType<string>();
             genericRule.ContentContainer.Should().Be(expectedRuleContent);
+            genericRule.RootCondition.Should().BeNull();
         }
 
         [Fact]

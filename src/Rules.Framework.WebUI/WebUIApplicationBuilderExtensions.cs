@@ -3,6 +3,7 @@ namespace Rules.Framework.WebUI
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Builder;
     using Rules.Framework.Generic;
+    using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Handlers;
 
     /// <summary>
@@ -20,7 +21,7 @@ namespace Rules.Framework.WebUI
                     new GetIndexPageHandler(new WebUIOptions()),
                     new GetPriorityCriteriasHandler(rulesEngine),
                     new GetContentTypeHandler(rulesEngine),
-                    new GetRulesHandler(rulesEngine)
+                    new GetRulesHandler(rulesEngine, new RuleStatusDtoAnalyzer())
                 });
 
             return app;
