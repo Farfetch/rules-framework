@@ -1,5 +1,6 @@
 namespace Rules.Framework.WebUI
 {
+    using System.Collections.Generic;
     using Microsoft.AspNetCore.Builder;
     using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Handlers;
@@ -14,10 +15,13 @@ namespace Rules.Framework.WebUI
         /// </summary>
         public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IGenericRulesEngine rulesEngine)
         {
-            app.UseMiddleware<WebUIMiddleware>(new GetIndexPageHandler(new WebUIOptions()));
-            app.UseMiddleware<WebUIMiddleware>(new GetPriorityCriteriasHandler(rulesEngine));
-            app.UseMiddleware<WebUIMiddleware>(new GetContentTypeHandler(rulesEngine));
-            app.UseMiddleware<WebUIMiddleware>(new GetRulesHandler(rulesEngine));
+            app.UseMiddleware<WebUIMiddleware>(
+                new List<IHttpRequestHandler>() {
+                    new GetIndexPageHandler(new WebUIOptions()),
+                    new GetPriorityCriteriasHandler(rulesEngine),
+                    new GetContentTypeHandler(rulesEngine),
+                    new GetRulesHandler(rulesEngine)
+                });
 
             return app;
         }

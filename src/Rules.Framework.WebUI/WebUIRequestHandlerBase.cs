@@ -76,12 +76,19 @@ namespace Rules.Framework.WebUI
 
         protected virtual Task WriteResponseAsync<T>(HttpResponse httpResponse, T responseDto, int statusCode)
         {
-            var body = JsonConvert.SerializeObject(responseDto, this.jsonSerializerSettings);
-            httpResponse.StatusCode = statusCode;
-            httpResponse.ContentType = "application/json";
-            httpResponse.Headers.ContentLength = body.Length;
+            if (!httpResponse.HasStarted)
+            {
+                var body = JsonConvert.SerializeObject(responseDto, this.jsonSerializerSettings);
+                httpResponse.StatusCode = statusCode;
+                httpResponse.ContentType = "application/json";
+                httpResponse.Headers.ContentLength = body.Length;
 
-            return httpResponse.WriteAsync(body, Encoding.UTF8);
+                return httpResponse.WriteAsync(body, Encoding.UTF8);
+            }
+            else
+            {
+                return httpResponse.WriteAsync(string.Empty);
+            }
         }
     }
 }

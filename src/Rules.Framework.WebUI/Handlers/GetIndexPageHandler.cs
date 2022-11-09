@@ -5,6 +5,8 @@ namespace Rules.Framework.WebUI.Handlers
     using Microsoft.AspNetCore.Http;
     using System.IO;
     using System.Text;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
 #if NETSTANDARD2_0
 
@@ -29,7 +31,20 @@ namespace Rules.Framework.WebUI.Handlers
             var path = httpRequest.Path.Value;
             var httpContext = httpRequest.HttpContext;
 
-            await this.RespondWithIndexHtmlAsync(httpContext.Response, next);
+            if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+            {
+                // Use relative redirect to support proxy environments
+                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                    ? "index.html"
+                    : $"{path.Split('/').Last()}/index.html";
+
+                this.RespondWithRedirect(httpContext.Response, relativeIndexUrl);
+            }
+
+            if (Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
+            {
+                await this.RespondWithIndexHtmlAsync(httpContext.Response, next);
+            }
         }
 
         private IDictionary<string, string> GetIndexArguments()
@@ -43,35 +58,51 @@ namespace Rules.Framework.WebUI.Handlers
 
         private async Task RespondWithIndexHtmlAsync(HttpResponse httpResponse, RequestDelegate next)
         {
-            httpResponse.StatusCode = 200;
-            httpResponse.ContentType = "text/html;charset=utf-8";
-
-            var originalBody = httpResponse.Body;
-
-            using (var stream = this.options.IndexStream())
+            if (!httpResponse.HasStarted)
             {
-                httpResponse.Body = stream;
-                await next(httpResponse.HttpContext);
+                httpResponse.StatusCode = 200;
+                httpResponse.ContentType = "text/html;charset=utf-8";
 
-                using (var reader = new StreamReader(stream))
+                var originalBody = httpResponse.Body;
+
+                using (var stream = this.options.IndexStream())
                 {
-                    var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync());
+                    httpResponse.Body = stream;
+                    await next(httpResponse.HttpContext);
 
-                    foreach (var entry in this.GetIndexArguments())
+                    using (var reader = new StreamReader(stream))
                     {
-                        responseTextBuilder.Replace(entry.Key, entry.Value);
+                        var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync());
+
+                        foreach (var entry in this.GetIndexArguments())
+                        {
+                            responseTextBuilder.Replace(entry.Key, entry.Value);
+                        }
+
+                        byte[] byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
+                        using (var newStream = new MemoryStream(byteArray))
+                        {
+                            httpResponse.Body = originalBody;
+                            newStream.Seek(0, SeekOrigin.Begin);
+                            await newStream.CopyToAsync(httpResponse.Body);
+                        }
                     }
 
-                    byte[] byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
-                    using (var newStream = new MemoryStream(byteArray))
-                    {
-                        httpResponse.Body = originalBody;
-                        newStream.Seek(0, SeekOrigin.Begin);
-                        await newStream.CopyToAsync(httpResponse.Body);
-                    }
+                    httpResponse.Body = originalBody;
                 }
+            }
+            else
+            {
+                await httpResponse.WriteAsync(string.Empty);
+            }
+        }
 
-                httpResponse.Body = originalBody;
+        private void RespondWithRedirect(HttpResponse httpResponse, string location)
+        {
+            if (!httpResponse.HasStarted)
+            {
+                httpResponse.StatusCode = 301;
+                httpResponse.Headers["Location"] = location;
             }
         }
     }

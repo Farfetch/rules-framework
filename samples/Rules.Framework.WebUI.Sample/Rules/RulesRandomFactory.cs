@@ -56,6 +56,32 @@ namespace Rules.Framework.WebUI.Sample.Rules
                                             .AddCondition(sub => sub
                                                 .AsValued(ConditionTypes.IsPrimeNumber).OfDataType<bool>()
                                                 .WithComparisonOperator(Operators.Equal)
+                                                .SetOperand(false)
+                                                .Build())
+                                            .AddCondition(sub => sub
+                                                .AsValued(ConditionTypes.SumAll).OfDataType<string>()
+                                                .WithComparisonOperator(Operators.StartsWith)
+                                                .SetOperand("15")
+                                                .Build())
+                                            .AddCondition(condition => condition.AsComposed()
+                                                .WithLogicalOperator(LogicalOperators.And)
+                                                .AddCondition(sub => sub
+                                                    .AsValued(ConditionTypes.CanNumberBeDividedBy3).OfDataType<bool>()
+                                                    .WithComparisonOperator(Operators.Equal)
+                                                    .SetOperand(false)
+                                                    .Build())
+                                                .AddCondition(sub => sub
+                                                    .AsValued(ConditionTypes.SumAll).OfDataType<string>()
+                                                    .WithComparisonOperator(Operators.EndsWith)
+                                                    .SetOperand("150")
+                                                    .Build())
+                                            .Build())
+                                        .Build())
+                                        .AddCondition(condition => condition.AsComposed()
+                                            .WithLogicalOperator(LogicalOperators.And)
+                                            .AddCondition(sub => sub
+                                                .AsValued(ConditionTypes.IsPrimeNumber).OfDataType<bool>()
+                                                .WithComparisonOperator(Operators.Equal)
                                                 .SetOperand(true)
                                                 .Build())
                                             .AddCondition(sub => sub

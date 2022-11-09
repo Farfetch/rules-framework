@@ -9,6 +9,8 @@ namespace Rules.Framework.WebUI
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.Hosting;
+    using System.Collections.Generic;
+    using System.Linq;
 
 #if NETSTANDARD2_0
 
@@ -18,7 +20,7 @@ namespace Rules.Framework.WebUI
 
     internal sealed class WebUIMiddleware
     {
-        private readonly IHttpRequestHandler httpRequestHandler;
+        private readonly IEnumerable<IHttpRequestHandler> httpRequestHandlers;
         private readonly RequestDelegate next;
         private readonly StaticFileMiddleware staticFileMiddlewares;
 
@@ -26,18 +28,21 @@ namespace Rules.Framework.WebUI
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            IHttpRequestHandler httpRequestHandler)
+            IEnumerable<IHttpRequestHandler> httpRequestHandlers)
         {
             var options = new WebUIOptions();
-            this.httpRequestHandler = httpRequestHandler;
+            this.httpRequestHandlers = httpRequestHandlers;
             this.next = next;
             this.staticFileMiddlewares = this.CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, ".node_modules");
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            await this.ExecuteHandlersAsync(httpContext).ConfigureAwait(false);
-            await this.ExecuteStaticFileMiddlewareAsync(httpContext).ConfigureAwait(true);
+            var anyHandlerExecuted = await this.ExecuteHandlersAsync(httpContext).ConfigureAwait(false);
+            if (!anyHandlerExecuted)
+            {
+                await this.ExecuteStaticFileMiddlewareAsync(httpContext).ConfigureAwait(true);
+            }
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next,
@@ -60,16 +65,19 @@ namespace Rules.Framework.WebUI
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
-        private async Task ExecuteHandlersAsync(HttpContext httpContext)
+        private async Task<bool> ExecuteHandlersAsync(HttpContext httpContext)
         {
-            var handled = await this.httpRequestHandler
-                            .HandleAsync(httpContext.Request, httpContext.Response, this.next)
-                            .ConfigureAwait(false);
+            var results = this.httpRequestHandlers.Select(d => d
+                .HandleAsync(httpContext.Request, httpContext.Response, this.next));
 
-            if (!handled)
+            var handle = await Task.WhenAll(results);
+
+            if (handle.All(d => !d))
             {
                 await this.next(httpContext);
+                return false;
             }
+            return true;
         }
 
         private Task ExecuteStaticFileMiddlewareAsync(HttpContext httpContext)

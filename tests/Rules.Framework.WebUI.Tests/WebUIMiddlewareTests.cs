@@ -1,5 +1,6 @@
 namespace Rules.Framework.WebUI.Tests
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
@@ -21,7 +22,7 @@ namespace Rules.Framework.WebUI.Tests
             mockLoggerFactory.Setup(d => d.CreateLogger(It.IsAny<string>())).Returns(mockLogger.Object);
             var middleware = WebUIMiddlewareFactory.Create(mockWebHostEnvironment.Object,
                 mockLoggerFactory.Object,
-                mockHttpRequestHandler.Object);
+                new List<IHttpRequestHandler> { mockHttpRequestHandler.Object });
 
             var context = new DefaultHttpContext();
             RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
