@@ -16,10 +16,12 @@ namespace Rules.Framework.WebUI.Handlers
         private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
         private static readonly string[] resourcePath = new[] { "/rules/Rule/List" };
         private readonly IGenericRulesEngine rulesEngine;
+        private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetRulesHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
+        public GetRulesHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
+            this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
             this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<GenericConditionNode<GenericConditionType>>());
         }
 
@@ -70,7 +72,7 @@ namespace Rules.Framework.WebUI.Handlers
                             Value = value,
                             DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
                             DateBegin = rule.DateBegin.ToString(dateFormat),
-                            Status = GetRuleStatus(rule.DateBegin, rule.DateEnd).ToString(),
+                            Status = this.ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
                             Conditions = conditions
                         });
                     }
@@ -82,31 +84,6 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 await this.WriteExceptionResponseAsync(httpResponse, ex);
             }
-        }
-
-        private static RuleStatusDto GetRuleStatus(DateTime? dateBegin, DateTime? dateEnd)
-        {
-            if (!dateBegin.HasValue)
-            {
-                return RuleStatusDto.Inactive;
-            }
-
-            if (dateBegin.Value > DateTime.UtcNow)
-            {
-                return RuleStatusDto.Pending;
-            }
-
-            if (!dateEnd.HasValue)
-            {
-                return RuleStatusDto.Active;
-            }
-
-            if (dateEnd.Value <= DateTime.UtcNow)
-            {
-                return RuleStatusDto.Inactive;
-            }
-
-            return RuleStatusDto.Active;
         }
     }
 }
