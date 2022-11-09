@@ -19,7 +19,7 @@ namespace Rules.Framework.Tests.Extensions
             var expectedRuleContent = "Type1";
 
             // TODO maybe better to create a builder for building GenericConditions (and GenericRules)
-            var expectedGenericRootComposedCondition = new GenericComposedConditionNode<GenericConditionType>
+            var expectedRootCondition = new GenericComposedConditionNode<GenericConditionType>
             {
                 ChildConditionNodes = new List<GenericConditionNode<GenericConditionType>>()
                 {
@@ -94,13 +94,11 @@ namespace Rules.Framework.Tests.Extensions
                 .Excluding(r => r.ContentContainer)
                 .Excluding(r => r.RootCondition));
             genericRule.ContentContainer.Should().BeOfType<string>();
+            genericRule.ContentContainer.Should().Be(expectedRuleContent);
             genericRule.RootCondition.Should().BeOfType<GenericComposedConditionNode<GenericConditionType>>();
 
-            var content = genericRule.ContentContainer as string;
-            content.Should().Be(expectedRuleContent);
-
-            var rootComposedCondition = genericRule.RootCondition as GenericComposedConditionNode<GenericConditionType>;
-            rootComposedCondition.Should().BeEquivalentTo(expectedGenericRootComposedCondition, config => config.IncludingAllRuntimeProperties());
+            var genericComposedRootCondition = genericRule.RootCondition as GenericComposedConditionNode<GenericConditionType>;
+            genericComposedRootCondition.Should().BeEquivalentTo(expectedRootCondition, config => config.IncludingAllRuntimeProperties());
         }
 
         [Fact]
@@ -122,9 +120,7 @@ namespace Rules.Framework.Tests.Extensions
             // Assert
             genericRule.Should().BeEquivalentTo(rule, config => config.Excluding(r => r.ContentContainer));
             genericRule.ContentContainer.Should().BeOfType<string>();
-
-            var content = genericRule.ContentContainer as string;
-            content.Should().Be(expectedRuleContent);
+            genericRule.ContentContainer.Should().Be(expectedRuleContent);
         }
 
         [Fact]
@@ -150,16 +146,14 @@ namespace Rules.Framework.Tests.Extensions
                 .Excluding(r => r.ContentContainer)
                 .Excluding(r => r.RootCondition));
             genericRule.ContentContainer.Should().BeOfType<string>();
+            genericRule.ContentContainer.Should().Be(expectedRuleContent);
             genericRule.RootCondition.Should().BeOfType<GenericValueConditionNode<GenericConditionType>>();
 
-            var content = genericRule.ContentContainer as string;
-            content.Should().Be(expectedRuleContent);
-
-            var rootCondition = genericRule.RootCondition as GenericValueConditionNode<GenericConditionType>;
-            rootCondition.Should().BeEquivalentTo(expectedRootCondition, config => config
+            var genericValueRootCondition = genericRule.RootCondition as GenericValueConditionNode<GenericConditionType>;
+            genericValueRootCondition.Should().BeEquivalentTo(expectedRootCondition, config => config
                 .Excluding(r => r.ConditionType)
                 .Excluding(r => r.LogicalOperator));
-            rootCondition.ConditionTypeName.Should().Be(expectedRootCondition.ConditionType.ToString());
+            genericValueRootCondition.ConditionTypeName.Should().Be(expectedRootCondition.ConditionType.ToString());
         }
     }
 }
