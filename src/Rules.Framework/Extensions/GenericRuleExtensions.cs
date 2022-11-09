@@ -46,7 +46,7 @@ namespace Rules.Framework.Extensions
         {
             return new GenericRule
             {
-                RootCondition = rule.RootCondition.ToGenericConditionNode(),
+                RootCondition = rule.RootCondition?.ToGenericConditionNode(),
                 ContentContainer = rule.ContentContainer.GetContentAs<object>(),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
