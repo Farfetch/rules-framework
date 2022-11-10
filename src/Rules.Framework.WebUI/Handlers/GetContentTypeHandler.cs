@@ -14,10 +14,12 @@ namespace Rules.Framework.WebUI.Handlers
         private static readonly string[] resourcePath = new[] { "/rules/ContentType/List" };
 
         private readonly IGenericRulesEngine rulesEngine;
+        private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetContentTypeHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
+        public GetContentTypeHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
+            this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
@@ -30,16 +32,16 @@ namespace Rules.Framework.WebUI.Handlers
 
                 var contentTypes = new List<ContentTypeDto>();
 
-                foreach (var content in contents)
+                foreach (var contentName in contents.Select(content => content.Name))
                 {
                     var genericRules = await this.rulesEngine.SearchAsync(
                     new SearchArgs<GenericContentType, GenericConditionType>(
-                        new GenericContentType { Name = content.Name }, DateTime.MinValue, DateTime.MaxValue)
+                        new GenericContentType { Name = contentName }, DateTime.MinValue, DateTime.MaxValue)
                     );
 
                     contentTypes.Add(new ContentTypeDto
                     {
-                        Name = content.Name,
+                        Name = contentName,
                         ActiveRulesCount = genericRules.Count(IsActive),
                         RulesCount = genericRules.Count()
                     });
@@ -55,22 +57,7 @@ namespace Rules.Framework.WebUI.Handlers
 
         private bool IsActive(GenericRule genericRule)
         {
-            if (genericRule.DateBegin > DateTime.UtcNow)
-            {
-                return false;
-            }
-
-            if (genericRule.DateEnd is null)
-            {
-                return true;
-            }
-
-            if (genericRule.DateEnd <= DateTime.UtcNow)
-            {
-                return false;
-            }
-
-            return true;
+            return this.ruleStatusDtoAnalyzer.Analyze(genericRule.DateBegin, genericRule.DateEnd) == RuleStatusDto.Active;
         }
     }
 }

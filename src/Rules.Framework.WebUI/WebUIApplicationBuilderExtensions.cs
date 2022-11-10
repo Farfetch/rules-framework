@@ -16,12 +16,14 @@ namespace Rules.Framework.WebUI
         /// </summary>
         public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IGenericRulesEngine rulesEngine)
         {
+            var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
+
             app.UseMiddleware<WebUIMiddleware>(
                 new List<IHttpRequestHandler>() {
                     new GetIndexPageHandler(new WebUIOptions()),
                     new GetPriorityCriteriasHandler(rulesEngine),
-                    new GetContentTypeHandler(rulesEngine),
-                    new GetRulesHandler(rulesEngine, new RuleStatusDtoAnalyzer())
+                    new GetContentTypeHandler(rulesEngine, ruleStatusDtoAnalyzer),
+                    new GetRulesHandler(rulesEngine, ruleStatusDtoAnalyzer)
                 });
 
             return app;
