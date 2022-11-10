@@ -29,50 +29,6 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario2/rules-framework-tests.car-insurance-advisor.json";
 
         [Fact]
-        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsPayOldCar()
-        {
-            // Arrange
-            CarInsuranceAdvices expected = CarInsuranceAdvices.PayOldCar;
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
-            DateTime expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
-            Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
-            {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 0.0m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 0.0m
-                }
-            };
-
-            IServiceCollection serviceDescriptors = new ServiceCollection();
-            serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
-            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
-
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
-                .SetInMemoryDataSource(serviceProvider)
-                .Configure(reo =>
-                {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
-                })
-                .Build();
-
-            // Act
-            Rule<ContentTypes, ConditionTypes> actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
-
-            // Assert
-            actual.Should().NotBeNull();
-            CarInsuranceAdvices actualContent = actual.ContentContainer.GetContentAs<CarInsuranceAdvices>();
-            actualContent.Should().Be(expected);
-        }
-
-        [Fact]
         public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
         {
             // Arrange
@@ -103,7 +59,51 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                })
+                .Build();
+
+            // Act
+            Rule<ContentTypes, ConditionTypes> actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+
+            // Assert
+            actual.Should().NotBeNull();
+            CarInsuranceAdvices actualContent = actual.ContentContainer.GetContentAs<CarInsuranceAdvices>();
+            actualContent.Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsPayOldCar()
+        {
+            // Arrange
+            CarInsuranceAdvices expected = CarInsuranceAdvices.PayOldCar;
+            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            DateTime expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
+            Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
+            {
+                new Condition<ConditionTypes>
+                {
+                    Type = ConditionTypes.RepairCosts,
+                    Value = 0.0m
+                },
+                new Condition<ConditionTypes>
+                {
+                    Type = ConditionTypes.RepairCostsCommercialValueRate,
+                    Value = 0.0m
+                }
+            };
+
+            IServiceCollection serviceDescriptors = new ServiceCollection();
+            serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
+            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
+
+            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+                .WithContentType<ContentTypes>()
+                .WithConditionType<ConditionTypes>()
+                .SetInMemoryDataSource(serviceProvider)
+                .Configure(reo =>
+                {
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
@@ -146,7 +146,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
