@@ -36,7 +36,7 @@ namespace Rules.Framework.Extensions
                 conditionNodeDataModels.Add(child.ToGenericConditionNode());
             }
 
-            return new GenericComposedConditionNode<GenericConditionType>
+            return new GenericComposedConditionNode
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator

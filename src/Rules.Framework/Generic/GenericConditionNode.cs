@@ -4,8 +4,7 @@ namespace Rules.Framework.Generic
 
     /// <summary>
     /// Defines generic condition node
-    /// </summary>
-    /// <typeparam name="GenericConditionType">The type of the generic condition type.</typeparam>
+    /// </summary>    
     public class GenericConditionNode
     {
         /// <summary>

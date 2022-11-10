@@ -3,11 +3,10 @@ namespace Rules.Framework.Generic
     using System.Collections.Generic;
 
     /// <summary>
-    /// Defines a generic composed conidtion node
+    /// Defines generic condition node
     /// </summary>
-    /// <typeparam name="GenericConditionType">The type of the generic condition type.</typeparam>
-    /// <seealso cref="Rules.Framework.Generic.GenericConditionNode&lt;GenericConditionType&gt;"/>
-    public class GenericComposedConditionNode<GenericConditionType> : GenericConditionNode
+    /// <seealso cref="Rules.Framework.Generic.GenericConditionNode" />
+    public class GenericComposedConditionNode : GenericConditionNode
     {
         /// <summary>
         /// Gets the child condition nodes.
