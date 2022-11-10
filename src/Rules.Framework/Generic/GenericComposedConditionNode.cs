@@ -3,15 +3,15 @@ namespace Rules.Framework.Generic
     using System.Collections.Generic;
 
     /// <summary>
-    /// Defines generic composed condition node
+    /// Defines a generic composed conidtion node
     /// </summary>
-    /// <typeparam name="ConditionType">The type of the ondition type.</typeparam>
-    /// <seealso cref="Rules.Framework.Generic.GenericConditionNode&lt;ConditionType&gt;"/>
-    public class GenericComposedConditionNode<ConditionType> : GenericConditionNode<ConditionType>
+    /// <typeparam name="GenericConditionType">The type of the generic condition type.</typeparam>
+    /// <seealso cref="Rules.Framework.Generic.GenericConditionNode&lt;GenericConditionType&gt;"/>
+    public class GenericComposedConditionNode<GenericConditionType> : GenericConditionNode
     {
         /// <summary>
         /// Gets the child condition nodes.
         /// </summary>
-        public IEnumerable<GenericConditionNode<ConditionType>> ChildConditionNodes { get; internal set; }
+        public IEnumerable<GenericConditionNode> ChildConditionNodes { get; internal set; }
     }
 }

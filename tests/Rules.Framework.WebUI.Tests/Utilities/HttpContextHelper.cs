@@ -60,7 +60,7 @@ namespace Rules.Framework.WebUI.Tests.Utilities
                 var requestMessage = await reader.ReadToEndAsync().ConfigureAwait(false);
 
                 responseDto = JsonConvert.DeserializeObject<T>(requestMessage,
-                    new JsonSerializerSettings() { DateTimeZoneHandling = DateTimeZoneHandling.Utc });
+                    new JsonSerializerSettings { DateTimeZoneHandling = DateTimeZoneHandling.Utc });
             }
 
             return responseDto;

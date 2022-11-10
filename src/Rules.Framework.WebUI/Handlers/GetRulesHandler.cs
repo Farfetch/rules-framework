@@ -22,7 +22,7 @@ namespace Rules.Framework.WebUI.Handlers
         {
             this.rulesEngine = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
-            this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<GenericConditionNode<GenericConditionType>>());
+            this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<GenericConditionNode>());
         }
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;

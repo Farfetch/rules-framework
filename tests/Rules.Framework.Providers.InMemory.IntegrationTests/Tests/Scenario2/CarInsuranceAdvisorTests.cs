@@ -59,7 +59,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
                 })
                 .Build();
 
@@ -103,7 +103,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
                 })
                 .Build();
 
@@ -146,7 +146,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
                 })
                 .Build();
 

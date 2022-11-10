@@ -9,7 +9,7 @@ namespace Rules.Framework.Extensions
 
     internal static class GenericRuleExtensions
     {
-        public static GenericConditionNode<GenericConditionType> ToGenericConditionNode<TConditionType>(this IConditionNode<TConditionType> rootCondition)
+        public static GenericConditionNode ToGenericConditionNode<TConditionType>(this IConditionNode<TConditionType> rootCondition)
         {
             if (rootCondition.LogicalOperator == LogicalOperators.Eval)
             {
@@ -17,7 +17,7 @@ namespace Rules.Framework.Extensions
 
                 var conditionAsEnum = Enum.Parse(typeof(TConditionType), condition.ConditionType.ToString());
 
-                return new GenericValueConditionNode<GenericConditionType>
+                return new GenericValueConditionNode
                 {
                     ConditionTypeName = conditionAsEnum.ToString(),
                     DataType = condition.DataType,
@@ -28,7 +28,7 @@ namespace Rules.Framework.Extensions
 
             var composedConditionNode = rootCondition as ComposedConditionNode<TConditionType>;
 
-            var conditionNodeDataModels = new List<GenericConditionNode<GenericConditionType>>(composedConditionNode.ChildConditionNodes.Count());
+            var conditionNodeDataModels = new List<GenericConditionNode>(composedConditionNode.ChildConditionNodes.Count());
 
             foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes
                 .Where(condition => condition != null))

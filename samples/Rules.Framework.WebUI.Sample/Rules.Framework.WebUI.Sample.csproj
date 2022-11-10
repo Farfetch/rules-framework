@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj" />
-    <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
+      <ProjectReference Include="..\..\src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj" />
+      <ProjectReference Include="..\..\src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Rules.Framework.Providers.InMemory" Version="1.5.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
 </Project>
