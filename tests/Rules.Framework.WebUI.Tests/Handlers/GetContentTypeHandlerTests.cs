@@ -15,14 +15,12 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     public class GetContentTypeHandlerTests
     {
         private readonly GetContentTypeHandler handler;
-        private readonly Mock<IGenericRulesEngine> rulesEngine;
-        private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
         public GetContentTypeHandlerTests()
         {
-            this.ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
-            this.rulesEngine = new Mock<IGenericRulesEngine>();
-            this.handler = new GetContentTypeHandler(rulesEngine.Object, this.ruleStatusDtoAnalyzer);
+            var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
+            var rulesEngine = new Mock<IGenericRulesEngine>();
+            this.handler = new GetContentTypeHandler(rulesEngine.Object, ruleStatusDtoAnalyzer);
         }
 
         [Theory]
@@ -34,7 +32,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
-            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
+            RequestDelegate next = (HttpContext _) => Task.CompletedTask;
             //Act
             var result = await this.handler
                 .HandleAsync(httpContext.Request, httpContext.Response, next)

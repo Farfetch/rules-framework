@@ -49,7 +49,7 @@ namespace Rules.Framework.WebUI.Handlers
 
         private IDictionary<string, string> GetIndexArguments()
         {
-            return new Dictionary<string, string>()
+            return new Dictionary<string, string>
             {
                 { "%(DocumentTitle)", this.options.DocumentTitle },
                 { "%(HeadContent)", this.options.HeadContent }

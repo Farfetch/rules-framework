@@ -19,7 +19,8 @@ namespace Rules.Framework.WebUI
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
 
             app.UseMiddleware<WebUIMiddleware>(
-                new List<IHttpRequestHandler>() {
+                new List<IHttpRequestHandler>
+                {
                     new GetIndexPageHandler(new WebUIOptions()),
                     new GetPriorityCriteriasHandler(rulesEngine),
                     new GetContentTypeHandler(rulesEngine, ruleStatusDtoAnalyzer),

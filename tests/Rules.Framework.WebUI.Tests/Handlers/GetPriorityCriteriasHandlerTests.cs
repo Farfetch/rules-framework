@@ -14,11 +14,10 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     public class GetPriorityCriteriasHandlerTests
     {
         private readonly GetPriorityCriteriasHandler handler;
-        private readonly Mock<IGenericRulesEngine> rulesEngine;
 
         public GetPriorityCriteriasHandlerTests()
         {
-            this.rulesEngine = new Mock<IGenericRulesEngine>();
+            var rulesEngine = new Mock<IGenericRulesEngine>();
             this.handler = new GetPriorityCriteriasHandler(rulesEngine.Object);
         }
 
@@ -31,7 +30,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
-            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
+            RequestDelegate next = (HttpContext _) => Task.CompletedTask;
 
             //Act
             var result = await this.handler

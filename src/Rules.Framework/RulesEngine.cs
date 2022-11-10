@@ -23,27 +23,24 @@ namespace Rules.Framework
     /// </typeparam>
     public class RulesEngine<TContentType, TConditionType> : IGenericRulesEngine
     {
-        /// <summary>
-        /// The rules engine options
-        /// </summary>
-        public readonly IRulesEngineOptions RulesEngineOptions;
-
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
+        private readonly IRulesEngineOptions rulesEngineOptions;
+
         private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(
-            IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
-            IRulesDataSource<TContentType, TConditionType> rulesDataSource,
-            IValidatorProvider validatorProvider,
-            IRulesEngineOptions rulesEngineOptions,
-            IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor)
+                    IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
+                    IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+                    IValidatorProvider validatorProvider,
+                    IRulesEngineOptions rulesEngineOptions,
+                    IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;
             this.rulesDataSource = rulesDataSource;
             this.validatorProvider = validatorProvider;
-            this.RulesEngineOptions = rulesEngineOptions;
+            this.rulesEngineOptions = rulesEngineOptions;
             this.conditionTypeExtractor = conditionTypeExtractor;
         }
 
@@ -101,7 +98,7 @@ namespace Rules.Framework
         /// <returns>Rules engine priority criterias</returns>
         public PriorityCriterias GetPriorityCriterias()
         {
-            return this.RulesEngineOptions.PriotityCriteria;
+            return this.rulesEngineOptions.PriotityCriteria;
         }
 
         /// <summary>
@@ -377,7 +374,7 @@ namespace Rules.Framework
 
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
-            return this.RulesEngineOptions.PriotityCriteria switch
+            return this.rulesEngineOptions.PriotityCriteria switch
             {
                 PriorityCriterias.BottomMostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
                 _ => rules.OrderBy(r => r.Priority).First(),

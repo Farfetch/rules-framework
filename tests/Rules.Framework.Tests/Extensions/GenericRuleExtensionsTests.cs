@@ -21,7 +21,7 @@ namespace Rules.Framework.Tests.Extensions
             // TODO maybe better to create a builder for building GenericConditions (and GenericRules)
             var expectedRootCondition = new GenericComposedConditionNode<GenericConditionType>
             {
-                ChildConditionNodes = new List<GenericConditionNode<GenericConditionType>>()
+                ChildConditionNodes = new List<GenericConditionNode<GenericConditionType>>
                 {
                     new GenericValueConditionNode<GenericConditionType>
                     {
@@ -32,7 +32,7 @@ namespace Rules.Framework.Tests.Extensions
                     },
                     new GenericComposedConditionNode<GenericConditionType>
                     {
-                        ChildConditionNodes = new List<GenericConditionNode<GenericConditionType>>()
+                        ChildConditionNodes = new List<GenericConditionNode<GenericConditionType>>
                         {
                             new GenericValueConditionNode<GenericConditionType>
                             {

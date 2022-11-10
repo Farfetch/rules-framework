@@ -18,13 +18,12 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     {
         private readonly GetRulesHandler handler;
         private readonly Mock<IGenericRulesEngine> rulesEngine;
-        private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
         public GetRulesHandlerTests()
         {
             this.rulesEngine = new Mock<IGenericRulesEngine>();
-            this.ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
-            this.handler = new GetRulesHandler(rulesEngine.Object, this.ruleStatusDtoAnalyzer);
+            var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
+            this.handler = new GetRulesHandler(rulesEngine.Object, ruleStatusDtoAnalyzer);
         }
 
         [Theory]
@@ -38,9 +37,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
-            var genericRule = new List<GenericRule>()
-            {
-            };
+            var genericRule = new List<GenericRule>();
 
             if (statusCode == HttpStatusCode.OK || statusCode == HttpStatusCode.InternalServerError)
             {
@@ -62,7 +59,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
             {
                 httpContext.Request.QueryString = new QueryString();
             }
-            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
+            RequestDelegate next = (HttpContext _) => Task.CompletedTask;
 
             //Act
             var result = await this.handler

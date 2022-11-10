@@ -25,7 +25,6 @@ namespace Rules.Framework.WebUI.Tests
                 new List<IHttpRequestHandler> { mockHttpRequestHandler.Object });
 
             var context = new DefaultHttpContext();
-            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
 
             // act
             await middleware.InvokeAsync(context);

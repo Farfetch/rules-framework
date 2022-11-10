@@ -1,7 +1,6 @@
 namespace Rules.Framework.WebUI
 {
     using System;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text;
@@ -12,13 +11,7 @@ namespace Rules.Framework.WebUI
 
     internal abstract class WebUIRequestHandlerBase : IHttpRequestHandler
     {
-        /*protected JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
-        {
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            TypeNameHandling = TypeNameHandling.None
-        };*/
-
-        protected JsonSerializerOptions SerializerOptions = new JsonSerializerOptions()
+        protected JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
@@ -70,10 +63,10 @@ namespace Rules.Framework.WebUI
 
         protected Task WriteExceptionResponseAsync(HttpResponse httpResponse, Exception exception)
         {
-            var error = exception.Message.ToString();
+            var error = new StringBuilder(exception.Message);
             if (exception.InnerException != null)
             {
-                error += Environment.NewLine + exception.InnerException.ToString();
+                error.AppendLine(exception.InnerException.Message);
             }
 
             return this.WriteResponseAsync(httpResponse, error, (int)HttpStatusCode.InternalServerError);
