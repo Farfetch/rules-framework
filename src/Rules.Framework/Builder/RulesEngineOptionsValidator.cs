@@ -13,42 +13,42 @@ namespace Rules.Framework.Builder
                 throw new InvalidRulesEngineOptionsException($"Specified null {nameof(rulesEngineOptions)}.");
             }
 
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Boolean,
                 value => value != null && bool.TryParse(value.ToString(), out bool boolRes));
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Decimal,
                 value => value != null && decimal.TryParse(value.ToString(), out decimal decimalRes));
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Integer,
                 value => value != null && int.TryParse(value.ToString(), out int intRes));
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.String,
                 value => value is string);
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayBoolean,
                 value => value is IEnumerable<bool>);
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayDecimal,
                 value => value is IEnumerable<decimal>);
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayInteger,
                 value => value is IEnumerable<int>);
-            EnsureValidDataTypeDefault(
+            ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayString,
                 value => value is IEnumerable<string>);
 
         }
 
-        private static void EnsureValidDataTypeDefault(IDictionary<DataTypes, object> dataTypeDefaults, DataTypes dataType, Func<object, bool> validFunc)
+        private static void ValidateDataTypeDefault(IDictionary<DataTypes, object> dataTypeDefaults, DataTypes dataType, Func<object, bool> validFunc)
         {
             object value = dataTypeDefaults[dataType];
             if (!validFunc.Invoke(value))
