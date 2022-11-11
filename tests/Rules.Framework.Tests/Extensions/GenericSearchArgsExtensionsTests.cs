@@ -89,12 +89,12 @@ namespace Rules.Framework.Tests.Extensions
                 {
                     new Condition<GenericConditionType>
                     {
-                        Type = new GenericConditionType() { Name = "ConditionType", Code = "PluviosityRate" },
+                        Type = new GenericConditionType { Name = "ConditionType", Code = "PluviosityRate" },
                         Value = pluviosityRate
                     },
                     new Condition<GenericConditionType>
                     {
-                        Type = new GenericConditionType() { Name = "ConditionType", Code = "IsoCountryCode" },
+                        Type = new GenericConditionType { Name = "ConditionType", Code = "IsoCountryCode" },
                         Value = countryCode
                     }
                 },
