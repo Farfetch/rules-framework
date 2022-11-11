@@ -62,7 +62,7 @@ namespace Rules.Framework.Tests.Extensions
 
             var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd)
             {
-                Conditions = new Condition<ConditionType>[]
+                Conditions = new List<Condition<ConditionType>>
                 {
                     new Condition<ConditionType>
                     {
@@ -85,14 +85,14 @@ namespace Rules.Framework.Tests.Extensions
                 new GenericContentType { Name = contentTypeName, Code = contentTypeCode }, dateBegin, dateEnd
                 )
             {
-                Conditions = new List<Condition<GenericConditionType>>()
+                Conditions = new List<Condition<GenericConditionType>>
                 {
-                    new Condition<GenericConditionType>()
+                    new Condition<GenericConditionType>
                     {
                         Type = new GenericConditionType() { Name = "ConditionType", Code = "PluviosityRate" },
                         Value = pluviosityRate
                     },
-                    new Condition<GenericConditionType>()
+                    new Condition<GenericConditionType>
                     {
                         Type = new GenericConditionType() { Name = "ConditionType", Code = "IsoCountryCode" },
                         Value = countryCode

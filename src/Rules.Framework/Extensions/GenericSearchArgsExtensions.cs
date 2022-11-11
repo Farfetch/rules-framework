@@ -15,8 +15,7 @@ namespace Rules.Framework.Extensions
             }
 
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Name);
-            //var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Code);
-
+            
             var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd)
             {
                 Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
