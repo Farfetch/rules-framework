@@ -65,7 +65,7 @@ namespace Rules.Framework.Providers.SqlServer
 
             Model.Rule ruleDataModel = new Model.Rule
             {
-                Content = content,
+                Content = content.ToString(),
                 ContentTypeCode = Convert.ToInt32(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,

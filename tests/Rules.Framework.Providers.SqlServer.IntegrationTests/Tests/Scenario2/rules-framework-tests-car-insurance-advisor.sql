@@ -9,7 +9,7 @@ insert into ConditionTypes values (2, 'RepairCostsCommercialValueRate')
 --Rule 1
 
 insert into ConditionNodes ([ConditionNodeTypeCode], [ConditionTypeCode], [DataTypeCode], [OperatorCode], [Operand], [LogicalOperatorCode])
-values (1, 1, 2, 5, '80', 3)
+values (1, 2, 2, 5, '80', 3)
 
 DECLARE @ConditionNodeId AS BIGINT = (SELECT SCOPE_IDENTITY())
 
@@ -19,7 +19,7 @@ values  ('Pay', 1, '2018-01-01T00:00:00Z', null, 'Car Insurance Advise on repair
 --Rule 2
 
 insert into ConditionNodes ([ConditionNodeTypeCode], [ConditionTypeCode], [DataTypeCode], [OperatorCode], [Operand], [LogicalOperatorCode])
-values (1, 1, 2, 4, '80', 3)
+values (1, 2, 2, 4, '80', 3)
 
 SET @ConditionNodeId = (SELECT SCOPE_IDENTITY())
 

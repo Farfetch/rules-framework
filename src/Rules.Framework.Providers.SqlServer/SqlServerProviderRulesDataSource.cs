@@ -14,15 +14,12 @@ namespace Rules.Framework.Providers.SqlServer
 
         private readonly RulesFrameworkDbContext rulesFrameworkDbContext;
 
-        private readonly string sqlConnection;
-
-        public SqlServerProviderRulesDataSource(string sqlConnection,
+        public SqlServerProviderRulesDataSource(RulesFrameworkDbContext rulesFrameworkDbContext,
             IRuleFactory<TContentType, TConditionType> ruleFactory)
         {
-            this.sqlConnection = sqlConnection ?? throw new ArgumentNullException(nameof(sqlConnection));
+            //this.sqlConnection = sqlConnection ?? throw new ArgumentNullException(nameof(sqlConnection));
+            this.rulesFrameworkDbContext = rulesFrameworkDbContext;
             this.ruleFactory = ruleFactory ?? throw new ArgumentNullException(nameof(ruleFactory));
-
-            rulesFrameworkDbContext = new RulesFrameworkDbContext(); //TODO: how to override sql connection to use sqlConnection field? SqlConnectionStringBuilder
         }
 
         public Task AddRuleAsync(Rule<TContentType, TConditionType> rule)
@@ -30,6 +27,8 @@ namespace Rules.Framework.Providers.SqlServer
             var ruleDataModel = this.ruleFactory.CreateRule(rule);
 
             rulesFrameworkDbContext.Add(ruleDataModel);
+
+            rulesFrameworkDbContext.SaveChanges();
 
             return Task.CompletedTask;
         }

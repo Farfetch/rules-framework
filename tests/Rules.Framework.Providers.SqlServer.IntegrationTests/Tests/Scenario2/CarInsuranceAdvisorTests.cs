@@ -21,9 +21,9 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         private readonly DatabaseHelper databaseHelper;
 
         //TODO: get connection from settings
-        // $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;"
-        // $"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True"
-        private readonly string sqlConnection = $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;";
+        private readonly string sqlConnection = $"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True;";
+
+        //private readonly string sqlConnection = $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;";
 
         private readonly SqlServerDbSettings sqlServerDbSettings;
 
@@ -118,9 +118,9 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
                 {
                     reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
-                .Build();
+            .Build();
 
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = CreateRulesDataSourceTest<ContentTypes, ConditionTypes>(this.sqlConnection);
+            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = CreateRulesDataSourceTest<ContentTypes, ConditionTypes>();
 
             RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
@@ -230,12 +230,11 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
             rule34.Priority.Should().Be(4);
         }
 
-        private static IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(
-            string sqlConnection)
+        private static IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>()
         {
             IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>(new DynamicToStrongTypeContentSerializationProvider<TContentType>());
             return new SqlServerProviderRulesDataSource<TContentType, TConditionType>(
-                    sqlConnection,
+                    SqlServerRulesDataSourceSelectorExtensions.RulesFrameworkDbContext,
                     ruleFactory);
         }
     }
