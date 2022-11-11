@@ -1,6 +1,6 @@
 namespace Rules.Framework.Tests.TestStubs
 {
-    internal enum ContentType
+    public enum ContentType
     {
         Type1 = 1,
 

@@ -7,27 +7,26 @@ namespace Rules.Framework.Extensions
     internal static class GenericSearchArgsExtensions
     {
         public static SearchArgs<TContentType, TConditionType> ToSearchArgs<TContentType, TConditionType>(
-            this SearchArgs<GenericContentType, GenericConditionType> searchArgs)
+            this SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
         {
             if (!typeof(TContentType).IsEnum)
             {
-                throw new ArgumentException("Extensions only works if TContentType is a enum");
+                throw new ArgumentException("Only TContentType of type enum are currently supported.");
             }
 
-            var contentType = (TContentType)Enum.Parse(typeof(TContentType), searchArgs.ContentType.Name);
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Code);
 
-            var genericSearchArgs = new SearchArgs<TContentType, TConditionType>(
-                contentType,
-                searchArgs.DateBegin,
-                searchArgs.DateEnd);
-
-            genericSearchArgs.Conditions = searchArgs.Conditions.Select(condition => new Condition<TConditionType>
+            var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd)
             {
-                Value = condition.Value,
-                Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Code)
-            });
+                Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
+                {
+                    Value = condition.Value,
+                    Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Code)
+                }),
+                ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
+            };
 
-            return genericSearchArgs;
+            return searchArgs;
         }
     }
 }

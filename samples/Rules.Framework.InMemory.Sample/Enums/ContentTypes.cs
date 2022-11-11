@@ -1,6 +1,6 @@
 namespace Rules.Framework.InMemory.Sample.Enums
 {
-    internal enum ContentTypes
+    public enum ContentTypes
     {
         None = 0,
 

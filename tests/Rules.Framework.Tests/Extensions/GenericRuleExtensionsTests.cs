@@ -14,7 +14,7 @@ namespace Rules.Framework.Tests.Extensions
     public class GenericRuleExtensionsTests
     {
         [Fact]
-        public void GenericRuleExtensions_ToGenericRule_WithComposedConditions_Success()
+        public void GenericRuleExtensions_ToGenericRule_WithComposedCondition_Success()
         {
             var expectedRuleContent = "Type1";
 

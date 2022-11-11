@@ -3,7 +3,9 @@ namespace Rules.Framework
     /// <summary>
     /// Defines a condition to filter rules.
     /// </summary>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     public class Condition<TConditionType>
     {
         /// <summary>

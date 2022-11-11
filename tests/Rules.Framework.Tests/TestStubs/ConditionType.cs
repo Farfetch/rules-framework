@@ -10,6 +10,6 @@ namespace Rules.Framework.Tests.TestStubs
 
         PluviosityRate = 4,
 
-        IsVip = 5
+        IsVip = 5,
     }
 }
