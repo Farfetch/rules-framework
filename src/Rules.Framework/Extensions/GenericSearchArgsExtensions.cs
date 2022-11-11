@@ -14,7 +14,8 @@ namespace Rules.Framework.Extensions
                 throw new ArgumentException("Only TContentType of type enum are currently supported.");
             }
 
-            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Code);
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Name);
+            //var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Code);
 
             var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd)
             {

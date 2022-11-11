@@ -14,8 +14,8 @@ namespace Rules.Framework.Tests.Extensions
         public void GenericSearchArgsExtensions_ToSearchArgs_WithConditions_Success()
         {
             //Arrange
-            var contentTypeName = "ContentType";
-            var contentTypeCode = "Type1";
+            var contentTypeCode = "ContentType";
+            var contentTypeName = "Type1";
             var contentType = ContentType.Type1;
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2020, 12, 31);
@@ -78,8 +78,8 @@ namespace Rules.Framework.Tests.Extensions
                 ExcludeRulesWithoutSearchConditions = true
             };
 
-            var contentTypeName = "ContentType";
-            var contentTypeCode = "Type1";
+            var contentTypeCode = "ContentType";
+            var contentTypeName = "Type1";
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
                 new GenericContentType { Name = contentTypeName, Code = contentTypeCode }, dateBegin, dateEnd
