@@ -40,7 +40,7 @@ namespace Rules.Framework.Builder
         public IConfiguredRulesEngineBuilder<TContentType, TConditionType> Configure(Action<RulesEngineOptions> configurationAction)
         {
             configurationAction.Invoke(this.rulesEngineOptions);
-            RulesEngineOptionsValidator.EnsureValid(this.rulesEngineOptions);
+            RulesEngineOptionsValidator.Validate(this.rulesEngineOptions);
 
             return this;
         }
