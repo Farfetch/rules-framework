@@ -16,7 +16,7 @@ namespace Rules.Framework.Tests.Builder
             InvalidRulesEngineOptionsException actual = Assert.Throws<InvalidRulesEngineOptionsException>(() =>
             {
                 // Act
-                RulesEngineOptionsValidator.EnsureValid(rulesEngineOptions);
+                RulesEngineOptionsValidator.Validate(rulesEngineOptions);
             });
 
             actual.Message.Should().Be("Specified null rulesEngineOptions.");
@@ -48,7 +48,7 @@ namespace Rules.Framework.Tests.Builder
             InvalidRulesEngineOptionsException actual = Assert.Throws<InvalidRulesEngineOptionsException>(() =>
             {
                 // Act
-                RulesEngineOptionsValidator.EnsureValid(rulesEngineOptions);
+                RulesEngineOptionsValidator.Validate(rulesEngineOptions);
             });
 
             actual.Message.Should().Be($"Specified invalid default value for data type {dataType}: {defaultValue ?? "null"}.");

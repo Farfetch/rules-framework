@@ -6,7 +6,7 @@ namespace Rules.Framework.Builder
 
     internal static class RulesEngineOptionsValidator
     {
-        public static void EnsureValid(RulesEngineOptions rulesEngineOptions)
+        public static void Validate(RulesEngineOptions rulesEngineOptions)
         {
             if (rulesEngineOptions == null)
             {
