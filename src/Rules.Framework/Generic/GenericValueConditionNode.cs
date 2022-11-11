@@ -4,10 +4,8 @@ namespace Rules.Framework.Generic
 
     /// <summary>
     /// Defines generic value condition node
-    /// </summary>
-    /// <typeparam name="ConditionType">The type of the ondition type.</typeparam>
-    /// <seealso cref="Rules.Framework.Generic.GenericConditionNode&lt;ConditionType&gt;"/>
-    public class GenericValueConditionNode<ConditionType> : GenericConditionNode<ConditionType>
+    /// </summary>    
+    public class GenericValueConditionNode : GenericConditionNode
     {
         /// <summary>
         /// Gets the condition node type name.

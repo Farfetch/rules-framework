@@ -26,7 +26,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
-            RequestDelegate next = (HttpContext hc) => Task.CompletedTask;
+            RequestDelegate next = (HttpContext _) => Task.CompletedTask;
 
             //Act
             var result = await this.handler

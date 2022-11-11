@@ -4,9 +4,8 @@ namespace Rules.Framework.Generic
 
     /// <summary>
     /// Defines generic condition node
-    /// </summary>
-    /// <typeparam name="ConditionType">The type of the ondition type.</typeparam>
-    public class GenericConditionNode<ConditionType>
+    /// </summary>    
+    public class GenericConditionNode
     {
         /// <summary>
         /// Gets the logical operator to apply to condition node.

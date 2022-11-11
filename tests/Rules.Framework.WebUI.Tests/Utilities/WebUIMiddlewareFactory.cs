@@ -13,7 +13,7 @@ namespace Rules.Framework.WebUI.Tests.Utilities
             IEnumerable<IHttpRequestHandler> handlers)
         {
             return new WebUIMiddleware(loggerFactory: loggerFactory, hostingEnv: hostingEnv,
-                next: (innerHttpContext) =>
+                next: (_) =>
                 {
                     return Task.CompletedTask;
                 },
