@@ -9,7 +9,7 @@ namespace Rules.Framework.Tests.Extensions
     public class TypeExtensionsTests
     {
         public static IEnumerable<object[]> SuccessCases
-            => Enum.GetValues<LanguageOperator>().Select(lo => new object[] { lo });
+            => Enum.GetValues<LanguageOperator>().Where(lo => lo != LanguageOperator.None).Select(lo => new object[] { lo });
 
         [Theory]
         [MemberData(nameof(SuccessCases))]

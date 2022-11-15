@@ -87,7 +87,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
             // Act
             await rulesEngine.AddRuleAsync(ruleBuilderResult.Rule, RuleAddPriorityOption.AtBottom).ConfigureAwait(false);
 
-            Rule<ContentTypes, ConditionTypes> actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            Rule<ContentTypes, ConditionTypes> actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions).ConfigureAwait(false);
 
             // Assert
             actual.Should().NotBeNull();
