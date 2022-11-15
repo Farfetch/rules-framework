@@ -1,49 +1,53 @@
 namespace System
 {
-    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
 
     internal static class TypeExtensions
     {
-        private static readonly ConcurrentDictionary<Type, IDictionary<LanguageOperator, bool>> languageOperatorsSupportByType
-            = new ConcurrentDictionary<Type, IDictionary<LanguageOperator, bool>>();
+        private static readonly LanguageOperator[] languageOperators = new[]
+        {
+            LanguageOperator.Equal,
+            LanguageOperator.NotEqual,
+            LanguageOperator.GreaterThan,
+            LanguageOperator.GreaterThanOrEqual,
+            LanguageOperator.LessThan,
+            LanguageOperator.LessThanOrEqual,
+        };
+
+        private static readonly ConcurrentDictionary<Type, IDictionary<LanguageOperator, string>> languageOperatorsSupportByType = new();
 
         public static bool HasLanguageOperator(this Type type, LanguageOperator languageOperator)
         {
-            var languageOperatorsByType = languageOperatorsSupportByType.GetOrAdd(type, (t) => new Dictionary<LanguageOperator, bool>()
+            var languageOperatorsByType = languageOperatorsSupportByType.GetOrAdd(type, (t) =>
             {
-                { LanguageOperator.Equal, t.HasLanguageOperatorInternal(LanguageOperator.Equal) },
-                { LanguageOperator.NotEqual, t.HasLanguageOperatorInternal(LanguageOperator.NotEqual) },
-                { LanguageOperator.GreaterThan, t.HasLanguageOperatorInternal(LanguageOperator.GreaterThan) },
-                { LanguageOperator.GreaterThanOrEqual, t.HasLanguageOperatorInternal(LanguageOperator.GreaterThanOrEqual) },
-                { LanguageOperator.LessThan, t.HasLanguageOperatorInternal(LanguageOperator.LessThan) },
-                { LanguageOperator.LessThanOrEqual, t.HasLanguageOperatorInternal(LanguageOperator.LessThanOrEqual) },
+                return ((TypeInfo)type).GetRuntimeMethods()
+                    .Select(m =>
+                    {
+                        var splittedName = m.Name.Split('.');
+                        return splittedName[splittedName.Length - 1];
+                    })
+                    .Distinct(StringComparer.Ordinal)
+                    .Select(m => new { LanguageOperator = m.ToLanguageOperator(), Name = m })
+                    .Where(x => x.LanguageOperator != LanguageOperator.None)
+                    .ToDictionary(x => x.LanguageOperator, x => x.Name);
             });
 
-            if (languageOperatorsByType.TryGetValue(languageOperator, out bool result))
-            {
-                return result;
-            }
-
-            return false;
+            return languageOperatorsByType.ContainsKey(languageOperator);
         }
 
-        private static bool HasLanguageOperatorInternal(this Type type, LanguageOperator languageOperator)
-            => ((TypeInfo)type).GetRuntimeMethods().Any(m => m.Name.Contains(languageOperator.ToOperatorMethodName()));
-
-        private static string ToOperatorMethodName(this LanguageOperator languageOperator) => languageOperator switch
+        private static LanguageOperator ToLanguageOperator(this string operatorMethodName) => operatorMethodName switch
         {
-            LanguageOperator.Equal => "op_Equality",
-            LanguageOperator.NotEqual => "op_Inequality",
-            LanguageOperator.GreaterThan => "op_GreaterThan",
-            LanguageOperator.GreaterThanOrEqual => "op_GreaterThanOrEqual",
-            LanguageOperator.LessThan => "op_LessThan",
-            LanguageOperator.LessThanOrEqual => "op_LessThanOrEqual",
-            _ => throw new NotSupportedException()
+            "op_Equality" => LanguageOperator.Equal,
+            "op_Inequality" => LanguageOperator.NotEqual,
+            "op_GreaterThan" => LanguageOperator.GreaterThan,
+            "op_GreaterThanOrEqual" => LanguageOperator.GreaterThanOrEqual,
+            "op_LessThan" => LanguageOperator.LessThan,
+            "op_LessThanOrEqual" => LanguageOperator.LessThanOrEqual,
+            _ => LanguageOperator.None
         };
     }
 }
