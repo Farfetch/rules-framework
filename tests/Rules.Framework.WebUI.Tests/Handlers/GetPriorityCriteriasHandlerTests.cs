@@ -17,7 +17,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
         public GetPriorityCriteriasHandlerTests()
         {
-            var rulesEngine = new Mock<IGenericRulesEngine>();
+            var rulesEngine = new Mock<IGenericRulesEngineAdapter>();
             this.handler = new GetPriorityCriteriasHandler(rulesEngine.Object);
         }
 

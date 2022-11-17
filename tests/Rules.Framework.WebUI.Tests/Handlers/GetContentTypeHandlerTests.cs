@@ -19,7 +19,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         public GetContentTypeHandlerTests()
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
-            var rulesEngine = new Mock<IGenericRulesEngine>();
+            var rulesEngine = new Mock<IGenericRulesEngineAdapter>();
             this.handler = new GetContentTypeHandler(rulesEngine.Object, ruleStatusDtoAnalyzer);
         }
 

@@ -10,9 +10,9 @@ namespace Rules.Framework.WebUI.Handlers
     {
         private static readonly string[] resourcePath = new[] { "/rules/Rule/Priority" };
 
-        private readonly IGenericRulesEngine rulesEngine;
+        private readonly IGenericRulesEngineAdapter rulesEngine;
 
-        public GetPriorityCriteriasHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
+        public GetPriorityCriteriasHandler(IGenericRulesEngineAdapter rulesEngine) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
         }

@@ -13,10 +13,10 @@ namespace Rules.Framework.WebUI.Handlers
     {
         private static readonly string[] resourcePath = new[] { "/rules/ContentType/List" };
 
-        private readonly IGenericRulesEngine rulesEngine;
+        private readonly IGenericRulesEngineAdapter rulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetContentTypeHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
+        public GetContentTypeHandler(IGenericRulesEngineAdapter rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;

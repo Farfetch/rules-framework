@@ -14,7 +14,7 @@ namespace Rules.Framework.WebUI
         /// <summary>
         /// Register the UI middleware
         /// </summary>
-        public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IGenericRulesEngine rulesEngine)
+        public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IGenericRulesEngineAdapter genericRulesEngineAdapter)
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
 
@@ -22,9 +22,9 @@ namespace Rules.Framework.WebUI
                 new List<IHttpRequestHandler>
                 {
                     new GetIndexPageHandler(new WebUIOptions()),
-                    new GetPriorityCriteriasHandler(rulesEngine),
-                    new GetContentTypeHandler(rulesEngine, ruleStatusDtoAnalyzer),
-                    new GetRulesHandler(rulesEngine, ruleStatusDtoAnalyzer)
+                    new GetPriorityCriteriasHandler(genericRulesEngineAdapter),
+                    new GetContentTypeHandler(genericRulesEngineAdapter, ruleStatusDtoAnalyzer),
+                    new GetRulesHandler(genericRulesEngineAdapter, ruleStatusDtoAnalyzer)
                 });
 
             return app;

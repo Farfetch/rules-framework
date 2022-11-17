@@ -15,10 +15,10 @@ namespace Rules.Framework.WebUI.Handlers
     {
         private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
         private static readonly string[] resourcePath = new[] { "/rules/Rule/List" };
-        private readonly IGenericRulesEngine rulesEngine;
+        private readonly IGenericRulesEngineAdapter rulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetRulesHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
+        public GetRulesHandler(IGenericRulesEngineAdapter rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;

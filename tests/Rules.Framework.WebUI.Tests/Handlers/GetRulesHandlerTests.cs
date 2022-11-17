@@ -17,11 +17,11 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     public class GetRulesHandlerTests
     {
         private readonly GetRulesHandler handler;
-        private readonly Mock<IGenericRulesEngine> rulesEngine;
+        private readonly Mock<IGenericRulesEngineAdapter> rulesEngine;
 
         public GetRulesHandlerTests()
         {
-            this.rulesEngine = new Mock<IGenericRulesEngine>();
+            this.rulesEngine = new Mock<IGenericRulesEngineAdapter>();
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
             this.handler = new GetRulesHandler(rulesEngine.Object, ruleStatusDtoAnalyzer);
         }

@@ -1,6 +1,7 @@
 using Rules.Framework.Generic;
 using Rules.Framework.WebUI;
 using Rules.Framework.WebUI.Sample.Engine;
+using Rules.Framework.WebUI.Sample.Enums;
 using Rules.Framework.WebUI.Sample.Rules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,11 +16,13 @@ var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTy
 
 builder.Services.AddSingleton(rulesProvider);
 
-builder.Services.AddSingleton<IGenericRulesEngine>(d => rulesProvider
+var rulesEngine = rulesProvider
     .GetRulesEngineAsync()
     .ConfigureAwait(false)
     .GetAwaiter()
-    .GetResult());
+    .GetResult();
+
+builder.Services.AddSingleton<IGenericRulesEngineAdapter>(d => new GenericRulesEngineAdapter<ContentTypes, ConditionTypes>(rulesEngine));
 
 var app = builder.Build();
 
@@ -50,7 +53,7 @@ app.Run();
 
 static void AddRulesFrameworkUI(IApplicationBuilder app)
 {
-    var rulesEngine = app.ApplicationServices.GetRequiredService<IGenericRulesEngine>();
+    var rulesEngine = app.ApplicationServices.GetRequiredService<IGenericRulesEngineAdapter>();
 
     app.UseRulesFrameworkUI(rulesEngine);
 }
