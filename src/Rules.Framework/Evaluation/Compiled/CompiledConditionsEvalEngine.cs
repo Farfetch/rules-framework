@@ -9,6 +9,7 @@ namespace Rules.Framework.Evaluation.Compiled
 
     internal sealed class CompiledConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
+        private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
         private readonly IConditionsTreeCompiler<TConditionType> conditionsTreeCompiler;
         private readonly IMultiplicityEvaluator multiplicityEvaluator;
         private readonly RulesEngineOptions rulesEngineOptions;
@@ -16,16 +17,18 @@ namespace Rules.Framework.Evaluation.Compiled
         public CompiledConditionsEvalEngine(
             IConditionsTreeCompiler<TConditionType> conditionsTreeCompiler,
             IMultiplicityEvaluator multiplicityEvaluator,
+            IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer,
             RulesEngineOptions rulesEngineOptions)
         {
             this.conditionsTreeCompiler = conditionsTreeCompiler;
             this.multiplicityEvaluator = multiplicityEvaluator;
+            this.conditionsTreeAnalyzer = conditionsTreeAnalyzer;
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
         public bool Eval(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions, EvaluationOptions evaluationOptions)
         {
-            if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !AreAllSearchConditionsPresent(conditionNode, conditions))
+            if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !this.conditionsTreeAnalyzer.AreAllSearchConditionsPresent(conditionNode, conditions))
             {
                 return false;
             }
@@ -38,44 +41,6 @@ namespace Rules.Framework.Evaluation.Compiled
             ISpecification<IDictionary<TConditionType, object>> specification = this.BuildSpecification(conditionNode, conditions, evaluationOptions.MatchMode);
 
             return specification.IsSatisfiedBy(conditions);
-        }
-
-        private static bool AreAllSearchConditionsPresent(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions)
-        {
-            // Conditions checklist is a mere control construct to avoid a full sweep of the
-            // condition nodes tree when we already found all conditions.
-            IDictionary<TConditionType, bool> conditionsChecklist = new Dictionary<TConditionType, bool>(conditions.ToDictionary(ks => ks.Key, vs => false));
-
-            return VisitConditionNode(conditionNode, conditionsChecklist);
-        }
-
-        private static bool VisitConditionNode(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, bool> conditionsChecklist)
-        {
-            switch (conditionNode)
-            {
-                case ValueConditionNode<TConditionType> valueConditionNode:
-                    if (conditionsChecklist.ContainsKey(valueConditionNode.ConditionType))
-                    {
-                        conditionsChecklist[valueConditionNode.ConditionType] = true;
-                    }
-
-                    return conditionsChecklist.All(kvp => kvp.Value);
-
-                case ComposedConditionNode<TConditionType> composedConditionNode:
-                    foreach (IConditionNode<TConditionType> childConditionNode in composedConditionNode.ChildConditionNodes)
-                    {
-                        bool allPresentAlready = VisitConditionNode(childConditionNode, conditionsChecklist);
-                        if (allPresentAlready)
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-
-                default:
-                    throw new NotSupportedException($"Unsupported condition node: '{conditionNode.GetType().Name}'.");
-            }
         }
 
         private ISpecification<IDictionary<TConditionType, object>> BuildSpecification(

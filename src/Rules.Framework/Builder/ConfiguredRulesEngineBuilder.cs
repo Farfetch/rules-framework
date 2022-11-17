@@ -28,6 +28,7 @@ namespace Rules.Framework.Builder
             var rulesSourceMiddlewares = new List<IRulesSourceMiddleware<TContentType, TConditionType>>();
             var dataTypesConfigurationProvider = new DataTypesConfigurationProvider(this.rulesEngineOptions);
             var multiplicityEvaluator = new MultiplicityEvaluator();
+            var conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
 
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
@@ -36,14 +37,13 @@ namespace Rules.Framework.Builder
                 var conditionExpressionBuilderProvider = new ConditionExpressionBuilderProvider();
                 var valueConditionNodeCompilerProvider = new ValueConditionNodeCompilerProvider(conditionExpressionBuilderProvider, dataTypesConfigurationProvider);
                 var conditionsTreeCompiler = new ConditionsTreeCompiler<TConditionType>(valueConditionNodeCompilerProvider);
-                conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(conditionsTreeCompiler, multiplicityEvaluator, this.rulesEngineOptions);
+                conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(conditionsTreeCompiler, multiplicityEvaluator, conditionsTreeAnalyzer, this.rulesEngineOptions);
             }
             else
             {
                 var operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
                 var conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
                 var deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
-                var conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
                 conditionsEvalEngine = new ClassicConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
             }
 

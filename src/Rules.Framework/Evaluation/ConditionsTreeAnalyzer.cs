@@ -1,5 +1,7 @@
 namespace Rules.Framework.Evaluation
 {
+    using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
     using System;
     using System.Collections.Generic;
     using System.Linq;

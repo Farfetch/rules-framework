@@ -3,10 +3,13 @@ namespace Rules.Framework.Tests.Evaluation
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
+    using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Tests.TestStubs;
+    using System;
+    using System.Collections.Generic;
     using Xunit;
 
     public class ConditionsTreeAnalyzerTests

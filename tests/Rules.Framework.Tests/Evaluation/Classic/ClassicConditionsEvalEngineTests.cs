@@ -17,17 +17,23 @@ namespace Rules.Framework.Tests.Evaluation.Classic
         public void Eval_GivenComposedConditionNodeWithAndOperatorAndMissingConditionWithSearchMode_EvalsAndReturnsResult()
         {
             // Arrange
-            var condition1 = new ValueConditionNode<ConditionType>(DataTypes.Boolean, ConditionType.IsVip, Operators.Equal, true);
-            var condition2 = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.NotEqual, "SGD");
+            ValueConditionNode<ConditionType> condition1 = new(DataTypes.Boolean, ConditionType.IsVip, Operators.Equal, true);
+            ValueConditionNode<ConditionType> condition2 = new(DataTypes.String, ConditionType.IsoCurrency, Operators.NotEqual, "SGD");
 
-            var composedConditionNode = new ComposedConditionNode<ConditionType>(
-                LogicalOperators.Or,
+            ComposedConditionNode<ConditionType> composedConditionNode = new(
+                LogicalOperators.And,
                 new IConditionNode<ConditionType>[] { condition1, condition2 });
 
-            var conditions = new Dictionary<ConditionType, object>
+            Dictionary<ConditionType, object> conditions = new()
             {
-                { ConditionType.IsoCurrency, "SGD" },
-                { ConditionType.IsoCountryCode, "PT" }
+                {
+                    ConditionType.IsoCurrency,
+                    "SGD"
+                },
+                {
+                    ConditionType.IsVip,
+                    true
+                }
             };
 
             var evaluationOptions = new EvaluationOptions
@@ -49,7 +55,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
                 .Throws(new NotImplementedException("Shouldn't have gotten any more deferred evals."));
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            ClassicConditionsEvalEngine<ConditionType> sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
             bool actual = sut.Eval(composedConditionNode, conditions, evaluationOptions);
@@ -64,17 +70,23 @@ namespace Rules.Framework.Tests.Evaluation.Classic
         public void Eval_GivenComposedConditionNodeWithAndOperatorWithExactMatch_EvalsAndReturnsResult()
         {
             // Arrange
-            var condition1 = new ValueConditionNode<ConditionType>(DataTypes.Boolean, ConditionType.IsVip, Operators.Equal, true);
-            var condition2 = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.NotEqual, "SGD");
+            ValueConditionNode<ConditionType> condition1 = new(DataTypes.Boolean, ConditionType.IsVip, Operators.Equal, true);
+            ValueConditionNode<ConditionType> condition2 = new(DataTypes.String, ConditionType.IsoCurrency, Operators.NotEqual, "SGD");
 
-            var composedConditionNode = new ComposedConditionNode<ConditionType>(
-                LogicalOperators.And,
+            ComposedConditionNode<ConditionType> composedConditionNode = new(
+                LogicalOperators.Eval,
                 new IConditionNode<ConditionType>[] { condition1, condition2 });
 
-            var conditions = new Dictionary<ConditionType, object>
+            Dictionary<ConditionType, object> conditions = new()
             {
-                { ConditionType.IsoCurrency, "SGD" },
-                { ConditionType.IsVip, true }
+                {
+                    ConditionType.IsoCurrency,
+                    "SGD"
+                },
+                {
+                    ConditionType.IsVip,
+                    true
+                }
             };
 
             var evaluationOptions = new EvaluationOptions
@@ -82,28 +94,19 @@ namespace Rules.Framework.Tests.Evaluation.Classic
                 MatchMode = MatchModes.Exact
             };
 
-            var mockDeferredEval = new Mock<IDeferredEval>();
-            mockDeferredEval.SetupSequence(x => x.GetDeferredEvalFor(It.IsAny<IValueConditionNode<ConditionType>>(), It.Is<MatchModes>(mm => mm == MatchModes.Exact)))
-                .Returns(() =>
-                {
-                    return (c) => true;
-                })
-                .Returns(() =>
-                {
-                    return (c) => true;
-                })
-                .Throws(new NotImplementedException("Shouldn't have gotten any more deferred evals."));
-            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
+            Mock<IDeferredEval> mockDeferredEval = new Mock<IDeferredEval>();
 
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            IConditionsTreeAnalyzer<ConditionType> conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
+
+            ClassicConditionsEvalEngine<ConditionType> sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
-            bool actual = sut.Eval(composedConditionNode, conditions, evaluationOptions);
+            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.Eval(composedConditionNode, conditions, evaluationOptions));
 
             // Assert
-            actual.Should().BeTrue();
-
-            mockDeferredEval.Verify(x => x.GetDeferredEvalFor(It.IsAny<IValueConditionNode<ConditionType>>(), It.Is<MatchModes>(mm => mm == MatchModes.Exact)), Times.Exactly(2));
+            notSupportedException.Should().NotBeNull();
+            notSupportedException.Message.Should().Be("Unsupported logical operator: 'Eval'.");
+            mockDeferredEval.Verify(x => x.GetDeferredEvalFor(It.IsAny<IValueConditionNode<ConditionType>>(), It.Is<MatchModes>(mm => mm == MatchModes.Exact)), Times.Never());
         }
 
         [Fact]
@@ -117,10 +120,16 @@ namespace Rules.Framework.Tests.Evaluation.Classic
                 LogicalOperators.Eval,
                 new IConditionNode<ConditionType>[] { condition1, condition2 });
 
-            var conditions = new Dictionary<ConditionType, object>
+            Dictionary<ConditionType, object> conditions = new()
             {
-                { ConditionType.IsoCurrency, "SGD" },
-                { ConditionType.IsVip, true }
+                {
+                    ConditionType.IsoCurrency,
+                    "SGD"
+                },
+                {
+                    ConditionType.IsVip,
+                    true
+                }
             };
 
             var evaluationOptions = new EvaluationOptions
@@ -131,7 +140,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
             var mockDeferredEval = new Mock<IDeferredEval>();
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
+            ClassicConditionsEvalEngine<ConditionType> sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
 
             // Act
             var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.Eval(composedConditionNode, conditions, evaluationOptions));
@@ -153,10 +162,16 @@ namespace Rules.Framework.Tests.Evaluation.Classic
                 LogicalOperators.Or,
                 new IConditionNode<ConditionType>[] { condition1, condition2 });
 
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<ConditionType, object>()
             {
-                { ConditionType.IsoCurrency, "SGD" },
-                { ConditionType.IsVip, true }
+                {
+                    ConditionType.IsoCurrency,
+                    "SGD"
+                },
+                {
+                    ConditionType.IsVip,
+                    true
+                }
             };
 
             var evaluationOptions = new EvaluationOptions
@@ -168,7 +183,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic
             mockDeferredEval.SetupSequence(x => x.GetDeferredEvalFor(It.IsAny<IValueConditionNode<ConditionType>>(), It.Is<MatchModes>(mm => mm == MatchModes.Exact)))
                 .Returns(() =>
                 {
-                    return (c) => false;
+                    return (c) => true;
                 })
                 .Returns(() =>
                 {
@@ -186,38 +201,6 @@ namespace Rules.Framework.Tests.Evaluation.Classic
             actual.Should().BeTrue();
 
             mockDeferredEval.Verify(x => x.GetDeferredEvalFor(It.IsAny<IValueConditionNode<ConditionType>>(), It.Is<MatchModes>(mm => mm == MatchModes.Exact)), Times.Exactly(2));
-        }
-
-        [Fact]
-        public void Eval_GivenComposedConditionNodeWithUnknownConditionNode_ThrowsNotSupportedException()
-        {
-            // Arrange
-            var mockConditionNode = new Mock<IConditionNode<ConditionType>>();
-
-            var conditions = new Dictionary<ConditionType, object>
-            {
-                { ConditionType.IsoCurrency, "SGD" },
-                { ConditionType.IsVip, true }
-            };
-
-            var evaluationOptions = new EvaluationOptions
-            {
-                MatchMode = MatchModes.Exact
-            };
-
-            var mockDeferredEval = new Mock<IDeferredEval>();
-            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
-
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
-
-            // Act
-            var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.Eval(mockConditionNode.Object, conditions, evaluationOptions));
-
-            // Assert
-            notSupportedException.Should().NotBeNull();
-            notSupportedException.Message.Should().Be($"Unsupported condition node: '{mockConditionNode.Object.GetType().Name}'.");
-
-            mockDeferredEval.Verify(x => x.GetDeferredEvalFor(It.IsAny<IValueConditionNode<ConditionType>>(), It.Is<MatchModes>(mm => mm == MatchModes.Exact)), Times.Never());
         }
     }
 }
