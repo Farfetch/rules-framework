@@ -6,11 +6,8 @@ namespace Rules.Framework
     using System.Text;
     using System.Threading.Tasks;
     using FluentValidation;
-    using FluentValidation.Results;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
-    using Rules.Framework.Extensions;
-    using Rules.Framework.Generic;
     using Rules.Framework.Management;
     using Rules.Framework.Validation;
 
@@ -21,13 +18,12 @@ namespace Rules.Framework
     /// <typeparam name="TConditionType">
     /// The condition type that allows to filter rules based on a set of conditions.
     /// </typeparam>
-    public class RulesEngine<TContentType, TConditionType>
+    public class RulesEngine<TContentType, TConditionType> : IRulesEngine<TContentType, TConditionType>
     {
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
         private readonly IRulesEngineOptions rulesEngineOptions;
-
         private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(
@@ -67,29 +63,6 @@ namespace Rules.Framework
             }
 
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
-        }
-
-        /// <summary>
-        /// Gets the content types.
-        /// </summary>
-        /// <returns>List of content types</returns>
-        /// <exception cref="System.ArgumentException">
-        /// Method only works if TContentType is a enum
-        /// </exception>
-        public IEnumerable<GenericContentType> GetContentTypes()
-        {
-            if (!typeof(TContentType).IsEnum)
-            {
-                throw new ArgumentException("Method only works if TContentType is a enum");
-            }
-
-            return Enum.GetValues(typeof(TContentType))
-               .Cast<TContentType>()
-               .Select(t => new GenericContentType
-               {
-                   Code = Enum.Parse(typeof(TContentType), t.ToString()).ToString(),
-                   Name = t.ToString()
-               });
         }
 
         /// <summary>
@@ -194,15 +167,17 @@ namespace Rules.Framework
                 throw new ArgumentNullException(nameof(searchArgs));
             }
 
-            IValidator<SearchArgs<TContentType, TConditionType>> validator = this.validatorProvider.GetValidatorFor<SearchArgs<TContentType, TConditionType>>();
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validator = this.validatorProvider.GetValidatorFor<SearchArgs<TContentType, TConditionType>>();
+
+            var validationResult = validator.Validate(searchArgs);
+
             if (!validationResult.IsValid)
             {
-                StringBuilder stringBuilder = new StringBuilder()
+                var stringBuilder = new StringBuilder()
                     .AppendFormat("Specified '{0}' with invalid search values:", nameof(searchArgs))
                     .AppendLine();
 
-                foreach (ValidationFailure validationFailure in validationResult.Errors)
+                foreach (var validationFailure in validationResult.Errors)
                 {
                     stringBuilder.AppendFormat("> {0}", validationFailure.ErrorMessage)
                         .AppendLine();
@@ -211,10 +186,10 @@ namespace Rules.Framework
                 throw new ArgumentException(stringBuilder.ToString(), nameof(searchArgs));
             }
 
-            DateTime dateBegin = searchArgs.DateBegin;
-            DateTime dateEnd = searchArgs.DateEnd;
+            var dateBegin = searchArgs.DateBegin;
+            var dateEnd = searchArgs.DateEnd;
 
-            EvaluationOptions evaluationOptions = new EvaluationOptions
+            var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
                 MatchMode = MatchModes.Search
@@ -226,20 +201,6 @@ namespace Rules.Framework
             }
 
             return this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions);
-        }
-
-        /// <summary>
-        /// Searches for generic rules that match on supplied <paramref name="genericSearchArgs"/>.
-        /// </summary>
-        /// <param name="genericSearchArgs"></param>
-        /// <returns>the set of generic rules matching the conditions.</returns>
-        public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
-        {
-            var searchArgs = genericSearchArgs.ToSearchArgs<TContentType, TConditionType>();
-
-            var result = await this.SearchAsync(searchArgs);
-
-            return result.Select(rule => rule.ToGenericRule());
         }
 
         /// <summary>

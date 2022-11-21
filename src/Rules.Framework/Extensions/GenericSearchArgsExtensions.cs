@@ -15,13 +15,13 @@ namespace Rules.Framework.Extensions
             }
 
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Name);
-            
+
             var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd)
             {
                 Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
                 {
                     Value = condition.Value,
-                    Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Code)
+                    Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Name)
                 }),
                 ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
             };

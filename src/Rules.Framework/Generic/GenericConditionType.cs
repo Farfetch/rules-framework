@@ -8,10 +8,10 @@ namespace Rules.Framework.Generic
     public struct GenericConditionType : IEquatable<GenericConditionType>
     {
         /// <summary>
-        /// Gets or sets the code.
+        /// Gets or sets the file name.
         /// </summary>
-        /// <value>The code.</value>
-        public string Code { get; set; }
+        /// <value>The file name.</value>
+        public string FileName { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
@@ -24,12 +24,13 @@ namespace Rules.Framework.Generic
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns>
-        /// true if the current object is equal to the <paramref name="other">other</paramref> parameter; otherwise, false.
+        /// true if the current object is equal to the <paramref name="other">other</paramref>
+        /// parameter; otherwise, false.
         /// </returns>
         public bool Equals(GenericConditionType other)
         {
-            return other.Name == this.Name
-                && other.Code == this.Code;
+            return other.FileName == this.FileName
+                && other.Name == this.Name;
         }
     }
 }

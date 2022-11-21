@@ -13,12 +13,12 @@ namespace Rules.Framework.WebUI.Handlers
     {
         private static readonly string[] resourcePath = new[] { "/rules/ContentType/List" };
 
-        private readonly IGenericRulesEngineAdapter rulesEngine;
+        private readonly IGenericRulesEngineAdapter genericRulesEngineAdapter;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
         public GetContentTypeHandler(IGenericRulesEngineAdapter rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
         {
-            this.rulesEngine = rulesEngine;
+            this.genericRulesEngineAdapter = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
@@ -28,20 +28,21 @@ namespace Rules.Framework.WebUI.Handlers
         {
             try
             {
-                var contents = this.rulesEngine.GetContentTypes();
+                var contents = this.genericRulesEngineAdapter.GetContentTypes();
 
                 var contentTypes = new List<ContentTypeDto>();
 
-                foreach (var contentName in contents.Select(content => content.Name))
+                foreach (var content in contents)
                 {
-                    var genericRules = await this.rulesEngine.SearchAsync(
-                    new SearchArgs<GenericContentType, GenericConditionType>(
-                        new GenericContentType { Name = contentName }, DateTime.MinValue, DateTime.MaxValue)
+                    var genericSearchArgs = new GenericContentType { Name = content.Name, FileName = content.FileName };
+
+                    var genericRules = await this.genericRulesEngineAdapter.SearchAsync(
+                        new SearchArgs<GenericContentType, GenericConditionType>(genericSearchArgs, DateTime.MinValue, DateTime.MaxValue)
                     );
 
                     contentTypes.Add(new ContentTypeDto
                     {
-                        Name = contentName,
+                        Name = content.Name,
                         ActiveRulesCount = genericRules.Count(IsActive),
                         RulesCount = genericRules.Count()
                     });

@@ -6,11 +6,22 @@ namespace Rules.Framework.Generic
     using System.Threading.Tasks;
     using Rules.Framework.Extensions;
 
+    /// <summary>
+    /// Exposes generic rules engine logic to provide rule matches to requests.
+    /// </summary>
+    /// <typeparam name="TContentType">The content type that allows to categorize rules.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     public class GenericRulesEngineAdapter<TContentType, TConditionType> : IGenericRulesEngineAdapter
     {
-        private readonly RulesEngine<TContentType, TConditionType> rulesEngine;
+        private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
 
-        public GenericRulesEngineAdapter(RulesEngine<TContentType, TConditionType> rulesEngine)
+        /// <summary>
+        /// Initializes a new instance of the <see
+        /// cref="GenericRulesEngineAdapter{TContentType,TConditionType}"/> class.
+        /// </summary>
+        public GenericRulesEngineAdapter(IRulesEngine<TContentType, TConditionType> rulesEngine)
         {
             this.rulesEngine = rulesEngine;
         }
@@ -33,8 +44,8 @@ namespace Rules.Framework.Generic
                .Cast<TContentType>()
                .Select(t => new GenericContentType
                {
-                   Code = Enum.Parse(typeof(TContentType), t.ToString()).ToString(),
-                   Name = t.ToString()
+                   Name = Enum.Parse(typeof(TContentType), t.ToString()).ToString(),
+                   FileName = typeof(TContentType).ToString()
                });
         }
 

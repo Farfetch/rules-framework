@@ -29,7 +29,7 @@ namespace Rules.Framework.WebUI.Handlers
 
         protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
         {
-            if (!httpRequest.Query.TryGetValue("contentType", out var contentType))
+            if (!httpRequest.Query.TryGetValue("contentType", out var contentTypeName))
             {
                 await this.WriteResponseAsync(httpResponse, new { }, (int)HttpStatusCode.BadRequest);
 
@@ -41,11 +41,9 @@ namespace Rules.Framework.WebUI.Handlers
                 var rules = new List<RuleDto>();
 
                 var genericRules = await this.rulesEngine.SearchAsync(
-                    new SearchArgs<GenericContentType, GenericConditionType>(new GenericContentType
-                    {
-                        Name = contentType
-                    },
-                    DateTime.MinValue, DateTime.MaxValue));
+                    new SearchArgs<GenericContentType, GenericConditionType>(
+                        new GenericContentType { Name = contentTypeName },
+                        DateTime.MinValue, DateTime.MaxValue));
 
                 var priorityOption = this.rulesEngine.GetPriorityCriterias();
 
