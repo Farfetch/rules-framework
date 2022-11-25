@@ -8,15 +8,10 @@ namespace Rules.Framework.Generic
     public struct GenericContentType : IEquatable<GenericContentType>
     {
         /// <summary>
-        /// Gets or sets the file name.
-        /// </summary>
-        /// <value>The file name.</value>
-        public string FileName { get; set; }
-
-        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
+        /// TODO: Gather to discuss better name for this property
         public string Name { get; set; }
 
         /// <summary>
@@ -29,8 +24,7 @@ namespace Rules.Framework.Generic
         /// </returns>
         public bool Equals(GenericContentType other)
         {
-            return other.FileName == this.FileName
-                && other.Name == this.Name;
+            return other.Name == this.Name;
         }
     }
 }

@@ -13,15 +13,16 @@ namespace Rules.Framework.Generic
     /// <typeparam name="TConditionType">
     /// The condition type that allows to filter rules based on a set of conditions.
     /// </typeparam>
-    public class GenericRulesEngineAdapter<TContentType, TConditionType> : IGenericRulesEngineAdapter
+    /// TODO: Gather to discuss better name for this property
+    public class GenericRulesEngine<TContentType, TConditionType> : IGenericRulesEngine
     {
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
 
         /// <summary>
         /// Initializes a new instance of the <see
-        /// cref="GenericRulesEngineAdapter{TContentType,TConditionType}"/> class.
+        /// cref="GenericRulesEngine{TContentType,TConditionType}"/> class.
         /// </summary>
-        public GenericRulesEngineAdapter(IRulesEngine<TContentType, TConditionType> rulesEngine)
+        public GenericRulesEngine(IRulesEngine<TContentType, TConditionType> rulesEngine)
         {
             this.rulesEngine = rulesEngine;
         }
@@ -44,8 +45,7 @@ namespace Rules.Framework.Generic
                .Cast<TContentType>()
                .Select(t => new GenericContentType
                {
-                   Name = Enum.Parse(typeof(TContentType), t.ToString()).ToString(),
-                   FileName = typeof(TContentType).ToString()
+                   Name = Enum.Parse(typeof(TContentType), t.ToString()).ToString()
                });
         }
 

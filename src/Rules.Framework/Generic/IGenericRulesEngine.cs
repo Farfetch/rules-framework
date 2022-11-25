@@ -6,7 +6,7 @@ namespace Rules.Framework.Generic
     /// <summary>
     /// Exposes generic rules engine logic to provide rule matches to requests.
     /// </summary>
-    public interface IGenericRulesEngineAdapter
+    public interface IGenericRulesEngine
     {
         /// <summary>
         /// Gets the content types.

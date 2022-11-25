@@ -13,10 +13,10 @@ namespace Rules.Framework.WebUI.Handlers
     {
         private static readonly string[] resourcePath = new[] { "/rules/ContentType/List" };
 
-        private readonly IGenericRulesEngineAdapter genericRulesEngineAdapter;
+        private readonly IGenericRulesEngine genericRulesEngineAdapter;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetContentTypeHandler(IGenericRulesEngineAdapter rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
+        public GetContentTypeHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
         {
             this.genericRulesEngineAdapter = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
@@ -34,7 +34,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                 foreach (var content in contents)
                 {
-                    var genericSearchArgs = new GenericContentType { Name = content.Name, FileName = content.FileName };
+                    var genericSearchArgs = new GenericContentType { Name = content.Name };
 
                     var genericRules = await this.genericRulesEngineAdapter.SearchAsync(
                         new SearchArgs<GenericContentType, GenericConditionType>(genericSearchArgs, DateTime.MinValue, DateTime.MaxValue)

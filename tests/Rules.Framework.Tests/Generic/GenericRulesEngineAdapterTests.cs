@@ -26,11 +26,11 @@ namespace Rules.Framework.Tests.Generic
             // Arrange
             var expectedGenericContentTypes = new List<GenericContentType>()
             {
-                new GenericContentType() { FileName = "Rules.Framework.Tests.TestStubs.ContentType", Name = "Type1" },
-                new GenericContentType() { FileName = "Rules.Framework.Tests.TestStubs.ContentType", Name = "Type2" },
+                new GenericContentType() { Name = "Type1" },
+                new GenericContentType() { Name = "Type2" },
             };
 
-            var genericRulesEngineAdapter = new GenericRulesEngineAdapter<ContentType, ConditionType>(this.mockRulesEngine.Object);
+            var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
             var genericContentTypes = genericRulesEngineAdapter.GetContentTypes();
@@ -45,7 +45,7 @@ namespace Rules.Framework.Tests.Generic
             // Arrange
             var mockRulesEngineContentTypeClass = new Mock<IRulesEngine<ContentTypeClass, ConditionType>>();
 
-            var genericRulesEngineAdapter = new GenericRulesEngineAdapter<ContentTypeClass, ConditionType>(mockRulesEngineContentTypeClass.Object);
+            var genericRulesEngineAdapter = new GenericRulesEngine<ContentTypeClass, ConditionType>(mockRulesEngineContentTypeClass.Object);
 
             // Act and Assert
             Assert.Throws<ArgumentException>(() => genericRulesEngineAdapter.GetContentTypes());
@@ -57,7 +57,7 @@ namespace Rules.Framework.Tests.Generic
             // Arrange
             var mockRulesEngineEmptyContentType = new Mock<IRulesEngine<EmptyContentType, ConditionType>>();
 
-            var genericRulesEngineAdapter = new GenericRulesEngineAdapter<EmptyContentType, ConditionType>(mockRulesEngineEmptyContentType.Object);
+            var genericRulesEngineAdapter = new GenericRulesEngine<EmptyContentType, ConditionType>(mockRulesEngineEmptyContentType.Object);
 
             // Act
             var genericContentTypes = genericRulesEngineAdapter.GetContentTypes();
@@ -74,7 +74,7 @@ namespace Rules.Framework.Tests.Generic
 
             this.mockRulesEngine.Setup(m => m.GetPriorityCriterias()).Returns(expectedPriorityCriteria);
 
-            var genericRulesEngineAdapter = new GenericRulesEngineAdapter<ContentType, ConditionType>(this.mockRulesEngine.Object);
+            var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
             var priorityCriteria = genericRulesEngineAdapter.GetPriorityCriterias();
@@ -108,7 +108,7 @@ namespace Rules.Framework.Tests.Generic
 
             var dateBegin = new DateTime(2022, 01, 01);
             var dateEnd = new DateTime(2022, 12, 01);
-            var genericContentType = new GenericContentType { Name = "Type1", FileName = "Rules.Framework.Tests.TestStubs.ContentType" };
+            var genericContentType = new GenericContentType { Name = "Type1" };
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(genericContentType, dateBegin, dateEnd);
 
@@ -129,7 +129,7 @@ namespace Rules.Framework.Tests.Generic
                 .Setup(m => m.SearchAsync(It.IsAny<SearchArgs<ContentType, ConditionType>>()))
                 .ReturnsAsync(testRules);
 
-            var genericRulesEngineAdapter = new GenericRulesEngineAdapter<ContentType, ConditionType>(this.mockRulesEngine.Object);
+            var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
             var genericRules = await genericRulesEngineAdapter.SearchAsync(genericSearchArgs);

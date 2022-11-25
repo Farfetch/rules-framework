@@ -14,8 +14,8 @@ namespace Rules.Framework.Tests.Extensions
         public void GenericSearchArgsExtensions_ToSearchArgs_WithConditions_Success()
         {
             //Arrange
-            var contentTypeFullName = "Rules.Framework.Tests.TestStubs.ContentType";
             var contentTypeCode = "Type1";
+
             var contentType = ContentType.Type1;
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2020, 12, 31);
@@ -23,7 +23,7 @@ namespace Rules.Framework.Tests.Extensions
             var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd);
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { FileName = contentTypeFullName, Name = contentTypeCode }, dateBegin, dateEnd
+                new GenericContentType { Name = contentTypeCode }, dateBegin, dateEnd
                 );
 
             // Act
@@ -37,13 +37,12 @@ namespace Rules.Framework.Tests.Extensions
         public void GenericSearchArgsExtensions_ToSearchArgs_WithInvalidType_ThrowsException()
         {
             //Arrange
-            var contentTypeFullName = "Rules.Framework.Tests.TestStubs.ContentType";
             var contentTypeCode = "Type1";
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2020, 12, 31);
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { FileName = contentTypeFullName, Name = contentTypeCode }, dateBegin, dateEnd
+                new GenericContentType { Name = contentTypeCode }, dateBegin, dateEnd
                 );
 
             // Act and Assert
@@ -78,23 +77,22 @@ namespace Rules.Framework.Tests.Extensions
                 ExcludeRulesWithoutSearchConditions = true
             };
 
-            var contentTypeFullName = "Rules.Framework.Tests.TestStubs.ContentType";
             var contentTypeCode = "Type1";
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { FileName = contentTypeFullName, Name = contentTypeCode }, dateBegin, dateEnd
+                new GenericContentType { Name = contentTypeCode }, dateBegin, dateEnd
                 )
             {
                 Conditions = new List<Condition<GenericConditionType>>
                 {
                     new Condition<GenericConditionType>
                     {
-                        Type = new GenericConditionType { FileName = "Rules.Framework.Tests.TestStubs.ConditionType", Name = "PluviosityRate" },
+                        Type = new GenericConditionType { Name = "PluviosityRate" },
                         Value = pluviosityRate
                     },
                     new Condition<GenericConditionType>
                     {
-                        Type = new GenericConditionType { FileName = "Rules.Framework.Tests.TestStubs.ConditionType", Name = "IsoCountryCode" },
+                        Type = new GenericConditionType { Name = "IsoCountryCode" },
                         Value = countryCode
                     }
                 },
