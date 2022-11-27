@@ -5,6 +5,7 @@ namespace Rules.Framework.Tests.Extensions
     using Rules.Framework.Evaluation;
     using Rules.Framework.Extension;
     using Rules.Framework.Generics;
+    using Rules.Framework.Source;
     using Rules.Framework.Tests.TestStubs;
     using Rules.Framework.Validation;
     using Xunit;
@@ -17,7 +18,7 @@ namespace Rules.Framework.Tests.Extensions
             // Arrange
             var rulesEngine = new RulesEngine<ContentType, ConditionType>(
                 Mock.Of<IConditionsEvalEngine<ConditionType>>(),
-                Mock.Of<IRulesDataSource<ContentType, ConditionType>>(),
+                Mock.Of<IRulesSource<ContentType, ConditionType>>(),
                 Mock.Of<IValidatorProvider>(),
                 RulesEngineOptions.NewWithDefaults(),
                 Mock.Of<IConditionTypeExtractor<ContentType, ConditionType>>()

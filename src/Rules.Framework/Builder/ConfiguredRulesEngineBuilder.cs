@@ -1,9 +1,12 @@
 namespace Rules.Framework.Builder
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.ValueEvaluation;
     using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
+    using Rules.Framework.Source;
     using Rules.Framework.Validation;
 
     internal sealed class ConfiguredRulesEngineBuilder<TContentType, TConditionType> : IConfiguredRulesEngineBuilder<TContentType, TConditionType>
@@ -19,8 +22,8 @@ namespace Rules.Framework.Builder
 
         public RulesEngine<TContentType, TConditionType> Build()
         {
+            List<IRulesSourceMiddleware<TContentType, TConditionType>> rulesSourceMiddlewares = new();
             IOperatorEvalStrategyFactory operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
-
             IDataTypesConfigurationProvider dataTypesConfigurationProvider = new DataTypesConfigurationProvider(this.rulesEngineOptions);
             IMultiplicityEvaluator multiplicityEvaluator = new MultiplicityEvaluator();
             IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
@@ -36,7 +39,11 @@ namespace Rules.Framework.Builder
             ValidationProvider validationProvider = ValidationProvider.New()
                 .MapValidatorFor(new SearchArgsValidator<TContentType, TConditionType>());
 
-            return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, this.rulesDataSource, validationProvider, this.rulesEngineOptions, conditionTypeExtractor);
+            IEnumerable<IRulesSourceMiddleware<TContentType, TConditionType>> orderedMiddlewares = rulesSourceMiddlewares
+                .Reverse<IRulesSourceMiddleware<TContentType, TConditionType>>();
+            IRulesSource<TContentType, TConditionType> rulesSource = new RulesSource<TContentType, TConditionType>(this.rulesDataSource, orderedMiddlewares);
+
+            return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, rulesSource, validationProvider, this.rulesEngineOptions, conditionTypeExtractor);
         }
 
         public IConfiguredRulesEngineBuilder<TContentType, TConditionType> Configure(Action<RulesEngineOptions> configurationAction)

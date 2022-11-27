@@ -37,6 +37,8 @@ First of all, ensure you have appropriate .Net SDK installed (need .Net Core 3.1
     $ git checkout -b my-branch
     ```
 
+1. Create a `.env` file to adjust specific settings for your local environment. Use the `.env_template` as a starting point.
+
 1. Perform your code changes, including covering unit tests and integration tests.
 
 1. [Windows Environment] After your code changes are done, under a PowerShell terminal and located at local repository root, run:

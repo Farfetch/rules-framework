@@ -8,6 +8,8 @@ namespace Rules.Framework.Builder
 
     internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
+        private static readonly RuleValidator<TContentType, TConditionType> ruleValidator = new RuleValidator<TContentType, TConditionType>();
+
         private ContentContainer<TContentType> contentContainer;
         private DateTime dateBegin;
         private DateTime? dateEnd;
@@ -27,7 +29,6 @@ namespace Rules.Framework.Builder
                 RootCondition = this.rootCondition
             };
 
-            RuleValidator<TContentType, TConditionType> ruleValidator = new RuleValidator<TContentType, TConditionType>();
             ValidationResult validationResult = ruleValidator.Validate(rule);
 
             if (validationResult.IsValid)

@@ -2,6 +2,7 @@ namespace Rules.Framework.Management
 {
     using System.Collections.Generic;
     using Rules.Framework.Core;
+    using Rules.Framework.Source;
 
     internal static class ManagementOperations
     {
@@ -18,7 +19,7 @@ namespace Rules.Framework.Management
                 this.rules = rules;
             }
 
-            public ManagementOperationsController<TContentType, TConditionType> UsingDataSource(IRulesDataSource<TContentType, TConditionType> rulesDataSource)
+            public ManagementOperationsController<TContentType, TConditionType> UsingSource(IRulesSource<TContentType, TConditionType> rulesDataSource)
                 => new ManagementOperationsController<TContentType, TConditionType>(rulesDataSource, this.rules);
         }
     }

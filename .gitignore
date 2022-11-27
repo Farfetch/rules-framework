@@ -557,3 +557,4 @@ typings/
 
 # Specific ones added
 coverage-outputs/**
+.env
