@@ -1,6 +1,9 @@
 namespace Rules.Framework.Source
 {
     using System;
+    using System.Collections.Generic;
+    using System.Runtime.InteropServices;
+    using System.Text;
 
     internal sealed class GetRulesArgs<TContentType>
     {
