@@ -26,8 +26,8 @@ namespace Rules.Framework.Tests.Generic
             // Arrange
             var expectedGenericContentTypes = new List<GenericContentType>()
             {
-                new GenericContentType() { Name = "Type1" },
-                new GenericContentType() { Name = "Type2" },
+                new GenericContentType() { DisplayName = "Type1" },
+                new GenericContentType() { DisplayName = "Type2" },
             };
 
             var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
@@ -108,7 +108,7 @@ namespace Rules.Framework.Tests.Generic
 
             var dateBegin = new DateTime(2022, 01, 01);
             var dateEnd = new DateTime(2022, 12, 01);
-            var genericContentType = new GenericContentType { Name = "Type1" };
+            var genericContentType = new GenericContentType { DisplayName = "Type1" };
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(genericContentType, dateBegin, dateEnd);
 

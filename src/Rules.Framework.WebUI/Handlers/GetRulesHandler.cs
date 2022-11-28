@@ -42,7 +42,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                 var genericRules = await this.rulesEngine.SearchAsync(
                     new SearchArgs<GenericContentType, GenericConditionType>(
-                        new GenericContentType { Name = contentTypeName },
+                        new GenericContentType { DisplayName = contentTypeName },
                         DateTime.MinValue, DateTime.MaxValue));
 
                 var priorityOption = this.rulesEngine.GetPriorityCriterias();

@@ -11,8 +11,7 @@ namespace Rules.Framework.Generic
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        /// TODO: Gather to discuss better name for this property
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -24,7 +23,7 @@ namespace Rules.Framework.Generic
         /// </returns>
         public bool Equals(GenericConditionType other)
         {
-            return other.Name == this.Name;
+            return other.DisplayName == this.DisplayName;
         }
     }
 }

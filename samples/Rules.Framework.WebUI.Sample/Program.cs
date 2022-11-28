@@ -1,29 +1,12 @@
-using Rules.Framework;
-using Rules.Framework.Generic;
+using Rules.Framework.Extensions;
 using Rules.Framework.WebUI;
 using Rules.Framework.WebUI.Sample.Engine;
-using Rules.Framework.WebUI.Sample.Enums;
 using Rules.Framework.WebUI.Sample.Rules;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
-            {
-                new RulesRandomFactory()
-            }));
-
-builder.Services.AddSingleton(rulesProvider);
-
-var rulesEngine = rulesProvider
-    .GetRulesEngineAsync()
-    .ConfigureAwait(false)
-    .GetAwaiter()
-    .GetResult();
-
-builder.Services.AddSingleton<IRulesEngine<ContentTypes, ConditionTypes>>(rulesEngine);
 
 var app = builder.Build();
 
@@ -54,7 +37,16 @@ app.Run();
 
 static void AddRulesFrameworkUI(IApplicationBuilder app)
 {
-    var rulesEngine = app.ApplicationServices.GetRequiredService<IRulesEngine<ContentTypes, ConditionTypes>>();
+    var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
+            {
+                new RulesRandomFactory()
+            }));
 
-    app.UseRulesFrameworkUI(new GenericRulesEngine<ContentTypes, ConditionTypes>(rulesEngine));
+    var rulesEngine = rulesProvider
+    .GetRulesEngineAsync()
+    .ConfigureAwait(false)
+    .GetAwaiter()
+    .GetResult();
+
+    app.UseRulesFrameworkUI(rulesEngine.CreateGenericRulesEngine());
 }

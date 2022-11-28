@@ -34,7 +34,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                 foreach (var content in contents)
                 {
-                    var genericSearchArgs = new GenericContentType { Name = content.Name };
+                    var genericSearchArgs = new GenericContentType { DisplayName = content.DisplayName };
 
                     var genericRules = await this.genericRulesEngineAdapter.SearchAsync(
                         new SearchArgs<GenericContentType, GenericConditionType>(genericSearchArgs, DateTime.MinValue, DateTime.MaxValue)
@@ -42,7 +42,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                     contentTypes.Add(new ContentTypeDto
                     {
-                        Name = content.Name,
+                        Name = content.DisplayName,
                         ActiveRulesCount = genericRules.Count(IsActive),
                         RulesCount = genericRules.Count()
                     });

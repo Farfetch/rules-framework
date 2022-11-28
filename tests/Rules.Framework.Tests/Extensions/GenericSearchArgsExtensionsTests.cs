@@ -23,7 +23,7 @@ namespace Rules.Framework.Tests.Extensions
             var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd);
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Name = contentTypeCode }, dateBegin, dateEnd
+                new GenericContentType { DisplayName = contentTypeCode }, dateBegin, dateEnd
                 );
 
             // Act
@@ -42,7 +42,7 @@ namespace Rules.Framework.Tests.Extensions
             var dateEnd = new DateTime(2020, 12, 31);
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Name = contentTypeCode }, dateBegin, dateEnd
+                new GenericContentType { DisplayName = contentTypeCode }, dateBegin, dateEnd
                 );
 
             // Act and Assert
@@ -80,19 +80,19 @@ namespace Rules.Framework.Tests.Extensions
             var contentTypeCode = "Type1";
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Name = contentTypeCode }, dateBegin, dateEnd
+                new GenericContentType { DisplayName = contentTypeCode }, dateBegin, dateEnd
                 )
             {
                 Conditions = new List<Condition<GenericConditionType>>
                 {
                     new Condition<GenericConditionType>
                     {
-                        Type = new GenericConditionType { Name = "PluviosityRate" },
+                        Type = new GenericConditionType { DisplayName = "PluviosityRate" },
                         Value = pluviosityRate
                     },
                     new Condition<GenericConditionType>
                     {
-                        Type = new GenericConditionType { Name = "IsoCountryCode" },
+                        Type = new GenericConditionType { DisplayName = "IsoCountryCode" },
                         Value = countryCode
                     }
                 },

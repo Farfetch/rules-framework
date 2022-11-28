@@ -14,14 +14,14 @@ namespace Rules.Framework.Extensions
                 throw new ArgumentException("Only TContentType of type enum are currently supported.");
             }
 
-            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Name);
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.DisplayName);
 
             var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd)
             {
                 Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
                 {
                     Value = condition.Value,
-                    Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Name)
+                    Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.DisplayName)
                 }),
                 ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
             };

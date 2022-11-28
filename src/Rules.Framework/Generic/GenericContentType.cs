@@ -8,11 +8,10 @@ namespace Rules.Framework.Generic
     public struct GenericContentType : IEquatable<GenericContentType>
     {
         /// <summary>
-        /// Gets or sets the name.
+        /// Gets or sets the display name.
         /// </summary>
-        /// <value>The name.</value>
-        /// TODO: Gather to discuss better name for this property
-        public string Name { get; set; }
+        /// <value>The display name.</value>
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -24,7 +23,7 @@ namespace Rules.Framework.Generic
         /// </returns>
         public bool Equals(GenericContentType other)
         {
-            return other.Name == this.Name;
+            return other.DisplayName == this.DisplayName;
         }
     }
 }

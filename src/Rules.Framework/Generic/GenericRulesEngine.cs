@@ -13,8 +13,7 @@ namespace Rules.Framework.Generic
     /// <typeparam name="TConditionType">
     /// The condition type that allows to filter rules based on a set of conditions.
     /// </typeparam>
-    /// TODO: Gather to discuss better name for this property
-    public class GenericRulesEngine<TContentType, TConditionType> : IGenericRulesEngine
+    internal class GenericRulesEngine<TContentType, TConditionType> : IGenericRulesEngine
     {
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
 
@@ -45,7 +44,7 @@ namespace Rules.Framework.Generic
                .Cast<TContentType>()
                .Select(t => new GenericContentType
                {
-                   Name = Enum.Parse(typeof(TContentType), t.ToString()).ToString()
+                   DisplayName = Enum.Parse(typeof(TContentType), t.ToString()).ToString()
                });
         }
 
