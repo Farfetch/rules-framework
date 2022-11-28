@@ -1,6 +1,6 @@
 namespace Rules.Framework.Tests.TestStubs
 {
-    public enum ConditionType
+    internal enum ConditionType
     {
         IsoCountryCode = 1,
 

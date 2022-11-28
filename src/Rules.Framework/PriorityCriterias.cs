@@ -8,11 +8,11 @@ namespace Rules.Framework
         /// <summary>
         /// Sets the rule with the lowest priority number to win on a untie scenario.
         /// </summary>
-        TopmostRuleWins = 0,
+        TopMostRuleWins = 0,
 
         /// <summary>
         /// Sets the rule with the highest priority number to win on a untie scenario.
         /// </summary>
-        BottommostRuleWins = 1
+        BottomMostRuleWins = 1
     }
 }

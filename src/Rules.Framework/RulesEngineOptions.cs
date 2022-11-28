@@ -7,7 +7,7 @@ namespace Rules.Framework
     /// <summary>
     /// The set of rules engine options that influence rules engine rules matching.
     /// </summary>
-    public class RulesEngineOptions
+    public class RulesEngineOptions : IRulesEngineOptions
     {
         private RulesEngineOptions()
         {
@@ -31,7 +31,7 @@ namespace Rules.Framework
             RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
             {
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                PriotityCriteria = PriorityCriterias.TopmostRuleWins
+                PriotityCriteria = PriorityCriterias.TopMostRuleWins
             };
 
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);
