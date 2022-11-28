@@ -90,6 +90,27 @@ namespace Rules.Framework.Providers.InMemory
                    .WithComparisonOperator(conditionNodeDataModel.Operator)
                    .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                     .Build(),
+
+                DataTypes.ArrayInteger => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
+                    .OfDataType<IEnumerable<int>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<int>)
+                    .Build(),
+                DataTypes.ArrayDecimal => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
+                    .OfDataType<IEnumerable<decimal>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<decimal>)
+                    .Build(),
+                DataTypes.ArrayString => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
+                    .OfDataType<IEnumerable<string>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<string>)
+                    .Build(),
+                DataTypes.ArrayBoolean => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
+                    .OfDataType<IEnumerable<bool>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<bool>)
+                    .Build(),
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
             };
         }
@@ -162,6 +183,7 @@ namespace Rules.Framework.Providers.InMemory
                         Operand = valueConditionNode.Operand,
                         Operator = valueConditionNode.Operator
                     },
+
                     _ => throw new NotSupportedException($"Unsupported value condition node type: {conditionNode.GetType().FullName}."),
                 };
             }
