@@ -12,13 +12,15 @@ namespace Rules.Framework.Builder.Validation
         {
             this.valueConditionNodeValidator = new ValueConditionNodeValidator<TConditionType>();
 
-            this.RuleFor(c => c.LogicalOperator).IsContainedOn(LogicalOperators.And, LogicalOperators.Or);
-            this.RuleForEach(c => c.ChildConditionNodes).Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType, ComposedConditionNode<TConditionType>>
-            {
-                ComposedConditionNodeValidator = this,
-                ValidationContext = cc,
-                ValueConditionNodeValidator = this.valueConditionNodeValidator
-            }));
+            this.RuleFor(c => c.LogicalOperator).IsContainedOn(LogicalOperators.And, LogicalOperators.Or);            
+            this.RuleForEach(c => c.ChildConditionNodes)
+                .NotNull()
+                .Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType, ComposedConditionNode<TConditionType>>
+                {
+                    ComposedConditionNodeValidator = this,
+                    ValidationContext = cc,
+                    ValueConditionNodeValidator = this.valueConditionNodeValidator
+                }));
         }
     }
 }
