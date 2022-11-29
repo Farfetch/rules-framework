@@ -12,7 +12,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario5
 
     public class BestServerTests
     {
-        public static IEnumerable<object[]> DataTest = new List<object[]>
+        public readonly static IEnumerable<object[]> DataTest = new List<object[]>
         {
             new object[]
             {
