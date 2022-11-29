@@ -8,9 +8,9 @@ namespace Rules.Framework.Generics
     public sealed class GenericRule
     {
         /// <summary>
-        /// Gets the content container which contains the rule content.
+        /// Gets the content which contains the rule content.
         /// </summary>
-        public object ContentContainer { get; internal set; }
+        public object Content { get; internal set; }
 
         /// <summary>
         /// Gets the date from which the rule begins being applicable.

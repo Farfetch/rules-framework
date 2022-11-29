@@ -92,8 +92,8 @@ namespace Rules.Framework.Tests.Extensions
             genericRule.Should().BeEquivalentTo(rule, config => config
                 .Excluding(r => r.ContentContainer)
                 .Excluding(r => r.RootCondition));
-            genericRule.ContentContainer.Should().BeOfType<string>();
-            genericRule.ContentContainer.Should().Be(expectedRuleContent);
+            genericRule.Content.Should().BeOfType<string>();
+            genericRule.Content.Should().Be(expectedRuleContent);
             genericRule.RootCondition.Should().BeOfType<GenericComposedConditionNode>();
 
             var genericComposedRootCondition = genericRule.RootCondition as GenericComposedConditionNode;
@@ -118,8 +118,8 @@ namespace Rules.Framework.Tests.Extensions
 
             // Assert
             genericRule.Should().BeEquivalentTo(rule, config => config.Excluding(r => r.ContentContainer));
-            genericRule.ContentContainer.Should().BeOfType<string>();
-            genericRule.ContentContainer.Should().Be(expectedRuleContent);
+            genericRule.Content.Should().BeOfType<string>();
+            genericRule.Content.Should().Be(expectedRuleContent);
             genericRule.RootCondition.Should().BeNull();
         }
 
@@ -145,8 +145,8 @@ namespace Rules.Framework.Tests.Extensions
             genericRule.Should().BeEquivalentTo(rule, config => config
                 .Excluding(r => r.ContentContainer)
                 .Excluding(r => r.RootCondition));
-            genericRule.ContentContainer.Should().BeOfType<string>();
-            genericRule.ContentContainer.Should().Be(expectedRuleContent);
+            genericRule.Content.Should().BeOfType<string>();
+            genericRule.Content.Should().Be(expectedRuleContent);
             genericRule.RootCondition.Should().BeOfType<GenericValueConditionNode>();
 
             var genericValueRootCondition = genericRule.RootCondition as GenericValueConditionNode;
