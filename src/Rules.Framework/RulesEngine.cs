@@ -338,7 +338,7 @@ namespace Rules.Framework
         {
             return this.rulesEngineOptions.PriotityCriteria switch
             {
-                PriorityCriterias.BottomMostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
+                PriorityCriterias.BottommostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
                 _ => rules.OrderBy(r => r.Priority).First(),
             };
         }

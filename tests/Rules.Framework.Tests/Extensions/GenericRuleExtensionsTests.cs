@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Extensions
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
-    using Rules.Framework.Extensions;    
+    using Rules.Framework.Extensions;
     using Rules.Framework.Generics;
     using Rules.Framework.Tests.TestStubs;
     using Xunit;

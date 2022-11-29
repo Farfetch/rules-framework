@@ -49,7 +49,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                 .SetDataSource(rulesDataSource)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
@@ -122,7 +122,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                 .SetDataSource(rulesDataSource)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
@@ -168,7 +168,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                 .SetDataSource(rulesDataSource)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
@@ -208,7 +208,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                 .SetDataSource(rulesDataSource)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
@@ -251,7 +251,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario2
                 .SetDataSource(rulesDataSource)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottomMostRuleWins;
+                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 

@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Generics
     using FluentAssertions;
     using Moq;
     using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;    
+    using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Generics;
     using Rules.Framework.Tests.TestStubs;
     using Xunit;
@@ -70,7 +70,7 @@ namespace Rules.Framework.Tests.Generics
         public void GenericRulesEngineAdapter_GetPriorityCriterias_CallsRulesEngineMethod()
         {
             // Arrange
-            var expectedPriorityCriteria = PriorityCriterias.TopMostRuleWins;
+            var expectedPriorityCriteria = PriorityCriterias.TopmostRuleWins;
 
             this.mockRulesEngine.Setup(m => m.GetPriorityCriterias()).Returns(expectedPriorityCriteria);
 
@@ -132,7 +132,7 @@ namespace Rules.Framework.Tests.Generics
             var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var genericRules = await genericRulesEngineAdapter.SearchAsync(genericSearchArgs);
+            var genericRules = await genericRulesEngineAdapter.SearchAsync(genericSearchArgs).ConfigureAwait(false);
 
             // Assert
             genericRules.Should().BeEquivalentTo(expectedGenericRules);

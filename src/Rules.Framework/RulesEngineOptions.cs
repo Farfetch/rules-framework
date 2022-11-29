@@ -31,7 +31,7 @@ namespace Rules.Framework
             RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
             {
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                PriotityCriteria = PriorityCriterias.TopMostRuleWins
+                PriotityCriteria = PriorityCriterias.TopmostRuleWins
             };
 
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);
