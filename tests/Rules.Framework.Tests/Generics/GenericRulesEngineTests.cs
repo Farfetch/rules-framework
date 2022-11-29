@@ -21,7 +21,7 @@ namespace Rules.Framework.Tests.Generics
         }
 
         [Fact]
-        public void GenericRulesEngineAdapter_GetContentTypes_Success()
+        public void GenericRulesEngine_GetContentTypes_Success()
         {
             // Arrange
             var expectedGenericContentTypes = new List<GenericContentType>
@@ -30,61 +30,62 @@ namespace Rules.Framework.Tests.Generics
                 new GenericContentType { Identifier = "Type2" },
             };
 
-            var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
+            var genericRulesEngine = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var genericContentTypes = genericRulesEngineAdapter.GetContentTypes();
+            var genericContentTypes = genericRulesEngine.GetContentTypes();
 
             // Assert
             genericContentTypes.Should().BeEquivalentTo(expectedGenericContentTypes);
         }
 
         [Fact]
-        public void GenericRulesEngineAdapter_GetContentTypes_WithClassContentType_ThrowsException()
+        public void GenericRulesEngine_GetContentTypes_WithClassContentType_ThrowsException()
         {
             // Arrange
             var mockRulesEngineContentTypeClass = new Mock<IRulesEngine<ContentTypeClass, ConditionType>>();
 
-            var genericRulesEngineAdapter = new GenericRulesEngine<ContentTypeClass, ConditionType>(mockRulesEngineContentTypeClass.Object);
+            var genericRulesEngine = new GenericRulesEngine<ContentTypeClass, ConditionType>(mockRulesEngineContentTypeClass.Object);
 
             // Act and Assert
-            Assert.Throws<ArgumentException>(() => genericRulesEngineAdapter.GetContentTypes());
+            Assert.Throws<ArgumentException>(() => genericRulesEngine.GetContentTypes());
         }
 
         [Fact]
-        public void GenericRulesEngineAdapter_GetContentTypes_WithEmptyContentType_Success()
+        public void GenericRulesEngine_GetContentTypes_WithEmptyContentType_Success()
         {
             // Arrange
             var mockRulesEngineEmptyContentType = new Mock<IRulesEngine<EmptyContentType, ConditionType>>();
 
-            var genericRulesEngineAdapter = new GenericRulesEngine<EmptyContentType, ConditionType>(mockRulesEngineEmptyContentType.Object);
+            var genericRulesEngine = new GenericRulesEngine<EmptyContentType, ConditionType>(mockRulesEngineEmptyContentType.Object);
 
             // Act
-            var genericContentTypes = genericRulesEngineAdapter.GetContentTypes();
+            var genericContentTypes = genericRulesEngine.GetContentTypes();
 
             // Assert
             genericContentTypes.Should().BeEmpty();
         }
 
         [Fact]
-        public void GenericRulesEngineAdapter_GetPriorityCriterias_CallsRulesEngineMethod()
+        public void GenericRulesEngine_GetPriorityCriterias_CallsRulesEngineMethod()
         {
             // Arrange
             var expectedPriorityCriteria = PriorityCriterias.TopmostRuleWins;
 
             this.mockRulesEngine.Setup(m => m.GetPriorityCriteria()).Returns(expectedPriorityCriteria);
 
-            var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
+            var genericRulesEngine = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var priorityCriteria = genericRulesEngineAdapter.GetPriorityCriteria();
+            var priorityCriteria = genericRulesEngine.GetPriorityCriteria();
 
             // Assert
             priorityCriteria.Should().Be(expectedPriorityCriteria);
+            this.mockRulesEngine.Verify(m => m.GetPriorityCriteria(), Times.Once);
         }
 
         [Fact]
-        public async Task GenericRulesEngineAdapter_SearchAsync_Success()
+        public async Task GenericRulesEngine_SearchAsync_Success()
         {
             // Arrange
             var expectedGenericRules = new List<GenericRule>
@@ -129,13 +130,15 @@ namespace Rules.Framework.Tests.Generics
                 .Setup(m => m.SearchAsync(It.IsAny<SearchArgs<ContentType, ConditionType>>()))
                 .ReturnsAsync(testRules);
 
-            var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
+            var genericRulesEngine = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var genericRules = await genericRulesEngineAdapter.SearchAsync(genericSearchArgs);
+            var genericRules = await genericRulesEngine.SearchAsync(genericSearchArgs);
 
             // Assert
             genericRules.Should().BeEquivalentTo(expectedGenericRules);
+            this.mockRulesEngine
+                .Verify(m => m.SearchAsync(It.IsAny<SearchArgs<ContentType, ConditionType>>()), Times.Once);
         }
     }
 }
