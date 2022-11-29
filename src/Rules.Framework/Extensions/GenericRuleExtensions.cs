@@ -15,11 +15,9 @@ namespace Rules.Framework.Extensions
             {
                 var condition = rootCondition as ValueConditionNode<TConditionType>;
 
-                var conditionAsEnum = Enum.Parse(typeof(TConditionType), condition.ConditionType.ToString());
-
                 return new GenericValueConditionNode
                 {
-                    ConditionTypeName = conditionAsEnum.ToString(),
+                    ConditionTypeName = condition.ConditionType.ToString(),
                     DataType = condition.DataType,
                     Operand = condition.Operand,
                     Operator = condition.Operator
@@ -30,8 +28,7 @@ namespace Rules.Framework.Extensions
 
             var conditionNodeDataModels = new List<GenericConditionNode>(composedConditionNode.ChildConditionNodes.Count());
 
-            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes
-                .Where(condition => condition != null))
+            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels.Add(child.ToGenericConditionNode());
             }

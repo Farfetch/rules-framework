@@ -21,7 +21,7 @@ namespace Rules.Framework.Generics
         /// Gets the priority criterias.
         /// </summary>
         /// <returns>Rules engine priority criterias</returns>
-        PriorityCriterias GetPriorityCriterias();
+        PriorityCriterias GetPriorityCriteria();
 
         /// <summary>
         /// Searches the asynchronous.

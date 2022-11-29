@@ -9,7 +9,7 @@ namespace Rules.Framework
     {
         Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption);
 
-        PriorityCriterias GetPriorityCriterias();
+        PriorityCriterias GetPriorityCriteria();
 
         Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
 

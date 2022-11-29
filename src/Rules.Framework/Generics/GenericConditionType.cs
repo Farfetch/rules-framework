@@ -8,10 +8,12 @@ namespace Rules.Framework.Generics
     public struct GenericConditionType : IEquatable<GenericConditionType>
     {
         /// <summary>
-        /// Gets or sets the name.
+        /// Gets or sets the identifier.
         /// </summary>
-        /// <value>The name.</value>
-        public string DisplayName { get; set; }
+        /// <value>
+        /// The identifier.
+        /// </value>
+        public string Identifier { get; set; }
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -23,7 +25,7 @@ namespace Rules.Framework.Generics
         /// </returns>
         public bool Equals(GenericConditionType other)
         {
-            return other.DisplayName == this.DisplayName;
+            return other.Identifier == this.Identifier;
         }
     }
 }

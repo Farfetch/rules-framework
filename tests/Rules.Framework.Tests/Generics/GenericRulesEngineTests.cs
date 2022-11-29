@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Generics
     using FluentAssertions;
     using Moq;
     using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Core.ConditionNodes;    
     using Rules.Framework.Generics;
     using Rules.Framework.Tests.TestStubs;
     using Xunit;
@@ -26,8 +26,8 @@ namespace Rules.Framework.Tests.Generics
             // Arrange
             var expectedGenericContentTypes = new List<GenericContentType>()
             {
-                new GenericContentType() { DisplayName = "Type1" },
-                new GenericContentType() { DisplayName = "Type2" },
+                new GenericContentType() { Identifier = "Type1" },
+                new GenericContentType() { Identifier = "Type2" },
             };
 
             var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
@@ -72,12 +72,12 @@ namespace Rules.Framework.Tests.Generics
             // Arrange
             var expectedPriorityCriteria = PriorityCriterias.TopmostRuleWins;
 
-            this.mockRulesEngine.Setup(m => m.GetPriorityCriterias()).Returns(expectedPriorityCriteria);
+            this.mockRulesEngine.Setup(m => m.GetPriorityCriteria()).Returns(expectedPriorityCriteria);
 
             var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var priorityCriteria = genericRulesEngineAdapter.GetPriorityCriterias();
+            var priorityCriteria = genericRulesEngineAdapter.GetPriorityCriteria();
 
             // Assert
             priorityCriteria.Should().Be(expectedPriorityCriteria);
@@ -108,7 +108,7 @@ namespace Rules.Framework.Tests.Generics
 
             var dateBegin = new DateTime(2022, 01, 01);
             var dateEnd = new DateTime(2022, 12, 01);
-            var genericContentType = new GenericContentType { DisplayName = "Type1" };
+            var genericContentType = new GenericContentType { Identifier = "Type1" };
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(genericContentType, dateBegin, dateEnd);
 
@@ -132,7 +132,7 @@ namespace Rules.Framework.Tests.Generics
             var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var genericRules = await genericRulesEngineAdapter.SearchAsync(genericSearchArgs).ConfigureAwait(false);
+            var genericRules = await genericRulesEngineAdapter.SearchAsync(genericSearchArgs);
 
             // Assert
             genericRules.Should().BeEquivalentTo(expectedGenericRules);

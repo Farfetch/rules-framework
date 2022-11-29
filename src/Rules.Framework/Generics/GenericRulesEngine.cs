@@ -26,13 +26,14 @@ namespace Rules.Framework.Generics
                .Cast<TContentType>()
                .Select(t => new GenericContentType
                {
-                   DisplayName = Enum.Parse(typeof(TContentType), t.ToString()).ToString()
+                   Identifier = Enum.Parse(typeof(TContentType), t.ToString()).ToString()
                });
         }
 
-        public PriorityCriterias GetPriorityCriterias()
+
+        public PriorityCriterias GetPriorityCriteria()
         {
-            return this.rulesEngine.GetPriorityCriterias();
+            return this.rulesEngine.GetPriorityCriteria();
         }
 
         public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
@@ -41,7 +42,7 @@ namespace Rules.Framework.Generics
 
             var result = await this.rulesEngine.SearchAsync(searchArgs).ConfigureAwait(false);
 
-            return result.Select(rule => rule.ToGenericRule());
+            return result.Select(rule => rule.ToGenericRule()).ToList();
         }
     }
 }

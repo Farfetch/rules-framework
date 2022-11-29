@@ -4,6 +4,7 @@ namespace Rules.Framework.Tests.Extensions
     using Moq;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Extension;
+    using Rules.Framework.Generics;
     using Rules.Framework.Tests.TestStubs;
     using Rules.Framework.Validation;
     using Xunit;
@@ -27,6 +28,7 @@ namespace Rules.Framework.Tests.Extensions
 
             //Arrange
             genericEngine.Should().NotBeNull();
+            genericEngine.GetType().Should().Be(typeof(GenericRulesEngine<ContentType, ConditionType>));
         }
     }
 }

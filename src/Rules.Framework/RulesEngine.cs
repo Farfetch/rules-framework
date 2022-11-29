@@ -72,7 +72,7 @@ namespace Rules.Framework
         /// Gets the priority criterias.
         /// </summary>
         /// <returns>Rules engine priority criterias</returns>
-        public PriorityCriterias GetPriorityCriterias()
+        public PriorityCriterias GetPriorityCriteria()
         {
             return this.rulesEngineOptions.PriotityCriteria;
         }

@@ -86,7 +86,7 @@ namespace Rules.Framework.Tests
                 );
 
             //Act
-            var priorityCriterias = rulesEngine.GetPriorityCriterias();
+            var priorityCriterias = rulesEngine.GetPriorityCriteria();
 
             //Arrange            
             priorityCriterias.Should().Be(PriorityCriterias.TopmostRuleWins);
