@@ -6,7 +6,7 @@ namespace Rules.Framework.Generics
     using System.Threading.Tasks;
     using Rules.Framework.Extensions;
 
-    internal class GenericRulesEngine<TContentType, TConditionType> : IGenericRulesEngine
+    internal sealed class GenericRulesEngine<TContentType, TConditionType> : IGenericRulesEngine
     {
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
 

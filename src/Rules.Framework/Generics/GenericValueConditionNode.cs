@@ -5,7 +5,7 @@ namespace Rules.Framework.Generics
     /// <summary>
     /// Defines generic value condition node
     /// </summary>
-    public class GenericValueConditionNode : GenericConditionNode
+    public sealed class GenericValueConditionNode : GenericConditionNode
     {
         /// <summary>
         /// Gets the condition node type name.

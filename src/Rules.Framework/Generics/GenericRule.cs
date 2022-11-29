@@ -5,7 +5,7 @@ namespace Rules.Framework.Generics
     /// <summary>
     /// Defines a generic rule
     /// </summary>
-    public class GenericRule
+    public sealed class GenericRule
     {
         /// <summary>
         /// Gets the content container which contains the rule content.
