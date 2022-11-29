@@ -30,7 +30,6 @@ namespace Rules.Framework.Generics
                });
         }
 
-
         public PriorityCriterias GetPriorityCriterias()
         {
             return this.rulesEngine.GetPriorityCriterias();
@@ -40,7 +39,7 @@ namespace Rules.Framework.Generics
         {
             var searchArgs = genericSearchArgs.ToSearchArgs<TContentType, TConditionType>();
 
-            var result = await this.rulesEngine.SearchAsync(searchArgs);
+            var result = await this.rulesEngine.SearchAsync(searchArgs).ConfigureAwait(false);
 
             return result.Select(rule => rule.ToGenericRule());
         }
