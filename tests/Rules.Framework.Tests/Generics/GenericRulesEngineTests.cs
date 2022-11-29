@@ -24,10 +24,10 @@ namespace Rules.Framework.Tests.Generics
         public void GenericRulesEngineAdapter_GetContentTypes_Success()
         {
             // Arrange
-            var expectedGenericContentTypes = new List<GenericContentType>()
+            var expectedGenericContentTypes = new List<GenericContentType>
             {
-                new GenericContentType() { Identifier = "Type1" },
-                new GenericContentType() { Identifier = "Type2" },
+                new GenericContentType { Identifier = "Type1" },
+                new GenericContentType { Identifier = "Type2" },
             };
 
             var genericRulesEngineAdapter = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
@@ -87,16 +87,16 @@ namespace Rules.Framework.Tests.Generics
         public async Task GenericRulesEngineAdapter_SearchAsync_Success()
         {
             // Arrange
-            var expectedGenericRules = new List<GenericRule>()
+            var expectedGenericRules = new List<GenericRule>
             {
-                new GenericRule()
+                new GenericRule
                 {
-                    ContentContainer = new ContentContainer<ContentType>(ContentType.Type1, (t) => new object()).GetContentAs<object>(),
+                    ContentContainer = new ContentContainer<ContentType>(ContentType.Type1, (_) => new object()).GetContentAs<object>(),
                     DateBegin = new DateTime(2018, 01, 01),
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Test rule",
                     Priority = 3,
-                    RootCondition = new GenericValueConditionNode()
+                    RootCondition = new GenericValueConditionNode
                     {
                         ConditionTypeName =  ConditionType.IsoCountryCode.ToString(),
                         DataType = DataTypes.String,
@@ -112,11 +112,11 @@ namespace Rules.Framework.Tests.Generics
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(genericContentType, dateBegin, dateEnd);
 
-            var testRules = new List<Rule<ContentType, ConditionType>>()
+            var testRules = new List<Rule<ContentType, ConditionType>>
             {
                 new Rule<ContentType, ConditionType>
                 {
-                    ContentContainer = new ContentContainer<ContentType>(ContentType.Type1, (t) => new object()),
+                    ContentContainer = new ContentContainer<ContentType>(ContentType.Type1, (_) => new object()),
                     DateBegin = new DateTime(2018, 01, 01),
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Test rule",
