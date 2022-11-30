@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Generics
     using FluentAssertions;
     using Moq;
     using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;    
+    using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Generics;
     using Rules.Framework.Tests.TestStubs;
     using Xunit;
@@ -133,7 +133,7 @@ namespace Rules.Framework.Tests.Generics
             var genericRulesEngine = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var genericRules = await genericRulesEngine.SearchAsync(genericSearchArgs);
+            var genericRules = await genericRulesEngine.SearchAsync(genericSearchArgs).ConfigureAwait(false);
 
             // Assert
             genericRules.Should().BeEquivalentTo(expectedGenericRules);
