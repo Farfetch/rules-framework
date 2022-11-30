@@ -5,7 +5,7 @@ namespace Rules.Framework.Generics
     /// <summary>
     /// Defines generic condition node
     /// </summary>
-    /// <seealso cref="Rules.Framework.Generic.GenericConditionNode"/>
+    /// <seealso cref="Rules.Framework.Generics.GenericConditionNode"/>
     public sealed class GenericComposedConditionNode : GenericConditionNode
     {
         /// <summary>
