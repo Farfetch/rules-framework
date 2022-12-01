@@ -4,7 +4,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
     using System.Collections.Generic;
     using Rules.Framework.Core;
 
-    internal class DataTypesConfigurationProvider : IDataTypesConfigurationProvider
+    internal sealed class DataTypesConfigurationProvider : IDataTypesConfigurationProvider
     {
         private readonly IDictionary<DataTypes, DataTypeConfiguration> dataTypeConfigurations;
 

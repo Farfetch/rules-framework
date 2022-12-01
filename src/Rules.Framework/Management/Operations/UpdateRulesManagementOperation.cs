@@ -4,7 +4,7 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal class UpdateRulesManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class UpdateRulesManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
     {
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
 

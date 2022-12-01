@@ -5,7 +5,7 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
     using Rules.Framework.Core;
 
     [BsonDiscriminator("value")]
-    internal class ValueConditionNodeDataModel : ConditionNodeDataModel
+    internal sealed class ValueConditionNodeDataModel : ConditionNodeDataModel
     {
         [BsonElement(Order = 1)]
         public string ConditionType { get; set; }

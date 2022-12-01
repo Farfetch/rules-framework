@@ -5,7 +5,7 @@ namespace Rules.Framework.Builder
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal class ValueConditionNodeBuilder<TConditionType> : IValueConditionNodeBuilder<TConditionType>
+    internal sealed class ValueConditionNodeBuilder<TConditionType> : IValueConditionNodeBuilder<TConditionType>
     {
         private readonly TConditionType conditionType;
 
@@ -18,7 +18,7 @@ namespace Rules.Framework.Builder
             => new ValueConditionNodeBuilder<TConditionType, T>(this.conditionType);
     }
 
-    internal class ValueConditionNodeBuilder<TConditionType, TDataType> : IValueConditionNodeBuilder<TConditionType, TDataType>
+    internal sealed class ValueConditionNodeBuilder<TConditionType, TDataType> : IValueConditionNodeBuilder<TConditionType, TDataType>
     {
         private readonly TConditionType conditionType;
         private Operators comparisonOperator;

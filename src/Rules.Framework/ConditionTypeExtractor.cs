@@ -36,10 +36,8 @@ namespace Rules.Framework
                 return conditionTypes;
             }
 
-            foreach (var rule in matchedRules)
+            foreach (var rootCondition in matchedRules.Select(r => r.RootCondition))
             {
-                var rootCondition = rule.RootCondition;
-
                 if (rootCondition is null)
                 {
                     continue;

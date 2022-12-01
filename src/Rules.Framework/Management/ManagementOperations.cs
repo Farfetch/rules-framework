@@ -9,7 +9,7 @@ namespace Rules.Framework.Management
             IEnumerable<Rule<TContentType, TConditionType>> rules)
             => new ManagementOperationsSelector<TContentType, TConditionType>(rules);
 
-        internal class ManagementOperationsSelector<TContentType, TConditionType>
+        internal sealed class ManagementOperationsSelector<TContentType, TConditionType>
         {
             private readonly IEnumerable<Rule<TContentType, TConditionType>> rules;
 

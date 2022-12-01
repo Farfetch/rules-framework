@@ -6,7 +6,7 @@ namespace Rules.Framework.Providers.InMemory
     using System.Linq;
     using Rules.Framework.Providers.InMemory.DataModel;
 
-    internal class InMemoryRulesStorage<TContentType, TConditionType> : IInMemoryRulesStorage<TContentType, TConditionType>
+    internal sealed class InMemoryRulesStorage<TContentType, TConditionType> : IInMemoryRulesStorage<TContentType, TConditionType>
     {
         private readonly ConcurrentDictionary<TContentType, List<RuleDataModel<TContentType, TConditionType>>> rulesByContentType;
 

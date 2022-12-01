@@ -6,7 +6,7 @@ namespace Rules.Framework.Builder
     using Rules.Framework.Builder.Validation;
     using Rules.Framework.Core;
 
-    internal class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
+    internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
         private ContentContainer<TContentType> contentContainer;
         private DateTime dateBegin;

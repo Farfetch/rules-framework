@@ -5,7 +5,7 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
     using MongoDB.Bson.Serialization.Attributes;
 
     [BsonDiscriminator("composed")]
-    internal class ComposedConditionNodeDataModel : ConditionNodeDataModel
+    internal sealed class ComposedConditionNodeDataModel : ConditionNodeDataModel
     {
         public IEnumerable<ConditionNodeDataModel> ChildConditionNodes { get; set; }
     }

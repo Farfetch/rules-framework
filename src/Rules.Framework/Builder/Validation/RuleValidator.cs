@@ -3,7 +3,7 @@ namespace Rules.Framework.Builder.Validation
     using FluentValidation;
     using Rules.Framework.Core;
 
-    internal class RuleValidator<TContentType, TConditionType> : AbstractValidator<Rule<TContentType, TConditionType>>
+    internal sealed class RuleValidator<TContentType, TConditionType> : AbstractValidator<Rule<TContentType, TConditionType>>
     {
         private readonly ComposedConditionNodeValidator<TConditionType> composedConditionNodeValidator;
         private readonly ValueConditionNodeValidator<TConditionType> valueConditionNodeValidator;

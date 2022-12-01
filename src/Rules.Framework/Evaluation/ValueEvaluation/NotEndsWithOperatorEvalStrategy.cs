@@ -2,7 +2,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
 
-    internal class NotEndsWithOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
+    internal sealed class NotEndsWithOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
         public bool Eval(object leftOperand, object rightOperand)
         {
@@ -11,7 +11,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 var leftOperandAsString = leftOperand as string;
                 var rightOperandAsString = rightOperand as string;
 
-                return !leftOperandAsString.EndsWith(rightOperandAsString);
+                return !leftOperandAsString.EndsWith(rightOperandAsString, StringComparison.Ordinal);
             }
 
             throw new NotSupportedException($"Only operands of type {nameof(String)} supported.");

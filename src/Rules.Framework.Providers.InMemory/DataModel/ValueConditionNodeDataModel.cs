@@ -2,7 +2,7 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 {
     using Rules.Framework.Core;
 
-    internal class ValueConditionNodeDataModel<TConditionType> : ConditionNodeDataModel<TConditionType>
+    internal sealed class ValueConditionNodeDataModel<TConditionType> : ConditionNodeDataModel<TConditionType>
     {
         public TConditionType ConditionType { get; set; }
 

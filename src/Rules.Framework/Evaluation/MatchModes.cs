@@ -1,6 +1,6 @@
 namespace Rules.Framework.Evaluation
 {
-    internal enum MatchModes
+    internal enum MatchModes : byte
     {
         Exact = 1,
         Search = 2

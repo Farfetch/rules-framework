@@ -4,7 +4,7 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal class AddRuleManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class AddRuleManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
     {
         private readonly Rule<TContentType, TConditionType> rule;
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
