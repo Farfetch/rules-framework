@@ -80,5 +80,32 @@ namespace Rules.Framework.Core.ConditionNodes
         /// <returns></returns>
         public IConditionNode<TConditionType> Clone()
             => new ValueConditionNode<TConditionType>(this.DataType, this.ConditionType, this.Operator, this.Operand, new Dictionary<string, object>(this.Properties, StringComparer.Ordinal));
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj) => obj is ValueConditionNode<TConditionType> node && EqualityComparer<TConditionType>.Default.Equals(this.ConditionType, node.ConditionType) && this.DataType == node.DataType && this.LogicalOperator == node.LogicalOperator && EqualityComparer<object>.Default.Equals(this.Operand, node.Operand) && this.Operator == node.Operator && EqualityComparer<IDictionary<string, object>>.Default.Equals(this.Properties, node.Properties);
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            int hashCode = -847281186;
+            hashCode = hashCode * -1521134295 + EqualityComparer<TConditionType>.Default.GetHashCode(this.ConditionType);
+            hashCode = hashCode * -1521134295 + this.DataType.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.LogicalOperator.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(this.Operand);
+            hashCode = hashCode * -1521134295 + this.Operator.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<IDictionary<string, object>>.Default.GetHashCode(this.Properties);
+            return hashCode;
+        }
     }
 }

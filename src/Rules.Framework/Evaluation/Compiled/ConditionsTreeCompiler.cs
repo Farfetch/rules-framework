@@ -21,7 +21,6 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             ParameterExpression parameterExpression = Expression.Parameter(dictionaryOfConditionTypeAndObjectType, "conditions");
             this.CompileInternal(conditionNode, parameterExpression);
-            conditionNode.Properties[ConditionNodeProperties.CompiledFlagKey] = true;
         }
 
         private void CompileInternal(

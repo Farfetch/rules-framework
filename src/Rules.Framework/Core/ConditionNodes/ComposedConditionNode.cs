@@ -46,5 +46,29 @@ namespace Rules.Framework.Core.ConditionNodes
         /// <returns></returns>
         public IConditionNode<TConditionNode> Clone()
             => new ComposedConditionNode<TConditionNode>(this.LogicalOperator, this.ChildConditionNodes.Select(cn => cn.Clone()).ToList().AsReadOnly());
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj) => obj is ComposedConditionNode<TConditionNode> node && EqualityComparer<IEnumerable<IConditionNode<TConditionNode>>>.Default.Equals(this.ChildConditionNodes, node.ChildConditionNodes) && this.LogicalOperator == node.LogicalOperator && EqualityComparer<IDictionary<string, object>>.Default.Equals(this.Properties, node.Properties);
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            int hashCode = 321258115;
+            hashCode = hashCode * -1521134295 + EqualityComparer<IEnumerable<IConditionNode<TConditionNode>>>.Default.GetHashCode(this.ChildConditionNodes);
+            hashCode = hashCode * -1521134295 + this.LogicalOperator.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<IDictionary<string, object>>.Default.GetHashCode(this.Properties);
+            return hashCode;
+        }
     }
 }

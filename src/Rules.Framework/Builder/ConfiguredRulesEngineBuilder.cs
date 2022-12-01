@@ -34,13 +34,22 @@ namespace Rules.Framework.Builder
 
             if (this.rulesEngineOptions.EnableCompilation)
             {
+                // Use specific conditions eval engine to use compiled parts of conditions tree.
                 var conditionExpressionBuilderProvider = new ConditionExpressionBuilderProvider();
                 var valueConditionNodeCompilerProvider = new ValueConditionNodeCompilerProvider(conditionExpressionBuilderProvider, dataTypesConfigurationProvider);
                 var conditionsTreeCompiler = new ConditionsTreeCompiler<TConditionType>(valueConditionNodeCompilerProvider);
-                conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(conditionsTreeCompiler, multiplicityEvaluator, conditionsTreeAnalyzer, this.rulesEngineOptions);
+                conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(multiplicityEvaluator, conditionsTreeAnalyzer, this.rulesEngineOptions);
+
+                // Add conditions compiler middleware to ensure compilation occurs before rules
+                // engine uses the rules, while also ensuring that the compilation result is kept on
+                // data source (avoiding future re-compilation).
+                CompilationRulesSourceMiddleware<TContentType, TConditionType> compilationRulesSourceMiddleware = new(conditionsTreeCompiler, this.rulesDataSource);
+                rulesSourceMiddlewares.Add(compilationRulesSourceMiddleware);
             }
             else
             {
+                // Use classic conditions eval engine that runs throught all conditions and
+                // interprets them at each evaluation.
                 var operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
                 var conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
                 var deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);

@@ -1,11 +1,13 @@
 namespace Rules.Framework.Core
 {
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     internal static class ConditionNodeProperties
     {
+        public static string CompilationPrefix => "_compilation";
+
+        public static string CompiledFlagKey => $"{CompilationPrefix}_isCompiled";
+
         public static string GetCompiledDelegateKey(string multiplicity)
         {
             if (string.IsNullOrWhiteSpace(multiplicity))
@@ -13,9 +15,7 @@ namespace Rules.Framework.Core
                 throw new ArgumentException($"'{nameof(multiplicity)}' cannot be null or whitespace.", nameof(multiplicity));
             }
 
-            return $"_compiled_{multiplicity}";
+            return $"{CompilationPrefix}_compiled_{multiplicity}";
         }
-
-        public static string CompiledFlagKey => "_compiled";
     }
 }

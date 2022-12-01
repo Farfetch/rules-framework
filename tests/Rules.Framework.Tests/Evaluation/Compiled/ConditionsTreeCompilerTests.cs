@@ -60,8 +60,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .BeOfType<Func<IDictionary<ConditionType, object>, bool>>()
                 .And
                 .BeSameAs(expectedCompiledFunc);
-            composedConditionNode.Properties.TryGetValue(ConditionNodeProperties.CompiledFlagKey, out object compiled);
-            compiled.Should().Be(true);
         }
 
         [Fact]

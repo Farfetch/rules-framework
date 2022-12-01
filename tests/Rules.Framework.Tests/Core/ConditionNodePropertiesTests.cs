@@ -12,7 +12,7 @@ namespace Rules.Framework.Tests.Core
         {
             // Arrange
             string multiplicity = "test";
-            string expected = "_compiled_test";
+            string expected = "_compilation_compiled_test";
 
             // Act
             string actual = ConditionNodeProperties.GetCompiledDelegateKey(multiplicity);

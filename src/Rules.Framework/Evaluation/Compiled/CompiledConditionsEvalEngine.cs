@@ -10,17 +10,14 @@ namespace Rules.Framework.Evaluation.Compiled
     internal sealed class CompiledConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
         private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
-        private readonly IConditionsTreeCompiler<TConditionType> conditionsTreeCompiler;
         private readonly IMultiplicityEvaluator multiplicityEvaluator;
         private readonly RulesEngineOptions rulesEngineOptions;
 
         public CompiledConditionsEvalEngine(
-            IConditionsTreeCompiler<TConditionType> conditionsTreeCompiler,
             IMultiplicityEvaluator multiplicityEvaluator,
             IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer,
             RulesEngineOptions rulesEngineOptions)
         {
-            this.conditionsTreeCompiler = conditionsTreeCompiler;
             this.multiplicityEvaluator = multiplicityEvaluator;
             this.conditionsTreeAnalyzer = conditionsTreeAnalyzer;
             this.rulesEngineOptions = rulesEngineOptions;
@@ -31,11 +28,6 @@ namespace Rules.Framework.Evaluation.Compiled
             if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !this.conditionsTreeAnalyzer.AreAllSearchConditionsPresent(conditionNode, conditions))
             {
                 return false;
-            }
-
-            if (!conditionNode.Properties.TryGetValue(ConditionNodeProperties.CompiledFlagKey, out var compiledFlag) || !(bool)compiledFlag)
-            {
-                this.conditionsTreeCompiler.Compile(conditionNode);
             }
 
             ISpecification<IDictionary<TConditionType, object>> specification = this.BuildSpecification(conditionNode, conditions, evaluationOptions.MatchMode);
