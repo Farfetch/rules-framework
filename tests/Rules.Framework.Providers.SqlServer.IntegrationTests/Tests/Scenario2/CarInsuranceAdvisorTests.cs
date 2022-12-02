@@ -18,10 +18,12 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         //TODO: read from seetings
         private const string DataBaseName = "rules-framework-sample";
 
-        private readonly DatabaseHelper databaseHelper;
+        private const string MasterDataBaseName = "master";
+
+        private readonly DatabaseHelper databaseHelper = new DatabaseHelper();
 
         //TODO: get connection from settings
-        private readonly string sqlConnection = $"Data Source=localhost;Initial Catalog=rules-framework-sample;Integrated Security=True;MultipleActiveResultSets=True;";
+        private readonly string sqlConnection = $"Data Source=localhost;Initial Catalog=master;Integrated Security=True;MultipleActiveResultSets=True;";
 
         //private readonly string sqlConnection = $"Server=sqlserver.docker.internal;User ID=sa; Password=Finance123.;Database={DataBaseName};Pooling=true; Min Pool Size=1; Max Pool Size=100; MultipleActiveResultSets=true;";
 
@@ -31,15 +33,9 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         {
             sqlServerDbSettings = new SqlServerDbSettings(sqlConnection, DataBaseName);
 
-            SqlServerDbDataProviderFactory sqlServerDbDataProviderFactory = new SqlServerDbDataProviderFactory();
-            var rulesSchemaCreator = sqlServerDbDataProviderFactory.CreateSchemaCreator(sqlServerDbSettings);
-            rulesSchemaCreator.CreateOrUpdateSchemaAsync(DataBaseName);
-
-            databaseHelper = new DatabaseHelper();
-            var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2.rules-framework-tests-car-insurance-advisor.sql";
-            databaseHelper.ExecuteScriptAsync(sqlServerDbSettings, testeResource).GetAwaiter().GetResult(); //TODO change this
-
-            //TODO: change Model.Rule to RuleDataMOdel
+            CreateDatabaseAndExecuteTestData()
+                .GetAwaiter()
+                .GetResult(); 
         }
 
         public IRulesSchemaCreator RulesSchemaCreator { get; }
@@ -237,5 +233,19 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
                     SqlServerRulesDataSourceSelectorExtensions.RulesFrameworkDbContext,
                     ruleFactory);
         }
+
+        private async Task CreateDatabaseAndExecuteTestData()
+        {
+            var sqlServerDbDataProviderFactory = new SqlServerDbDataProviderFactory();
+            var rulesSchemaCreator = sqlServerDbDataProviderFactory.CreateSchemaCreator(sqlServerDbSettings);
+
+            await rulesSchemaCreator.CreateOrUpdateSchemaAsync(DataBaseName);
+
+            var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2.rules-framework-tests-car-insurance-advisor.sql";
+
+            await databaseHelper
+                .ExecuteScriptAsync(sqlServerDbSettings, testeResource)
+                .ConfigureAwait(false);
+        } 
     }
 }

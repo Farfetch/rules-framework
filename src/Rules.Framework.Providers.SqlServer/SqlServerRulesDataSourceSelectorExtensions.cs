@@ -3,7 +3,6 @@ namespace Rules.Framework.Providers.SqlServer
     using System;
     using Rules.Framework.Builder;
     using Rules.Framework.Providers.SqlServer.Serialization;
-    using Rules.Framework.Serialization;
     using Rules.Framework.SqlServer.Models;
 
     /// <summary>
@@ -11,6 +10,8 @@ namespace Rules.Framework.Providers.SqlServer
     /// </summary>
     public static class SqlServerRulesDataSourceSelectorExtensions
     {
+        public static RulesFrameworkDbContext RulesFrameworkDbContext = new RulesFrameworkDbContext();
+
         /// <summary>
         /// Sets the rules engine data source from a Sql Server database.
         /// </summary>
@@ -24,7 +25,6 @@ namespace Rules.Framework.Providers.SqlServer
             this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector,
             string sqlServerConnection)
         {
-            //TODO: check if we use Guard
             if (rulesDataSourceSelector is null)
             {
                 throw new ArgumentNullException(nameof(rulesDataSourceSelector));
@@ -35,17 +35,13 @@ namespace Rules.Framework.Providers.SqlServer
                 throw new ArgumentNullException(nameof(sqlServerConnection));
             }
 
-            
-            IContentSerializationProvider<TContentType> contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<TContentType>();
-            IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>(contentSerializationProvider);
-            SqlServerProviderRulesDataSource<TContentType, TConditionType> mongoDbProviderRulesDataSource
-                = new SqlServerProviderRulesDataSource<TContentType, TConditionType>(
-                    RulesFrameworkDbContext,
-                    ruleFactory);
+            var contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<TContentType>();
 
-            return rulesDataSourceSelector.SetDataSource(mongoDbProviderRulesDataSource);
+            var ruleFactory = new RuleFactory<TContentType, TConditionType>(contentSerializationProvider);
+
+            var sqlServerDbProviderRulesDataSource = new SqlServerProviderRulesDataSource<TContentType, TConditionType>(RulesFrameworkDbContext, ruleFactory);
+
+            return rulesDataSourceSelector.SetDataSource(sqlServerDbProviderRulesDataSource);
         }
-
-        public static RulesFrameworkDbContext RulesFrameworkDbContext = new RulesFrameworkDbContext();
     }
 }
