@@ -7,7 +7,7 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Database
 
     internal class DatabaseHelper
     {
-        public async Task ExecuteScriptAsync(SqlServerDbSettings sqlServerDbSettings, string resourceName)
+        public async Task ExecuteScriptAsync(SqlServerDbSettings sqlServerDbSettings, string resourceName, string schemaName = null)
         {
             var script = LoadResource(resourceName);
 
@@ -19,7 +19,9 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Database
 
                 foreach (var batch in batches)
                 {
-                    string replacedBatch = batch.Replace("@dbname", sqlServerDbSettings.DatabaseName);
+                    var replacedBatch = batch
+                                        .Replace("@dbname", sqlServerDbSettings.DatabaseName)
+                                        .Replace("@schemaname", schemaName ?? "dbo");
 
                     using (SqlCommand queryCommand = new SqlCommand(replacedBatch))
                     {

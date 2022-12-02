@@ -10,7 +10,16 @@ namespace Rules.Framework.Providers.SqlServer
     /// </summary>
     public static class SqlServerRulesDataSourceSelectorExtensions
     {
-        public static RulesFrameworkDbContext RulesFrameworkDbContext = new RulesFrameworkDbContext();
+        private static RulesFrameworkDbContext rulesFrameworkDbContext = null;
+
+        public static RulesFrameworkDbContext RulesFrameworkDbContext
+        {
+            get
+            {
+                rulesFrameworkDbContext ??= new RulesFrameworkDbContext();
+                return rulesFrameworkDbContext;
+            }
+        }
 
         /// <summary>
         /// Sets the rules engine data source from a Sql Server database.

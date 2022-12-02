@@ -1,7 +1,7 @@
 use [@dbname]
 
-delete from Rules
-delete from ConditionNodeRelations
-delete from ConditionNodes
-delete from ConditionTypes
-delete from ContentTypes
+delete from [@schemaname].Rules
+delete from [@schemaname].ConditionNodeRelations
+delete from [@schemaname].ConditionNodes
+delete from [@schemaname].ConditionTypes
+delete from [@schemaname].ContentTypes

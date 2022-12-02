@@ -16,7 +16,7 @@ namespace Rules.Framework.Providers.SqlServer
             this.schemaScripts = schemaScripts ?? throw new ArgumentNullException(nameof(schemaScripts));
         }
 
-        public async Task CreateOrUpdateSchemaAsync(string databaseName)
+        public async Task CreateOrUpdateSchemaAsync(string databaseName, string schemaName)
         {
             using (SqlConnection openCon = new SqlConnection(this.sqlServerDbSettings.ConnectionString))
             {
@@ -28,7 +28,9 @@ namespace Rules.Framework.Providers.SqlServer
 
                     foreach (var batch in batches)
                     {
-                        string replacedBatch = batch.Replace("@dbname", databaseName);
+                        var replacedBatch = batch
+                                            .Replace("@dbname", databaseName)
+                                            .Replace("@schemaname", schemaName);
 
                         using (SqlCommand queryCommand = new SqlCommand(replacedBatch))
                         {
@@ -39,6 +41,12 @@ namespace Rules.Framework.Providers.SqlServer
                     }
                 }
             }
+        }
+
+        public async Task CreateOrUpdateSchemaAsync(string databaseName)
+        {
+            await CreateOrUpdateSchemaAsync(databaseName, "dbo")
+                    .ConfigureAwait(false);
         }
     }
 }

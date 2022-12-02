@@ -56,6 +56,11 @@ namespace Rules.Framework.SqlServer.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Configure default schema
+            var schema = "test-rules";
+            modelBuilder.HasDefaultSchema(schema); //TODO: temporary setup
+            modelBuilder.Entity<Rule>().ToTable("Rule", schema);
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new ConditionNodeConfiguration());

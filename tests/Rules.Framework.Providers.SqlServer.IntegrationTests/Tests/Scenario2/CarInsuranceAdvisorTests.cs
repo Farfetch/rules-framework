@@ -18,7 +18,7 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         //TODO: read from seetings
         private const string DataBaseName = "rules-framework-sample";
 
-        private const string MasterDataBaseName = "master";
+        private const string SchemaName = "test-rules";
 
         private readonly DatabaseHelper databaseHelper = new DatabaseHelper();
 
@@ -35,7 +35,7 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
 
             CreateDatabaseAndExecuteTestData()
                 .GetAwaiter()
-                .GetResult(); 
+                .GetResult();
         }
 
         public IRulesSchemaCreator RulesSchemaCreator { get; }
@@ -43,7 +43,7 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
         public void Dispose()
         {
             var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Database.Cleanup.Clean-database.sql";
-            databaseHelper.ExecuteScriptAsync(sqlServerDbSettings, testeResource).GetAwaiter().GetResult(); //TODO change this
+            databaseHelper.ExecuteScriptAsync(sqlServerDbSettings, testeResource, SchemaName).GetAwaiter().GetResult(); //TODO change this
         }
 
         [Fact]
@@ -239,13 +239,13 @@ namespace Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2
             var sqlServerDbDataProviderFactory = new SqlServerDbDataProviderFactory();
             var rulesSchemaCreator = sqlServerDbDataProviderFactory.CreateSchemaCreator(sqlServerDbSettings);
 
-            await rulesSchemaCreator.CreateOrUpdateSchemaAsync(DataBaseName);
+            await rulesSchemaCreator.CreateOrUpdateSchemaAsync(DataBaseName, SchemaName);
 
             var testeResource = "Rules.Framework.Providers.SqlServer.IntegrationTests.Tests.Scenario2.rules-framework-tests-car-insurance-advisor.sql";
 
             await databaseHelper
-                .ExecuteScriptAsync(sqlServerDbSettings, testeResource)
+                .ExecuteScriptAsync(sqlServerDbSettings, testeResource, SchemaName)
                 .ConfigureAwait(false);
-        } 
+        }
     }
 }
