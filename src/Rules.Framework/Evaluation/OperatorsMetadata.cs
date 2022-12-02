@@ -13,7 +13,7 @@ namespace Rules.Framework.Evaluation
         private static readonly IDictionary<string, OperatorMetadata> allOperatorsMetadataBySupportedCombination;
 
         private static readonly IEnumerable<OperatorMetadata> operatorsMetadata = new[]
-                        {
+        {
             OperatorsMetadata.Equal,
             OperatorsMetadata.NotEqual,
             OperatorsMetadata.GreaterThan,

@@ -349,36 +349,28 @@ namespace Rules.Framework
 
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
-            return this.rulesEngineOptions.PriotityCriteria switch
-            {
-                PriorityCriterias.BottommostRuleWins => rules.OrderByDescending(r => r.Priority).First(),
-                _ => rules.OrderBy(r => r.Priority).First(),
-            };
+            return this.rulesEngineOptions.PriotityCriteria == PriorityCriterias.BottommostRuleWins
+                ? rules.OrderByDescending(r => r.Priority).First()
+                : rules.OrderBy(r => r.Priority).First();
         }
 
         private async Task<RuleOperationResult> UpdateRuleInternalAsync(Rule<TContentType, TConditionType> rule)
         {
-            RulesFilterArgs<TContentType> rulesFilterArgs = new RulesFilterArgs<TContentType>
+            var rulesFilterArgs = new RulesFilterArgs<TContentType>
             {
-                ContentType = rule.ContentContainer.ContentType
+                ContentType = rule.ContentContainer.ContentType,
             };
 
-            IEnumerable<Rule<TContentType, TConditionType>> existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
+            var existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
 
-            List<string> errors = new List<string>();
-            Rule<TContentType, TConditionType> existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.OrdinalIgnoreCase));
+            var existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.OrdinalIgnoreCase));
             if (existentRule is null)
             {
-                errors.Add($"Rule with name '{rule.Name}' does not exist.");
+                return RuleOperationResult.Error(new[] { $"Rule with name '{rule.Name}' does not exist." });
             }
 
-            if (errors.Any())
-            {
-                return RuleOperationResult.Error(errors);
-            }
-
-            int topPriorityThreshold = Math.Min(rule.Priority, existentRule.Priority);
-            int bottomPriorityThreshold = Math.Max(rule.Priority, existentRule.Priority);
+            var topPriorityThreshold = Math.Min(rule.Priority, existentRule.Priority);
+            var bottomPriorityThreshold = Math.Max(rule.Priority, existentRule.Priority);
 
             switch (rule.Priority)
             {

@@ -55,7 +55,7 @@ namespace Rules.Framework.Tests.Evaluation
                 LogicalOperators.Or,
                 new IConditionNode<ConditionType>[] { condition1, condition2 });
 
-            var conditions = new Dictionary<ConditionType, object>()
+            var conditions = new Dictionary<ConditionType, object>
             {
                 {
                     ConditionType.IsoCurrency,
@@ -88,7 +88,7 @@ namespace Rules.Framework.Tests.Evaluation
                 LogicalOperators.Or,
                 new IConditionNode<ConditionType>[] { condition1, condition3 });
 
-            var conditions = new Dictionary<ConditionType, object>()
+            var conditions = new Dictionary<ConditionType, object>
             {
                 {
                     ConditionType.IsoCurrency,

@@ -18,7 +18,7 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
-            var contentContainer = new ContentContainer<TContentType>(ruleDataModel.ContentType, (t) => ruleDataModel.Content);
+            var contentContainer = new ContentContainer<TContentType>(ruleDataModel.ContentType, (_) => ruleDataModel.Content);
             var ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)

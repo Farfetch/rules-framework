@@ -182,11 +182,7 @@ namespace Rules.Framework.Tests
 
             this.SetupMockForConditionsEvalEngine((rootConditionNode, _, _) =>
             {
-                return rootConditionNode switch
-                {
-                    ValueConditionNode<ConditionType> stringConditionNode => stringConditionNode.Operand.ToString() == "USA",
-                    _ => false,
-                };
+                return rootConditionNode is ValueConditionNode<ConditionType> stringConditionNode && stringConditionNode.Operand.ToString() == "USA";
             }, evaluationOptions);
 
             var validatorProvider = Mock.Of<IValidatorProvider>();
