@@ -1,6 +1,5 @@
 namespace Rules.Framework.Extensions
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
@@ -28,7 +27,7 @@ namespace Rules.Framework.Extensions
 
             var conditionNodeDataModels = new List<GenericConditionNode>(composedConditionNode.ChildConditionNodes.Count());
 
-            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
+            foreach (var child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels.Add(child.ToGenericConditionNode());
             }
