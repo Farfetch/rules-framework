@@ -11,6 +11,7 @@ namespace Rules.Framework.Tests
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation;
+    using Rules.Framework.Extension;
     using Rules.Framework.Tests.TestStubs;
     using Rules.Framework.Validation;
     using Xunit;
@@ -70,6 +71,25 @@ namespace Rules.Framework.Tests
                 It.IsAny<IConditionNode<ConditionType>>(),
                 It.IsAny<IEnumerable<Condition<ConditionType>>>(),
                 It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.Never());
+        }
+
+        [Fact]
+        public void GetPriorityCriterias_GivenRulesEngineOptionsNewWithDefaults_ReturnsTopMostRuleWins()
+        {
+            // Arrange
+            var rulesEngine = new RulesEngine<ContentType, ConditionType>(
+                Mock.Of<IConditionsEvalEngine<ConditionType>>(),
+                Mock.Of<IRulesDataSource<ContentType, ConditionType>>(),
+                Mock.Of<IValidatorProvider>(),
+                RulesEngineOptions.NewWithDefaults(),
+                Mock.Of<IConditionTypeExtractor<ContentType, ConditionType>>()
+                );
+
+            //Act
+            var priorityCriterias = rulesEngine.GetPriorityCriteria();
+
+            //Arrange            
+            priorityCriterias.Should().Be(PriorityCriterias.TopmostRuleWins);
         }
 
         [Fact]

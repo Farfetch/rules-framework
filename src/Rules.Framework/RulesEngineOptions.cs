@@ -7,7 +7,7 @@ namespace Rules.Framework
     /// <summary>
     /// The set of rules engine options that influence rules engine rules matching.
     /// </summary>
-    public class RulesEngineOptions
+    public class RulesEngineOptions : IRulesEngineOptions
     {
         private RulesEngineOptions()
         {

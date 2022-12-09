@@ -9,6 +9,7 @@ namespace Rules.Framework
     using FluentValidation.Results;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
+    using Rules.Framework.Extensions;
     using Rules.Framework.Management;
     using Rules.Framework.Validation;
 
@@ -19,7 +20,7 @@ namespace Rules.Framework
     /// <typeparam name="TConditionType">
     /// The condition type that allows to filter rules based on a set of conditions.
     /// </typeparam>
-    public class RulesEngine<TContentType, TConditionType>
+    public class RulesEngine<TContentType, TConditionType> : IRulesEngine<TContentType, TConditionType>
     {
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
 
@@ -65,6 +66,15 @@ namespace Rules.Framework
             }
 
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
+        }
+
+        /// <summary>
+        /// Gets the priority criterias.
+        /// </summary>
+        /// <returns>Rules engine priority criterias</returns>
+        public PriorityCriterias GetPriorityCriteria()
+        {
+            return this.rulesEngineOptions.PriotityCriteria;
         }
 
         /// <summary>

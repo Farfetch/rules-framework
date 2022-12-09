@@ -12,7 +12,7 @@ namespace Rules.Framework.InMemory.Sample
     {
         private static void Main(string[] args)
         {
-            var rulesEngine = new RulesService(new List<IContentTypes>()
+            var rulesService = new RulesService(new List<IContentTypes>()
             {
                 new TestNumberRules()
             });
@@ -38,7 +38,7 @@ namespace Rules.Framework.InMemory.Sample
                         { ConditionTypes.RoyalNumber, value }
                     };
 
-                    var result = rulesEngine
+                    var result = rulesService
                         .MatchOneAsync<string>(ContentTypes.TestNumber, targetDate, conditions)
                         .ConfigureAwait(false)
                         .GetAwaiter()
