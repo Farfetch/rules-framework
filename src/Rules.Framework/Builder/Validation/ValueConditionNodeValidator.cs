@@ -5,24 +5,28 @@ namespace Rules.Framework.Builder.Validation
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal class ValueConditionNodeValidator<TConditionType> : AbstractValidator<ValueConditionNode<TConditionType>>
+    internal sealed class ValueConditionNodeValidator<TConditionType> : AbstractValidator<ValueConditionNode<TConditionType>>
     {
         public ValueConditionNodeValidator()
         {
-            this.RuleFor(c => c.ConditionType).NotEmpty();
-            this.RuleFor(c => c.ConditionType).IsInEnum().When(c => c.ConditionType is { } && c.ConditionType.GetType().IsEnum);
-            this.RuleFor(c => c.DataType).IsInEnum();
-            this.RuleFor(c => c.DataType).Equal(DataTypes.Integer).When(c => c.Operand is int);
-            this.RuleFor(c => c.DataType).Equal(DataTypes.String).When(c => c.Operand is string);
-            this.RuleFor(c => c.DataType).Equal(DataTypes.Decimal).When(c => c.Operand is decimal);
-            this.RuleFor(c => c.DataType).Equal(DataTypes.Boolean).When(c => c.Operand is bool);
+            this.RuleFor(c => c.ConditionType)
+                .NotEmpty()
+                .IsInEnum()
+                .When(c => c.ConditionType.GetType().IsEnum);
 
-            this.RuleFor(c => c.DataType).Equal(DataTypes.ArrayInteger).When(c => c.Operand is IEnumerable<int>);
-            this.RuleFor(c => c.DataType).Equal(DataTypes.ArrayString).When(c => c.Operand is IEnumerable<string>);
-            this.RuleFor(c => c.DataType).Equal(DataTypes.ArrayDecimal).When(c => c.Operand is IEnumerable<decimal>);
-            this.RuleFor(c => c.DataType).Equal(DataTypes.ArrayBoolean).When(c => c.Operand is IEnumerable<bool>);
+            this.RuleFor(c => c.DataType)
+                .IsInEnum()
+                .Equal(DataTypes.Integer).When(c => c.Operand is int)
+                .Equal(DataTypes.String).When(c => c.Operand is string)
+                .Equal(DataTypes.Decimal).When(c => c.Operand is decimal)
+                .Equal(DataTypes.Boolean).When(c => c.Operand is bool)
+                .Equal(DataTypes.ArrayInteger).When(c => c.Operand is IEnumerable<int>)
+                .Equal(DataTypes.ArrayString).When(c => c.Operand is IEnumerable<string>)
+                .Equal(DataTypes.ArrayDecimal).When(c => c.Operand is IEnumerable<decimal>)
+                .Equal(DataTypes.ArrayBoolean).When(c => c.Operand is IEnumerable<bool>);
 
-            this.RuleFor(c => c.Operator).IsInEnum();
+            this.RuleFor(c => c.Operator)
+                .IsInEnum();
 
             this.RuleFor(c => c.Operator)
                 .IsContainedOn(Operators.Equal, Operators.NotEqual, Operators.Contains, Operators.NotContains, Operators.StartsWith, Operators.EndsWith, Operators.CaseInsensitiveStartsWith, Operators.CaseInsensitiveEndsWith, Operators.NotStartsWith, Operators.NotEndsWith)

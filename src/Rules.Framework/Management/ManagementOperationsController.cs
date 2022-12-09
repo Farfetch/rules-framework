@@ -5,7 +5,7 @@ namespace Rules.Framework.Management
     using Rules.Framework.Core;
     using Rules.Framework.Management.Operations;
 
-    internal class ManagementOperationsController<TContentType, TConditionType>
+    internal sealed class ManagementOperationsController<TContentType, TConditionType>
     {
         private readonly List<IManagementOperation<TContentType, TConditionType>> managementOperations;
         private readonly IEnumerable<Rule<TContentType, TConditionType>> rules;

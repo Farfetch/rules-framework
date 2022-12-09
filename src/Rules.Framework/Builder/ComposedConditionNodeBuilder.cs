@@ -5,7 +5,7 @@ namespace Rules.Framework.Builder
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal class ComposedConditionNodeBuilder<TConditionType> : IComposedConditionNodeBuilder<TConditionType>
+    internal sealed class ComposedConditionNodeBuilder<TConditionType> : IComposedConditionNodeBuilder<TConditionType>
     {
         private readonly IConditionNodeBuilder<TConditionType> conditionNodeBuilder;
         private readonly List<IConditionNode<TConditionType>> conditions;

@@ -2,7 +2,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
 
-    internal class ContainsOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
+    internal sealed class ContainsOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
         public bool Eval(object leftOperand, object rightOperand)
         {

@@ -18,33 +18,29 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         public void GetDeferredEvalFor_GivenBooleanConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            BooleanConditionNode<ConditionType> conditionNode = new BooleanConditionNode<ConditionType>(ConditionType.IsVip, Operators.NotEqual, true);
+            var conditionNode = new BooleanConditionNode<ConditionType>(ConditionType.IsVip, Operators.NotEqual, true);
 
-            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            var conditions = new Dictionary<ConditionType, object>
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsVip,
-                    Value = false
-                }
+                { ConditionType.IsVip, false }
             };
 
-            MatchModes matchMode = MatchModes.Exact;
+            var matchMode = MatchModes.Exact;
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
+            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
+            var actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
             bool actualEvalResult = actual.Invoke(conditions);
 
             // Assert
@@ -58,34 +54,30 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         public void GetDeferredEvalFor_GivenDecimalConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            DecimalConditionNode<ConditionType> conditionNode = new DecimalConditionNode<ConditionType>(ConditionType.PluviosityRate, Operators.GreaterThan, 50);
+            var conditionNode = new DecimalConditionNode<ConditionType>(ConditionType.PluviosityRate, Operators.GreaterThan, 50);
 
-            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            var conditions = new Dictionary<ConditionType, object>
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.PluviosityRate,
-                    Value = 78
-                }
+                { ConditionType.PluviosityRate, 78 }
             };
 
-            MatchModes matchMode = MatchModes.Exact;
+            var matchMode = MatchModes.Exact;
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
+            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
-            bool actualEvalResult = actual.Invoke(conditions);
+            var actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
+            var actualEvalResult = actual.Invoke(conditions);
 
             // Assert
             actualEvalResult.Should().BeTrue();
@@ -98,34 +90,30 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         public void GetDeferredEvalFor_GivenIntegerConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            IntegerConditionNode<ConditionType> conditionNode = new IntegerConditionNode<ConditionType>(ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
+            var conditionNode = new IntegerConditionNode<ConditionType>(ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
 
-            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            var conditions = new Dictionary<ConditionType, object>
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.NumberOfSales,
-                    Value = 2300
-                }
+                { ConditionType.NumberOfSales, 2300 }
             };
 
-            MatchModes matchMode = MatchModes.Exact;
+            var matchMode = MatchModes.Exact;
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
+            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
-            bool actualEvalResult = actual.Invoke(conditions);
+            var actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
+            var actualEvalResult = actual.Invoke(conditions);
 
             // Assert
             actualEvalResult.Should().BeTrue();
@@ -138,34 +126,30 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         public void GetDeferredEvalFor_GivenStringConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
-            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            var conditions = new Dictionary<ConditionType, object>
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCurrency,
-                    Value = "EUR"
-                }
+                { ConditionType.IsoCurrency, "EUR" }
             };
 
-            MatchModes matchMode = MatchModes.Exact;
+            var matchMode = MatchModes.Exact;
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
+            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
-            bool actualEvalResult = actual.Invoke(conditions);
+            var actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
+            var actualEvalResult = actual.Invoke(conditions);
 
             // Assert
             actualEvalResult.Should().BeTrue();
@@ -178,35 +162,31 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToDiscardWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
-            StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
-            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(true);
 
-            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            var conditions = new Dictionary<ConditionType, object>
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCountryCode,
-                    Value = "PT"
-                }
+                { ConditionType.IsoCountryCode, "PT" }
             };
 
-            MatchModes matchMode = MatchModes.Exact;
+            var matchMode = MatchModes.Exact;
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.Discard;
 
-            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
+            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
-            bool actualEvalResult = actual.Invoke(conditions);
+            var actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
+            var actualEvalResult = actual.Invoke(conditions);
 
             // Assert
             actualEvalResult.Should().BeFalse();
@@ -219,35 +199,31 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToUseDataTypeDefaultWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
-            StringConditionNode<ConditionType> conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
-            Mock<IConditionEvalDispatcher> mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
+            var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(false);
 
-            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            IEnumerable<Condition<ConditionType>> conditions = new Condition<ConditionType>[]
+            var conditions = new Dictionary<ConditionType, object>
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCountryCode,
-                    Value = "PT"
-                }
+                { ConditionType.IsoCountryCode, "PT" }
             };
 
-            MatchModes matchMode = MatchModes.Exact;
+            var matchMode = MatchModes.Exact;
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault;
 
-            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
+            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
-            Func<IEnumerable<Condition<ConditionType>>, bool> actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
-            bool actualEvalResult = actual.Invoke(conditions);
+            var actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
+            var actualEvalResult = actual.Invoke(conditions);
 
             // Assert
             actualEvalResult.Should().BeFalse();
@@ -260,18 +236,18 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
         public void GetDeferredEvalFor_GivenUnknownConditionNodeType_ThrowsNotSupportedException()
         {
             // Arrange
-            Mock<IValueConditionNode<ConditionType>> mockValueConditionNode = new Mock<IValueConditionNode<ConditionType>>();
+            var mockValueConditionNode = new Mock<IValueConditionNode<ConditionType>>();
 
-            Mock<IConditionEvalDispatchProvider> mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
+            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
 
-            MatchModes matchMode = MatchModes.Exact;
+            var matchMode = MatchModes.Exact;
 
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DeferredEval sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
+            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
 
             // Act
-            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetDeferredEvalFor(mockValueConditionNode.Object, matchMode));
+            var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetDeferredEvalFor(mockValueConditionNode.Object, matchMode));
 
             // Assert
             notSupportedException.Should().NotBeNull();

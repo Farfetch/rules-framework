@@ -1,77 +1,41 @@
 namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
     using Rules.Framework.Core;
 
-    internal class ConditionEvalDispatchProvider : IConditionEvalDispatchProvider
+    internal sealed class ConditionEvalDispatchProvider : IConditionEvalDispatchProvider
     {
-        private const string ManyToMany = "many-to-many";
-        private const string ManyToOne = "many-to-one";
-        private const string OneToMany = "one-to-many";
-        private const string OneToOne = "one-to-one";
         private readonly Dictionary<string, IConditionEvalDispatcher> dispatchers;
-        private readonly string[] supportedCombinations;
+        private readonly IMultiplicityEvaluator multiplicityEvaluator;
 
         public ConditionEvalDispatchProvider(
             IOperatorEvalStrategyFactory operatorEvalStrategyFactory,
+            IMultiplicityEvaluator multiplicityEvaluator,
             IDataTypesConfigurationProvider dataTypesConfigurationProvider)
         {
-            this.dispatchers = new Dictionary<string, IConditionEvalDispatcher>
+            this.dispatchers = new Dictionary<string, IConditionEvalDispatcher>(StringComparer.Ordinal)
             {
-                { OneToOne, new OneToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
-                { OneToMany, new OneToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
-                { ManyToOne, new ManyToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
-                { ManyToMany, new ManyToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) }
+                { Multiplicities.OneToOne, new OneToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
+                { Multiplicities.OneToMany, new OneToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
+                { Multiplicities.ManyToOne, new ManyToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
+                { Multiplicities.ManyToMany, new ManyToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
             };
-            this.supportedCombinations = new[]
-            {
-                $"{OneToOne}-{Operators.Equal}",
-                $"{OneToOne}-{Operators.NotEqual}",
-                $"{OneToOne}-{Operators.GreaterThan}",
-                $"{OneToOne}-{Operators.GreaterThanOrEqual}",
-                $"{OneToOne}-{Operators.LesserThan}",
-                $"{OneToOne}-{Operators.LesserThanOrEqual}",
-                $"{OneToOne}-{Operators.Contains}",
-                $"{OneToOne}-{Operators.NotContains}",
-                $"{OneToMany}-{Operators.In}",
-                $"{OneToOne}-{Operators.StartsWith}",
-                $"{OneToOne}-{Operators.EndsWith}",
-                $"{OneToOne}-{Operators.CaseInsensitiveStartsWith}",
-                $"{OneToOne}-{Operators.CaseInsensitiveEndsWith}",
-                $"{OneToOne}-{Operators.NotStartsWith}",
-                $"{OneToOne}-{Operators.NotEndsWith}"
-            };
+            this.multiplicityEvaluator = multiplicityEvaluator;
         }
 
         public IConditionEvalDispatcher GetEvalDispatcher(object leftOperand, Operators @operator, object rightOperand)
         {
-            string combination = leftOperand switch
-            {
-                IEnumerable _ when !(leftOperand is string) && rightOperand is IEnumerable && !(rightOperand is string) => ManyToMany,
-                IEnumerable _ when !(leftOperand is string) => ManyToOne,
-                object _ when rightOperand is IEnumerable && !(rightOperand is string) => OneToMany,
-                object _ => OneToOne,
-                null when OperatorSupportsOneMultiplicityLeftOperand(@operator) && rightOperand is IEnumerable && !(rightOperand is string) => OneToMany,
-                null when OperatorSupportsOneMultiplicityLeftOperand(@operator) => OneToOne,
-                _ => throw new NotSupportedException()
-            };
+            string multiplicity = this.multiplicityEvaluator.EvaluateMultiplicity(leftOperand, @operator, rightOperand);
 
-            this.ThrowIfUnsupportedOperandsAndOperatorCombination($"{combination}-{@operator}");
+            ThrowIfUnsupportedOperandsAndOperatorCombination($"{multiplicity}-{@operator}");
 
-            return this.dispatchers[combination];
+            return this.dispatchers[multiplicity];
         }
 
-        private bool OperatorSupportsOneMultiplicityLeftOperand(Operators @operator)
+        private static void ThrowIfUnsupportedOperandsAndOperatorCombination(string combination)
         {
-            return this.supportedCombinations.Where(x => x.Contains(@operator.ToString())).Any(x => x.Contains("one-to"));
-        }
-
-        private void ThrowIfUnsupportedOperandsAndOperatorCombination(string combination)
-        {
-            if (!this.supportedCombinations.Contains(combination))
+            if (!OperatorsMetadata.AllBySupportedCombination.ContainsKey(combination))
             {
                 throw new NotSupportedException($"The combination '{combination}' is not supported.");
             }

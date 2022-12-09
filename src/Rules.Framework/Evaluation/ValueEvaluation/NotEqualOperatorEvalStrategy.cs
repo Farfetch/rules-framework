@@ -2,7 +2,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
 
-    internal class NotEqualOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
+    internal sealed class NotEqualOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
         public bool Eval(object leftOperand, object rightOperand)
         {

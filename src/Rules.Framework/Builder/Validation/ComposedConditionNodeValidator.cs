@@ -4,7 +4,7 @@ namespace Rules.Framework.Builder.Validation
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal class ComposedConditionNodeValidator<TConditionType> : AbstractValidator<ComposedConditionNode<TConditionType>>
+    internal sealed class ComposedConditionNodeValidator<TConditionType> : AbstractValidator<ComposedConditionNode<TConditionType>>
     {
         private readonly ValueConditionNodeValidator<TConditionType> valueConditionNodeValidator;
 

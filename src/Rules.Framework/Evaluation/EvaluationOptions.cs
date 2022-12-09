@@ -1,7 +1,9 @@
 namespace Rules.Framework.Evaluation
 {
     using System;
+    using System.Runtime.InteropServices;
 
+    [StructLayout(LayoutKind.Auto)]
     internal struct EvaluationOptions : IEquatable<EvaluationOptions>
     {
         public bool ExcludeRulesWithoutSearchConditions { get; set; }

@@ -2,7 +2,7 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 {
     using System;
 
-    internal class RuleDataModel<TContentType, TConditionType>
+    internal sealed class RuleDataModel<TContentType, TConditionType>
     {
         public dynamic Content { get; set; }
 
