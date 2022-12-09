@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.WebUI.Sampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.WebUI", "src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj", "{7CE82611-FEC1-49E9-91FB-4C3ADF5ED56F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.WebUI.Tests", "tests\Rules.Framework.WebUI.Tests\Rules.Framework.WebUI.Tests.csproj", "{29DC6661-4F0C-46F7-AC91-968700D13C11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,10 @@ Global
 		{7CE82611-FEC1-49E9-91FB-4C3ADF5ED56F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CE82611-FEC1-49E9-91FB-4C3ADF5ED56F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CE82611-FEC1-49E9-91FB-4C3ADF5ED56F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29DC6661-4F0C-46F7-AC91-968700D13C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29DC6661-4F0C-46F7-AC91-968700D13C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29DC6661-4F0C-46F7-AC91-968700D13C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29DC6661-4F0C-46F7-AC91-968700D13C11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,6 +122,7 @@ Global
 		{DB242766-733B-4073-B20C-E2AA6D13DB8C} = {3125C5B5-0FD5-4370-9E22-A44A3BCEED59}
 		{F5E1BEF6-85CD-4966-94C2-DCA02D824043} = {3125C5B5-0FD5-4370-9E22-A44A3BCEED59}
 		{7CE82611-FEC1-49E9-91FB-4C3ADF5ED56F} = {AEE746EC-CEAA-4892-8C29-0CAAB97A23A8}
+		{29DC6661-4F0C-46F7-AC91-968700D13C11} = {74E24C97-8EE4-4B69-AECD-4765FD2C751F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FA9D4C31-972B-49C2-9F63-C56ED766DAB0}
