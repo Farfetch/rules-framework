@@ -36,7 +36,7 @@ namespace Rules.Framework.Builder
 
             var conditionTypeExtractor = new ConditionTypeExtractor<TContentType, TConditionType>();
 
-            ValidationProvider validationProvider = ValidationProvider.New()
+            var validationProvider = ValidationProvider.New()
                 .MapValidatorFor(new SearchArgsValidator<TContentType, TConditionType>());
 
             var orderedMiddlewares = rulesSourceMiddlewares
