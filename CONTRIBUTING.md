@@ -29,46 +29,46 @@ First of all, ensure you have appropriate .Net SDK installed (need .Net Core 3.1
 
 1. Fork repository.
 
-1. Clone repository locally.
+2. Clone repository locally.
 
-1. Create a new branch.
+3. Create a new branch.
 
     ```shell
-    $ git checkout -b my-branch
+    git checkout -b my-branch
     ```
 
-1. Create a `.env` file to adjust specific settings for your local environment. Use the `.env_template` as a starting point.
+4. Create a `.env` file to adjust specific settings for your local environment. Use the `.env_template` as a starting point.
 
-1. Perform your code changes, including covering unit tests and integration tests.
+5. Perform your code changes, including covering unit tests and integration tests.
 
-1. [Windows Environment] After your code changes are done, under a PowerShell terminal and located at local repository root, run:
+6. [Windows Environment] After your code changes are done, under a PowerShell terminal and located at local repository root, run:
 
     ```shell
-    PS> .\run-tests.ps1
+    .\run-tests.ps1
     ```
 
     Open \<your-repo-root>/coverage-outputs/report/index.html on your favorite browser to preview HTML coverage report.
 
-1. Commit your changes to codebase - make sure you use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (changelog will be supported sometime in the future, and this will be important to use automatic tooling on top of commit messages).
+7. Commit your changes to codebase - make sure you use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (changelog will be supported sometime in the future, and this will be important to use automatic tooling on top of commit messages).
 
-1. Push changes to your forked repository remote.
+8. Push changes to your forked repository remote.
 
     ```shell
-    $ git push origin my-branch
+    git push origin my-branch
     ```
 
-1. Open a pull request with your changes targeting to `Farfetch/rules-framework:master`. Link any issues solved on the pull request.
+9. Open a pull request with your changes targeting to `Farfetch/rules-framework:master`. Link any issues solved on the pull request.
 
-1. Changes will automatically run through GitHub actions build (build + test) for your pull request. Also, Codacy will detect the pull request and subsequent changes, and will perform static analysis on changes. Please make sure all checks are green on pull request.
+10. Changes will automatically run through GitHub actions build (build + test) for your pull request. Also, Codacy will detect the pull request and subsequent changes, and will perform static analysis on changes. Please make sure all checks are green on pull request.
 
-1. Changes might be suggested or requested. If that happens, please make sure to have all tests passing after changes are done.
+11. Changes might be suggested or requested. If that happens, please make sure to have all tests passing after changes are done.
 
-1. Please do not merge incoming changes from master branch, perform a rebase instead.
+12. Please do not merge incoming changes from master branch, perform a rebase instead.
 
     ```shell
-    $ git fetch upstream master:master
-    $ git rebase master -i
-    $ git push --force origin master
+    git fetch upstream master:master
+    git rebase master -i
+    git push --force origin master
     ```
 
 After all designated reviewers accept the changes (a contributor will set the reviewers), changes will be merged to master.
