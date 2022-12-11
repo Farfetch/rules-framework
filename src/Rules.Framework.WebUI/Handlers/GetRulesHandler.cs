@@ -11,7 +11,7 @@ namespace Rules.Framework.WebUI.Handlers
     using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Utitlies;
 
-    internal class GetRulesHandler : WebUIRequestHandlerBase
+    internal sealed class GetRulesHandler : WebUIRequestHandlerBase
     {
         private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
         private static readonly string[] resourcePath = new[] { "/rules/Rule/List" };

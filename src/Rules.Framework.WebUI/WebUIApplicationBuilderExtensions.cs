@@ -7,14 +7,17 @@ namespace Rules.Framework.WebUI
     using Rules.Framework.WebUI.Handlers;
 
     /// <summary>
-    /// IApplicationBuilder extension for Rules Framework UI
+    /// IApplicationBuilder extension for Rules Framework Web UI
     /// </summary>
     public static class WebUIApplicationBuilderExtensions
     {
         /// <summary>
-        /// Register the UI middleware
+        /// Register the Rules Framework Web UI.
         /// </summary>
-        public static IApplicationBuilder UseRulesFrameworkUI(this IApplicationBuilder app, IGenericRulesEngine genericRulesEngine)
+        /// <param name="app">The application builder.</param>
+        /// <param name="genericRulesEngine">The generic rules framework engine.</param>
+        /// <returns>The application builder with rules framework Web UI middleware registered</returns>
+        public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app, IGenericRulesEngine genericRulesEngine)
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
 

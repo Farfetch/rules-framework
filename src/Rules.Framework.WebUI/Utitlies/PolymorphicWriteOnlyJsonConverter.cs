@@ -4,7 +4,7 @@ namespace Rules.Framework.WebUI.Utitlies
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
-    internal class PolymorphicWriteOnlyJsonConverter<T> : JsonConverter<T>
+    internal sealed class PolymorphicWriteOnlyJsonConverter<T> : JsonConverter<T>
     {
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

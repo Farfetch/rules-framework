@@ -1,6 +1,6 @@
 namespace Rules.Framework.WebUI.Dto
 {
-    internal class RuleDto
+    internal sealed class RuleDto
     {
         public string Conditions { get; set; }
         public string DateBegin { get; set; }

@@ -9,7 +9,7 @@ namespace Rules.Framework.WebUI.Handlers
     using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
 
-    internal class GetContentTypeHandler : WebUIRequestHandlerBase
+    internal sealed class GetContentTypeHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules/ContentType/List" };
 
@@ -32,17 +32,18 @@ namespace Rules.Framework.WebUI.Handlers
 
                 var contentTypes = new List<ContentTypeDto>();
 
-                foreach (var content in contents)
+                foreach (var identifier in contents.Select(c => c.Identifier))
                 {
-                    var genericSearchArgs = new GenericContentType { Identifier = content.Identifier };
+                    var genericSearchArgs = new GenericContentType { Identifier = identifier };
 
-                    var genericRules = await this.genericRulesEngineAdapter.SearchAsync(
-                        new SearchArgs<GenericContentType, GenericConditionType>(genericSearchArgs, DateTime.MinValue, DateTime.MaxValue)
-                    );
+                    var genericRules = await this.genericRulesEngineAdapter
+                        .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericSearchArgs,
+                            DateTime.MinValue,
+                            DateTime.MaxValue));
 
                     contentTypes.Add(new ContentTypeDto
                     {
-                        Name = content.Identifier,
+                        Name = identifier,
                         ActiveRulesCount = genericRules.Count(IsActive),
                         RulesCount = genericRules.Count()
                     });

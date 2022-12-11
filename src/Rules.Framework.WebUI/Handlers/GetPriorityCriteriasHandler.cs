@@ -6,7 +6,7 @@ namespace Rules.Framework.WebUI.Handlers
     using Microsoft.AspNetCore.Http;
     using Rules.Framework.Generics;
 
-    internal class GetPriorityCriteriasHandler : WebUIRequestHandlerBase
+    internal sealed class GetPriorityCriteriasHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules/Rule/Priority" };
 

@@ -48,5 +48,5 @@ static void AddRulesFrameworkUI(IApplicationBuilder app)
     .GetAwaiter()
     .GetResult();
 
-    app.UseRulesFrameworkUI(rulesEngine.CreateGenericEngine());
+    app.UseRulesFrameworkWebUI(rulesEngine.CreateGenericEngine());
 }

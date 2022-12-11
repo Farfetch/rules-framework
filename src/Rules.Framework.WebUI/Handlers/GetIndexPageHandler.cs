@@ -1,12 +1,12 @@
 namespace Rules.Framework.WebUI.Handlers
 {
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using System.IO;
-    using System.Text;
-    using System.Linq;
-    using System.Text.RegularExpressions;
 
 #if NETSTANDARD2_0
 
@@ -14,7 +14,7 @@ namespace Rules.Framework.WebUI.Handlers
 
 #endif
 
-    internal class GetIndexPageHandler : WebUIRequestHandlerBase
+    internal sealed class GetIndexPageHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules", "/rules/", "/rules/index.html" };
         private readonly WebUIOptions options;

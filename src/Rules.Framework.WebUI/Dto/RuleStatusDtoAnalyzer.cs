@@ -2,7 +2,7 @@ namespace Rules.Framework.WebUI.Dto
 {
     using System;
 
-    internal class RuleStatusDtoAnalyzer : IRuleStatusDtoAnalyzer
+    internal sealed class RuleStatusDtoAnalyzer : IRuleStatusDtoAnalyzer
     {
         public RuleStatusDto Analyze(DateTime? dateBegin, DateTime? dateEnd)
         {
