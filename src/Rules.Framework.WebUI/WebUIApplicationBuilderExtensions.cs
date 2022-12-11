@@ -21,14 +21,17 @@ namespace Rules.Framework.WebUI
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
 
+            var webUIOptions = new WebUIOptions();
+
             app.UseMiddleware<WebUIMiddleware>(
                 new List<IHttpRequestHandler>
                 {
-                    new GetIndexPageHandler(new WebUIOptions()),
+                    new GetIndexPageHandler(webUIOptions),
                     new GetPriorityCriteriasHandler(genericRulesEngine),
                     new GetContentTypeHandler(genericRulesEngine, ruleStatusDtoAnalyzer),
                     new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer)
-                });
+                },
+                webUIOptions);
 
             return app;
         }

@@ -17,8 +17,8 @@ namespace Rules.Framework.WebUI.Tests.Utilities
                 {
                     return Task.CompletedTask;
                 },
-                httpRequestHandlers: handlers
-                );
+                httpRequestHandlers: handlers,
+                options: new WebUIOptions());
         }
     }
 }

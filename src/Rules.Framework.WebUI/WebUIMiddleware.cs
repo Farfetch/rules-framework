@@ -1,16 +1,16 @@
 namespace Rules.Framework.WebUI
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.StaticFiles;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Microsoft.AspNetCore.Hosting;
-    using System.Collections.Generic;
-    using System.Linq;
 
 #if NETSTANDARD2_0
 
@@ -28,12 +28,12 @@ namespace Rules.Framework.WebUI
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            IEnumerable<IHttpRequestHandler> httpRequestHandlers)
+            IEnumerable<IHttpRequestHandler> httpRequestHandlers,
+            WebUIOptions options)
         {
-            var options = new WebUIOptions();
             this.httpRequestHandlers = httpRequestHandlers;
             this.next = next;
-            this.staticFileMiddlewares = this.CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, ".node_modules");
+            this.staticFileMiddlewares = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, ".node_modules");
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
@@ -45,7 +45,7 @@ namespace Rules.Framework.WebUI
             }
         }
 
-        private StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next,
+        private static StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
             WebUIOptions options,
