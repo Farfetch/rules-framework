@@ -119,13 +119,6 @@ jobs:
 
     - name: Setup Report Generator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
-      
-    - name: Setup Java
-      run: |
-        sudo update-alternatives --query java
-        sudo update-alternatives --auto java
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
-        export PATH=$PATH:$JAVA_HOME
         
     - name: MongoDB in GitHub Actions
       uses: supercharge/mongodb-github-action@1.6.0
