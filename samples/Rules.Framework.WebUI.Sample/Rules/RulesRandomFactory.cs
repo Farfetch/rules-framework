@@ -116,7 +116,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
 
         private DateTime? CreateRandomDateEnd(DateTime dateBegin)
         {
-            int months = random.Next(0, 13);
+            var months = random.Next(0, 13);
             if (months == 13)
             {
                 return null;
