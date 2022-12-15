@@ -11,7 +11,7 @@ namespace Rules.Framework.WebUI
 
     internal abstract class WebUIRequestHandlerBase : IHttpRequestHandler
     {
-        protected JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+        protected readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
