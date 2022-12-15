@@ -39,22 +39,22 @@ namespace Rules.Framework.WebUI.Sample
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
 
-            static void AddRulesFrameworkUI(IApplicationBuilder app)
-            {
-                var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
+        private static void AddRulesFrameworkUI(IApplicationBuilder app)
+        {
+            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
             {
                 new RulesRandomFactory()
             }));
 
-                var rulesEngine = rulesProvider
-                .GetRulesEngineAsync()
-                .ConfigureAwait(false)
-                .GetAwaiter()
-                .GetResult();
+            var rulesEngine = rulesProvider
+            .GetRulesEngineAsync()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
 
-                app.UseRulesFrameworkWebUI(rulesEngine.CreateGenericEngine());
-            }
+            app.UseRulesFrameworkWebUI(rulesEngine.CreateGenericEngine());
         }
     }
 }
