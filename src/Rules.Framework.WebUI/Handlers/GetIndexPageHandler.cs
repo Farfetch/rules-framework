@@ -8,12 +8,6 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
 
-#if NETSTANDARD2_0
-
-    using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-
-#endif
-
     internal sealed class GetIndexPageHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules", "/rules/", "/rules/index.html" };
@@ -38,12 +32,21 @@ namespace Rules.Framework.WebUI.Handlers
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
 
-                this.RespondWithRedirect(httpContext.Response, relativeIndexUrl);
+                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
             }
 
             if (Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
                 await this.RespondWithIndexHtmlAsync(httpContext.Response, next);
+            }
+        }
+
+        private static void RespondWithRedirect(HttpResponse httpResponse, string location)
+        {
+            if (!httpResponse.HasStarted)
+            {
+                httpResponse.StatusCode = 301;
+                httpResponse.Headers["Location"] = location;
             }
         }
 
@@ -94,15 +97,6 @@ namespace Rules.Framework.WebUI.Handlers
             else
             {
                 await httpResponse.WriteAsync(string.Empty);
-            }
-        }
-
-        private void RespondWithRedirect(HttpResponse httpResponse, string location)
-        {
-            if (!httpResponse.HasStarted)
-            {
-                httpResponse.StatusCode = 301;
-                httpResponse.Headers["Location"] = location;
             }
         }
     }
