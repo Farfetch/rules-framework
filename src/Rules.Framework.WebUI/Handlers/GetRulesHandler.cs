@@ -31,7 +31,7 @@ namespace Rules.Framework.WebUI.Handlers
         {
             if (!httpRequest.Query.TryGetValue("contentType", out var contentTypeName))
             {
-                await this.WriteResponseAsync(httpResponse, new { }, (int)HttpStatusCode.BadRequest);
+                await this.WriteResponseAsync(httpResponse, new { }, (int)HttpStatusCode.BadRequest).ConfigureAwait(false);
 
                 return;
             }
@@ -43,7 +43,8 @@ namespace Rules.Framework.WebUI.Handlers
                 var genericRules = await this.rulesEngine.SearchAsync(
                     new SearchArgs<GenericContentType, GenericConditionType>(
                         new GenericContentType { Identifier = contentTypeName },
-                        DateTime.MinValue, DateTime.MaxValue));
+                        DateTime.MinValue, DateTime.MaxValue))
+                    .ConfigureAwait(false);
 
                 var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
 
@@ -76,11 +77,11 @@ namespace Rules.Framework.WebUI.Handlers
                     }
                 }
 
-                await this.WriteResponseAsync(httpResponse, rules, (int)HttpStatusCode.OK);
+                await this.WriteResponseAsync(httpResponse, rules, (int)HttpStatusCode.OK).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                await this.WriteExceptionResponseAsync(httpResponse, ex);
+                await this.WriteExceptionResponseAsync(httpResponse, ex).ConfigureAwait(false);
             }
         }
     }

@@ -70,11 +70,11 @@ namespace Rules.Framework.WebUI
             var results = this.httpRequestHandlers.Select(d => d
                 .HandleAsync(httpContext.Request, httpContext.Response, this.next));
 
-            var handle = await Task.WhenAll(results);
+            var handle = await Task.WhenAll(results).ConfigureAwait(false);
 
             if (handle.All(d => !d))
             {
-                await this.next(httpContext);
+                await this.next(httpContext).ConfigureAwait(false);
                 return false;
             }
             return true;

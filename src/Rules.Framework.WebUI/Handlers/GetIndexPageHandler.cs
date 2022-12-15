@@ -37,7 +37,7 @@ namespace Rules.Framework.WebUI.Handlers
 
             if (Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
-                await this.RespondWithIndexHtmlAsync(httpContext.Response, next);
+                await this.RespondWithIndexHtmlAsync(httpContext.Response, next).ConfigureAwait(false);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                     using (var reader = new StreamReader(stream))
                     {
-                        var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync());
+                        var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync().ConfigureAwait(false));
 
                         foreach (var entry in this.GetIndexArguments())
                         {
@@ -87,7 +87,7 @@ namespace Rules.Framework.WebUI.Handlers
                         {
                             httpResponse.Body = originalBody;
                             newStream.Seek(0, SeekOrigin.Begin);
-                            await newStream.CopyToAsync(httpResponse.Body);
+                            await newStream.CopyToAsync(httpResponse.Body).ConfigureAwait(false);
                         }
                     }
 
@@ -96,7 +96,7 @@ namespace Rules.Framework.WebUI.Handlers
             }
             else
             {
-                await httpResponse.WriteAsync(string.Empty);
+                await httpResponse.WriteAsync(string.Empty).ConfigureAwait(false);
             }
         }
     }

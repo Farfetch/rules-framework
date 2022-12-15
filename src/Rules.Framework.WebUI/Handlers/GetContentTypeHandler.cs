@@ -39,7 +39,8 @@ namespace Rules.Framework.WebUI.Handlers
                     var genericRules = await this.genericRulesEngineAdapter
                         .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericSearchArgs,
                             DateTime.MinValue,
-                            DateTime.MaxValue));
+                            DateTime.MaxValue))
+                        .ConfigureAwait(false);
 
                     contentTypes.Add(new ContentTypeDto
                     {
@@ -49,11 +50,11 @@ namespace Rules.Framework.WebUI.Handlers
                     });
                 }
 
-                await this.WriteResponseAsync(httpResponse, contentTypes, (int)HttpStatusCode.OK);
+                await this.WriteResponseAsync(httpResponse, contentTypes, (int)HttpStatusCode.OK).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                await this.WriteExceptionResponseAsync(httpResponse, ex);
+                await this.WriteExceptionResponseAsync(httpResponse, ex).ConfigureAwait(false);
             }
         }
 
