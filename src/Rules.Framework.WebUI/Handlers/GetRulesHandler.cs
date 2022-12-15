@@ -45,11 +45,11 @@ namespace Rules.Framework.WebUI.Handlers
                         new GenericContentType { Identifier = contentTypeName },
                         DateTime.MinValue, DateTime.MaxValue));
 
-                var priorityOption = this.rulesEngine.GetPriorityCriteria();
+                var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
 
                 if (genericRules != null)
                 {
-                    if (priorityOption == PriorityCriterias.BottommostRuleWins)
+                    if (priorityCriteria == PriorityCriterias.BottommostRuleWins)
                     {
                         genericRules = genericRules.OrderByDescending(r => r.Priority);
                     }

@@ -6,13 +6,13 @@ namespace Rules.Framework.WebUI.Handlers
     using Microsoft.AspNetCore.Http;
     using Rules.Framework.Generics;
 
-    internal sealed class GetPriorityCriteriasHandler : WebUIRequestHandlerBase
+    internal sealed class GetPriorityCriteriaHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/rules/Rule/Priority" };
 
         private readonly IGenericRulesEngine rulesEngine;
 
-        public GetPriorityCriteriasHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
+        public GetPriorityCriteriaHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
         {
             this.rulesEngine = rulesEngine;
         }
@@ -23,9 +23,9 @@ namespace Rules.Framework.WebUI.Handlers
         {
             try
             {
-                var priorityCriterias = this.rulesEngine.GetPriorityCriteria();
+                var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
 
-                return this.WriteResponseAsync(httpResponse, priorityCriterias.ToString(), (int)HttpStatusCode.OK);
+                return this.WriteResponseAsync(httpResponse, priorityCriteria.ToString(), (int)HttpStatusCode.OK);
             }
             catch (Exception ex)
             {

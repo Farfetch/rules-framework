@@ -13,12 +13,12 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
     public class GetPriorityCriteriasHandlerTests
     {
-        private readonly GetPriorityCriteriasHandler handler;
+        private readonly GetPriorityCriteriaHandler handler;
 
         public GetPriorityCriteriasHandlerTests()
         {
             var rulesEngine = new Mock<IGenericRulesEngine>();
-            this.handler = new GetPriorityCriteriasHandler(rulesEngine.Object);
+            this.handler = new GetPriorityCriteriaHandler(rulesEngine.Object);
         }
 
         [Theory]

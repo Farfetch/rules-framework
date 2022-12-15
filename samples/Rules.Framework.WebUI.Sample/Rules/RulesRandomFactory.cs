@@ -22,11 +22,11 @@ namespace Rules.Framework.WebUI.Sample.Rules
 
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
         {
-            int currentYear = DateTime.UtcNow.Year;
+            var currentYear = DateTime.UtcNow.Year;
 
-            foreach (int contentType in Enum.GetValues(typeof(ContentTypes)))
+            foreach (var contentType in Enum.GetValues(typeof(ContentTypes)))
             {
-                for (int i = 1; i < random.Next(intialNumber, finalNumber); i++)
+                for (var i = 1; i < random.Next(intialNumber, finalNumber); i++)
                 {
                     var dateBegin = CreateRandomDateBegin(currentYear);
 
@@ -109,7 +109,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
 
         private DateTime CreateRandomDateBegin(int year)
         {
-            int months = random.Next(1, 11);
+            var months = random.Next(1, 11);
             year = random.Next(0, 1) + year;
             return new DateTime(year, 1, 1).AddMonths(months);
         }
