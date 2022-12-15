@@ -47,7 +47,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                 var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
 
-                if (genericRules != null)
+                if (genericRules != null && genericRules.Any())
                 {
                     if (priorityCriteria == PriorityCriterias.BottommostRuleWins)
                     {
