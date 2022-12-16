@@ -48,7 +48,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
                 using (var reader = new StreamReader(httpContext.Response.Body))
                 {
                     httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-                    body = await reader.ReadToEndAsync();
+                    body = await reader.ReadToEndAsync().ConfigureAwait(false);
                 }
                 body.Should().NotBeNullOrWhiteSpace();
                 httpContext.Response.ContentLength.Should().Be(body.Length);
