@@ -71,18 +71,20 @@ namespace Rules.Framework.WebUI.Handlers
                 using (var stream = this.options.IndexStream())
                 {
                     httpResponse.Body = stream;
-                    await next(httpResponse.HttpContext);
+                    await next(httpResponse.HttpContext).ConfigureAwait(false);
 
                     using (var reader = new StreamReader(stream))
                     {
-                        var responseTextBuilder = new StringBuilder(await reader.ReadToEndAsync().ConfigureAwait(false));
+                        var body = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+                        var responseTextBuilder = new StringBuilder(body);
 
                         foreach (var entry in this.GetIndexArguments())
                         {
                             responseTextBuilder.Replace(entry.Key, entry.Value);
                         }
 
-                        byte[] byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
+                        var byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
                         using (var newStream = new MemoryStream(byteArray))
                         {
                             httpResponse.Body = originalBody;
