@@ -1,4 +1,4 @@
-namespace Rules.Framework.IntegrationTests.Tests.Scenario5
+namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario5
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario5
 
     public class BestServerTests
     {
-        public readonly static IEnumerable<object[]> DataTest = new List<object[]>
+        public static readonly IEnumerable<object[]> DataTest = new List<object[]>
         {
             new object[]
             {
