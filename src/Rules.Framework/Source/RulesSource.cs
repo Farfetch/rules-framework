@@ -1,134 +1,77 @@
 namespace Rules.Framework.Source
 {
-    using Rules.Framework.Core;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Rules.Framework.Core;
 
-    internal class RulesSource<TContentType, TConditionType> : IRulesSource<TContentType, TConditionType>
+    internal sealed class RulesSource<TContentType, TConditionType> : IRulesSource<TContentType, TConditionType>
     {
-        private readonly List<IRulesSourceMiddleware<TContentType, TConditionType>> middlewares;
-        private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
+        private readonly AddRuleDelegate<TContentType, TConditionType> addRuleDelegate;
+        private readonly GetRulesDelegate<TContentType, TConditionType> getRulesDelegate;
+        private readonly GetRulesFilteredDelegate<TContentType, TConditionType> getRulesFilteredDelegate;
+        private readonly UpdateRuleDelegate<TContentType, TConditionType> updateRuleDelegate;
 
         public RulesSource(
             IRulesDataSource<TContentType, TConditionType> rulesDataSource,
             IEnumerable<IRulesSourceMiddleware<TContentType, TConditionType>> middlewares)
         {
-            this.middlewares = new List<IRulesSourceMiddleware<TContentType, TConditionType>>(middlewares);
-            this.rulesDataSource = rulesDataSource;
+            var middlewaresLinkedList = new LinkedList<IRulesSourceMiddleware<TContentType, TConditionType>>(middlewares);
+            this.addRuleDelegate = CreateAddRulePipelineDelegate(rulesDataSource, middlewaresLinkedList);
+            this.getRulesDelegate = CreateGetRulesPipelineDelegate(rulesDataSource, middlewaresLinkedList);
+            this.getRulesFilteredDelegate = CreateGetRulesFilteredPipelineDelegate(rulesDataSource, middlewaresLinkedList);
+            this.updateRuleDelegate = CreateUpdateRulePipelineDelegate(rulesDataSource, middlewaresLinkedList);
         }
 
         public async Task AddRuleAsync(AddRuleArgs<TContentType, TConditionType> args)
         {
-            var queuedMiddlewares = new Queue<IRulesSourceMiddleware<TContentType, TConditionType>>(this.middlewares);
-
-            await this.AddRuleInternalAsync(args, queuedMiddlewares).ConfigureAwait(false);
-        }
-
-        private async Task AddRuleInternalAsync(
-            AddRuleArgs<TContentType, TConditionType> args,
-            Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
-        {
-            if (queuedMiddlewares.Count > 0)
-            {
-                IRulesSourceMiddleware<TContentType, TConditionType> middleware = queuedMiddlewares.Dequeue();
-                if (queuedMiddlewares.Count > 0)
-                {
-                    await middleware.HandleAddRuleAsync(
-                        args,
-                        GetDelegateForNextMiddleware(queuedMiddlewares)).ConfigureAwait(false);
-                    return;
-                }
-
-                await middleware.HandleAddRuleAsync(
-                    args,
-                    GetDelegateForDataSource()).ConfigureAwait(false);
-                return;
-            }
-
-            await ExecuteDataSource(args).ConfigureAwait(false);
-
-            AddRuleDelegate<TContentType, TConditionType> GetDelegateForNextMiddleware(Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
-                => async (argsInternal) => await this.AddRuleInternalAsync(argsInternal, queuedMiddlewares).ConfigureAwait(false);
-
-            AddRuleDelegate<TContentType, TConditionType> GetDelegateForDataSource() => ExecuteDataSource;
-
-            async Task ExecuteDataSource(AddRuleArgs<TContentType, TConditionType> args)
-            {
-                await this.rulesDataSource.AddRuleAsync(args.Rule).ConfigureAwait(false);
-            }
+            await this.addRuleDelegate.Invoke(args).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(GetRulesArgs<TContentType> args)
         {
-            var queuedMiddlewares = new Queue<IRulesSourceMiddleware<TContentType, TConditionType>>(this.middlewares);
-
-            return await this.GetRulesInternalAsync(args, queuedMiddlewares).ConfigureAwait(false);
-        }
-
-        private async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesInternalAsync(
-            GetRulesArgs<TContentType> args,
-            Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
-        {
-            if (queuedMiddlewares.Count > 0)
-            {
-                IRulesSourceMiddleware<TContentType, TConditionType> middleware = queuedMiddlewares.Dequeue();
-                if (queuedMiddlewares.Count > 0)
-                {
-                    return await middleware.HandleGetRulesAsync(
-                        args,
-                        GetDelegateForNextMiddleware(queuedMiddlewares)).ConfigureAwait(false);
-                }
-
-                return await middleware.HandleGetRulesAsync(
-                    args,
-                    GetDelegateForDataSource()).ConfigureAwait(false);
-            }
-
-            return await ExecuteDataSource(args).ConfigureAwait(false);
-
-            GetRulesDelegate<TContentType, TConditionType> GetDelegateForNextMiddleware(Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
-                => async (argsInternal) => await this.GetRulesInternalAsync(argsInternal, queuedMiddlewares).ConfigureAwait(false);
-
-            GetRulesDelegate<TContentType, TConditionType> GetDelegateForDataSource() => ExecuteDataSource;
-
-            async Task<IEnumerable<Rule<TContentType, TConditionType>>> ExecuteDataSource(GetRulesArgs<TContentType> args)
-                => await this.rulesDataSource.GetRulesAsync(args.ContentType, args.DateBegin, args.DateEnd).ConfigureAwait(false);
+            return await this.getRulesDelegate.Invoke(args).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesFilteredAsync(GetRulesFilteredArgs<TContentType> args)
         {
-            var queuedMiddlewares = new Queue<IRulesSourceMiddleware<TContentType, TConditionType>>(this.middlewares);
-
-            return await this.GetRulesFilteredInternalAsync(args, queuedMiddlewares).ConfigureAwait(false);
+            return await this.getRulesFilteredDelegate.Invoke(args).ConfigureAwait(false);
         }
 
-        private async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesFilteredInternalAsync(
-            GetRulesFilteredArgs<TContentType> args,
-            Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
+        public async Task UpdateRuleAsync(UpdateRuleArgs<TContentType, TConditionType> args)
         {
-            if (queuedMiddlewares.Count > 0)
-            {
-                IRulesSourceMiddleware<TContentType, TConditionType> middleware = queuedMiddlewares.Dequeue();
-                if (queuedMiddlewares.Count > 0)
-                {
-                    return await middleware.HandleGetRulesFilteredAsync(
-                        args,
-                        GetDelegateForNextMiddleware(queuedMiddlewares)).ConfigureAwait(false);
-                }
+            await this.updateRuleDelegate.Invoke(args).ConfigureAwait(false);
+        }
 
-                return await middleware.HandleGetRulesFilteredAsync(
-                    args,
-                    GetDelegateForDataSource()).ConfigureAwait(false);
+        private static AddRuleDelegate<TContentType, TConditionType> CreateAddRulePipelineDelegate(
+            IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+            LinkedList<IRulesSourceMiddleware<TContentType, TConditionType>> middlewares)
+        {
+            AddRuleDelegate<TContentType, TConditionType> action = async (args) => await rulesDataSource.AddRuleAsync(args.Rule).ConfigureAwait(false);
+
+            if (middlewares.Count > 0)
+            {
+                var middlewareNode = middlewares.Last;
+
+                while (middlewareNode is { })
+                {
+                    var middleware = middlewareNode.Value;
+                    var immutableAction = action;
+                    action = async (args) => await middleware.HandleAddRuleAsync(args, immutableAction).ConfigureAwait(false);
+
+                    // Get previous middleware node.
+                    middlewareNode = middlewareNode.Previous;
+                }
             }
 
-            return await ExecuteDataSource(args).ConfigureAwait(false);
+            return action;
+        }
 
-            GetRulesFilteredDelegate<TContentType, TConditionType> GetDelegateForNextMiddleware(Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
-                => async (argsInternal) => await this.GetRulesFilteredInternalAsync(argsInternal, queuedMiddlewares).ConfigureAwait(false);
-
-            GetRulesFilteredDelegate<TContentType, TConditionType> GetDelegateForDataSource() => ExecuteDataSource;
-
-            async Task<IEnumerable<Rule<TContentType, TConditionType>>> ExecuteDataSource(GetRulesFilteredArgs<TContentType> args)
+        private static GetRulesFilteredDelegate<TContentType, TConditionType> CreateGetRulesFilteredPipelineDelegate(
+            IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+            LinkedList<IRulesSourceMiddleware<TContentType, TConditionType>> middlewares)
+        {
+            GetRulesFilteredDelegate<TContentType, TConditionType> action =
+                async (args) =>
                 {
                     RulesFilterArgs<TContentType> rulesFilterArgs = new()
                     {
@@ -137,47 +80,77 @@ namespace Rules.Framework.Source
                         Priority = args.Priority,
                     };
 
-                    return await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
-                }
-        }
+                    return await rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
+                };
 
-        public async Task UpdateRuleAsync(UpdateRuleArgs<TContentType, TConditionType> args)
-        {
-            var queuedMiddlewares = new Queue<IRulesSourceMiddleware<TContentType, TConditionType>>(this.middlewares);
-
-            await this.UpdateRuleInternalAsync(args, queuedMiddlewares).ConfigureAwait(false);
-        }
-
-        private async Task UpdateRuleInternalAsync(
-            UpdateRuleArgs<TContentType, TConditionType> args,
-            Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
-        {
-            if (queuedMiddlewares.Count > 0)
+            if (middlewares.Count > 0)
             {
-                IRulesSourceMiddleware<TContentType, TConditionType> middleware = queuedMiddlewares.Dequeue();
-                if (queuedMiddlewares.Count > 0)
-                {
-                    await middleware.HandleUpdateRuleAsync(
-                        args,
-                        GetDelegateForNextMiddleware(queuedMiddlewares)).ConfigureAwait(false);
-                    return;
-                }
+                var middlewareNode = middlewares.Last;
 
-                await middleware.HandleUpdateRuleAsync(
-                    args,
-                    GetDelegateForDataSource()).ConfigureAwait(false);
-                return;
+                while (middlewareNode is { })
+                {
+                    var middleware = middlewareNode.Value;
+                    var immutableAction = action;
+                    action = async (args) => await middleware.HandleGetRulesFilteredAsync(args, immutableAction).ConfigureAwait(false);
+
+                    // Get previous middleware node.
+                    middlewareNode = middlewareNode.Previous;
+                }
             }
 
-            await ExecuteDataSource(args).ConfigureAwait(false);
+            return action;
+        }
 
-            UpdateRuleDelegate<TContentType, TConditionType> GetDelegateForNextMiddleware(Queue<IRulesSourceMiddleware<TContentType, TConditionType>> queuedMiddlewares)
-                => async (argsInternal) => await this.UpdateRuleInternalAsync(argsInternal, queuedMiddlewares).ConfigureAwait(false);
+        private static GetRulesDelegate<TContentType, TConditionType> CreateGetRulesPipelineDelegate(
+            IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+            LinkedList<IRulesSourceMiddleware<TContentType, TConditionType>> middlewares)
+        {
+            GetRulesDelegate<TContentType, TConditionType> action =
+                async (args)
+                    => await rulesDataSource.GetRulesAsync(args.ContentType, args.DateBegin, args.DateEnd).ConfigureAwait(false);
 
-            UpdateRuleDelegate<TContentType, TConditionType> GetDelegateForDataSource() => ExecuteDataSource;
+            if (middlewares.Count > 0)
+            {
+                var middlewareNode = middlewares.Last;
 
-            async Task ExecuteDataSource(UpdateRuleArgs<TContentType, TConditionType> args)
-                => await this.rulesDataSource.UpdateRuleAsync(args.Rule).ConfigureAwait(false);
+                while (middlewareNode is { })
+                {
+                    var middleware = middlewareNode.Value;
+                    var immutableAction = action;
+                    action = async (args) => await middleware.HandleGetRulesAsync(args, immutableAction).ConfigureAwait(false);
+
+                    // Get previous middleware node.
+                    middlewareNode = middlewareNode.Previous;
+                }
+            }
+
+            return action;
+        }
+
+        private static UpdateRuleDelegate<TContentType, TConditionType> CreateUpdateRulePipelineDelegate(
+            IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+            LinkedList<IRulesSourceMiddleware<TContentType, TConditionType>> middlewares)
+        {
+            UpdateRuleDelegate<TContentType, TConditionType> action =
+                async (args)
+                    => await rulesDataSource.UpdateRuleAsync(args.Rule).ConfigureAwait(false);
+
+            if (middlewares.Count > 0)
+            {
+                var middlewareNode = middlewares.Last;
+
+                while (middlewareNode is { })
+                {
+                    var middleware = middlewareNode.Value;
+                    var immutableAction = action;
+                    action = async (args) => await middleware.HandleUpdateRuleAsync(args, immutableAction).ConfigureAwait(false);
+
+                    // Get previous middleware node.
+                    middlewareNode = middlewareNode.Previous;
+                }
+            }
+
+            return action;
         }
     }
 }

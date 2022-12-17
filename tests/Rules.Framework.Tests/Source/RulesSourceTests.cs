@@ -1,15 +1,14 @@
 namespace Rules.Framework.Tests.Source
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using FluentAssertions;
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Source;
     using Rules.Framework.Tests.TestStubs;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Xunit;
 
     public class RulesSourceTests
@@ -159,9 +158,11 @@ namespace Rules.Framework.Tests.Source
             RulesSource<ContentType, ConditionType> rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
 
             // Act
-            await rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
+            var actual = await rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
 
             // Assert
+            actual.Should().NotBeNullOrEmpty()
+                .And.Contain(expected);
             middleware1.GetRulesCalls.Should().Be(1);
             Mock.Get(rulesDataSource)
                 .Verify(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)), Times.Once());
@@ -190,9 +191,11 @@ namespace Rules.Framework.Tests.Source
             RulesSource<ContentType, ConditionType> rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
 
             // Act
-            await rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
+            var actual = await rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
 
             // Assert
+            actual.Should().NotBeNullOrEmpty()
+                .And.Contain(expected);
             middleware1.GetRulesCalls.Should().Be(1);
             middleware2.GetRulesCalls.Should().Be(1);
             middlewareMessages.Should().ContainInOrder("Enter middleware1.", "Enter middleware2.", "Exit middleware2.", "Exit middleware1.");
@@ -253,9 +256,11 @@ namespace Rules.Framework.Tests.Source
             RulesSource<ContentType, ConditionType> rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
 
             // Act
-            await rulesSource.GetRulesFilteredAsync(getRulesFilteredArgs).ConfigureAwait(false);
+            var actual = await rulesSource.GetRulesFilteredAsync(getRulesFilteredArgs).ConfigureAwait(false);
 
             // Assert
+            actual.Should().NotBeNullOrEmpty()
+                .And.Contain(expected);
             middleware1.GetRulesFilteredCalls.Should().Be(1);
             Mock.Get(rulesDataSource)
                 .Verify(x => x.GetRulesByAsync(It.Is<RulesFilterArgs<ContentType>>(
@@ -286,9 +291,11 @@ namespace Rules.Framework.Tests.Source
             RulesSource<ContentType, ConditionType> rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
 
             // Act
-            await rulesSource.GetRulesFilteredAsync(getRulesFilteredArgs).ConfigureAwait(false);
+            var actual = await rulesSource.GetRulesFilteredAsync(getRulesFilteredArgs).ConfigureAwait(false);
 
             // Assert
+            actual.Should().NotBeNullOrEmpty()
+                .And.Contain(expected);
             middleware1.GetRulesFilteredCalls.Should().Be(1);
             middleware2.GetRulesFilteredCalls.Should().Be(1);
             middlewareMessages.Should().ContainInOrder("Enter middleware1.", "Enter middleware2.", "Exit middleware2.", "Exit middleware1.");
