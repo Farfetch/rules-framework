@@ -275,7 +275,10 @@
                 let labelColor = '';
                 let style = '';
                 let icon = '';
-
+                let dateEnd = item.dateEnd;
+                if (!dateEnd) {
+                    dateEnd = '-';
+                }
                 switch (item.status.toLowerCase()) {
 
                     case 'active':

@@ -38,13 +38,13 @@ namespace Rules.Framework.WebUI.Handlers
 
             try
             {
-                var rules = new List<RuleDto>();
-
                 var genericRules = await this.rulesEngine.SearchAsync(
                     new SearchArgs<GenericContentType, GenericConditionType>(
                         new GenericContentType { Identifier = contentTypeName },
                         DateTime.MinValue, DateTime.MaxValue))
                     .ConfigureAwait(false);
+
+                var rules = new List<RuleDto>(genericRules.Count());
 
                 var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
 
@@ -68,7 +68,7 @@ namespace Rules.Framework.WebUI.Handlers
                             Priority = rule.Priority,
                             Name = rule.Name,
                             Value = value,
-                            DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
+                            DateEnd = !rule.DateEnd.HasValue ? null : rule.DateEnd.Value.ToString(dateFormat),
                             DateBegin = rule.DateBegin.ToString(dateFormat),
                             Status = this.ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
                             Conditions = rule.RootCondition
