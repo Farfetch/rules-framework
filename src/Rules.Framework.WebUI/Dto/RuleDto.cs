@@ -2,7 +2,7 @@ namespace Rules.Framework.WebUI.Dto
 {
     internal sealed class RuleDto
     {
-        public string Conditions { get; set; }
+        public object Conditions { get; set; }
         public string DateBegin { get; set; }
         public string DateEnd { get; set; }
         public string Name { get; set; }

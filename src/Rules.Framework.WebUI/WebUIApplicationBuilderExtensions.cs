@@ -18,18 +18,32 @@ namespace Rules.Framework.WebUI
         /// Uses the rules framework web UI.
         /// </summary>
         /// <param name="app">The application.</param>
+        /// <param name="genericRulesEngineFactory">The generic rules engine factory.</param>
+        /// <param name="webUIOptionsAction">The web UI options action.</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
+            Func<IServiceProvider, IGenericRulesEngine> genericRulesEngineFactory, Action<WebUIOptions> webUIOptionsAction = null)
+        {
+            var genericRulesEngine = genericRulesEngineFactory.Invoke(app.ApplicationServices);
+            return app.UseRulesFrameworkWebUI(genericRulesEngine, webUIOptionsAction);
+        }
+
+        /// <summary>
+        /// Uses the rules framework web UI.
+        /// </summary>
+        /// <param name="app">The application.</param>
         /// <param name="genericRulesEngine">The generic rules engine.</param>
-        /// <param name="uiOptionsAction">The UI options action.</param>
+        /// <param name="webUIOptionsAction">The web UI options action.</param>
         /// <returns></returns>
         public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app, IGenericRulesEngine genericRulesEngine,
-            Action<WebUIOptions> uiOptionsAction = null)
+            Action<WebUIOptions> webUIOptionsAction = null)
         {
             WebUIOptions webUIOptions;
 
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 webUIOptions = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<WebUIOptions>>().Value;
-                uiOptionsAction?.Invoke(webUIOptions);
+                webUIOptionsAction?.Invoke(webUIOptions);
             }
 
             return UseRulesFrameworkWebUI(app, genericRulesEngine, webUIOptions);

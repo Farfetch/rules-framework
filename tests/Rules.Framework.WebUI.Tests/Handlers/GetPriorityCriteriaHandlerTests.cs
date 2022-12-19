@@ -11,20 +11,20 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     using Rules.Framework.WebUI.Tests.Utilities;
     using Xunit;
 
-    public class GetPriorityCriteriasHandlerTests
+    public class GetPriorityCriteriaHandlerTests
     {
         private readonly GetPriorityCriteriaHandler handler;
 
-        public GetPriorityCriteriasHandlerTests()
+        public GetPriorityCriteriaHandlerTests()
         {
             var rulesEngine = new Mock<IGenericRulesEngine>();
-            this.handler = new GetPriorityCriteriaHandler(rulesEngine.Object);
+            this.handler = new GetPriorityCriteriaHandler(rulesEngine.Object, new WebUIOptions());
         }
 
         [Theory]
-        [InlineData("POST", "/rules/Rule/Priority", false)]
-        [InlineData("GET", "/rules/Rule/List", false)]
-        [InlineData("GET", "/rules/Rule/Priority", true)]
+        [InlineData("POST", "/rules/api/v1/configurations", false)]
+        [InlineData("GET", "/rules/api/v1/contentTypes", false)]
+        [InlineData("GET", "/rules/api/v1/configurations", true)]
         public async Task HandleRequestAsync_Validation(string httpMethod, string resourcePath,
             bool expectedResult)
         {

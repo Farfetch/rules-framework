@@ -62,7 +62,6 @@ namespace Rules.Framework.WebUI.Handlers
                     foreach (var rule in genericRules)
                     {
                         var value = JsonSerializer.Serialize(rule.Content, this.SerializerOptions);
-                        var conditions = rule.RootCondition is null ? string.Empty : JsonSerializer.Serialize(rule.RootCondition, this.SerializerOptions);
 
                         rules.Add(new RuleDto
                         {
@@ -72,7 +71,7 @@ namespace Rules.Framework.WebUI.Handlers
                             DateEnd = !rule.DateEnd.HasValue ? "-" : rule.DateEnd.Value.ToString(dateFormat),
                             DateBegin = rule.DateBegin.ToString(dateFormat),
                             Status = this.ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
-                            Conditions = conditions
+                            Conditions = rule.RootCondition
                         });
                     }
                 }

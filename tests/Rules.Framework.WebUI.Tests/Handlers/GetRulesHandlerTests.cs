@@ -23,15 +23,15 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             this.rulesEngine = new Mock<IGenericRulesEngine>();
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
-            this.handler = new GetRulesHandler(rulesEngine.Object, ruleStatusDtoAnalyzer);
+            this.handler = new GetRulesHandler(rulesEngine.Object, ruleStatusDtoAnalyzer, new WebUIOptions());
         }
 
         [Theory]
-        [InlineData("POST", "/rules/Rule/List", false, null)]
-        [InlineData("GET", "/rules/ContentType/List", false, null)]
-        [InlineData("GET", "/rules/Rule/List", true, HttpStatusCode.BadRequest)]
-        [InlineData("GET", "/rules/Rule/List", true, HttpStatusCode.OK)]
-        [InlineData("GET", "/rules/Rule/List", true, HttpStatusCode.InternalServerError)]
+        [InlineData("POST", "/rules/api/v1/rules", false, null)]
+        [InlineData("GET", "/rules/api/v1/contentTypes", false, null)]
+        [InlineData("GET", "/rules/api/v1/rules", true, HttpStatusCode.BadRequest)]
+        [InlineData("GET", "/rules/api/v1/rules", true, HttpStatusCode.OK)]
+        [InlineData("GET", "/rules/api/v1/rules", true, HttpStatusCode.InternalServerError)]
         public async Task HandleRequestAsync_Validation(string httpMethod, string resourcePath,
             bool expectedResult, HttpStatusCode? statusCode)
         {

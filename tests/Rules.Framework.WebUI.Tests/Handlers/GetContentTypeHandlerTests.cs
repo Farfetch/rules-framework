@@ -20,13 +20,13 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
             var rulesEngine = new Mock<IGenericRulesEngine>();
-            this.handler = new GetContentTypeHandler(rulesEngine.Object, ruleStatusDtoAnalyzer);
+            this.handler = new GetContentTypeHandler(rulesEngine.Object, ruleStatusDtoAnalyzer, new WebUIOptions());
         }
 
         [Theory]
-        [InlineData("POST", "/rules/ContentType/List", false)]
-        [InlineData("GET", "/rules/Rule/List", false)]
-        [InlineData("GET", "/rules/ContentType/List", true)]
+        [InlineData("POST", "/rules/api/v1/contentTypes", false)]
+        [InlineData("GET", "/rules/api/v1/rules", false)]
+        [InlineData("GET", "/rules/api/v1/contentTypes", true)]
         public async Task HandleRequestAsync_Validation(string httpMethod, string resourcePath,
             bool expectedResult)
         {

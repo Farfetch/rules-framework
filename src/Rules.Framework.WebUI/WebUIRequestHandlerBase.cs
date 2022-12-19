@@ -77,7 +77,7 @@ namespace Rules.Framework.WebUI
             return this.WriteResponseAsync(httpResponse, error, (int)HttpStatusCode.InternalServerError);
         }
 
-        protected virtual Task WriteResponseAsync<T>(HttpResponse httpResponse, T responseDto, int statusCode)
+        protected virtual async Task WriteResponseAsync<T>(HttpResponse httpResponse, T responseDto, int statusCode)
         {
             if (!httpResponse.HasStarted)
             {
@@ -86,11 +86,7 @@ namespace Rules.Framework.WebUI
                 httpResponse.ContentType = "application/json";
                 httpResponse.Headers.ContentLength = body.Length;
 
-                return httpResponse.WriteAsync(body, Encoding.UTF8);
-            }
-            else
-            {
-                return httpResponse.WriteAsync(string.Empty);
+                await httpResponse.WriteAsync(body, Encoding.UTF8).ConfigureAwait(false);
             }
         }
     }

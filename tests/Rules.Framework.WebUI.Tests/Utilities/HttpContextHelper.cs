@@ -15,14 +15,14 @@ namespace Rules.Framework.WebUI.Tests.Utilities
             context.Request.Method = method;
             context.Request.ContentType = "application/json";
 
-            if (requestBody is object)
+            if (requestBody is not null)
             {
                 var body = JsonConvert.SerializeObject(requestBody,
                     new JsonSerializerSettings { DateTimeZoneHandling = DateTimeZoneHandling.Utc });
 
                 using (var writer = new StreamWriter(context.Request.Body, Encoding.UTF8))
                 {
-                    await writer.WriteAsync(body);
+                    await writer.WriteAsync(body).ConfigureAwait(false);
                 }
             }
 
