@@ -54,7 +54,7 @@ namespace Rules.Framework.WebUI.Sample
             .GetAwaiter()
             .GetResult();
 
-            app.UseRulesFrameworkWebUI(rulesEngine.CreateGenericEngine(), options => options.RoutePrefix = "rules-framework");
+            app.UseRulesFrameworkWebUI(rulesEngine.CreateGenericEngine());
         }
     }
 }
