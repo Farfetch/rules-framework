@@ -92,13 +92,7 @@ namespace Rules.Framework.WebUI.Handlers
                             await newStream.CopyToAsync(httpResponse.Body).ConfigureAwait(false);
                         }
                     }
-
-                    httpResponse.Body = originalBody;
                 }
-            }
-            else
-            {
-                await httpResponse.WriteAsync(string.Empty).ConfigureAwait(false);
             }
         }
     }
