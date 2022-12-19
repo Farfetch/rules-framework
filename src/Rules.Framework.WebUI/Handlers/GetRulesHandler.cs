@@ -14,11 +14,11 @@ namespace Rules.Framework.WebUI.Handlers
     internal sealed class GetRulesHandler : WebUIRequestHandlerBase
     {
         private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
-        private static readonly string[] resourcePath = new[] { "/rules/Rule/List" };
+        private static readonly string[] resourcePath = new[] { "/{0}/api/v1/rules" };
         private readonly IGenericRulesEngine rulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetRulesHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
+        public GetRulesHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
             this.rulesEngine = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;

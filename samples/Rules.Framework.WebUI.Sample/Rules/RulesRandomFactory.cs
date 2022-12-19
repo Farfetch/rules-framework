@@ -9,7 +9,6 @@ namespace Rules.Framework.WebUI.Sample.Rules
 
     internal class RulesRandomFactory : IContentTypes
     {
-        public readonly List<RuleSpecification> rulesSpecifications;
         private readonly int finalNumber = 50;
         private readonly int intialNumber = 10;
         private readonly Random random;
@@ -17,12 +16,12 @@ namespace Rules.Framework.WebUI.Sample.Rules
         public RulesRandomFactory()
         {
             this.random = new Random();
-            this.rulesSpecifications = new List<RuleSpecification>();
         }
 
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
         {
             var currentYear = DateTime.UtcNow.Year;
+            var rulesSpecifications = new List<RuleSpecification>();
 
             foreach (var contentType in Enum.GetValues(typeof(ContentTypes)))
             {
@@ -30,11 +29,13 @@ namespace Rules.Framework.WebUI.Sample.Rules
                 {
                     var dateBegin = CreateRandomDateBegin(currentYear);
 
-                    Add(CreateMultipleRule((ContentTypes)contentType, i, dateBegin, CreateRandomDateEnd(dateBegin)), RuleAddPriorityOption.ByPriorityNumber(i));
+                    Add(CreateMultipleRule((ContentTypes)contentType, i, dateBegin, CreateRandomDateEnd(dateBegin)),
+                        RuleAddPriorityOption.ByPriorityNumber(i),
+                        rulesSpecifications);
                 }
             }
 
-            return this.rulesSpecifications;
+            return rulesSpecifications;
         }
 
         private static RuleBuilderResult<ContentTypes, ConditionTypes> CreateMultipleRule(ContentTypes contentTypes, int value, DateTime dateBegin,
@@ -99,8 +100,8 @@ namespace Rules.Framework.WebUI.Sample.Rules
                             .Build();
 
         private void Add(
-                    RuleBuilderResult<ContentTypes, ConditionTypes> rule,
-            RuleAddPriorityOption ruleAddPriorityOption) => rulesSpecifications.Add(
+            RuleBuilderResult<ContentTypes, ConditionTypes> rule,
+            RuleAddPriorityOption ruleAddPriorityOption, List<RuleSpecification> rulesSpecifications) => rulesSpecifications.Add(
                 new RuleSpecification
                 {
                     RuleBuilderResult = rule,

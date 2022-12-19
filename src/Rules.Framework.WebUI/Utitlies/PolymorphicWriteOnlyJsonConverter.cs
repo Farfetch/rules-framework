@@ -8,7 +8,7 @@ namespace Rules.Framework.WebUI.Utitlies
     {
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            throw new NotImplementedException($"Deserializing not supported. Type={typeToConvert}.");
+            throw new NotSupportedException($"Deserializing not supported. Type={typeToConvert}.");
         }
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)

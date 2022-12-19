@@ -11,12 +11,14 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal sealed class GetContentTypeHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/rules/ContentType/List" };
+        private static readonly string[] resourcePath = new[] { "/{0}/api/v1/contentTypes" };
 
         private readonly IGenericRulesEngine genericRulesEngineAdapter;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetContentTypeHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) : base(resourcePath)
+        public GetContentTypeHandler(IGenericRulesEngine rulesEngine,
+            IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer,
+            WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
             this.genericRulesEngineAdapter = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
@@ -34,10 +36,10 @@ namespace Rules.Framework.WebUI.Handlers
 
                 foreach (var identifier in contents.Select(c => c.Identifier))
                 {
-                    var genericSearchArgs = new GenericContentType { Identifier = identifier };
+                    var genericContentType = new GenericContentType { Identifier = identifier };
 
                     var genericRules = await this.genericRulesEngineAdapter
-                        .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericSearchArgs,
+                        .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericContentType,
                             DateTime.MinValue,
                             DateTime.MaxValue))
                         .ConfigureAwait(false);

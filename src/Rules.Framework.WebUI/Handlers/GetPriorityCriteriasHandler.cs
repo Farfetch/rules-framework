@@ -8,11 +8,11 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal sealed class GetPriorityCriteriaHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/rules/Rule/Priority" };
+        private static readonly string[] resourcePath = new[] { "/{0}/api/v1/configurations" };
 
         private readonly IGenericRulesEngine rulesEngine;
 
-        public GetPriorityCriteriaHandler(IGenericRulesEngine rulesEngine) : base(resourcePath)
+        public GetPriorityCriteriaHandler(IGenericRulesEngine rulesEngine, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
             this.rulesEngine = rulesEngine;
         }

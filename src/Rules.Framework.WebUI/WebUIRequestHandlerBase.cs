@@ -18,9 +18,12 @@ namespace Rules.Framework.WebUI
             IncludeFields = true
         };
 
-        protected WebUIRequestHandlerBase(string[] resourcePath)
+        protected readonly WebUIOptions webUIOptions;
+
+        protected WebUIRequestHandlerBase(string[] resourcePath, WebUIOptions webUIOptions)
         {
             this.ResourcePath = resourcePath;
+            this.webUIOptions = webUIOptions;
             this.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }
 
@@ -44,7 +47,9 @@ namespace Rules.Framework.WebUI
         {
             var resource = httpRequest.Path.ToUriComponent();
 
-            if (!this.ResourcePath.Contains(resource))
+            var resourcesPath = this.ResourcePath.Select(r => string.Format(r, this.webUIOptions.RoutePrefix));
+
+            if (!resourcesPath.Contains(resource))
             {
                 return false;
             }

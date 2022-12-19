@@ -4,14 +4,9 @@ namespace Rules.Framework.WebUI.Dto
 
     internal sealed class RuleStatusDtoAnalyzer : IRuleStatusDtoAnalyzer
     {
-        public RuleStatusDto Analyze(DateTime? dateBegin, DateTime? dateEnd)
+        public RuleStatusDto Analyze(DateTime dateBegin, DateTime? dateEnd)
         {
-            if (!dateBegin.HasValue)
-            {
-                return RuleStatusDto.Inactive;
-            }
-
-            if (dateBegin.Value > DateTime.UtcNow)
+            if (dateBegin > DateTime.UtcNow)
             {
                 return RuleStatusDto.Pending;
             }

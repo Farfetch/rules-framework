@@ -4,6 +4,6 @@ namespace Rules.Framework.WebUI.Dto
 
     internal interface IRuleStatusDtoAnalyzer
     {
-        RuleStatusDto Analyze(DateTime? dateBegin, DateTime? dateEnd);
+        RuleStatusDto Analyze(DateTime dateBegin, DateTime? dateEnd);
     }
 }

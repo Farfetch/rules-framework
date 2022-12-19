@@ -10,12 +10,12 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal sealed class GetIndexPageHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/rules", "/rules/", "/rules/index.html" };
-        private readonly WebUIOptions options;
+        private static readonly string[] resourcePath = new[] { "/{0}", "/{0}/", "/{0}/index.html" };
+        private readonly WebUIOptions webUIOptions;
 
-        public GetIndexPageHandler(WebUIOptions options) : base(resourcePath)
+        public GetIndexPageHandler(WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
-            this.options = options;
+            this.webUIOptions = webUIOptions;
         }
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
@@ -25,7 +25,7 @@ namespace Rules.Framework.WebUI.Handlers
             var path = httpRequest.Path.Value;
             var httpContext = httpRequest.HttpContext;
 
-            if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.webUIOptions.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -35,7 +35,7 @@ namespace Rules.Framework.WebUI.Handlers
                 RespondWithRedirect(httpContext.Response, relativeIndexUrl);
             }
 
-            if (Regex.IsMatch(path, $"^/{Regex.Escape(this.options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(path, $"^/{Regex.Escape(this.webUIOptions.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
                 await this.RespondWithIndexHtmlAsync(httpContext.Response, next).ConfigureAwait(false);
             }
@@ -54,8 +54,8 @@ namespace Rules.Framework.WebUI.Handlers
         {
             return new Dictionary<string, string>
             {
-                { "%(DocumentTitle)", this.options.DocumentTitle },
-                { "%(HeadContent)", this.options.HeadContent }
+                { "%(DocumentTitle)", this.webUIOptions.DocumentTitle },
+                { "%(HeadContent)", this.webUIOptions.HeadContent }
             };
         }
 
@@ -68,7 +68,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                 var originalBody = httpResponse.Body;
 
-                using (var stream = this.options.IndexStream())
+                using (var stream = this.webUIOptions.IndexStream())
                 {
                     httpResponse.Body = stream;
                     await next(httpResponse.HttpContext).ConfigureAwait(false);

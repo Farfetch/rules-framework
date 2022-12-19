@@ -536,7 +536,7 @@
                 {
                     $("#loading").show();
                     $.ajax({
-                        url: "Rule/List?contentType=" + contentTypeSelected,
+                        url: "api/v1/rules?contentType=" + contentTypeSelected,
                         success: function (response) {
                             rules = response;
 
@@ -636,7 +636,7 @@
 
                 $('#rulesPriority').html('Loading...');
                 $.ajax({
-                    url: "Rule/Priority",
+                    url: "api/v1/configurations",
                     success: function (response) {
                         $('#rulesPriority').html(response);
                         priority = response;
@@ -650,7 +650,7 @@
                     setContentTypesPagination([]);
                     $("#loading").show();
                     $.ajax({
-                        url: "ContentType/List",
+                        url: "api/v1/contentTypes",
                         success: function (response) {
                             contentTypes = response;
                             setContentTypesPagination(response)
@@ -672,7 +672,7 @@
                     let $dropdown = $("#contentTypesSelect");
                     $dropdown.html('<option value="">Loading...</option>');
                     $.ajax({
-                        url: "ContentType/List",
+                        url: "api/v1/contentTypes",
                         success: function (response) {
                             contentTypes = response;
                             $dropdown.html('<option value="">Choose ContentType...</option>');
