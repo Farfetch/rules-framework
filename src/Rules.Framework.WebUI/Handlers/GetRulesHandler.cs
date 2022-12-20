@@ -28,7 +28,8 @@ namespace Rules.Framework.WebUI.Handlers
         {
             if (!httpRequest.Query.TryGetValue("contentType", out var contentTypeName))
             {
-                await this.WriteResponseAsync(httpResponse, new { }, (int)HttpStatusCode.BadRequest).ConfigureAwait(false);
+                await this.WriteResponseAsync(httpResponse, new { Message = "contentType is required" }, (int)HttpStatusCode.BadRequest)
+                    .ConfigureAwait(false);
 
                 return;
             }
