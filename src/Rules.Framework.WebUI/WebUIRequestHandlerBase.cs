@@ -8,23 +8,27 @@ namespace Rules.Framework.WebUI
     using System.Text.Json.Serialization;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using Rules.Framework.Generics;
+    using Rules.Framework.WebUI.Utitlies;
 
     internal abstract class WebUIRequestHandlerBase : IHttpRequestHandler
     {
-        protected readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true,
-            IncludeFields = true
-        };
-
         protected readonly WebUIOptions webUIOptions;
+
+        private readonly JsonSerializerOptions SerializerOptions;
 
         protected WebUIRequestHandlerBase(string[] resourcePath, WebUIOptions webUIOptions)
         {
             this.ResourcePath = resourcePath;
             this.webUIOptions = webUIOptions;
+            this.SerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true,
+                IncludeFields = true
+            };
             this.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<GenericConditionNode>());
         }
 
         protected abstract HttpMethod HttpMethod { get; }

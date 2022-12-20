@@ -4,12 +4,10 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
-    using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
-    using Rules.Framework.WebUI.Utitlies;
 
     internal sealed class GetRulesHandler : WebUIRequestHandlerBase
     {
@@ -22,7 +20,6 @@ namespace Rules.Framework.WebUI.Handlers
         {
             this.rulesEngine = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
-            this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<GenericConditionNode>());
         }
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
@@ -61,13 +58,11 @@ namespace Rules.Framework.WebUI.Handlers
 
                     foreach (var rule in genericRules)
                     {
-                        var value = JsonSerializer.Serialize(rule.Content, this.SerializerOptions);
-
                         rules.Add(new RuleDto
                         {
                             Priority = rule.Priority,
                             Name = rule.Name,
-                            Value = value,
+                            Value = rule.Content,
                             DateEnd = !rule.DateEnd.HasValue ? null : rule.DateEnd.Value.ToString(dateFormat),
                             DateBegin = rule.DateBegin.ToString(dateFormat),
                             Status = this.ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),

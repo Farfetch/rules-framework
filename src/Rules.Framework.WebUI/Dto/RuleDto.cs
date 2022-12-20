@@ -8,6 +8,6 @@ namespace Rules.Framework.WebUI.Dto
         public string Name { get; set; }
         public int? Priority { get; set; }
         public string Status { get; set; }
-        public string Value { get; set; }
+        public object Value { get; set; }
     }
 }
