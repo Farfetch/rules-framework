@@ -91,7 +91,7 @@ namespace Rules.Framework.WebUI
                 new List<IHttpRequestHandler>
                 {
                     new GetIndexPageHandler(webUIOptions),
-                    new GetPriorityCriteriaHandler(genericRulesEngine, webUIOptions),
+                    new GetConfigurationsHandler(genericRulesEngine, webUIOptions),
                     new GetContentTypeHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
                     new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions)
                 },

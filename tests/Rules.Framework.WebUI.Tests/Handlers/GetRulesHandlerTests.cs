@@ -38,9 +38,11 @@ namespace Rules.Framework.WebUI.Tests.Handlers
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
             var genericRule = new List<GenericRule>();
+            var verifySearchAsync = false;
 
             if (statusCode == HttpStatusCode.OK || statusCode == HttpStatusCode.InternalServerError)
             {
+                verifySearchAsync = true;
                 httpContext.Request.QueryString = new QueryString("?contentType=1");
 
                 if (statusCode == HttpStatusCode.OK)
@@ -81,6 +83,17 @@ namespace Rules.Framework.WebUI.Tests.Handlers
                 }
                 body.Should().NotBeNullOrWhiteSpace();
                 httpContext.Response.ContentLength.Should().Be(body.Length);
+            }
+
+            if (verifySearchAsync)
+            {
+                this.rulesEngine
+                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()), Times.Once);
+            }
+            else
+            {
+                this.rulesEngine
+                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()), Times.Never);
             }
         }
     }

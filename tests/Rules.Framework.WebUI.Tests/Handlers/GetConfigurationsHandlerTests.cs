@@ -11,14 +11,15 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     using Rules.Framework.WebUI.Tests.Utilities;
     using Xunit;
 
-    public class GetPriorityCriteriaHandlerTests
+    public class GetConfigurationsHandlerTests
     {
-        private readonly GetPriorityCriteriaHandler handler;
+        private readonly GetConfigurationsHandler handler;
+        private readonly Mock<IGenericRulesEngine> rulesEngine;
 
-        public GetPriorityCriteriaHandlerTests()
+        public GetConfigurationsHandlerTests()
         {
-            var rulesEngine = new Mock<IGenericRulesEngine>();
-            this.handler = new GetPriorityCriteriaHandler(rulesEngine.Object, new WebUIOptions());
+            this.rulesEngine = new Mock<IGenericRulesEngine>();
+            this.handler = new GetConfigurationsHandler(rulesEngine.Object, new WebUIOptions());
         }
 
         [Theory]
@@ -52,6 +53,11 @@ namespace Rules.Framework.WebUI.Tests.Handlers
                 }
                 body.Should().NotBeNullOrWhiteSpace();
                 httpContext.Response.ContentLength.Should().Be(body.Length);
+                this.rulesEngine.Verify(s => s.GetPriorityCriteria(), Times.Once);
+            }
+            else
+            {
+                this.rulesEngine.Verify(s => s.GetPriorityCriteria(), Times.Never);
             }
         }
     }

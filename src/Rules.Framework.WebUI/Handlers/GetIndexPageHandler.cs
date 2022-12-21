@@ -11,11 +11,9 @@ namespace Rules.Framework.WebUI.Handlers
     internal sealed class GetIndexPageHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/{0}", "/{0}/", "/{0}/index.html" };
-        private readonly WebUIOptions webUIOptions;
 
         public GetIndexPageHandler(WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
-            this.webUIOptions = webUIOptions;
         }
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;

@@ -8,7 +8,7 @@ namespace Rules.Framework.WebUI
     using System.Text.Json.Serialization;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Rules.Framework.Generics;
+    using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Utitlies;
 
     internal abstract class WebUIRequestHandlerBase : IHttpRequestHandler
@@ -28,7 +28,7 @@ namespace Rules.Framework.WebUI
                 IncludeFields = true
             };
             this.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<GenericConditionNode>());
+            this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeDto>());
         }
 
         protected abstract HttpMethod HttpMethod { get; }

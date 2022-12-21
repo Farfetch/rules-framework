@@ -588,15 +588,6 @@
 
                 dataSource = applyRulesFilter(dataSource);
 
-                for (var i = 0; i < dataSource.length; i++) {
-                    let conditionsToExport = dataSource[i].conditions;
-
-                    if (conditionsToExport) {
-                        dataSource[i].conditions = conditionsToExport;
-                    }
-                }
-
-
                 let filename = 'rules_as_json';
                 const contentTypeSelected = $('#contentTypesSelect').children("option:selected").val();
                 if (contentTypeSelected) {
@@ -634,8 +625,8 @@
                 $.ajax({
                     url: "api/v1/configurations",
                     success: function (response) {
-                        $('#rulesPriority').html(response);
-                        priority = response;
+                        $('#rulesPriority').html(response.PriorityCriteria);
+                        priority = response.PriorityCriteria;
                     },
                     error: function (error) {
                         openError(error);

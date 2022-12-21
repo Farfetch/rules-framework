@@ -15,11 +15,12 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     public class GetContentTypeHandlerTests
     {
         private readonly GetContentTypeHandler handler;
+        private readonly Mock<IGenericRulesEngine> rulesEngine;
 
         public GetContentTypeHandlerTests()
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
-            var rulesEngine = new Mock<IGenericRulesEngine>();
+            this.rulesEngine = new Mock<IGenericRulesEngine>();
             this.handler = new GetContentTypeHandler(rulesEngine.Object, ruleStatusDtoAnalyzer, new WebUIOptions());
         }
 
@@ -53,6 +54,11 @@ namespace Rules.Framework.WebUI.Tests.Handlers
                 }
                 body.Should().NotBeNullOrWhiteSpace();
                 httpContext.Response.ContentLength.Should().Be(body.Length);
+                this.rulesEngine.Verify(s => s.GetContentTypes(), Times.Once);
+            }
+            else
+            {
+                this.rulesEngine.Verify(s => s.GetContentTypes(), Times.Never);
             }
         }
     }

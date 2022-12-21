@@ -1,13 +1,13 @@
 namespace Rules.Framework.WebUI.Handlers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
+    using Rules.Framework.WebUI.Extensions;
 
     internal sealed class GetRulesHandler : WebUIRequestHandlerBase
     {
@@ -42,7 +42,7 @@ namespace Rules.Framework.WebUI.Handlers
                         DateTime.MinValue, DateTime.MaxValue))
                     .ConfigureAwait(false);
 
-                var rules = new List<RuleDto>(genericRules.Count());
+                var rules = Enumerable.Empty<RuleDto>();
 
                 var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
 
@@ -57,19 +57,7 @@ namespace Rules.Framework.WebUI.Handlers
                         genericRules = genericRules.OrderBy(r => r.Priority);
                     }
 
-                    foreach (var rule in genericRules)
-                    {
-                        rules.Add(new RuleDto
-                        {
-                            Priority = rule.Priority,
-                            Name = rule.Name,
-                            Value = rule.Content,
-                            DateEnd = !rule.DateEnd.HasValue ? null : rule.DateEnd.Value.ToString(dateFormat),
-                            DateBegin = rule.DateBegin.ToString(dateFormat),
-                            Status = this.ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
-                            Conditions = rule.RootCondition
-                        });
-                    }
+                    rules = genericRules.Select(g => g.ToRuleDto(this.ruleStatusDtoAnalyzer));
                 }
 
                 await this.WriteResponseAsync(httpResponse, rules, (int)HttpStatusCode.OK).ConfigureAwait(false);
