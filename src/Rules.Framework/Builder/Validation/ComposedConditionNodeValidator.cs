@@ -4,7 +4,7 @@ namespace Rules.Framework.Builder.Validation
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal class ComposedConditionNodeValidator<TConditionType> : AbstractValidator<ComposedConditionNode<TConditionType>>
+    internal sealed class ComposedConditionNodeValidator<TConditionType> : AbstractValidator<ComposedConditionNode<TConditionType>>
     {
         private readonly ValueConditionNodeValidator<TConditionType> valueConditionNodeValidator;
 
@@ -12,13 +12,15 @@ namespace Rules.Framework.Builder.Validation
         {
             this.valueConditionNodeValidator = new ValueConditionNodeValidator<TConditionType>();
 
-            this.RuleFor(c => c.LogicalOperator).IsContainedOn(LogicalOperators.And, LogicalOperators.Or);
-            this.RuleForEach(c => c.ChildConditionNodes).Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType, ComposedConditionNode<TConditionType>>
-            {
-                ComposedConditionNodeValidator = this,
-                ValidationContext = cc,
-                ValueConditionNodeValidator = this.valueConditionNodeValidator
-            }));
+            this.RuleFor(c => c.LogicalOperator).IsContainedOn(LogicalOperators.And, LogicalOperators.Or);            
+            this.RuleForEach(c => c.ChildConditionNodes)
+                .NotNull()
+                .Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType, ComposedConditionNode<TConditionType>>
+                {
+                    ComposedConditionNodeValidator = this,
+                    ValidationContext = cc,
+                    ValueConditionNodeValidator = this.valueConditionNodeValidator
+                }));
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace Rules.Framework.Evaluation.Specification
 {
-    internal class AndSpecification<T> : SpecificationBase<T>
+    internal sealed class AndSpecification<T> : SpecificationBase<T>
     {
         private readonly ISpecification<T> leftSpecification;
 

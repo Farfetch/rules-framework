@@ -8,65 +8,32 @@ namespace Rules.Framework.Evaluation
     using Rules.Framework.Evaluation.Specification;
     using Rules.Framework.Evaluation.ValueEvaluation;
 
-    internal class ConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
+    internal sealed class ConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
+        private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
         private readonly IDeferredEval deferredEval;
 
-        public ConditionsEvalEngine(IDeferredEval deferredEval)
+        public ConditionsEvalEngine(
+            IDeferredEval deferredEval,
+            IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer)
         {
             this.deferredEval = deferredEval;
+            this.conditionsTreeAnalyzer = conditionsTreeAnalyzer;
         }
 
-        public bool Eval(IConditionNode<TConditionType> conditionNode, IEnumerable<Condition<TConditionType>> conditions, EvaluationOptions evaluationOptions)
+        public bool Eval(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions, EvaluationOptions evaluationOptions)
         {
-            if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !AreAllSearchConditionsPresent(conditionNode, conditions))
+            if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !this.conditionsTreeAnalyzer.AreAllSearchConditionsPresent(conditionNode, conditions))
             {
                 return false;
             }
 
-            ISpecification<IEnumerable<Condition<TConditionType>>> specification = this.BuildSpecification(conditionNode, evaluationOptions.MatchMode);
+            ISpecification<IDictionary<TConditionType, object>> specification = this.BuildSpecification(conditionNode, evaluationOptions.MatchMode);
 
             return specification.IsSatisfiedBy(conditions);
         }
 
-        private static bool AreAllSearchConditionsPresent(IConditionNode<TConditionType> conditionNode, IEnumerable<Condition<TConditionType>> conditions)
-        {
-            // Conditions checklist is a mere control construct to avoid a full sweep of the condition nodes tree when we already found all conditions.
-            IDictionary<TConditionType, bool> conditionsChecklist = new Dictionary<TConditionType, bool>(conditions.ToDictionary(ks => ks.Type, vs => false));
-
-            return VisitConditionNode(conditionNode, conditionsChecklist);
-        }
-
-        private static bool VisitConditionNode(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, bool> conditionsChecklist)
-        {
-            switch (conditionNode)
-            {
-                case IValueConditionNode<TConditionType> valueConditionNode:
-                    if (conditionsChecklist.ContainsKey(valueConditionNode.ConditionType))
-                    {
-                        conditionsChecklist[valueConditionNode.ConditionType] = true;
-                    }
-
-                    return conditionsChecklist.All(kvp => kvp.Value);
-
-                case ComposedConditionNode<TConditionType> composedConditionNode:
-                    foreach (IConditionNode<TConditionType> childConditionNode in composedConditionNode.ChildConditionNodes)
-                    {
-                        bool allPresentAlready = VisitConditionNode(childConditionNode, conditionsChecklist);
-                        if (allPresentAlready)
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-
-                default:
-                    throw new NotSupportedException($"Unsupported condition node: '{conditionNode.GetType().Name}'.");
-            }
-        }
-
-        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecification(IConditionNode<TConditionType> conditionNode, MatchModes matchMode)
+        private ISpecification<IDictionary<TConditionType, object>> BuildSpecification(IConditionNode<TConditionType> conditionNode, MatchModes matchMode)
         {
             return conditionNode switch
             {
@@ -76,9 +43,9 @@ namespace Rules.Framework.Evaluation
             };
         }
 
-        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecificationForComposedNode(ComposedConditionNode<TConditionType> composedConditionNode, MatchModes matchMode)
+        private ISpecification<IDictionary<TConditionType, object>> BuildSpecificationForComposedNode(ComposedConditionNode<TConditionType> composedConditionNode, MatchModes matchMode)
         {
-            IEnumerable<ISpecification<IEnumerable<Condition<TConditionType>>>> childConditionNodesSpecifications = composedConditionNode
+            IEnumerable<ISpecification<IDictionary<TConditionType, object>>> childConditionNodesSpecifications = composedConditionNode
                 .ChildConditionNodes
                 .Select(cn => this.BuildSpecification(cn, matchMode));
 
@@ -90,9 +57,9 @@ namespace Rules.Framework.Evaluation
             };
         }
 
-        private ISpecification<IEnumerable<Condition<TConditionType>>> BuildSpecificationForValueNode(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
+        private ISpecification<IDictionary<TConditionType, object>> BuildSpecificationForValueNode(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
         {
-            return new FuncSpecification<IEnumerable<Condition<TConditionType>>>(this.deferredEval.GetDeferredEvalFor(valueConditionNode, matchMode));
+            return new FuncSpecification<IDictionary<TConditionType, object>>(this.deferredEval.GetDeferredEvalFor(valueConditionNode, matchMode));
         }
     }
 }

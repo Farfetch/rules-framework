@@ -3,7 +3,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
     using System;
     using Rules.Framework.Core;
 
-    internal class DataTypeConfiguration
+    internal sealed class DataTypeConfiguration
     {
         private DataTypeConfiguration()
         {

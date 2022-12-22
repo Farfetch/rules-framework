@@ -4,7 +4,7 @@ namespace Rules.Framework.Validation
     using System.Collections.Generic;
     using FluentValidation;
 
-    internal class ValidationProvider : IValidatorProvider
+    internal sealed class ValidationProvider : IValidatorProvider
     {
         private readonly IDictionary<Type, IValidator> validatorsByType;
 

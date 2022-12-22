@@ -78,6 +78,7 @@ To keep source code clean and comprehensive, please make sure you follow these r
 - Public classes, structures, interfaces, properties and methods must be documented. Private, protected and internal ones are excluded from this rule.
 - Usings must be placed inside namespace. System usings always come first.
 - Any warning suppression must be added to global suppression files, and a justification is mandatory.
+- Implicit variable declarations (using `var`) instead of explicit declarations should be preferred, to avoid redundancy and allow for more flexible and better readable code.
 - Unit tests are separated per each class - suppose you are testing class `Rule`, you should place all tests for its' members under `RuleTests`.
 - Unit tests naming must be done under the pattern `MemberName_Conditions_ExpectedOutcome`. See examples above for guidance.
 

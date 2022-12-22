@@ -5,7 +5,7 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal class FilterPrioritiesRangeManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class FilterPrioritiesRangeManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
     {
         private readonly int? topPriorityThreshold;
         private readonly int? bottomPriorityThreshold;

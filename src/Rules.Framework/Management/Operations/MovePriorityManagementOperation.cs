@@ -5,7 +5,7 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal class MovePriorityManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class MovePriorityManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
     {
         private readonly int priorityMoveFactor;
 

@@ -2,6 +2,7 @@ namespace Rules.Framework.Builder
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using Rules.Framework.Core;
 
     internal static class RulesEngineOptionsValidator
@@ -20,11 +21,11 @@ namespace Rules.Framework.Builder
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Decimal,
-                value => value != null && decimal.TryParse(value.ToString(), out decimal decimalRes));
+                value => value != null && decimal.TryParse(value.ToString(), NumberStyles.None, CultureInfo.InvariantCulture, out decimal decimalRes));
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Integer,
-                value => value != null && int.TryParse(value.ToString(), out int intRes));
+                value => value != null && int.TryParse(value.ToString(), NumberStyles.None, CultureInfo.InvariantCulture, out int intRes));
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.String,

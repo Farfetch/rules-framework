@@ -1,7 +1,8 @@
-namespace System.Linq
+namespace Rules.Framework.Extensions
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     internal static class LinqExtension
     {

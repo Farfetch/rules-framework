@@ -3,7 +3,7 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
     using System;
     using MongoDB.Bson.Serialization.Attributes;
 
-    internal class RuleDataModel
+    internal sealed class RuleDataModel
     {
         public dynamic Content { get; set; }
 

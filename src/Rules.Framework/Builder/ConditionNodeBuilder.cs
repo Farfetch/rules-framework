@@ -1,6 +1,6 @@
 namespace Rules.Framework.Builder
 {
-    internal class ConditionNodeBuilder<TConditionType> : IConditionNodeBuilder<TConditionType>
+    internal sealed class ConditionNodeBuilder<TConditionType> : IConditionNodeBuilder<TConditionType>
     {
         public IComposedConditionNodeBuilder<TConditionType> AsComposed()
             => new ComposedConditionNodeBuilder<TConditionType>(this);
