@@ -3,6 +3,7 @@ namespace Rules.Framework.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using FluentAssertions;
     using FluentValidation;
@@ -480,8 +481,8 @@ namespace Rules.Framework.Tests
 
             IValidator<SearchArgs<ContentType, ConditionType>> validator = Mock.Of<IValidator<SearchArgs<ContentType, ConditionType>>>();
             Mock.Get(validator)
-                .Setup(x => x.Validate(It.IsAny<SearchArgs<ContentType, ConditionType>>()))
-                .Returns(new ValidationResult(new[] { new ValidationFailure("Prop1", "Sample error message") }));
+                .Setup(x => x.ValidateAsync(It.IsAny<SearchArgs<ContentType, ConditionType>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult(new[] { new ValidationFailure("Prop1", "Sample error message") }));
 
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             Mock.Get(validatorProvider)

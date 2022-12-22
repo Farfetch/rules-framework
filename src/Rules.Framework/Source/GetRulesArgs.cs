@@ -1,11 +1,8 @@
 namespace Rules.Framework.Source
 {
     using System;
-    using System.Collections.Generic;
-    using System.Runtime.InteropServices;
-    using System.Text;
 
-    internal class GetRulesArgs<TContentType>
+    internal sealed class GetRulesArgs<TContentType>
     {
         public TContentType ContentType { get; set; }
 
