@@ -558,3 +558,7 @@ typings/
 # Specific ones added
 coverage-outputs/**
 .env
+
+### Rules Framework Web UI ###
+!src/Rules.Framework.WebUI/node_modules/
+!samples/Rules.Framework.WebUI.Sample/Properties/launchSettings.json
