@@ -149,8 +149,10 @@ jobs:
       run: |
         dotnet remove src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj package Rules.Framework
         dotnet remove src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj package Rules.Framework
+        dotnet remove src/Rules.Framework.WebUI/Rules.Framework.WebUI.csproj package Rules.Framework
         dotnet add src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj reference src/Rules.Framework/Rules.Framework.csproj
         dotnet add src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj reference src/Rules.Framework/Rules.Framework.csproj
+        dotnet add src/Rules.Framework.WebUI/Rules.Framework.WebUI.csproj reference src/Rules.Framework/Rules.Framework.csproj
 
     - name: Clear Nuget locals
       run: dotnet nuget locals all --clear

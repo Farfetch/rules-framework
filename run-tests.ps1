@@ -15,6 +15,7 @@ dotnet test .\rules-framework.sln -m:1
 # Use project reference to "Rules.Framework" now
 dotnet add src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj reference src\Rules.Framework\Rules.Framework.csproj
 dotnet add src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj reference src\Rules.Framework\Rules.Framework.csproj
+dotnet add src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj reference src\Rules.Framework\Rules.Framework.csproj
 
 # Run again with project reference
 dotnet test .\rules-framework.sln --collect:"XPlat Code Coverage" --results-directory:"$coverageDir" -m:1
@@ -22,6 +23,7 @@ dotnet test .\rules-framework.sln --collect:"XPlat Code Coverage" --results-dire
 # Remove project reference to "Rules.Framework"
 dotnet remove src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj reference src\Rules.Framework\Rules.Framework.csproj
 dotnet remove src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj reference src\Rules.Framework\Rules.Framework.csproj
+dotnet remove src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj reference src\Rules.Framework\Rules.Framework.csproj
 
 reportgenerator -reports:"$($coverageDir)*\\*.xml" -targetdir:"$($coverageDir)" -reporttypes:Cobertura
 
