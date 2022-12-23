@@ -7,11 +7,11 @@ namespace Rules.Framework
     using System.Text;
     using System.Threading.Tasks;
     using FluentValidation;
-    using FluentValidation.Results;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Extensions;
     using Rules.Framework.Management;
+    using Rules.Framework.Source;
     using Rules.Framework.Validation;
 
     /// <summary>
@@ -24,21 +24,20 @@ namespace Rules.Framework
     public class RulesEngine<TContentType, TConditionType> : IRulesEngine<TContentType, TConditionType>
     {
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
-
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
-        private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
         private readonly RulesEngineOptions rulesEngineOptions;
+        private readonly IRulesSource<TContentType, TConditionType> rulesSource;
         private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(
             IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
-            IRulesDataSource<TContentType, TConditionType> rulesDataSource,
+            IRulesSource<TContentType, TConditionType> rulesSource,
             IValidatorProvider validatorProvider,
             RulesEngineOptions rulesEngineOptions,
             IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;
-            this.rulesDataSource = rulesDataSource;
+            this.rulesSource = rulesSource;
             this.validatorProvider = validatorProvider;
             this.rulesEngineOptions = rulesEngineOptions;
             this.conditionTypeExtractor = conditionTypeExtractor;
@@ -94,7 +93,14 @@ namespace Rules.Framework
         /// <returns>the matched rule; otherwise, empty.</returns>
         public async Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
         {
-            var matchedRules = await this.rulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd).ConfigureAwait(false);
+            var getRulesArgs = new GetRulesArgs<TContentType>
+            {
+                ContentType = contentType,
+                DateBegin = dateBegin,
+                DateEnd = dateEnd,
+            };
+
+            var matchedRules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
 
             return this.conditionTypeExtractor.GetConditionTypes(matchedRules);
         }
@@ -116,14 +122,14 @@ namespace Rules.Framework
         /// <returns>the matched rule; otherwise, null.</returns>
         public Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
         {
-            EvaluationOptions evaluationOptions = new EvaluationOptions
+            var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
-                MatchMode = MatchModes.Exact
+                MatchMode = MatchModes.Exact,
             };
 
-            DateTime dateBegin = matchDateTime.Date;
-            DateTime dateEnd = matchDateTime.Date.AddDays(1);
+            var dateBegin = matchDateTime.Date;
+            var dateEnd = matchDateTime.Date.AddDays(1);
 
             return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
         }
@@ -148,7 +154,7 @@ namespace Rules.Framework
         /// <returns>the matched rule; otherwise, null.</returns>
         public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
         {
-            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = await this.MatchManyAsync(contentType, matchDateTime, conditions).ConfigureAwait(false);
+            var matchedRules = await this.MatchManyAsync(contentType, matchDateTime, conditions).ConfigureAwait(false);
 
             return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
         }
@@ -164,22 +170,22 @@ namespace Rules.Framework
         /// </para>
         /// </remarks>
         /// <returns>the set of rules matching the conditions.</returns>
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> SearchAsync(SearchArgs<TContentType, TConditionType> searchArgs)
+        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> SearchAsync(SearchArgs<TContentType, TConditionType> searchArgs)
         {
             if (searchArgs is null)
             {
                 throw new ArgumentNullException(nameof(searchArgs));
             }
 
-            IValidator<SearchArgs<TContentType, TConditionType>> validator = this.validatorProvider.GetValidatorFor<SearchArgs<TContentType, TConditionType>>();
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validator = this.validatorProvider.GetValidatorFor<SearchArgs<TContentType, TConditionType>>();
+            var validationResult = await validator.ValidateAsync(searchArgs).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
-                StringBuilder stringBuilder = new StringBuilder()
+                var stringBuilder = new StringBuilder()
                     .AppendFormat(CultureInfo.InvariantCulture, "Specified '{0}' with invalid search values:", nameof(searchArgs))
                     .AppendLine();
 
-                foreach (ValidationFailure validationFailure in validationResult.Errors)
+                foreach (var validationFailure in validationResult.Errors)
                 {
                     stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "> {0}", validationFailure.ErrorMessage)
                         .AppendLine();
@@ -188,13 +194,13 @@ namespace Rules.Framework
                 throw new ArgumentException(stringBuilder.ToString(), nameof(searchArgs));
             }
 
-            DateTime dateBegin = searchArgs.DateBegin;
-            DateTime dateEnd = searchArgs.DateEnd;
+            var dateBegin = searchArgs.DateBegin;
+            var dateEnd = searchArgs.DateEnd;
 
-            EvaluationOptions evaluationOptions = new EvaluationOptions
+            var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
-                MatchMode = MatchModes.Search
+                MatchMode = MatchModes.Search,
             };
 
             if (dateBegin == dateEnd)
@@ -202,7 +208,7 @@ namespace Rules.Framework
                 dateEnd = dateBegin.AddDays(1);
             }
 
-            return this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions);
+            return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,12 +230,12 @@ namespace Rules.Framework
         private async Task<RuleOperationResult> AddRuleInternalAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
         {
             var errors = new List<string>();
-            var rulesFilterArgs = new RulesFilterArgs<TContentType>
+            var rulesFilterArgs = new GetRulesFilteredArgs<TContentType>
             {
                 ContentType = rule.ContentContainer.ContentType,
             };
 
-            var existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
+            var existentRules = await this.rulesSource.GetRulesFilteredAsync(rulesFilterArgs).ConfigureAwait(false);
 
             if (ruleAddPriorityOption.PriorityOption == PriorityOptions.AtRuleName
                 && !existentRules.Any(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.OrdinalIgnoreCase)))
@@ -282,7 +288,7 @@ namespace Rules.Framework
             rule.Priority = !existentRules.Any() ? 1 : existentRules.Max(r => r.Priority) + 1;
 
             await ManagementOperations.Manage(existentRules)
-                .UsingDataSource(this.rulesDataSource)
+                .UsingSource(this.rulesSource)
                 .AddRule(rule)
                 .ExecuteOperationsAsync()
                 .ConfigureAwait(false);
@@ -290,17 +296,17 @@ namespace Rules.Framework
 
         private async Task AddRuleInternalAtPriorityNumberAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption, IEnumerable<Rule<TContentType, TConditionType>> existentRules)
         {
-            int priorityMin = existentRules.MinOrDefault(r => r.Priority);
-            int priorityMax = existentRules.MaxOrDefault(r => r.Priority);
+            var priorityMin = existentRules.MinOrDefault(r => r.Priority);
+            var priorityMax = existentRules.MaxOrDefault(r => r.Priority);
 
-            int rulePriority = ruleAddPriorityOption.AtPriorityNumberOptionValue;
+            var rulePriority = ruleAddPriorityOption.AtPriorityNumberOptionValue;
             rulePriority = Math.Min(rulePriority, priorityMax + 1);
             rulePriority = Math.Max(rulePriority, priorityMin);
 
             rule.Priority = rulePriority;
 
             await ManagementOperations.Manage(existentRules)
-                .UsingDataSource(this.rulesDataSource)
+                .UsingSource(this.rulesSource)
                 .FilterFromThresholdPriorityToBottom(rulePriority)
                 .IncreasePriority()
                 .UpdateRules()
@@ -311,13 +317,13 @@ namespace Rules.Framework
 
         private async Task AddRuleInternalAtRuleNameAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption, IEnumerable<Rule<TContentType, TConditionType>> existentRules)
         {
-            int firstPriorityToIncrement = existentRules
+            var firstPriorityToIncrement = existentRules
                                     .FirstOrDefault(r => string.Equals(r.Name, ruleAddPriorityOption.AtRuleNameOptionValue, StringComparison.OrdinalIgnoreCase))
                                     .Priority;
             rule.Priority = firstPriorityToIncrement;
 
             await ManagementOperations.Manage(existentRules)
-                .UsingDataSource(this.rulesDataSource)
+                .UsingSource(this.rulesSource)
                 .FilterFromThresholdPriorityToBottom(firstPriorityToIncrement)
                 .IncreasePriority()
                 .UpdateRules()
@@ -331,7 +337,7 @@ namespace Rules.Framework
             rule.Priority = 1;
 
             await ManagementOperations.Manage(existentRules)
-                .UsingDataSource(this.rulesDataSource)
+                .UsingSource(this.rulesSource)
                 .IncreasePriority()
                 .UpdateRules()
                 .AddRule(rule)
@@ -346,11 +352,18 @@ namespace Rules.Framework
             IEnumerable<Condition<TConditionType>> conditions,
             EvaluationOptions evaluationOptions)
         {
-            IEnumerable<Rule<TContentType, TConditionType>> rules = await this.rulesDataSource.GetRulesAsync(contentType, matchDateBegin, matchDateEnd).ConfigureAwait(false);
+            var getRulesArgs = new GetRulesArgs<TContentType>
+            {
+                ContentType = contentType,
+                DateBegin = matchDateBegin,
+                DateEnd = matchDateEnd,
+            };
+
+            var rules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
 
             var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
 
-            IEnumerable<Rule<TContentType, TConditionType>> matchedRules = rules
+            var matchedRules = rules
                 .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions))
                 .ToList();
 
@@ -366,12 +379,12 @@ namespace Rules.Framework
 
         private async Task<RuleOperationResult> UpdateRuleInternalAsync(Rule<TContentType, TConditionType> rule)
         {
-            var rulesFilterArgs = new RulesFilterArgs<TContentType>
+            var rulesFilterArgs = new GetRulesFilteredArgs<TContentType>
             {
                 ContentType = rule.ContentContainer.ContentType,
             };
 
-            var existentRules = await this.rulesDataSource.GetRulesByAsync(rulesFilterArgs).ConfigureAwait(false);
+            var existentRules = await this.rulesSource.GetRulesFilteredAsync(rulesFilterArgs).ConfigureAwait(false);
 
             var existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.OrdinalIgnoreCase));
             if (existentRule is null)
@@ -386,7 +399,7 @@ namespace Rules.Framework
             {
                 case int p when p > existentRule.Priority:
                     await ManagementOperations.Manage(existentRules)
-                        .UsingDataSource(this.rulesDataSource)
+                        .UsingSource(this.rulesSource)
                         .FilterPrioritiesRange(topPriorityThreshold, bottomPriorityThreshold)
                         .DecreasePriority()
                         .SetRuleForUpdate(rule)
@@ -397,7 +410,7 @@ namespace Rules.Framework
 
                 case int p when p < existentRule.Priority:
                     await ManagementOperations.Manage(existentRules)
-                        .UsingDataSource(this.rulesDataSource)
+                        .UsingSource(this.rulesSource)
                         .FilterPrioritiesRange(topPriorityThreshold, bottomPriorityThreshold)
                         .IncreasePriority()
                         .SetRuleForUpdate(rule)
@@ -408,7 +421,7 @@ namespace Rules.Framework
 
                 default:
                     await ManagementOperations.Manage(existentRules)
-                        .UsingDataSource(this.rulesDataSource)
+                        .UsingSource(this.rulesSource)
                         .SetRuleForUpdate(rule)
                         .UpdateRules()
                         .ExecuteOperationsAsync()

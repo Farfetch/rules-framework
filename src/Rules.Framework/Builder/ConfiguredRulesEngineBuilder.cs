@@ -1,9 +1,12 @@
 namespace Rules.Framework.Builder
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.ValueEvaluation;
     using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
+    using Rules.Framework.Source;
     using Rules.Framework.Validation;
 
     internal sealed class ConfiguredRulesEngineBuilder<TContentType, TConditionType> : IConfiguredRulesEngineBuilder<TContentType, TConditionType>
@@ -19,24 +22,28 @@ namespace Rules.Framework.Builder
 
         public RulesEngine<TContentType, TConditionType> Build()
         {
-            IOperatorEvalStrategyFactory operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
+            var rulesSourceMiddlewares = new List<IRulesSourceMiddleware<TContentType, TConditionType>>();
+            var operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
+            var dataTypesConfigurationProvider = new DataTypesConfigurationProvider(this.rulesEngineOptions);
+            var multiplicityEvaluator = new MultiplicityEvaluator();
+            var conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
 
-            IDataTypesConfigurationProvider dataTypesConfigurationProvider = new DataTypesConfigurationProvider(this.rulesEngineOptions);
-            IMultiplicityEvaluator multiplicityEvaluator = new MultiplicityEvaluator();
-            IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer = new ConditionsTreeAnalyzer<TConditionType>();
+            var conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
 
-            IConditionEvalDispatchProvider conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
+            var deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
 
-            IDeferredEval deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
+            var conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
 
-            IConditionsEvalEngine<TConditionType> conditionsEvalEngine = new ConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
+            var conditionTypeExtractor = new ConditionTypeExtractor<TContentType, TConditionType>();
 
-            IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor = new ConditionTypeExtractor<TContentType, TConditionType>();
-
-            ValidationProvider validationProvider = ValidationProvider.New()
+            var validationProvider = ValidationProvider.New()
                 .MapValidatorFor(new SearchArgsValidator<TContentType, TConditionType>());
 
-            return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, this.rulesDataSource, validationProvider, this.rulesEngineOptions, conditionTypeExtractor);
+            var orderedMiddlewares = rulesSourceMiddlewares
+                .Reverse<IRulesSourceMiddleware<TContentType, TConditionType>>();
+            var rulesSource = new RulesSource<TContentType, TConditionType>(this.rulesDataSource, orderedMiddlewares);
+
+            return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, rulesSource, validationProvider, this.rulesEngineOptions, conditionTypeExtractor);
         }
 
         public IConfiguredRulesEngineBuilder<TContentType, TConditionType> Configure(Action<RulesEngineOptions> configurationAction)
