@@ -270,7 +270,7 @@
 
         function populateRules(dataSource) {
             let trHTML = '';
-            $.each(dataSource, function (i, item) {
+            $.each(dataSource, function (_, item) {
 
                 let labelColor = '';
                 let style = '';
@@ -298,7 +298,7 @@
                 }
 
                 trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.name + '</td>';
-                trHTML += '<td nowrap>' + item.dateBegin + '</td><td nowrap> ' + item.dateEnd + '</td>';
+                trHTML += '<td nowrap>' + item.dateBegin + '</td><td nowrap> ' + dateEnd + '</td>';
                 trHTML += '<td>' + item.value + '</td>';
                 trHTML += '<td style="text-align: center;"><span class="' + labelColor + '" style="' + style + '"> ';
                 trHTML += item.status;
