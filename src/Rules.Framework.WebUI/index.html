@@ -123,11 +123,11 @@
                             <table class="table table-hover table-sm" style="font-size: .875rem;">
                                 <thead style="border-bottom: 2px solid currentcolor;">
                                     <tr>
-                                        <th scope="col" width="4%">#</th>
-                                        <th scope="col" width="36%">Name</th>
-                                        <th scope="col" width="25%" style="text-align: center;">Active Rules</th>
-                                        <th scope="col" width="25%" style="text-align: center;">Total Rules</th>
-                                        <th scope="col" width="10%" style="text-align: center;">Rules</th>
+                                        <th scope="col" width="3%">#</th>
+                                        <th scope="col" width="62%">Name</th>
+                                        <th scope="col" width="15%" style="text-align: center;">Active Rules</th>
+                                        <th scope="col" width="15%" style="text-align: center;">Total Rules</th>
+                                        <th scope="col" width="5%" style="text-align: center;">Rules</th>
                                     </tr>
                                 </thead>
                                 <tbody id="contentTypes_table">
@@ -200,13 +200,13 @@
                             <table class="table table-hover table-sm" style="font-size: .875rem;">
                                 <thead style="border-bottom: 2px solid currentcolor;">
                                     <tr>
-                                        <th scope="col" width="1%">Priority</th>
-                                        <th scope="col" width="25%">Name</th>
-                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date Begin</th>
-                                        <th scope="col" width="1%" nowrap style="text-align: center;">Date End</th>
-                                        <th scope="col" width="42%">Value</th>
-                                        <th scope="col" width="10%" style="text-align: center;">Status</th>
-                                        <th scope="col" width="10%" style="text-align: center;">Conditions</th>
+                                        <th scope="col" width="2%">Priority</th>
+                                        <th scope="col" width="30%">Name</th>
+                                        <th scope="col" width="16%" nowrap style="text-align: center;">Date Begin</th>
+                                        <th scope="col" width="16%" nowrap style="text-align: center;">Date End</th>
+                                        <th scope="col" width="25%">Value</th>
+                                        <th scope="col" width="6%" style="text-align: center;">Status</th>
+                                        <th scope="col" width="5%" style="text-align: center;">Conditions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="rules_table">
@@ -270,7 +270,7 @@
 
         function populateRules(dataSource) {
             let trHTML = '';
-            $.each(dataSource, function (i, item) {
+            $.each(dataSource, function (_, item) {
 
                 let labelColor = '';
                 let style = '';
@@ -298,7 +298,7 @@
                 }
 
                 trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.name + '</td>';
-                trHTML += '<td nowrap>' + item.dateBegin + '</td><td nowrap> ' + item.dateEnd + '</td>';
+                trHTML += '<td style="text-align: center;" nowrap>' + item.dateBegin + '</td><td style="text-align: center;" nowrap> ' + dateEnd + '</td>';
                 trHTML += '<td>' + item.value + '</td>';
                 trHTML += '<td style="text-align: center;"><span class="' + labelColor + '" style="' + style + '"> ';
                 trHTML += item.status;
