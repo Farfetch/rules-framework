@@ -27,7 +27,7 @@ namespace Rules.Framework.Evaluation.Compiled
                 return false;
             }
 
-            if (conditionNode.Properties.TryGetValue(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey, out object conditionFuncAux))
+            if (!conditionNode.Properties.TryGetValue(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey, out object conditionFuncAux))
             {
                 throw new ArgumentException("Condition node does not contain compiled information.", nameof(conditionNode));
             }
