@@ -1,22 +1,20 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Core;
     using System;
     using System.Linq.Expressions;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal sealed class LesserThanOrEqualOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
-        public Expression BuildConditionExpression(
-            Expression leftHandOperandExpression,
-            Expression rightHandOperatorExpression,
-            DataTypeConfiguration dataTypeConfiguration)
+        public Expression BuildConditionExpression(IImplementationExpressionBuilder builder, BuildConditionExpressionArgs args)
         {
-            if (!dataTypeConfiguration.Type.HasLanguageOperator(LanguageOperator.LessThanOrEqual))
+            if (!args.DataTypeConfiguration.Type.HasLanguageOperator(LanguageOperator.LessThanOrEqual))
             {
-                throw new NotSupportedException($"The operator '{Operators.LesserThanOrEqual}' is not supported for data type '{dataTypeConfiguration.DataType}'.");
+                throw new NotSupportedException($"The operator '{Operators.LesserThanOrEqual}' is not supported for data type '{args.DataTypeConfiguration.DataType}'.");
             }
 
-            return Expression.LessThanOrEqual(leftHandOperandExpression, rightHandOperatorExpression);
+            return builder.LessThan(args.LeftHandOperand, args.RightHandOperand);
         }
     }
 }

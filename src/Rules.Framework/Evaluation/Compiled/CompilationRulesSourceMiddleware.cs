@@ -1,21 +1,20 @@
 namespace Rules.Framework.Evaluation.Compiled
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.Source;
-    using System.Collections.Generic;
-    using System.Numerics;
-    using System.Threading.Tasks;
 
-    internal class CompilationRulesSourceMiddleware<TContentType, TConditionType> : IRulesSourceMiddleware<TContentType, TConditionType>
+    internal sealed class CompilationRulesSourceMiddleware<TContentType, TConditionType> : IRulesSourceMiddleware<TContentType, TConditionType>
     {
-        private readonly IConditionsTreeCompiler<TConditionType> conditionsTreeCompiler;
+        private readonly IRuleConditionsExpressionBuilder<TConditionType> ruleConditionsExpressionBuilder;
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
 
         public CompilationRulesSourceMiddleware(
-            IConditionsTreeCompiler<TConditionType> conditionsTreeCompiler,
+            IRuleConditionsExpressionBuilder<TConditionType> rulesExpressionBuilder,
             IRulesDataSource<TContentType, TConditionType> rulesDataSource)
         {
-            this.conditionsTreeCompiler = conditionsTreeCompiler;
+            this.ruleConditionsExpressionBuilder = rulesExpressionBuilder;
             this.rulesDataSource = rulesDataSource;
         }
 
@@ -81,10 +80,12 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             var conditionNode = rule.RootCondition;
 
-            if (conditionNode is { } && (!conditionNode.Properties.TryGetValue(ConditionNodeProperties.CompiledFlagKey, out var compiledFlag) || !(bool)compiledFlag))
+            if (conditionNode is { } && (!conditionNode.Properties.TryGetValue(ConditionNodeProperties.CompilationProperties.IsCompiledKey, out var compiledFlag) || !(bool)compiledFlag))
             {
-                this.conditionsTreeCompiler.Compile(conditionNode);
-                conditionNode.Properties[ConditionNodeProperties.CompiledFlagKey] = true;
+                var expression = this.ruleConditionsExpressionBuilder.BuildExpression(conditionNode);
+                var compiledExpression = expression.Compile();
+                conditionNode.Properties[ConditionNodeProperties.CompilationProperties.CompiledDelegateKey] = compiledExpression;
+                conditionNode.Properties[ConditionNodeProperties.CompilationProperties.IsCompiledKey] = true;
                 return true;
             }
 

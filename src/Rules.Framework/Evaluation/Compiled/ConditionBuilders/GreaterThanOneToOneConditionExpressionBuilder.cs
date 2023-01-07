@@ -1,22 +1,20 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Core;
     using System;
     using System.Linq.Expressions;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal sealed class GreaterThanOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
-        public Expression BuildConditionExpression(
-            Expression leftHandOperandExpression,
-            Expression rightHandOperatorExpression,
-            DataTypeConfiguration dataTypeConfiguration)
+        public Expression BuildConditionExpression(IImplementationExpressionBuilder builder, BuildConditionExpressionArgs args)
         {
-            if (!dataTypeConfiguration.Type.HasLanguageOperator(LanguageOperator.GreaterThan))
+            if (!args.DataTypeConfiguration.Type.HasLanguageOperator(LanguageOperator.GreaterThan))
             {
-                throw new NotSupportedException($"The operator '{Operators.GreaterThan}' is not supported for data type '{dataTypeConfiguration.DataType}'.");
+                throw new NotSupportedException($"The operator '{Operators.GreaterThan}' is not supported for data type '{args.DataTypeConfiguration.DataType}'.");
             }
 
-            return Expression.GreaterThan(leftHandOperandExpression, rightHandOperatorExpression);
+            return builder.GreaterThan(args.LeftHandOperand, args.RightHandOperand);
         }
     }
 }

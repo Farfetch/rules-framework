@@ -1,15 +1,13 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
     using System.Linq.Expressions;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal sealed class NotEqualOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
-        public Expression BuildConditionExpression(
-            Expression leftHandOperandExpression,
-            Expression rightHandOperatorExpression,
-            DataTypeConfiguration dataTypeConfiguration)
+        public Expression BuildConditionExpression(IImplementationExpressionBuilder builder, BuildConditionExpressionArgs args)
         {
-            return Expression.NotEqual(leftHandOperandExpression, rightHandOperatorExpression);
+            return builder.NotEqual(args.LeftHandOperand, args.RightHandOperand);
         }
     }
 }

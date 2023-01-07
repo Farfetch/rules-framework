@@ -2,6 +2,7 @@ namespace Rules.Framework.IntegrationTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -20,20 +21,20 @@ namespace Rules.Framework.IntegrationTests
         public async Task<IRulesDataSource<TContentType, TConditionType>> FromJsonFileAsync<TContentType, TConditionType>(string filePath, bool serializedContent = true)
             where TContentType : new()
         {
-            JsonContentSerializationProvider<TContentType> serializationProvider = new JsonContentSerializationProvider<TContentType>();
+            var serializationProvider = new JsonContentSerializationProvider<TContentType>();
 
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            using (StreamReader streamReader = new StreamReader(fileStream))
+            using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            using (var streamReader = new StreamReader(fileStream))
             {
-                string contents = await streamReader.ReadToEndAsync();
-                IEnumerable<RuleDataModel> ruleDataModels = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents));
+                var contents = await streamReader.ReadToEndAsync();
+                var ruleDataModels = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents));
 
-                List<Rule<TContentType, TConditionType>> rules = new List<Rule<TContentType, TConditionType>>(ruleDataModels.Count());
-                foreach (RuleDataModel ruleDataModel in ruleDataModels)
+                var rules = new List<Rule<TContentType, TConditionType>>(ruleDataModels.Count());
+                foreach (var ruleDataModel in ruleDataModels)
                 {
-                    TContentType contentType = GetContentType<TContentType>(ruleDataModel.ContentTypeCode);
+                    var contentType = GetContentType<TContentType>(ruleDataModel.ContentTypeCode);
 
-                    IRuleBuilder<TContentType, TConditionType> ruleBuilder = RuleBuilder.NewRule<TContentType, TConditionType>()
+                    var ruleBuilder = RuleBuilder.NewRule<TContentType, TConditionType>()
                         .WithName(ruleDataModel.Name)
                         .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd);
 
@@ -51,7 +52,7 @@ namespace Rules.Framework.IntegrationTests
                         ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (t) => RulesFromJsonFile.Parse(ruleDataModel.Content, t)));
                     }
 
-                    RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult = ruleBuilder.Build();
+                    var ruleBuilderResult = ruleBuilder.Build();
 
                     if (ruleBuilderResult.IsSuccess)
                     {
@@ -76,21 +77,21 @@ namespace Rules.Framework.IntegrationTests
             => (T)Parse(value, typeof(T));
 
         private static object Parse(string value, Type type)
-            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type);
+            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
         private IConditionNode<TConditionType> ConvertConditionNode<TConditionType>(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
-            LogicalOperators logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
+            var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
             if (logicalOperator == LogicalOperators.Eval)
             {
                 return this.CreateValueConditionNode<TConditionType>(conditionNodeBuilder, conditionNodeDataModel);
             }
             else
             {
-                IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
+                var composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
                     .WithLogicalOperator(logicalOperator);
 
-                foreach (ConditionNodeDataModel child in conditionNodeDataModel.ChildConditionNodes)
+                foreach (var child in conditionNodeDataModel.ChildConditionNodes)
                 {
                     composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, child));
                 }
@@ -101,23 +102,23 @@ namespace Rules.Framework.IntegrationTests
 
         private IConditionNode<TConditionType> CreateValueConditionNode<TConditionType>(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
-            DataTypes dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
-            TConditionType integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
-            Operators @operator = RulesFromJsonFile.Parse<Operators>(conditionNodeDataModel.Operator);
+            var dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
+            var integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
+            var @operator = RulesFromJsonFile.Parse<Operators>(conditionNodeDataModel.Operator);
             switch (dataType)
             {
                 case DataTypes.Integer:
                     return conditionNodeBuilder.AsValued(integrationTestsConditionType)
                         .OfDataType<int>()
                         .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand))
+                        .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                         .Build();
 
                 case DataTypes.Decimal:
                     return conditionNodeBuilder.AsValued(integrationTestsConditionType)
                         .OfDataType<decimal>()
                         .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand))
+                        .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                         .Build();
 
                 case DataTypes.String:
@@ -131,7 +132,7 @@ namespace Rules.Framework.IntegrationTests
                     return conditionNodeBuilder.AsValued(integrationTestsConditionType)
                         .OfDataType<bool>()
                         .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand))
+                        .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                         .Build();
 
                 default:

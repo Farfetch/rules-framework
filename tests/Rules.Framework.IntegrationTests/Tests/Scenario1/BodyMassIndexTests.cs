@@ -119,7 +119,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
                     .Build())
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule1 = newRuleResult1.Rule;
+            Rule<ContentTypes, ConditionTypes> expectedRule1 = newRuleResult1.Rule;
             RuleAddPriorityOption ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
 
             RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
@@ -132,12 +132,12 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
                 }))
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule2 = ruleBuilderResult2.Rule;
+            Rule<ContentTypes, ConditionTypes> expectedRule2 = ruleBuilderResult2.Rule;
             RuleAddPriorityOption ruleAddPriorityOption2 = RuleAddPriorityOption.ByPriorityNumber(4);
 
             // Act
-            RuleOperationResult ruleOperationResult1 = await rulesEngine.AddRuleAsync(newRule1, ruleAddPriorityOption1).ConfigureAwait(false);
-            RuleOperationResult ruleOperationResult2 = await rulesEngine.AddRuleAsync(newRule2, ruleAddPriorityOption2).ConfigureAwait(false);
+            RuleOperationResult ruleOperationResult1 = await rulesEngine.AddRuleAsync(expectedRule1, ruleAddPriorityOption1).ConfigureAwait(false);
+            RuleOperationResult ruleOperationResult2 = await rulesEngine.AddRuleAsync(expectedRule2, ruleAddPriorityOption2).ConfigureAwait(false);
 
             // Assert
             ruleOperationResult1.Should().NotBeNull();
@@ -148,9 +148,9 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
 
             IEnumerable<Rule<ContentTypes, ConditionTypes>> rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(3);
-            rules.Should().ContainEquivalentOf(newRule1);
-            newRule1.Priority.Should().Be(1, "rule should to priority 1 if inserted at priority 1");
-            newRule2.Priority.Should().Be(3, "rule should have priority 3 if inserted at priority 3, given that last rule after insert was at priority 2.");
+            rules.Should().ContainEquivalentOf(expectedRule1);
+            expectedRule1.Priority.Should().Be(1, "rule should to priority 1 if inserted at priority 1");
+            expectedRule2.Priority.Should().Be(3, "rule should have priority 3 if inserted at priority 3, given that last rule after insert was at priority 2.");
         }
 
         [Theory]
@@ -188,14 +188,14 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
                     .Build())
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule = newRuleResult.Rule;
+            Rule<ContentTypes, ConditionTypes> expectedRule = newRuleResult.Rule;
             RuleAddPriorityOption ruleAddPriorityOption = new RuleAddPriorityOption
             {
                 PriorityOption = PriorityOptions.AtTop
             };
 
             // Act
-            RuleOperationResult ruleOperationResult = await rulesEngine.AddRuleAsync(newRule, ruleAddPriorityOption).ConfigureAwait(false);
+            RuleOperationResult ruleOperationResult = await rulesEngine.AddRuleAsync(expectedRule, ruleAddPriorityOption).ConfigureAwait(false);
 
             // Assert
             ruleOperationResult.Should().NotBeNull();
@@ -203,8 +203,8 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario1
 
             IEnumerable<Rule<ContentTypes, ConditionTypes>> rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(2);
-            rules.Should().ContainEquivalentOf(newRule);
-            newRule.Priority.Should().Be(1, "rule should to priority 1 if inserted at top.");
+            rules.Should().ContainEquivalentOf(expectedRule, o => o.Excluding(x => x.RootCondition.Properties));
+            expectedRule.Priority.Should().Be(1, "rule should to priority 1 if inserted at top.");
         }
 
         [Theory]

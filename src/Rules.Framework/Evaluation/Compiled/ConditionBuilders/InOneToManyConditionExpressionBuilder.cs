@@ -4,6 +4,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal sealed class InOneToManyConditionExpressionBuilder : IConditionExpressionBuilder
     {
@@ -12,12 +13,12 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
                 .GetMethods()
                 .FirstOrDefault(m => string.Equals(m.Name, "Contains", StringComparison.Ordinal) && m.GetParameters().Length == 2);
 
-        public Expression BuildConditionExpression(
-            Expression leftHandOperandExpression,
-            Expression rightHandOperatorExpression,
-            DataTypeConfiguration dataTypeConfiguration)
+        public Expression BuildConditionExpression(IImplementationExpressionBuilder builder, BuildConditionExpressionArgs args)
         {
-            return Expression.Call(null, enumerableGenericContains.MakeGenericMethod(dataTypeConfiguration.Type), rightHandOperatorExpression, leftHandOperandExpression);
+            return builder.Call(
+                instance: null,
+                enumerableGenericContains.MakeGenericMethod(args.DataTypeConfiguration.Type),
+                new Expression[] { args.RightHandOperand, args.LeftHandOperand });
         }
     }
 }

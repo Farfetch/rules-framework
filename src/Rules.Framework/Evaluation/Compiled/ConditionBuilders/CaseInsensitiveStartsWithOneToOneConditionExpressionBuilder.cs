@@ -1,39 +1,31 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Core;
     using System;
-    using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Reflection;
-    using System.Text;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal sealed class CaseInsensitiveStartsWithOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
         private static readonly Type booleanType = typeof(bool);
-        private static readonly MethodInfo endsWithMethodInfo = typeof(string)
+
+        private static readonly MethodInfo startsWithMethodInfo = typeof(string)
             .GetMethod(nameof(string.StartsWith), new[] { typeof(string), typeof(StringComparison) });
 
-        public Expression BuildConditionExpression(
-            Expression leftHandOperandExpression,
-            Expression rightHandOperatorExpression,
-            DataTypeConfiguration dataTypeConfiguration)
+        public Expression BuildConditionExpression(IImplementationExpressionBuilder builder, BuildConditionExpressionArgs args)
         {
-            if (dataTypeConfiguration.DataType != DataTypes.String)
+            if (args.DataTypeConfiguration.DataType != DataTypes.String)
             {
-                throw new NotSupportedException($"The operator '{Operators.CaseInsensitiveStartsWith}' is not supported for data type '{dataTypeConfiguration.DataType}'.");
+                throw new NotSupportedException($"The operator '{Operators.CaseInsensitiveStartsWith}' is not supported for data type '{args.DataTypeConfiguration.DataType}'.");
             }
 
-            var returnLabelTarget = Expression.Label(booleanType);
-            Expression notNullScenario = Expression.Call(
-                leftHandOperandExpression,
-                endsWithMethodInfo,
-                rightHandOperatorExpression,
-                Expression.Constant(StringComparison.InvariantCultureIgnoreCase));
-            Expression ifNotNullExpression = Expression.IfThen(
-                Expression.NotEqual(leftHandOperandExpression, Expression.Constant(null)),
-                Expression.Return(returnLabelTarget, notNullScenario));
-
-            return Expression.Block(new[] { ifNotNullExpression, Expression.Label(returnLabelTarget, Expression.Constant(false)) });
+            return builder.AndAlso(
+                builder.NotEqual(args.LeftHandOperand, builder.Constant<object>(value: null)),
+                builder.Call(
+                    args.LeftHandOperand,
+                    startsWithMethodInfo,
+                    new Expression[] { args.RightHandOperand, builder.Constant(StringComparison.InvariantCultureIgnoreCase) }));
         }
     }
 }

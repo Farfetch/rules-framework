@@ -1,16 +1,15 @@
 namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Core;
-    using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
-    using Rules.Framework.Evaluation;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Xunit;
     using FluentAssertions;
+    using Moq;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation;
+    using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
+    using Xunit;
 
     public class GreaterThanOneToOneConditionExpressionBuilderTests
     {
@@ -18,21 +17,36 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
         public void BuildConditionExpression_GivenLeftExpressionRightExpressionAndDataTypeConfigurationForInt_ReturnsConditionExpression()
         {
             // Arrange
-            ParameterExpression leftHandExpression = Expression.Parameter(typeof(int), "leftHand");
-            Expression rightHandExpression = Expression.Constant(1, typeof(int));
-            DataTypeConfiguration dataTypeConfiguration = DataTypeConfiguration.Create(DataTypes.Integer, typeof(int), 0);
-
-            GreaterThanOneToOneConditionExpressionBuilder greaterThanOneToOneConditionExpressionBuilder
+            var greaterThanOneToOneConditionExpressionBuilder
                 = new GreaterThanOneToOneConditionExpressionBuilder();
 
             // Act
-            Expression actualExpression = greaterThanOneToOneConditionExpressionBuilder
-                .BuildConditionExpression(leftHandExpression, rightHandExpression, dataTypeConfiguration);
+            var expressionResult = ExpressionBuilder.NewExpression("TestCondition")
+                .WithParameters(p =>
+                {
+                    p.CreateParameter("leftHand", typeof(int));
+                })
+                .HavingReturn(typeof(bool), false)
+                .SetImplementation(builder =>
+                {
+                    var args = new BuildConditionExpressionArgs
+                    {
+                        DataTypeConfiguration = DataTypeConfiguration.Create(DataTypes.Integer, typeof(int), 0),
+                        LeftHandOperand = builder.GetParameter("leftHand"),
+                        RightHandOperand = builder.Constant(1),
+                    };
+                    var conditionExpression = greaterThanOneToOneConditionExpressionBuilder
+                        .BuildConditionExpression(builder, args);
+
+                    builder.Return(conditionExpression);
+                })
+                .Build();
 
             // Assert
+            var actualExpression = expressionResult.Implementation;
             actualExpression.Should().NotBeNull();
 
-            var compiledExpression = Expression.Lambda<Func<int, bool>>(actualExpression, leftHandExpression).Compile(true);
+            var compiledExpression = Expression.Lambda<Func<int, bool>>(actualExpression, expressionResult.Parameters).Compile(true);
             var notNullLeftHandValueResult1 = compiledExpression.Invoke(2);
             var notNullLeftHandValueResult2 = compiledExpression.Invoke(0);
 
@@ -44,16 +58,21 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
         public void BuildConditionExpression_GivenLeftExpressionRightExpressionAndDataTypeConfigurationForString_ThrowsNotSupportedException()
         {
             // Arrange
-            ParameterExpression leftHandExpression = Expression.Parameter(typeof(string), "leftHand");
-            Expression rightHandExpression = Expression.Constant("test", typeof(string));
-            DataTypeConfiguration dataTypeConfiguration = DataTypeConfiguration.Create(DataTypes.String, typeof(string), null);
+            var args = new BuildConditionExpressionArgs
+            {
+                DataTypeConfiguration = DataTypeConfiguration.Create(DataTypes.String, typeof(string), null),
+                LeftHandOperand = Expression.Parameter(typeof(string), "leftHand"),
+                RightHandOperand = Expression.Constant("test", typeof(string)),
+            };
 
-            GreaterThanOneToOneConditionExpressionBuilder greaterThanOneToOneConditionExpressionBuilder
+            var builder = Mock.Of<IImplementationExpressionBuilder>();
+
+            var greaterThanOneToOneConditionExpressionBuilder
                 = new GreaterThanOneToOneConditionExpressionBuilder();
 
             // Act
-            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => greaterThanOneToOneConditionExpressionBuilder
-                .BuildConditionExpression(leftHandExpression, rightHandExpression, dataTypeConfiguration));
+            var notSupportedException = Assert.Throws<NotSupportedException>(() => greaterThanOneToOneConditionExpressionBuilder
+                .BuildConditionExpression(builder, args));
 
             // Assert
             notSupportedException.Should().NotBeNull();

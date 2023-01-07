@@ -1,9 +1,10 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Core;
     using System;
     using System.Linq.Expressions;
     using System.Reflection;
+    using Rules.Framework.Core;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal class NotStartsWithOneToOneConditionExpressionBuilder : IConditionExpressionBuilder
     {
@@ -12,27 +13,19 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
         private static readonly MethodInfo startsWithMethodInfo = typeof(string)
             .GetMethod(nameof(string.StartsWith), new[] { typeof(string), typeof(StringComparison) });
 
-        public Expression BuildConditionExpression(
-            Expression leftHandOperandExpression,
-            Expression rightHandOperatorExpression,
-            DataTypeConfiguration dataTypeConfiguration)
+        public Expression BuildConditionExpression(IImplementationExpressionBuilder builder, BuildConditionExpressionArgs args)
         {
-            if (dataTypeConfiguration.DataType != DataTypes.String)
+            if (args.DataTypeConfiguration.DataType != DataTypes.String)
             {
-                throw new NotSupportedException($"The operator '{Operators.NotStartsWith}' is not supported for data type '{dataTypeConfiguration.DataType}'.");
+                throw new NotSupportedException($"The operator '{Operators.NotStartsWith}' is not supported for data type '{args.DataTypeConfiguration.DataType}'.");
             }
 
-            var returnLabelTarget = Expression.Label(booleanType);
-            Expression notNullScenario = Expression.Not(Expression.Call(
-                leftHandOperandExpression,
-                startsWithMethodInfo,
-                rightHandOperatorExpression,
-                Expression.Constant(StringComparison.InvariantCulture)));
-            Expression ifNotNullExpression = Expression.IfThen(
-                Expression.NotEqual(leftHandOperandExpression, Expression.Constant(value: null)),
-                Expression.Return(returnLabelTarget, notNullScenario));
-
-            return Expression.Block(new[] { ifNotNullExpression, Expression.Label(returnLabelTarget, Expression.Constant(value: false)) });
+            return builder.AndAlso(
+                builder.NotEqual(args.LeftHandOperand, builder.Constant<object>(value: null)),
+                builder.Not(builder.Call(
+                    args.LeftHandOperand,
+                    startsWithMethodInfo,
+                    new Expression[] { args.RightHandOperand, builder.Constant(StringComparison.InvariantCulture) })));
         }
     }
 }

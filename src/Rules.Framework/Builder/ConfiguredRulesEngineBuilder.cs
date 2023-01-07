@@ -36,14 +36,14 @@ namespace Rules.Framework.Builder
             {
                 // Use specific conditions eval engine to use compiled parts of conditions tree.
                 var conditionExpressionBuilderProvider = new ConditionExpressionBuilderProvider();
-                var valueConditionNodeCompilerProvider = new ValueConditionNodeCompilerProvider(conditionExpressionBuilderProvider, dataTypesConfigurationProvider);
-                var conditionsTreeCompiler = new ConditionsTreeCompiler<TConditionType>(valueConditionNodeCompilerProvider);
+                var valueConditionNodeCompilerProvider = new ValueConditionNodeExpressionBuilderProvider(conditionExpressionBuilderProvider);
+                var ruleConditionsExpressionBuilder = new RuleConditionsExpressionBuilder<TConditionType>(valueConditionNodeCompilerProvider, dataTypesConfigurationProvider);
                 conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(multiplicityEvaluator, conditionsTreeAnalyzer, this.rulesEngineOptions);
 
                 // Add conditions compiler middleware to ensure compilation occurs before rules
                 // engine uses the rules, while also ensuring that the compilation result is kept on
                 // data source (avoiding future re-compilation).
-                CompilationRulesSourceMiddleware<TContentType, TConditionType> compilationRulesSourceMiddleware = new(conditionsTreeCompiler, this.rulesDataSource);
+                var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<TContentType, TConditionType>(ruleConditionsExpressionBuilder, this.rulesDataSource);
                 rulesSourceMiddlewares.Add(compilationRulesSourceMiddleware);
             }
             else

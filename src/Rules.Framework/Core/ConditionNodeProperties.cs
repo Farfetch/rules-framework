@@ -1,21 +1,12 @@
 namespace Rules.Framework.Core
 {
-    using System;
-
     internal static class ConditionNodeProperties
     {
-        public static string CompilationPrefix => "_compilation";
-
-        public static string CompiledFlagKey => $"{CompilationPrefix}_isCompiled";
-
-        public static string GetCompiledDelegateKey(string multiplicity)
+        internal static class CompilationProperties
         {
-            if (string.IsNullOrWhiteSpace(multiplicity))
-            {
-                throw new ArgumentException($"'{nameof(multiplicity)}' cannot be null or whitespace.", nameof(multiplicity));
-            }
-
-            return $"{CompilationPrefix}_compiled_{multiplicity}";
+            public static string CompiledDelegateKey => $"{Prefix}_compiledDelegate";
+            public static string IsCompiledKey => $"{Prefix}_isCompiled";
+            public static string Prefix => "_compilation";
         }
     }
 }

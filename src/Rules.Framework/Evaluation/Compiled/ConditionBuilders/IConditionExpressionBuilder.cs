@@ -1,13 +1,10 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Evaluation;
     using System.Linq.Expressions;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal interface IConditionExpressionBuilder
     {
-        Expression BuildConditionExpression(
-            Expression leftHandOperandExpression,
-            Expression rightHandOperatorExpression,
-            DataTypeConfiguration dataTypeConfiguration);
+        Expression BuildConditionExpression(IImplementationExpressionBuilder builder, BuildConditionExpressionArgs args);
     }
 }
