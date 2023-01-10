@@ -29,8 +29,9 @@
   <ItemGroup>	  
 	  <EmbeddedResource Include="node_modules/glyphicons-only-bootstrap/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
 	  <EmbeddedResource Include="node_modules/jquery/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
-	  <EmbeddedResource Include="node_modules/paginationjs/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />	    
-	  <EmbeddedResource Include="index.html" />	  
+	  <EmbeddedResource Include="node_modules/paginationjs/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
+	  <EmbeddedResource Include="node_modules/bootstrap/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
+	  <EmbeddedResource Include="index.html" />
 	  <EmbeddedResource Include="node_modules/rules_list.ico" />
   </ItemGroup>
 	
@@ -61,6 +62,12 @@
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="node_modules\paginationjs\dist\pagination.min.js">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="node_modules\bootstrap\dist\bootstrap.bundle.min.js">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="node_modules\bootstrap\css\bootstrap.min.css">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </EmbeddedResource>
 	</ItemGroup>
 </Project>
