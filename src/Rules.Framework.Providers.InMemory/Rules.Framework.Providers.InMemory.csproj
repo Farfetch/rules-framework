@@ -15,7 +15,7 @@
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>rules rulesframework memory inmemory</PackageTags>
-    <Description>A data source provider implementation using Mongo DB for rules framework.</Description>
+    <Description>A data source provider implementation using InMemory for rules framework.</Description>
     <Copyright></Copyright>
   </PropertyGroup>
 
