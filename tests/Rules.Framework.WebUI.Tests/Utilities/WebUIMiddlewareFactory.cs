@@ -2,8 +2,8 @@ namespace Rules.Framework.WebUI.Tests.Utilities
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
-    using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Logging;    
 
     public static class WebUIMiddlewareFactory
     {
