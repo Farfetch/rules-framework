@@ -1,41 +1,41 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <LangVersion>9.0</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<LangVersion>9.0</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
-    <None Remove="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
+		<None Remove="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="3.1.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="DotEnv.Core" Version="2.3.1" />
-	<PackageReference Include="FluentAssertions" Version="6.7.0" />
-	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
-    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" Version="3.1.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="DotEnv.Core" Version="2.3.1" />
+		<PackageReference Include="FluentAssertions" Version="6.7.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+		<PackageReference Include="MongoDB.Driver" Version="2.13.1" />
+		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+		<PackageReference Include="xunit" Version="2.4.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj" />
-    <ProjectReference Include="..\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj" />
+		<ProjectReference Include="..\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
-    <EmbeddedResource Include="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
+		<EmbeddedResource Include="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
+	</ItemGroup>
 </Project>
