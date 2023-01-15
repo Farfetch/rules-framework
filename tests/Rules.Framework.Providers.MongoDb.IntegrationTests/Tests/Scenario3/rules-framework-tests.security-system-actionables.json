@@ -98,25 +98,19 @@
                     "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
                     "_t": "value",
                     "ConditionType": "TemperatureCelsius",
-                    "DataType": "ArrayDecimal",
+                    "DataType": "Decimal",
                     "LogicalOperator": "Eval",
-                    "Operator": "In",
-                    "Operand": {
-                        "_t": "System.Decimal[]",
-                        "_v": [ "70", "80", "90" ]
-                    }
+                    "Operator": "GreaterThanOrEqual",
+                    "Operand": 70
                 },
                 {
                     "$type": "Rules.Framework.Providers.MongoDb.DataModel.ValueConditionNodeDataModel, Rules.Framework.Providers.MongoDb",
                     "_t": "value",
                     "ConditionType": "SmokeRate",
-                    "DataType": "ArrayInteger",
+                    "DataType": "Decimal",
                     "LogicalOperator": "Eval",
-                    "Operator": "In",
-                    "Operand": {
-                        "_t": "System.Int32[]",
-                        "_v": [ 50, 60 ]
-                    }
+                    "Operator": "GreaterThanOrEqual",
+                    "Operand": 50
                 }
             ]
         }
