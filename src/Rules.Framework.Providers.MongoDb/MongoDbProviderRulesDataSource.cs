@@ -41,9 +41,9 @@ namespace Rules.Framework.Providers.MongoDb
         /// <param name="rule">The rule.</param>
         public async Task AddRuleAsync(Rule<TContentType, TConditionType> rule)
         {
-            IMongoCollection<RuleDataModel> rulesCollection = this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesCollection = this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
 
-            RuleDataModel ruleDataModel = this.ruleFactory.CreateRule(rule);
+            var ruleDataModel = this.ruleFactory.CreateRule(rule);
 
             await rulesCollection.InsertOneAsync(ruleDataModel).ConfigureAwait(false);
         }
@@ -57,7 +57,7 @@ namespace Rules.Framework.Providers.MongoDb
         /// <returns></returns>
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
         {
-            FilterDefinition<RuleDataModel> getRulesByContentTypeAndDatesInterval = MongoDbProviderRulesDataSource<TContentType, TConditionType>
+            var getRulesByContentTypeAndDatesInterval = MongoDbProviderRulesDataSource<TContentType, TConditionType>
                 .BuildFilterByContentTypeAndDatesInterval(contentType, dateBegin, dateEnd);
 
             return await this.GetRulesAsync(getRulesByContentTypeAndDatesInterval).ConfigureAwait(false);
@@ -75,7 +75,7 @@ namespace Rules.Framework.Providers.MongoDb
                 throw new ArgumentNullException(nameof(rulesFilterArgs));
             }
 
-            FilterDefinition<RuleDataModel> filterDefinition = MongoDbProviderRulesDataSource<TContentType, TConditionType>
+            var filterDefinition = MongoDbProviderRulesDataSource<TContentType, TConditionType>
                 .BuildFilterFromRulesFilterArgs(rulesFilterArgs);
 
             return this.GetRulesAsync(filterDefinition);
@@ -87,13 +87,13 @@ namespace Rules.Framework.Providers.MongoDb
         /// <param name="rule">The rule.</param>
         public async Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
         {
-            IMongoCollection<RuleDataModel> rulesCollection = this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesCollection = this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
 
-            RuleDataModel ruleDataModel = this.ruleFactory.CreateRule(rule);
+            var ruleDataModel = this.ruleFactory.CreateRule(rule);
 
-            FilterDefinition<RuleDataModel> filterDefinition = Builders<RuleDataModel>.Filter.Eq(x => x.Name, ruleDataModel.Name);
+            var filterDefinition = Builders<RuleDataModel>.Filter.Eq(x => x.Name, ruleDataModel.Name);
             FieldDefinition<RuleDataModel, object> contentField = "Content";
-            IEnumerable<UpdateDefinition<RuleDataModel>> updateDefinitions = new UpdateDefinition<RuleDataModel>[]
+            var updateDefinitions = new UpdateDefinition<RuleDataModel>[]
             {
                 Builders<RuleDataModel>.Update.Set(contentField, (object)ruleDataModel.Content),
                 Builders<RuleDataModel>.Update.Set(r => r.ContentType, ruleDataModel.ContentType),
@@ -104,28 +104,28 @@ namespace Rules.Framework.Providers.MongoDb
                 Builders<RuleDataModel>.Update.Set(r => r.RootCondition, ruleDataModel.RootCondition),
             };
 
-            UpdateDefinition<RuleDataModel> updateDefinition = Builders<RuleDataModel>.Update.Combine(updateDefinitions);
+            var updateDefinition = Builders<RuleDataModel>.Update.Combine(updateDefinitions);
 
             await rulesCollection.UpdateOneAsync(filterDefinition, updateDefinition).ConfigureAwait(false);
         }
 
         private static FilterDefinition<RuleDataModel> BuildFilterByContentTypeAndDatesInterval(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
         {
-            FilterDefinition<RuleDataModel> contentTypeFilter = Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, contentType.ToString());
+            var contentTypeFilter = Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, contentType.ToString());
 
             // To fetch rules that begin during filtered interval but end after it.
-            FilterDefinition<RuleDataModel> dateBeginFilter = Builders<RuleDataModel>.Filter.And(
+            var dateBeginFilter = Builders<RuleDataModel>.Filter.And(
                 Builders<RuleDataModel>.Filter.Gte(x => x.DateBegin, dateBegin),
                 Builders<RuleDataModel>.Filter.Lt(x => x.DateBegin, dateEnd));
 
             // To fetch rules that begun before filtered interval but end during it.
-            FilterDefinition<RuleDataModel> dateEndFilter = Builders<RuleDataModel>.Filter.And(
+            var dateEndFilter = Builders<RuleDataModel>.Filter.And(
                 Builders<RuleDataModel>.Filter.Ne(x => x.DateEnd, null),
                 Builders<RuleDataModel>.Filter.Gte(x => x.DateEnd, dateBegin),
                 Builders<RuleDataModel>.Filter.Lt(x => x.DateEnd, dateEnd));
 
             // To fetch rules that begun before and end after filtered interval.
-            FilterDefinition<RuleDataModel> slicingFilter = Builders<RuleDataModel>.Filter.And(
+            var slicingFilter = Builders<RuleDataModel>.Filter.And(
                 Builders<RuleDataModel>.Filter.Lt(x => x.DateBegin, dateBegin),
                 Builders<RuleDataModel>.Filter.Or(
                     Builders<RuleDataModel>.Filter.Eq(x => x.DateEnd, null),
@@ -136,7 +136,7 @@ namespace Rules.Framework.Providers.MongoDb
 
         private static FilterDefinition<RuleDataModel> BuildFilterFromRulesFilterArgs(RulesFilterArgs<TContentType> rulesFilterArgs)
         {
-            List<FilterDefinition<RuleDataModel>> filtersToApply = new List<FilterDefinition<RuleDataModel>>(3);
+            var filtersToApply = new List<FilterDefinition<RuleDataModel>>(3);
 
             if (!object.Equals(rulesFilterArgs.ContentType, default(TContentType)))
             {
@@ -158,11 +158,11 @@ namespace Rules.Framework.Providers.MongoDb
 
         private async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(FilterDefinition<RuleDataModel> getRulesByContentTypeAndDatesInterval)
         {
-            IMongoCollection<RuleDataModel> rulesCollection = this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesCollection = this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
 
-            IAsyncCursor<RuleDataModel> fetchedRulesCursor = await rulesCollection.FindAsync(getRulesByContentTypeAndDatesInterval).ConfigureAwait(false);
+            var fetchedRulesCursor = await rulesCollection.FindAsync(getRulesByContentTypeAndDatesInterval).ConfigureAwait(false);
 
-            List<RuleDataModel> fetchedRules = await fetchedRulesCursor.ToListAsync().ConfigureAwait(false);
+            var fetchedRules = await fetchedRulesCursor.ToListAsync().ConfigureAwait(false);
 
             return fetchedRules.Select(r => this.ruleFactory.CreateRule(r));
         }
