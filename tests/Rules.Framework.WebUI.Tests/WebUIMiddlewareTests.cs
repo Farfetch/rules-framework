@@ -2,12 +2,12 @@ namespace Rules.Framework.WebUI.Tests
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using Moq;
     using Rules.Framework.WebUI.Tests.Utilities;
-    using Xunit;
-    using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+    using Xunit;    
 
     public class WebUIMiddlewareTests
     {
