@@ -23,6 +23,7 @@ namespace Rules.Framework.Evaluation
             OperatorsMetadata.Contains,
             OperatorsMetadata.NotContains,
             OperatorsMetadata.In,
+            OperatorsMetadata.NotIn,
             OperatorsMetadata.StartsWith,
             OperatorsMetadata.EndsWith,
             OperatorsMetadata.CaseInsensitiveStartsWith,
@@ -136,6 +137,12 @@ namespace Rules.Framework.Evaluation
         {
             Operator = Operators.NotEqual,
             SupportedMultiplicities = new[] { Multiplicities.OneToOne },
+        };
+
+        public static OperatorMetadata NotIn => new()
+        {
+            Operator = Operators.NotIn,
+            SupportedMultiplicities = new[] { Multiplicities.OneToMany },
         };
 
         public static OperatorMetadata NotStartsWith => new()
