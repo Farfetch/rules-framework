@@ -102,6 +102,12 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario5
                             .SetOperand(new[] { 12, 16, 24, 36 })
                             .Build())
                         .AddCondition(x2 =>
+                            x2.AsValued(BestServerConditions.Memory)
+                            .OfDataType<IEnumerable<int>>()
+                            .WithComparisonOperator(Operators.NotIn)
+                            .SetOperand(new[] { 4, 8 })
+                            .Build())
+                        .AddCondition(x2 =>
                             x2.AsValued(BestServerConditions.StoragePartionable)
                             .OfDataType<IEnumerable<bool>>()
                             .WithComparisonOperator(Operators.In)

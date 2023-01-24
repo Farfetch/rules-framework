@@ -37,6 +37,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
-    <PackageReference Include="Rules.Framework" Version="1.7.3" />
+    <PackageReference Include="Rules.Framework" Version="1.7.4" />
   </ItemGroup>
 </Project>

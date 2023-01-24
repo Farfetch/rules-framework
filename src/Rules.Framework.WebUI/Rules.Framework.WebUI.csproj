@@ -47,7 +47,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Rules.Framework" Version="1.7.3" />
+	  <PackageReference Include="Rules.Framework" Version="1.7.4" />
 	</ItemGroup>
 
 	<ItemGroup>
