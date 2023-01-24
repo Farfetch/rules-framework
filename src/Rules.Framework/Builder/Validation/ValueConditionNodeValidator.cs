@@ -49,22 +49,22 @@ namespace Rules.Framework.Builder.Validation
                 .WithMessage(cn => $"Condition nodes with data type '{cn.DataType}' can't define a operator of type '{cn.Operator}'.");
 
             this.RuleFor(c => c.Operator)
-                .IsContainedOn(Operators.In)
+                .IsContainedOn(Operators.In, Operators.NotIn, Operators.Equal, Operators.NotEqual)
                 .When(c => c.DataType == DataTypes.ArrayString)
                 .WithMessage(cn => $"Condition nodes with data type '{cn.DataType}' can't define a operator of type '{cn.Operator}'.");
 
             this.RuleFor(c => c.Operator)
-                .IsContainedOn(Operators.In)
+                .IsContainedOn(Operators.In, Operators.NotIn, Operators.Equal, Operators.NotEqual)
                 .When(c => c.DataType == DataTypes.ArrayInteger)
                 .WithMessage(cn => $"Condition nodes with data type '{cn.DataType}' can't define a operator of type '{cn.Operator}'.");
 
             this.RuleFor(c => c.Operator)
-                .IsContainedOn(Operators.In)
+                .IsContainedOn(Operators.In, Operators.NotIn, Operators.Equal, Operators.NotEqual)
                 .When(c => c.DataType == DataTypes.ArrayDecimal)
                 .WithMessage(cn => $"Condition nodes with data type '{cn.DataType}' can't define a operator of type '{cn.Operator}'.");
 
             this.RuleFor(c => c.Operator)
-                .IsContainedOn(Operators.In)
+                .IsContainedOn(Operators.In, Operators.NotIn, Operators.Equal, Operators.NotEqual)
                 .When(c => c.DataType == DataTypes.ArrayBoolean)
                 .WithMessage(cn => $"Condition nodes with data type '{cn.DataType}' can't define a operator of type '{cn.Operator}'.");
         }

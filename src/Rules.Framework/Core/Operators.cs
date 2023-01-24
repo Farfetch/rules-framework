@@ -78,6 +78,11 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The not ends with operator.
         /// </summary>
-        NotEndsWith = 15
+        NotEndsWith = 15,
+
+        /// <summary>
+        /// The not in operator.
+        /// </summary>
+        NotIn = 16,
     }
 }
