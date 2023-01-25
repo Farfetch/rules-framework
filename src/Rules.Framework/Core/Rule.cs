@@ -6,7 +6,9 @@ namespace Rules.Framework.Core
     /// Defines a rule.
     /// </summary>
     /// <typeparam name="TContentType">The content type that allows to categorize rules.</typeparam>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     public class Rule<TContentType, TConditionType>
     {
         /// <summary>
@@ -20,9 +22,9 @@ namespace Rules.Framework.Core
         public DateTime DateBegin { get; internal set; }
 
         /// <summary>
-        /// Gets the date from which the rule ceases to be applicable.
+        /// Gets and sets the date from which the rule ceases to be applicable.
         /// </summary>
-        public DateTime? DateEnd { get; internal set; }
+        public DateTime? DateEnd { get; set; }
 
         /// <summary>
         /// Gets the rule name.
@@ -30,7 +32,7 @@ namespace Rules.Framework.Core
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Gets the rule priority compared to other rules (preferrably it is unique).
+        /// Gets and sets the rule priority compared to other rules (preferrably it is unique).
         /// </summary>
         public int Priority { get; set; }
 
