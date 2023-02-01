@@ -7,6 +7,7 @@ namespace Rules.Framework
     using System.Text;
     using System.Threading.Tasks;
     using FluentValidation;
+    using Rules.Framework.Builder.Validation;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Extensions;
@@ -23,6 +24,7 @@ namespace Rules.Framework
     /// </typeparam>
     public class RulesEngine<TContentType, TConditionType> : IRulesEngine<TContentType, TConditionType>
     {
+        private static readonly RuleValidator<TContentType, TConditionType> ruleValidator = new();
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly RulesEngineOptions rulesEngineOptions;
@@ -66,6 +68,24 @@ namespace Rules.Framework
             }
 
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
+        }
+
+        /// <summary>
+        /// Deactivates the specified existing rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
+        public Task<RuleOperationResult> DeactivateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            rule.DateEnd = rule.DateBegin;
+
+            return this.UpdateRuleInternalAsync(rule);
         }
 
         /// <summary>
@@ -222,6 +242,13 @@ namespace Rules.Framework
             if (rule is null)
             {
                 throw new ArgumentNullException(nameof(rule));
+            }
+
+            var validationResult = ruleValidator.Validate(rule);
+
+            if (!validationResult.IsValid)
+            {
+                return Task.FromResult(RuleOperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage)));
             }
 
             return this.UpdateRuleInternalAsync(rule);
