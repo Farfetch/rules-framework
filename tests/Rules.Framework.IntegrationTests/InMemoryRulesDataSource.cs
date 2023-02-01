@@ -26,8 +26,16 @@ namespace Rules.Framework.IntegrationTests
             TContentType contentType,
             DateTime dateBegin,
             DateTime dateEnd)
-            => Task.FromResult<IEnumerable<Rule<TContentType, TConditionType>>>(
-                this.rules.Where(r => object.Equals(r.ContentContainer.ContentType, contentType)).ToList());
+        {
+            var filteredByDate = this.rules.Where(r =>
+                    object.Equals(r.ContentContainer.ContentType, contentType) &&
+                    r.DateBegin != r.DateEnd &&
+                    ((r.DateBegin >= dateBegin && r.DateBegin < dateEnd)
+                    || (!(r.DateEnd is null) && r.DateEnd >= dateBegin && r.DateEnd < dateEnd)
+                    || (r.DateBegin < dateBegin && (r.DateEnd is null || r.DateEnd > dateEnd))));
+
+            return Task.FromResult(filteredByDate);
+        }
 
         public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs)
         {
