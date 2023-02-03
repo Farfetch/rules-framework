@@ -48,7 +48,7 @@ namespace Rules.Framework.WebUI.Extensions
                 Conditions = rule.RootCondition?.ToConditionNodeDto(),
                 Priority = rule.Priority,
                 Name = rule.Name,
-                Value = rule.Content,
+                Value = rule.Content?.ToString(),
                 DateEnd = !rule.DateEnd.HasValue ? null : rule.DateEnd.Value.ToString(dateFormat),
                 DateBegin = rule.DateBegin.ToString(dateFormat),
                 Status = ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
