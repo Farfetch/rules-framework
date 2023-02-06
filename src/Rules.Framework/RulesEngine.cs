@@ -24,11 +24,11 @@ namespace Rules.Framework
     /// </typeparam>
     public class RulesEngine<TContentType, TConditionType> : IRulesEngine<TContentType, TConditionType>
     {
-        private static readonly RuleValidator<TContentType, TConditionType> ruleValidator = new();
         private readonly IConditionsEvalEngine<TConditionType> conditionsEvalEngine;
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly RulesEngineOptions rulesEngineOptions;
         private readonly IRulesSource<TContentType, TConditionType> rulesSource;
+        private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Intance;
         private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(
@@ -84,6 +84,13 @@ namespace Rules.Framework
             }
 
             rule.DateEnd = rule.DateBegin;
+
+            var validationResult = this.ruleValidator.Validate(rule);
+
+            if (!validationResult.IsValid)
+            {
+                return Task.FromResult(RuleOperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage)));
+            }
 
             return this.UpdateRuleInternalAsync(rule);
         }
@@ -244,7 +251,7 @@ namespace Rules.Framework
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            var validationResult = ruleValidator.Validate(rule);
+            var validationResult = this.ruleValidator.Validate(rule);
 
             if (!validationResult.IsValid)
             {

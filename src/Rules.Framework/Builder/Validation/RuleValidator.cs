@@ -5,10 +5,13 @@ namespace Rules.Framework.Builder.Validation
 
     internal sealed class RuleValidator<TContentType, TConditionType> : AbstractValidator<Rule<TContentType, TConditionType>>
     {
+        private static RuleValidator<TContentType, TConditionType> ruleValidator;
+
         private readonly ComposedConditionNodeValidator<TConditionType> composedConditionNodeValidator;
+
         private readonly ValueConditionNodeValidator<TConditionType> valueConditionNodeValidator;
 
-        public RuleValidator()
+        private RuleValidator()
         {
             this.composedConditionNodeValidator = new ComposedConditionNodeValidator<TConditionType>();
             this.valueConditionNodeValidator = new ValueConditionNodeValidator<TConditionType>();
@@ -23,6 +26,19 @@ namespace Rules.Framework.Builder.Validation
                 ValidationContext = cc,
                 ValueConditionNodeValidator = this.valueConditionNodeValidator
             }));
+        }
+
+        public static RuleValidator<TContentType, TConditionType> Intance
+        {
+            get
+            {
+                if (ruleValidator is null)
+                {
+                    ruleValidator = new RuleValidator<TContentType, TConditionType>();
+                }
+
+                return ruleValidator;
+            }
         }
     }
 }
