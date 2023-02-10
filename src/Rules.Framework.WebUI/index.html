@@ -164,7 +164,7 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="ruleValueSearch" class="col-form-label-sm">Value</label>
+                                        <label for="ruleValueSearch" class="col-form-label-sm">Content</label>
                                         <input class="form-control form-control-sm" id="ruleValueSearch" />
                                     </div>
 
@@ -389,63 +389,53 @@
         }
 
         function setStringView(node) {
-            let html = recursiveStringView(node, null, 0);
+            let html = recursiveStringView(node, null, false, 0);
 
             return html;
         }
-
-        function recursiveStringView(node, logicalOperator, tabs)
-        {
-            let html = '';
-            let tabsLeft = 1;
-            let tabsLeftChild = 1;
+        function recursiveStringView(node, logicalOperator, isFirst, tabsLeft) {
+            let html = '';                        
             if (!node) {
                 return html;
             }
 
             if (node.conditionTypeName) {
-                if (logicalOperator) {
-                    if (tabs) {
-                        tabsLeft = 4 * tabs;
-                    }
-
-                    html += '<br/><span class="conditions-tab" style="--tab-left: ' + tabsLeft + 'em"><b>' + logicalOperator + '</b></span> ';
+                if (logicalOperator && !isFirst) {
+                    html += '<br/><span class="conditions-tab" style="--tab-left: ' + (4 * tabsLeft) + 'em"><b>' + logicalOperator + '</b></span> ';
                 }
+                else
+                {
+                    html += '<span class="conditions-tab" style="--tab-left: ' + (4 * tabsLeft) + 'em"></span> ';
+                }
+                
+                html += '<i>' + node.conditionTypeName + '</i>';
 
-                html += '<i>' + node.conditionTypeName + '</i> (';
+                html += ' <span style="text-decoration:underline">' + node.operator + '</span> ';
 
-                html += node.operator;
-                html += ' ' + node.operand;
-
-                html += ')';
+                let operand = node.operand;
+                if ($.trim(operand) == '') {
+                    operand = 'Empty';
+                }
+                html += ' ' + operand;
 
                 return html;
             }
 
             if (node.logicalOperator) {
-                if (tabs) {
-                    tabsLeft = 4 * tabs;
-                    html += '<br/>';
-                }
-
-                html += '<span class="conditions-tab" style="--tab-left: ' + tabsLeft + 'em"> <b>' + node.logicalOperator + '</b></span>';
-
-
                 if (node.childConditionNodes) {
-                    tabs++;
-                    if (tabs) {
-                        tabsLeftChild = 4 * tabs;
+                    if (logicalOperator && !isFirst) {                        
+                        html += ' <br/><span class="conditions-tab" style="--tab-left: ' + (4 * tabsLeft) + 'em"><b>' + logicalOperator + '</b> (<br/>';
+                        tabsLeft++;
                     }
-
-                    html += ' (<br/><span class="conditions-tab" style="--tab-left: ' + tabsLeftChild + 'em">';
 
                     for (var i = 0; i < node.childConditionNodes.length; i++) {
-                        html += recursiveStringView(node.childConditionNodes[i], i > 0 ? node.logicalOperator : '', tabs);
+                        html += recursiveStringView(node.childConditionNodes[i], node.logicalOperator, i == 0, tabsLeft);
                     }
 
-                    html += '<br/></span><span class="conditions-tab" style="--tab-left: ' + tabsLeft + 'em">)</span>';
+                    if (logicalOperator && !isFirst) {
+                        html += '<br/></span><span class="conditions-tab" style="--tab-left: ' + (4 * (tabsLeft-1)) + 'em">)</span>';
+                    }
                 }
-
                 return html;
             }
 
@@ -517,7 +507,7 @@
 
             if (ruleFilter.value) {
                 dataSource = dataSource.filter(function (r) {
-                    return r.value.toLowerCase().includes(ruleFilter.value.toLowerCase());
+                    return JSON.stringify(r.value).toLowerCase().includes(ruleFilter.value.toLowerCase());
                 });
             }
 
@@ -737,21 +727,21 @@
                 <div class="modal-body">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" aria-current="page" data-bs-target="#string-tab-pane" data-bs-toggle="tab" href="#">String</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" href="#" data-bs-target="#json-tab-pane" data-bs-toggle="tab">Json</a>
+                            <a class="nav-link active" aria-current="page" data-bs-target="#string-tab-pane" data-bs-toggle="tab" href="#">Pretty</a>
                         </li>
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" href="#" data-bs-target="#tree-tab-pane" data-bs-toggle="tab">Tree</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="#" data-bs-target="#json-tab-pane" data-bs-toggle="tab">Json</a>
                         </li>
                     </ul>
 
                     <div class="row"></div>
                     <div class="tab-content" id="myTabContent" style="max-height: 500px; overflow-y: auto; ">
                         <div class="tab-pane fade show active" id="string-tab-pane" role="tabpanel" aria-labelledby="string-tab" tabindex="0"></div>
-                        <div class="tab-pane fade" id="json-tab-pane" role="tabpanel" aria-labelledby="json-tab" tabindex="1"></div>
-                        <div class="tab-pane fade" id="tree-tab-pane" role="tabpanel" aria-labelledby="tree-tab" tabindex="2"></div>
+                        <div class="tab-pane fade" id="tree-tab-pane" role="tabpanel" aria-labelledby="tree-tab" tabindex="1"></div>
+                        <div class="tab-pane fade" id="json-tab-pane" role="tabpanel" aria-labelledby="json-tab" tabindex="2"></div>
                     </div>
 
                 </div>
