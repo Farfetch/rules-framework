@@ -466,7 +466,13 @@
                 html += '<ul class="nested">';
 
                 html += '<li>' + node.operator + '</li>';
-                html += '<li>' + node.operand + '</li>';
+
+                let operand = node.operand;
+                if ($.trim(operand) == '') {
+                    operand = 'Empty';
+                }
+
+                html += '<li>' + operand + '</li>';
 
                 html += '</ul></li>';
 
