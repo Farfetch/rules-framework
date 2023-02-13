@@ -204,7 +204,7 @@
                                         <th scope="col" width="30%">Name</th>
                                         <th scope="col" width="16%" nowrap style="text-align: center;">Date Begin</th>
                                         <th scope="col" width="16%" nowrap style="text-align: center;">Date End</th>
-                                        <th scope="col" width="25%">Value</th>
+                                        <th scope="col" width="25%">Content</th>
                                         <th scope="col" width="6%" style="text-align: center;">Status</th>
                                         <th scope="col" width="5%" style="text-align: center;">Conditions</th>
                                     </tr>
@@ -299,7 +299,7 @@
 
                 trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.name + '</td>';
                 trHTML += '<td style="text-align: center;" nowrap>' + item.dateBegin + '</td><td style="text-align: center;" nowrap> ' + dateEnd + '</td>';
-                trHTML += '<td>' + item.value + '</td>';
+                trHTML += '<td>' + JSON.stringify(item.value) + '</td>';
                 trHTML += '<td style="text-align: center;"><span class="' + labelColor + '" style="' + style + '"> ';
                 trHTML += item.status;
                 trHTML += ' <span class="' + icon + '"></span> '
