@@ -28,14 +28,11 @@ namespace Rules.Framework.Builder.Validation
             }));
         }
 
-        public static RuleValidator<TContentType, TConditionType> Intance
+        public static RuleValidator<TContentType, TConditionType> Instance
         {
             get
             {
-                if (ruleValidator is null)
-                {
-                    ruleValidator = new RuleValidator<TContentType, TConditionType>();
-                }
+                ruleValidator ??= new RuleValidator<TContentType, TConditionType>();
 
                 return ruleValidator;
             }

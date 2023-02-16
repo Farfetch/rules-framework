@@ -6,7 +6,6 @@ namespace Rules.Framework
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using FluentValidation;
     using Rules.Framework.Builder.Validation;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
@@ -28,7 +27,7 @@ namespace Rules.Framework
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly RulesEngineOptions rulesEngineOptions;
         private readonly IRulesSource<TContentType, TConditionType> rulesSource;
-        private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Intance;
+        private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
         private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(

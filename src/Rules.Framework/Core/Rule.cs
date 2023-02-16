@@ -32,7 +32,7 @@ namespace Rules.Framework.Core
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Gets and sets the rule priority compared to other rules (preferrably it is unique).
+        /// Gets and sets the rule priority compared to other rules (preferably it is unique).
         /// </summary>
         public int Priority { get; set; }
 
