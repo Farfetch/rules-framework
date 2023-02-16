@@ -33,7 +33,7 @@ namespace Rules.Framework.WebUI.Handlers
                 var contents = this.genericRulesEngineAdapter.GetContentTypes();
 
                 var contentTypes = new List<ContentTypeDto>();
-
+                var index = 0;
                 foreach (var identifier in contents.Select(c => c.Identifier))
                 {
                     var genericContentType = new GenericContentType { Identifier = identifier };
@@ -46,10 +46,12 @@ namespace Rules.Framework.WebUI.Handlers
 
                     contentTypes.Add(new ContentTypeDto
                     {
+                        Index = index,
                         Name = identifier,
                         ActiveRulesCount = genericRules.Count(IsActive),
                         RulesCount = genericRules.Count()
                     });
+                    index++;
                 }
 
                 await this.WriteResponseAsync(httpResponse, contentTypes, (int)HttpStatusCode.OK).ConfigureAwait(false);
