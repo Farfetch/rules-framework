@@ -8,7 +8,6 @@ namespace Rules.Framework.Evaluation.Compiled
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
-    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
 
     internal sealed class RuleConditionsExpressionBuilder<TConditionType> : IRuleConditionsExpressionBuilder<TConditionType>
     {
@@ -60,7 +59,7 @@ namespace Rules.Framework.Evaluation.Compiled
                 parameters: expressionResult.Parameters);
         }
 
-        private static void BuildExpressionForBehaviorOnNullLeftOperand(IImplementationExpressionBuilder builder)
+        private static void BuildExpressionForBehaviorOnNullLeftOperand(IExpressionBlockBuilder builder)
         {
             var leftOperandVariableExpression = builder.GetVariable("leftOperand");
             var resultVariableExpression = builder.GetVariable("result");
@@ -88,7 +87,7 @@ namespace Rules.Framework.Evaluation.Compiled
                 }));
         }
 
-        private void BuildExpression(IConditionNode<TConditionType> conditionNode, IImplementationExpressionBuilder builder)
+        private void BuildExpression(IConditionNode<TConditionType> conditionNode, IExpressionBlockBuilder builder)
         {
             switch (conditionNode)
             {
@@ -112,7 +111,7 @@ namespace Rules.Framework.Evaluation.Compiled
                     {
                         LogicalOperators.And => builder.AndAlso(conditionExpressions),
                         LogicalOperators.Or => builder.OrElse(conditionExpressions),
-                        _ => throw new NotSupportedException()
+                        _ => throw new NotSupportedException($"Unsupported logical operator on composed condition node: '{conditionNode.LogicalOperator}'.")
                     };
                     var composedResultVariableExpression = builder.GetVariable("result");
                     builder.Assign(composedResultVariableExpression, conditionExpression);
@@ -147,7 +146,7 @@ namespace Rules.Framework.Evaluation.Compiled
         }
 
         private void BuildFetchAndSwitchOverMultiplicity(
-            IImplementationExpressionBuilder builder,
+            IExpressionBlockBuilder builder,
             ValueConditionNode<TConditionType> valueConditionNode)
         {
             var operatorConstantExpression = builder.Constant(valueConditionNode.Operator);

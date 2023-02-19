@@ -7,15 +7,12 @@ namespace Rules.Framework.Evaluation.Compiled
     internal sealed class CompiledConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
     {
         private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
-        private readonly IMultiplicityEvaluator multiplicityEvaluator;
         private readonly RulesEngineOptions rulesEngineOptions;
 
         public CompiledConditionsEvalEngine(
-            IMultiplicityEvaluator multiplicityEvaluator,
             IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer,
             RulesEngineOptions rulesEngineOptions)
         {
-            this.multiplicityEvaluator = multiplicityEvaluator;
             this.conditionsTreeAnalyzer = conditionsTreeAnalyzer;
             this.rulesEngineOptions = rulesEngineOptions;
         }

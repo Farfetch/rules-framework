@@ -1,4 +1,4 @@
-namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
+namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
 {
     using System;
     using System.Collections.Generic;
@@ -10,9 +10,9 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
 
         public IEnumerable<Expression> Expressions { get; set; }
 
-        public IDictionary<string, LabelTarget> LabelTargets { get; set; }
+        public IReadOnlyDictionary<string, LabelTarget> LabelTargets { get; set; }
 
-        public IDictionary<string, ParameterExpression> Parameters { get; set; }
+        public IReadOnlyDictionary<string, ParameterExpression> Parameters { get; set; }
 
         public object ReturnDefaultValue { get; set; }
 
@@ -20,6 +20,6 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
 
         public Type ReturnType { get; set; }
 
-        public IDictionary<string, ParameterExpression> Variables { get; set; }
+        public IReadOnlyDictionary<string, ParameterExpression> Variables { get; set; }
     }
 }

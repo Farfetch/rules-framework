@@ -1,13 +1,19 @@
-namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
+namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
 {
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Reflection;
 
-    internal interface IImplementationExpressionBuilder
+    internal interface IExpressionBlockBuilder
     {
+        IReadOnlyList<Expression> Expressions { get; }
+
+        IReadOnlyDictionary<string, LabelTarget> LabelTargets { get; }
+
         string ScopeName { get; }
+
+        IReadOnlyDictionary<string, ParameterExpression> Variables { get; }
 
         void AddExpression(Expression expression);
 
@@ -17,9 +23,9 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
 
         void Assign(Expression left, Expression right);
 
-        Expression Block(Action<IImplementationExpressionBuilder> blcokImplementationBuilderAction);
+        Expression Block(Action<IExpressionBlockBuilder> blcokImplementationBuilderAction);
 
-        Expression Block(string scopeName, Action<IImplementationExpressionBuilder> blockImplementationBuilderAction);
+        Expression Block(string scopeName, Action<IExpressionBlockBuilder> blockImplementationBuilderAction);
 
         Expression Call(Expression instance, MethodInfo method);
 
@@ -56,13 +62,13 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
         Expression GreaterThanOrEqual(Expression left, Expression right);
 
         void If(
-            Func<IImplementationExpressionBuilder, Expression> testExpressionBuilderFunc,
-            Func<IImplementationExpressionBuilder, Expression> thenExpressionBuilderFunc);
+            Func<IExpressionBlockBuilder, Expression> testExpressionBuilderFunc,
+            Func<IExpressionBlockBuilder, Expression> thenExpressionBuilderFunc);
 
         void If(
-            Func<IImplementationExpressionBuilder, Expression> testExpressionBuilderFunc,
-            Func<IImplementationExpressionBuilder, Expression> thenExpressionBuilderFunc,
-            Func<IImplementationExpressionBuilder, Expression> elseExpressionBuilderFunc);
+            Func<IExpressionBlockBuilder, Expression> testExpressionBuilderFunc,
+            Func<IExpressionBlockBuilder, Expression> thenExpressionBuilderFunc,
+            Func<IExpressionBlockBuilder, Expression> elseExpressionBuilderFunc);
 
         void Label(LabelTarget labelTarget);
 
@@ -81,7 +87,7 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
         void Return(Expression returnValueExpression);
 
         void Switch(
-            Expression switchExpressionValue,
-            Action<ISwitchExpressionBuilder> switchExpressionBuilderAction);
+            Expression expressionSwitchValue,
+            Action<IExpressionSwitchBuilder> expressionSwitchBuilderAction);
     }
 }

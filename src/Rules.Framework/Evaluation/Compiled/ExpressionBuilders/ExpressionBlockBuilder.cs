@@ -1,4 +1,4 @@
-namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
+namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
 {
     using System;
     using System.Collections.Generic;
@@ -6,32 +6,38 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
     using System.Linq.Expressions;
     using System.Reflection;
 
-    internal sealed class ImplementationExpressionBuilder : IImplementationExpressionBuilder
+    internal sealed class ExpressionBlockBuilder : IExpressionBlockBuilder
     {
         private readonly ExpressionConfiguration expressionConfiguration;
         private readonly List<Expression> expressions;
+        private readonly IExpressionBuilderFactory factory;
         private readonly Dictionary<string, LabelTarget> labelTargets;
         private readonly Dictionary<string, ParameterExpression> variables;
 
-        public ImplementationExpressionBuilder(string scopeName, IImplementationExpressionBuilder parent, ExpressionConfiguration expressionConfiguration)
+        public ExpressionBlockBuilder(
+            string scopeName,
+            IExpressionBlockBuilder parent,
+            IExpressionBuilderFactory factory,
+            ExpressionConfiguration expressionConfiguration)
         {
             this.expressionConfiguration = expressionConfiguration;
             this.expressions = new List<Expression>();
             this.labelTargets = new Dictionary<string, LabelTarget>(StringComparer.Ordinal);
             this.ScopeName = scopeName;
             this.Parent = parent;
+            this.factory = factory;
             this.variables = new Dictionary<string, ParameterExpression>(StringComparer.Ordinal);
         }
 
-        public IList<Expression> Expressions => this.expressions;
+        public IReadOnlyList<Expression> Expressions => this.expressions;
 
-        public IDictionary<string, LabelTarget> LabelTargets => this.labelTargets;
+        public IReadOnlyDictionary<string, LabelTarget> LabelTargets => this.labelTargets;
 
-        public IImplementationExpressionBuilder Parent { get; }
+        public IExpressionBlockBuilder Parent { get; }
 
         public string ScopeName { get; }
 
-        public IDictionary<string, ParameterExpression> Variables => this.variables;
+        public IReadOnlyDictionary<string, ParameterExpression> Variables => this.variables;
 
         public void AddExpression(Expression expression)
         {
@@ -69,10 +75,10 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
             this.AddExpression(expression);
         }
 
-        public Expression Block(Action<IImplementationExpressionBuilder> implementationBuilder)
+        public Expression Block(Action<IExpressionBlockBuilder> implementationBuilder)
             => this.Block(string.Empty, implementationBuilder);
 
-        public Expression Block(string scopeName, Action<IImplementationExpressionBuilder> implementationBuilder)
+        public Expression Block(string scopeName, Action<IExpressionBlockBuilder> implementationBuilder)
         {
             if (implementationBuilder is null)
             {
@@ -80,15 +86,15 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
             }
 
             var actualScopeName = scopeName ?? string.Empty;
-            var implementationExpressionBuilder = new ImplementationExpressionBuilder(actualScopeName, this, this.expressionConfiguration);
-            implementationBuilder.Invoke(implementationExpressionBuilder);
+            var expressionBlockBuilder = this.factory.CreateExpressionBlockBuilder(actualScopeName, this, this.expressionConfiguration);
+            implementationBuilder.Invoke(expressionBlockBuilder);
 
-            if (implementationExpressionBuilder.Expressions.Count == 0)
+            if (expressionBlockBuilder.Expressions.Count == 0)
             {
-                throw new InvalidOperationException($"No body block expressions were added for '{implementationExpressionBuilder.ScopeName}'.");
+                throw new InvalidOperationException($"No body block expressions were added for '{expressionBlockBuilder.ScopeName}'.");
             }
 
-            var expression = Expression.Block(expressions: implementationExpressionBuilder.Expressions);
+            var expression = Expression.Block(expressions: expressionBlockBuilder.Expressions);
 
             return expression;
         }
@@ -219,14 +225,14 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
             => Expression.GreaterThanOrEqual(left, right);
 
         public void If(
-            Func<IImplementationExpressionBuilder, Expression> testExpressionBuilder,
-            Func<IImplementationExpressionBuilder, Expression> thenExpressionBuilder)
+            Func<IExpressionBlockBuilder, Expression> testExpressionBuilder,
+            Func<IExpressionBlockBuilder, Expression> thenExpressionBuilder)
             => this.If(testExpressionBuilder, thenExpressionBuilder, elseExpressionBuilder: null);
 
         public void If(
-            Func<IImplementationExpressionBuilder, Expression> testExpressionBuilder,
-            Func<IImplementationExpressionBuilder, Expression> thenExpressionBuilder,
-            Func<IImplementationExpressionBuilder, Expression> elseExpressionBuilder)
+            Func<IExpressionBlockBuilder, Expression> testExpressionBuilder,
+            Func<IExpressionBlockBuilder, Expression> thenExpressionBuilder,
+            Func<IExpressionBlockBuilder, Expression> elseExpressionBuilder)
         {
             if (testExpressionBuilder is null)
             {
@@ -305,22 +311,25 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
         }
 
         public void Switch(
-            Expression switchExpressionValue,
-            Action<ISwitchExpressionBuilder> switchExpressionBuilderAction)
+            Expression switchValueExpression,
+            Action<IExpressionSwitchBuilder> expressionSwitchBuilderAction)
         {
-            if (switchExpressionValue is null)
+            if (switchValueExpression is null)
             {
-                throw new ArgumentNullException(nameof(switchExpressionValue));
+                throw new ArgumentNullException(nameof(switchValueExpression));
             }
 
-            if (switchExpressionBuilderAction is null)
+            if (expressionSwitchBuilderAction is null)
             {
-                throw new ArgumentNullException(nameof(switchExpressionBuilderAction));
+                throw new ArgumentNullException(nameof(expressionSwitchBuilderAction));
             }
 
-            var switchExpressionBuilder = new SwitchExpressionBuilder(this);
-            switchExpressionBuilderAction.Invoke(switchExpressionBuilder);
-            var expression = switchExpressionBuilder.CreateSwitchExpression(switchExpressionValue);
+            var expressionSwitchBuilder = this.factory.CreateExpressionSwitchBuilder(this);
+            expressionSwitchBuilderAction.Invoke(expressionSwitchBuilder);
+            var expression = Expression.Switch(
+                switchValueExpression,
+                expressionSwitchBuilder.DefaultBody,
+                expressionSwitchBuilder.SwitchCases.ToArray());
             this.AddExpression(expression);
         }
     }

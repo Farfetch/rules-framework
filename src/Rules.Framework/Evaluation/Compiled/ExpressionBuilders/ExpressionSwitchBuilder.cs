@@ -1,25 +1,29 @@
-namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
+namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
 {
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
 
-    internal sealed class SwitchExpressionBuilder : ISwitchExpressionBuilder
+    internal sealed class ExpressionSwitchBuilder : IExpressionSwitchBuilder
     {
-        private readonly IImplementationExpressionBuilder implementationExpressionBuilder;
+        private readonly IExpressionBlockBuilder implementationExpressionBuilder;
         private readonly List<SwitchCase> switchCases;
-        private Expression defaultExpression;
+        private Expression defaultBody;
 
-        public SwitchExpressionBuilder(IImplementationExpressionBuilder implementationExpressionBuilder)
+        public ExpressionSwitchBuilder(IExpressionBlockBuilder implementationExpressionBuilder)
         {
-            this.defaultExpression = null;
+            this.defaultBody = null;
             this.implementationExpressionBuilder = implementationExpressionBuilder;
             this.switchCases = new List<SwitchCase>();
         }
 
-        public ISwitchExpressionBuilder Case(
+        public Expression DefaultBody => this.defaultBody;
+
+        public IEnumerable<SwitchCase> SwitchCases => this.switchCases.AsReadOnly();
+
+        public IExpressionSwitchBuilder Case(
             Expression caseExpression,
-            Func<IImplementationExpressionBuilder, Expression> caseBodyExpressionBuilder)
+            Func<IExpressionBlockBuilder, Expression> caseBodyExpressionBuilder)
         {
             if (caseExpression is null)
             {
@@ -29,9 +33,9 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
             return this.Case(new[] { caseExpression }, caseBodyExpressionBuilder);
         }
 
-        public ISwitchExpressionBuilder Case(
+        public IExpressionSwitchBuilder Case(
             IEnumerable<Expression> caseExpressions,
-            Func<IImplementationExpressionBuilder, Expression> caseBodyExpressionBuilder)
+            Func<IExpressionBlockBuilder, Expression> caseBodyExpressionBuilder)
         {
             if (caseExpressions is null)
             {
@@ -49,17 +53,14 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
             return this;
         }
 
-        public SwitchExpression CreateSwitchExpression(Expression switchValueExpression)
-            => Expression.Switch(switchValueExpression, this.defaultExpression, this.switchCases.ToArray());
-
-        public void Default(Func<IImplementationExpressionBuilder, Expression> defaultBodyExpressionBuilder)
+        public void Default(Func<IExpressionBlockBuilder, Expression> defaultBodyExpressionBuilder)
         {
             if (defaultBodyExpressionBuilder is null)
             {
                 throw new ArgumentNullException(nameof(defaultBodyExpressionBuilder));
             }
 
-            defaultExpression = defaultBodyExpressionBuilder.Invoke(this.implementationExpressionBuilder);
+            defaultBody = defaultBodyExpressionBuilder.Invoke(this.implementationExpressionBuilder);
         }
     }
 }

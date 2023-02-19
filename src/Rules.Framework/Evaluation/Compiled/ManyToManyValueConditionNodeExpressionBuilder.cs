@@ -4,7 +4,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using System.Collections.Generic;
     using System.Reflection;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
-    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
+    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
 
     internal sealed class ManyToManyValueConditionNodeExpressionBuilder : IValueConditionNodeExpressionBuilder
     {
@@ -22,7 +22,7 @@ namespace Rules.Framework.Evaluation.Compiled
         }
 
         public void Build(
-            IImplementationExpressionBuilder builder,
+            IExpressionBlockBuilder builder,
             BuildValueConditionNodeExpressionArgs args)
         {
             var enumerableOfDataType = enumerableType.MakeGenericType(args.DataTypeConfiguration.Type);

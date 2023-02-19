@@ -11,10 +11,10 @@ namespace Rules.Framework.Evaluation.Compiled
         private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
 
         public CompilationRulesSourceMiddleware(
-            IRuleConditionsExpressionBuilder<TConditionType> rulesExpressionBuilder,
+            IRuleConditionsExpressionBuilder<TConditionType> ruleConditionsExpressionBuilder,
             IRulesDataSource<TContentType, TConditionType> rulesDataSource)
         {
-            this.ruleConditionsExpressionBuilder = rulesExpressionBuilder;
+            this.ruleConditionsExpressionBuilder = ruleConditionsExpressionBuilder;
             this.rulesDataSource = rulesDataSource;
         }
 

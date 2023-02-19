@@ -38,7 +38,7 @@ namespace Rules.Framework.Builder
                 var conditionExpressionBuilderProvider = new ConditionExpressionBuilderProvider();
                 var valueConditionNodeCompilerProvider = new ValueConditionNodeExpressionBuilderProvider(conditionExpressionBuilderProvider);
                 var ruleConditionsExpressionBuilder = new RuleConditionsExpressionBuilder<TConditionType>(valueConditionNodeCompilerProvider, dataTypesConfigurationProvider);
-                conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(multiplicityEvaluator, conditionsTreeAnalyzer, this.rulesEngineOptions);
+                conditionsEvalEngine = new CompiledConditionsEvalEngine<TConditionType>(conditionsTreeAnalyzer, this.rulesEngineOptions);
 
                 // Add conditions compiler middleware to ensure compilation occurs before rules
                 // engine uses the rules, while also ensuring that the compilation result is kept on

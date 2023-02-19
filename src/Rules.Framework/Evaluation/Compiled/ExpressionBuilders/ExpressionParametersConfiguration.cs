@@ -1,4 +1,4 @@
-namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
+namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
 {
     using System;
     using System.Collections.Generic;
@@ -6,22 +6,24 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine
 
     internal sealed class ExpressionParametersConfiguration : IExpressionParametersConfiguration
     {
+        private readonly Dictionary<string, ParameterExpression> parameters;
+
         public ExpressionParametersConfiguration()
         {
-            this.Parameters = new Dictionary<string, ParameterExpression>(StringComparer.Ordinal);
+            this.parameters = new Dictionary<string, ParameterExpression>(StringComparer.Ordinal);
         }
 
-        public IDictionary<string, ParameterExpression> Parameters { get; }
+        public IReadOnlyDictionary<string, ParameterExpression> Parameters => parameters;
 
         public ParameterExpression CreateParameter(string name, Type type)
         {
-            if (this.Parameters.ContainsKey(name))
+            if (this.parameters.ContainsKey(name))
             {
                 throw new InvalidOperationException($"A parameter for name '{name}' was already added.");
             }
 
             var parameterExpression = Expression.Parameter(type, name);
-            this.Parameters.Add(name, parameterExpression);
+            this.parameters.Add(name, parameterExpression);
 
             return parameterExpression;
         }
