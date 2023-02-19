@@ -13,6 +13,7 @@
     <None Remove="Evaluation\Compiled\ManyToOneValueConditionNodeExpressionBuilderTests.GoldenFile1.csx" />
     <None Remove="Evaluation\Compiled\OneToManyValueConditionNodeExpressionBuilderTests.GoldenFile1.csx" />
     <None Remove="Evaluation\Compiled\RuleConditionsExpressionBuilderTests.GoldenFile1.csx" />
+    <None Remove="Evaluation\Compiled\RuleConditionsExpressionBuilderTests.GoldenFile2.csx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +21,7 @@
     <EmbeddedResource Include="Evaluation\Compiled\ManyToManyValueConditionNodeExpressionBuilderTests.GoldenFile1.csx" />
     <EmbeddedResource Include="Evaluation\Compiled\ManyToOneValueConditionNodeExpressionBuilderTests.GoldenFile1.csx" />
     <EmbeddedResource Include="Evaluation\Compiled\OneToManyValueConditionNodeExpressionBuilderTests.GoldenFile1.csx" />
+    <EmbeddedResource Include="Evaluation\Compiled\RuleConditionsExpressionBuilderTests.GoldenFile2.csx" />
     <EmbeddedResource Include="Evaluation\Compiled\RuleConditionsExpressionBuilderTests.GoldenFile1.csx" />
   </ItemGroup>
 
@@ -42,5 +44,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Evaluation\Compiled\ExpressionBuilders\StateMachine\" />
   </ItemGroup>
 </Project>

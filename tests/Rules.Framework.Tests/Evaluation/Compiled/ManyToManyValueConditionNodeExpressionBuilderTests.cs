@@ -14,7 +14,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     using Rules.Framework.Evaluation.Compiled;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
-    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
     using Xunit;
 
     public class ManyToManyValueConditionNodeExpressionBuilderTests
@@ -35,8 +34,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var conditionExpression = Expression.AndAlso(Expression.Constant(true, typeof(bool)), Expression.Constant(true, typeof(bool))); // For testing purposes, does not need to stay true to the scenario
             var conditionExpressionBuilder = Mock.Of<IConditionExpressionBuilder>();
             Mock.Get(conditionExpressionBuilder)
-                .Setup(x => x.BuildConditionExpression(It.IsAny<IImplementationExpressionBuilder>(), It.IsAny<BuildConditionExpressionArgs>()))
-                .Callback<IImplementationExpressionBuilder, BuildConditionExpressionArgs>((b, args) =>
+                .Setup(x => x.BuildConditionExpression(It.IsAny<IExpressionBlockBuilder>(), It.IsAny<BuildConditionExpressionArgs>()))
+                .Callback<IExpressionBlockBuilder, BuildConditionExpressionArgs>((b, args) =>
                 {
                     actualLeftExpression = args.LeftHandOperand;
                     actualRightExpression = args.RightHandOperand;

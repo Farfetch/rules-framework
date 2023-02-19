@@ -8,7 +8,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
-    using Rules.Framework.Evaluation.Compiled.ExpressionBuilders.StateMachine;
     using Xunit;
 
     public class NotEndsWithOneToOneConditionExpressionBuilderTests
@@ -24,7 +23,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
                 RightHandOperand = Expression.Constant(2, typeof(int)),
             };
 
-            var builder = Mock.Of<IImplementationExpressionBuilder>();
+            var builder = Mock.Of<IExpressionBlockBuilder>();
 
             var notEndsWithOneToOneConditionExpressionBuilder
                 = new NotEndsWithOneToOneConditionExpressionBuilder();
