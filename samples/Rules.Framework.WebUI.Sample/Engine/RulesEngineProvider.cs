@@ -19,7 +19,7 @@ namespace Rules.Framework.WebUI.Sample.Engine
                     .WithContentType<ContentTypes>()
                     .WithConditionType<ConditionTypes>()
                     .SetInMemoryDataSource()
-                    .Configure(c => c.PriotityCriteria = PriorityCriterias.BottommostRuleWins)
+                    .Configure(c => c.PriotityCriteria = PriorityCriterias.TopmostRuleWins)
                     .Build();
 
                 await rulesBuilder.BuildAsync(rulesEngine).ConfigureAwait(false);

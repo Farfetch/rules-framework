@@ -1,8 +1,8 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Core;
     using System;
     using System.Collections.Generic;
+    using Rules.Framework.Core;
 
     internal sealed class ConditionExpressionBuilderProvider : IConditionExpressionBuilderProvider
     {
@@ -27,6 +27,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
                 { Combine(Operators.CaseInsensitiveEndsWith, Multiplicities.OneToOne), new CaseInsensitiveEndsWithOneToOneConditionExpressionBuilder() },
                 { Combine(Operators.NotEndsWith, Multiplicities.OneToOne), new NotEndsWithOneToOneConditionExpressionBuilder() },
                 { Combine(Operators.NotStartsWith, Multiplicities.OneToOne), new NotStartsWithOneToOneConditionExpressionBuilder() },
+                { Combine(Operators.NotIn, Multiplicities.OneToMany), new NotInOneToManyConditionExpressionBuilder() },
             };
         }
 

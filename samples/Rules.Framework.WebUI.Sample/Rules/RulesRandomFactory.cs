@@ -43,7 +43,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
                                      RuleBuilder
                              .NewRule<ContentTypes, ConditionTypes>()
                              .WithName($"Multi rule for test {contentTypes} {value}")
-                             .WithContent(contentTypes, $"Value {contentTypes} {value}")
+                             .WithContent(contentTypes, new { Value = value })
                              .WithDatesInterval(dateBegin, dateEnd)
                              .WithCondition(cnb => cnb.AsComposed()
                                     .WithLogicalOperator(LogicalOperators.Or)
@@ -51,6 +51,11 @@ namespace Rules.Framework.WebUI.Sample.Rules
                                             .AsValued(ConditionTypes.RoyalNumber).OfDataType<int>()
                                             .WithComparisonOperator(Operators.Equal)
                                             .SetOperand(7)
+                                            .Build())
+                                        .AddCondition(condition => condition
+                                            .AsValued(ConditionTypes.SumAll).OfDataType<int>()
+                                            .WithComparisonOperator(Operators.Equal)
+                                            .SetOperand(9)
                                             .Build())
                                         .AddCondition(condition => condition.AsComposed()
                                             .WithLogicalOperator(LogicalOperators.And)
@@ -73,8 +78,8 @@ namespace Rules.Framework.WebUI.Sample.Rules
                                                     .Build())
                                                 .AddCondition(sub => sub
                                                     .AsValued(ConditionTypes.SumAll).OfDataType<string>()
-                                                    .WithComparisonOperator(Operators.EndsWith)
-                                                    .SetOperand("150")
+                                                    .WithComparisonOperator(Operators.NotEqual)
+                                                    .SetOperand(string.Empty)
                                                     .Build())
                                             .Build())
                                         .Build())

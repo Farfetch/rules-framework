@@ -25,7 +25,8 @@ namespace Rules.Framework.WebUI
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
-                IncludeFields = true
+                IncludeFields = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
             this.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeDto>());

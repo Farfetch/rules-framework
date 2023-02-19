@@ -165,6 +165,27 @@ namespace Rules.Framework.Providers.MongoDb
                    .WithComparisonOperator(conditionNodeDataModel.Operator)
                    .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                     .Build(),
+
+                DataTypes.ArrayInteger => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<int>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<int>)
+                    .Build(),
+                DataTypes.ArrayDecimal => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<decimal>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<decimal>)
+                    .Build(),
+                DataTypes.ArrayString => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<string>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<string>)
+                    .Build(),
+                DataTypes.ArrayBoolean => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<bool>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<bool>)
+                    .Build(),
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
             };
         }

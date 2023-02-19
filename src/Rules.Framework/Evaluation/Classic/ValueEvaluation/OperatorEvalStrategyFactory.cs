@@ -21,6 +21,7 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation
                 { Operators.Contains, new ContainsOperatorEvalStrategy() },
                 { Operators.NotContains, new NotContainsOperatorEvalStrategy() },
                 { Operators.In, new InOperatorEvalStrategy() },
+                { Operators.NotIn, new NotInOperatorEvalStrategy() },
                 { Operators.StartsWith, new StartsWithOperatorEvalStrategy() },
                 { Operators.EndsWith, new EndsWithOperatorEvalStrategy() },
                 { Operators.CaseInsensitiveStartsWith, new CaseInsensitiveStartsWithOperatorEvalStrategy() },
