@@ -70,6 +70,6 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         NumberOfClubs = 66,
         NumberOfDiamonds = 67,
         NumberOfHearts = 68,
-        NumberOfSpades = 69
+        NumberOfSpades = 69,
     }
 }

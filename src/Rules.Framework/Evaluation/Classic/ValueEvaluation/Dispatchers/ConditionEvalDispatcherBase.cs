@@ -6,7 +6,6 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
     using System.Globalization;
     using System.Linq;
     using Rules.Framework.Core;
-    using Rules.Framework.Evaluation;
 
     internal abstract class ConditionEvalDispatcherBase
     {

@@ -1,10 +1,10 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
 {
+    using System;
+    using System.Collections.Generic;
     using Rules.Framework;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
-    using System;
-    using System.Collections.Generic;
 
     internal class Benchmark2Data : IBenchmarkData<ContentTypes, ConditionTypes>
     {

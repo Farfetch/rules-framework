@@ -11,7 +11,9 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
 
         IExpressionParametersBuilder CreateExpressionBuilder(
             ExpressionConfiguration expressionConfiguration);
+
         IExpressionParametersConfiguration CreateExpressionParametersConfiguration();
+
         IExpressionSwitchBuilder CreateExpressionSwitchBuilder(
             IExpressionBlockBuilder parent);
     }

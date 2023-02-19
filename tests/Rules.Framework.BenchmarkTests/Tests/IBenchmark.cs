@@ -5,7 +5,9 @@ namespace Rules.Framework.BenchmarkTests.Tests
     internal interface IBenchmark
     {
         Task RunAsync();
+
         Task SetUpAsync();
+
         Task TearDownAsync();
     }
 }

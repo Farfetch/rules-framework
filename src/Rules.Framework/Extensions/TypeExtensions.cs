@@ -2,22 +2,11 @@ namespace System
 {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Linq;
     using System.Reflection;
 
     internal static class TypeExtensions
     {
-        private static readonly LanguageOperator[] languageOperators = new[]
-        {
-            LanguageOperator.Equal,
-            LanguageOperator.NotEqual,
-            LanguageOperator.GreaterThan,
-            LanguageOperator.GreaterThanOrEqual,
-            LanguageOperator.LessThan,
-            LanguageOperator.LessThanOrEqual,
-        };
-
         private static readonly ConcurrentDictionary<Type, IDictionary<LanguageOperator, string>> languageOperatorsSupportByType = new();
 
         public static bool HasLanguageOperator(this Type type, LanguageOperator languageOperator)
@@ -47,7 +36,7 @@ namespace System
             "op_GreaterThanOrEqual" => LanguageOperator.GreaterThanOrEqual,
             "op_LessThan" => LanguageOperator.LessThan,
             "op_LessThanOrEqual" => LanguageOperator.LessThanOrEqual,
-            _ => LanguageOperator.None
+            _ => LanguageOperator.None,
         };
     }
 }

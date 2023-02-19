@@ -3,7 +3,6 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
-    using Rules.Framework.Evaluation;
 
     internal sealed class ManyToOneConditionEvalDispatcher : ConditionEvalDispatcherBase, IConditionEvalDispatcher
     {

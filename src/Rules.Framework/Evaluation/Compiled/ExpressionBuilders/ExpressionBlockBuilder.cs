@@ -140,7 +140,7 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
                     throw new InvalidOperationException($"A label target for name '{name}' under scope '{this.ScopeName}' was already added.");
                 }
 
-                string prefixedName = $"{this.ScopeName}_{name}";
+                var prefixedName = $"{this.ScopeName}_{name}";
                 return this.Parent.CreateLabelTarget(prefixedName);
             }
         }
@@ -168,7 +168,7 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
                     throw new InvalidOperationException($"A variable for name '{name}' under scope '{this.ScopeName}' was already added.");
                 }
 
-                string prefixedName = $"{this.ScopeName}_{name}";
+                var prefixedName = $"{this.ScopeName}_{name}";
                 return this.Parent.CreateVariable(prefixedName, type);
             }
         }

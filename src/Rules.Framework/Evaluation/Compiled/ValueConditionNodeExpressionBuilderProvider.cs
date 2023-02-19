@@ -2,7 +2,6 @@ namespace Rules.Framework.Evaluation.Compiled
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
 
     internal sealed class ValueConditionNodeExpressionBuilderProvider : IValueConditionNodeExpressionBuilderProvider

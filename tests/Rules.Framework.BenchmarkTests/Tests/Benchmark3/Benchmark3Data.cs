@@ -1,13 +1,10 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    using Rules.Framework;
-    using Rules.Framework.Builder;
-    using Rules.Framework.Core;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using Rules.Framework;
+    using Rules.Framework.Core;
 
     internal partial class Benchmark3Data : IBenchmarkData<ContentTypes, ConditionTypes>
     {
@@ -31,8 +28,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 
         private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetRules()
         {
-            // Does not consider the double pairs and full house combinations, as they would imply a combinatorial explosion.
-            // For the purpose of the benchmark, scenario already simulates a high number of rules.
+            // Does not consider the double pairs and full house combinations, as they would imply a
+            // combinatorial explosion. For the purpose of the benchmark, scenario already simulates
+            // a high number of rules.
             var highCards = this.GetHighCardsRules();
 
             var pairs = this.GetPairsRules();

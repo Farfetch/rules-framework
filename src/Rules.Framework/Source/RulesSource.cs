@@ -35,12 +35,12 @@ namespace Rules.Framework.Source
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesFilteredAsync(GetRulesFilteredArgs<TContentType> args)
         {
             return await this.getRulesFilteredDelegate.Invoke(args).ConfigureAwait(false);
-                }
+        }
 
         public async Task UpdateRuleAsync(UpdateRuleArgs<TContentType, TConditionType> args)
         {
             await this.updateRuleDelegate.Invoke(args).ConfigureAwait(false);
-            }
+        }
 
         private static AddRuleDelegate<TContentType, TConditionType> CreateAddRulePipelineDelegate(
             IRulesDataSource<TContentType, TConditionType> rulesDataSource,
@@ -53,15 +53,15 @@ namespace Rules.Framework.Source
                 var middlewareNode = middlewares.Last;
 
                 while (middlewareNode is { })
-            {
+                {
                     var middleware = middlewareNode.Value;
                     var immutableAction = action;
                     action = async (args) => await middleware.HandleAddRuleAsync(args, immutableAction).ConfigureAwait(false);
 
                     // Get previous middleware node.
                     middlewareNode = middlewareNode.Previous;
+                }
             }
-        }
 
             return action;
         }
@@ -72,9 +72,9 @@ namespace Rules.Framework.Source
         {
             GetRulesFilteredDelegate<TContentType, TConditionType> action =
                 async (args) =>
-            {
-                    RulesFilterArgs<TContentType> rulesFilterArgs = new()
                 {
+                    RulesFilterArgs<TContentType> rulesFilterArgs = new()
+                    {
                         ContentType = args.ContentType,
                         Name = args.Name,
                         Priority = args.Priority,
@@ -88,18 +88,18 @@ namespace Rules.Framework.Source
                 var middlewareNode = middlewares.Last;
 
                 while (middlewareNode is { })
-        {
+                {
                     var middleware = middlewareNode.Value;
                     var immutableAction = action;
                     action = async (args) => await middleware.HandleGetRulesFilteredAsync(args, immutableAction).ConfigureAwait(false);
 
                     // Get previous middleware node.
                     middlewareNode = middlewareNode.Previous;
-        }
                 }
+            }
 
             return action;
-            }
+        }
 
         private static GetRulesDelegate<TContentType, TConditionType> CreateGetRulesPipelineDelegate(
             IRulesDataSource<TContentType, TConditionType> rulesDataSource,
@@ -110,11 +110,11 @@ namespace Rules.Framework.Source
                     => await rulesDataSource.GetRulesAsync(args.ContentType, args.DateBegin, args.DateEnd).ConfigureAwait(false);
 
             if (middlewares.Count > 0)
-                {
+            {
                 var middlewareNode = middlewares.Last;
 
                 while (middlewareNode is { })
-                    {
+                {
                     var middleware = middlewareNode.Value;
                     var immutableAction = action;
                     action = async (args) => await middleware.HandleGetRulesAsync(args, immutableAction).ConfigureAwait(false);
@@ -122,7 +122,7 @@ namespace Rules.Framework.Source
                     // Get previous middleware node.
                     middlewareNode = middlewareNode.Previous;
                 }
-        }
+            }
 
             return action;
         }

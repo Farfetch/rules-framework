@@ -33,7 +33,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 
         public IConditionExpressionBuilder GetConditionExpressionBuilderFor(Operators @operator, string multiplicity)
         {
-            if (this.conditionExpressionBuilders.TryGetValue(Combine(@operator, multiplicity), out IConditionExpressionBuilder operatorEvalStrategy))
+            if (this.conditionExpressionBuilders.TryGetValue(Combine(@operator, multiplicity), out var operatorEvalStrategy))
             {
                 return operatorEvalStrategy;
             }

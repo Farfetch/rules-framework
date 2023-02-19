@@ -1,12 +1,9 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    using Rules.Framework.Builder;
-    using Rules.Framework.Core;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using Rules.Framework.Builder;
+    using Rules.Framework.Core;
 
     internal partial class Benchmark3Data
     {

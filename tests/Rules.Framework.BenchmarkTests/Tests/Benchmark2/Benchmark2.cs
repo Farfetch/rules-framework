@@ -1,9 +1,9 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
 {
-    using BenchmarkDotNet.Attributes;
-    using Rules.Framework.Core;
     using System.Linq;
     using System.Threading.Tasks;
+    using BenchmarkDotNet.Attributes;
+    using Rules.Framework.Core;
 
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark2 : IBenchmark

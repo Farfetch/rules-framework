@@ -1,7 +1,6 @@
 namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
 {
     using Rules.Framework.Core;
-    using Rules.Framework.Evaluation;
 
     internal sealed class OneToOneConditionEvalDispatcher : ConditionEvalDispatcherBase, IConditionEvalDispatcher
     {

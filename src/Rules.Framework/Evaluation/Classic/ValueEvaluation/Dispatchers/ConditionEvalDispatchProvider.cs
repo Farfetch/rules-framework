@@ -1,11 +1,8 @@
 namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
     using Rules.Framework.Core;
-    using Rules.Framework.Evaluation;
 
     internal sealed class ConditionEvalDispatchProvider : IConditionEvalDispatchProvider
     {
@@ -22,7 +19,7 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
                 { Multiplicities.OneToOne, new OneToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
                 { Multiplicities.OneToMany, new OneToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
                 { Multiplicities.ManyToOne, new ManyToOneConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
-                { Multiplicities.ManyToMany, new ManyToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) }
+                { Multiplicities.ManyToMany, new ManyToManyConditionEvalDispatcher(operatorEvalStrategyFactory, dataTypesConfigurationProvider) },
             };
             this.multiplicityEvaluator = multiplicityEvaluator;
         }
@@ -31,12 +28,12 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
         {
             string multiplicity = this.multiplicityEvaluator.EvaluateMultiplicity(leftOperand, @operator, rightOperand);
 
-            this.ThrowIfUnsupportedOperandsAndOperatorCombination($"{multiplicity}-{@operator}");
+            ThrowIfUnsupportedOperandsAndOperatorCombination($"{multiplicity}-{@operator}");
 
             return this.dispatchers[multiplicity];
         }
 
-        private void ThrowIfUnsupportedOperandsAndOperatorCombination(string combination)
+        private static void ThrowIfUnsupportedOperandsAndOperatorCombination(string combination)
         {
             if (!OperatorsMetadata.AllBySupportedCombination.ContainsKey(combination))
             {

@@ -8,6 +8,6 @@ namespace System
         GreaterThan = 3,
         GreaterThanOrEqual = 4,
         LessThan = 5,
-        LessThanOrEqual = 6
+        LessThanOrEqual = 6,
     }
 }
