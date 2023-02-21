@@ -7,7 +7,7 @@ using BenchmarkDotNet.Running;
 
 [assembly: SimpleJob(RuntimeMoniker.Net60)]
 
-internal class Program
+internal static class Program
 {
     private static void Main(string[] args)
     {

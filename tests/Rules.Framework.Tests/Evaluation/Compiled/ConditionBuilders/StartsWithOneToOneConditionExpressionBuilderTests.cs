@@ -45,11 +45,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
         public void BuildConditionExpression_GivenLeftExpressionRightExpressionAndDataTypeConfigurationForString_ReturnsConditionExpression()
         {
             // Arrange
-
-            var leftHandExpression = Expression.Parameter(typeof(string), "leftHand");
-            var rightHandExpression = Expression.Constant("The", typeof(string));
-            var dataTypeConfiguration = DataTypeConfiguration.Create(DataTypes.String, typeof(string), null);
-
             var startsWithOneToOneConditionExpressionBuilder
                 = new StartsWithOneToOneConditionExpressionBuilder();
 

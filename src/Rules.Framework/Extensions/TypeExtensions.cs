@@ -13,7 +13,7 @@ namespace System
         {
             var languageOperatorsByType = languageOperatorsSupportByType.GetOrAdd(type, (t) =>
             {
-                return ((TypeInfo)type).GetRuntimeMethods()
+                return ((TypeInfo)t).GetRuntimeMethods()
                     .Select(m =>
                     {
                         var splittedName = m.Name.Split('.');

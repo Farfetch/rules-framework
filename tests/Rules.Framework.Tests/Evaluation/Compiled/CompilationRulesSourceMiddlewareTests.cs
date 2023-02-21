@@ -31,13 +31,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -73,13 +73,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -115,13 +115,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -168,13 +168,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -218,13 +218,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -268,13 +268,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -323,13 +323,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -371,13 +371,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -419,13 +419,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -473,13 +473,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -515,13 +515,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -557,13 +557,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             };
 
             bool nextDelegateWasInvoked = false;
-            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((args) =>
+            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (evaluationContext) => true;
+            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
 
             var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
             Mock.Get(ruleConditionsExpressionBuilder)

@@ -9,7 +9,13 @@ namespace Rules.Framework.Evaluation.Compiled
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
 
-    internal sealed class RuleConditionsExpressionBuilder<TConditionType> : IRuleConditionsExpressionBuilder<TConditionType>
+    internal class RuleConditionsExpressionBuilder
+    {
+        protected static readonly MethodInfo multiplicityEvaluateMethod = typeof(MultiplicityEvaluator)
+            .GetMethod(nameof(MultiplicityEvaluator.Evaluate));
+    }
+
+    internal sealed class RuleConditionsExpressionBuilder<TConditionType> : RuleConditionsExpressionBuilder, IRuleConditionsExpressionBuilder<TConditionType>
     {
         private static readonly MethodInfo conditionsGetterMethod = typeof(EvaluationContext<TConditionType>)
             .GetProperty("Conditions")
@@ -21,9 +27,6 @@ namespace Rules.Framework.Evaluation.Compiled
         private static readonly MethodInfo getValueOrDefaultMethod = typeof(ConditionsValueLookupExtension)
             .GetMethod(nameof(ConditionsValueLookupExtension.GetValueOrDefault))
             .MakeGenericMethod(typeof(TConditionType));
-
-        private static readonly MethodInfo multiplicityEvaluateMethod = typeof(MultiplicityEvaluator)
-            .GetMethod(nameof(MultiplicityEvaluator.Evaluate));
 
         private readonly IDataTypesConfigurationProvider dataTypesConfigurationProvider;
         private readonly IValueConditionNodeExpressionBuilderProvider valueConditionNodeExpressionBuilderProvider;
@@ -121,7 +124,6 @@ namespace Rules.Framework.Evaluation.Compiled
                     // Variables, constants, and labels.
                     var leftOperandVariableExpression = builder.CreateVariable<object>("leftOperand");
                     var rightOperandVariableExpression = builder.CreateVariable<object>("rightOperand");
-                    var resultVariableExpression = builder.GetVariable("result");
                     var jumpToLabelTarget = builder.CreateLabelTarget("Label_EndValueConditionNode");
                     var parameterExpression = builder.GetParameter("evaluationContext");
 

@@ -35,7 +35,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var conditionExpressionBuilder = Mock.Of<IConditionExpressionBuilder>();
             Mock.Get(conditionExpressionBuilder)
                 .Setup(x => x.BuildConditionExpression(It.IsAny<IExpressionBlockBuilder>(), It.IsAny<BuildConditionExpressionArgs>()))
-                .Callback<IExpressionBlockBuilder, BuildConditionExpressionArgs>((b, args) =>
+                .Callback<IExpressionBlockBuilder, BuildConditionExpressionArgs>((_, args) =>
                 {
                     actualLeftExpression = args.LeftHandOperand;
                     actualRightExpression = args.RightHandOperand;
@@ -89,10 +89,10 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             FluentActions.Invoking(() => compiledLambdaExpression = lambdaExpression.Compile())
                 .Should()
                 .NotThrow("expression should be compilable");
-            FluentActions.Invoking(() => compiledLambdaExpression.Invoke(null, new string[] { "dummy" }))
+            FluentActions.Invoking(() => compiledLambdaExpression.Invoke(null, new[] { "dummy" }))
                 .Should()
                 .NotThrow("compiled expression should be executable");
-            FluentActions.Invoking(() => compiledLambdaExpression.Invoke("abc", new string[] { "dummy" }))
+            FluentActions.Invoking(() => compiledLambdaExpression.Invoke("abc", new[] { "dummy" }))
                 .Should()
                 .NotThrow("compiled expression should be able to deal with null left operand");
             actualLeftExpression.Should().NotBeNull();

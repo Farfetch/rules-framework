@@ -175,15 +175,15 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
                 ReturnType = typeof(int),
             };
 
-            var testExpressions = new List<Expression>()
+            var testExpressions = new List<Expression>
             {
                 Expression.Constant(1),
             };
-            var testVariables = new Dictionary<string, ParameterExpression>()
+            var testVariables = new Dictionary<string, ParameterExpression>
             {
                 { "result", Expression.Variable(typeof(int), "result") },
             };
-            var testLabelTargets = new Dictionary<string, LabelTarget>()
+            var testLabelTargets = new Dictionary<string, LabelTarget>
             {
                 { "Return", Expression.Label(typeof(int)) },
             };

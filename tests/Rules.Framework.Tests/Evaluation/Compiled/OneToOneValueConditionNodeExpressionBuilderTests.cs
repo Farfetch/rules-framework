@@ -34,7 +34,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var conditionExpressionBuilder = Mock.Of<IConditionExpressionBuilder>();
             Mock.Get(conditionExpressionBuilder)
                 .Setup(x => x.BuildConditionExpression(It.IsAny<IExpressionBlockBuilder>(), It.IsAny<BuildConditionExpressionArgs>()))
-                .Callback<IExpressionBlockBuilder, BuildConditionExpressionArgs>((b, args) =>
+                .Callback<IExpressionBlockBuilder, BuildConditionExpressionArgs>((_, args) =>
                 {
                     actualLeftExpression = args.LeftHandOperand;
                     actualRightExpression = args.RightHandOperand;

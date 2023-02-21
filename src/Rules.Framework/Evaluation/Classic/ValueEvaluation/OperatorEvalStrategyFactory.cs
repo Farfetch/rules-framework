@@ -10,7 +10,7 @@ namespace Rules.Framework.Evaluation.Classic.ValueEvaluation
 
         public OperatorEvalStrategyFactory()
         {
-            this.strategies = new Dictionary<Operators, object>()
+            this.strategies = new Dictionary<Operators, object>
             {
                 { Operators.Equal, new EqualOperatorEvalStrategy() },
                 { Operators.NotEqual, new NotEqualOperatorEvalStrategy() },

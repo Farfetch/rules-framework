@@ -8,7 +8,7 @@ namespace Rules.Framework.Tests.Evaluation.Classic.ValueEvaluation
 
     public class GreaterThanOrEqualOperatorEvalStrategyTests
     {
-        public static IEnumerable<object[]> UnsupportedOperandTypesCombinations = new[]
+        public static IEnumerable<object[]> UnsupportedOperandTypesCombinations => new[]
         {
             new[] { 1, new object() },
             new[] { new object(), 1 }

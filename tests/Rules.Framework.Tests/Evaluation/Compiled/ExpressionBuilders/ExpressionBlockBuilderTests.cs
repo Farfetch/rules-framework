@@ -902,7 +902,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
         {
             // Arrange
             var resultExpression = Expression.Variable(typeof(bool), "result");
-            var testExpression = Expression.Equal(Expression.Variable(typeof(int), "x"), Expression.Constant(0, typeof(int)));
             var thenExpression = Expression.Assign(resultExpression, Expression.Constant(true));
 
             var expressionConfiguration = new ExpressionConfiguration();
@@ -924,7 +923,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
             // Arrange
             var resultExpression = Expression.Variable(typeof(bool), "result");
             var testExpression = Expression.Equal(Expression.Variable(typeof(int), "x"), Expression.Constant(0, typeof(int)));
-            var thenExpression = Expression.Assign(resultExpression, Expression.Constant(true));
 
             var expressionConfiguration = new ExpressionConfiguration();
             var expressionBuilderFactory = Mock.Of<IExpressionBuilderFactory>();
@@ -1220,7 +1218,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
         public void Return_GivenNullReturnValueExpression_ThrowsArgumentNullException()
         {
             // Arrange
-            var expressionConfiguration = new ExpressionConfiguration()
+            var expressionConfiguration = new ExpressionConfiguration
             {
                 ReturnLabelTarget = Expression.Label(typeof(string)),
             };
@@ -1242,7 +1240,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
             // Arrange
             var returnValueExpression = Expression.Constant("testValue");
 
-            var expressionConfiguration = new ExpressionConfiguration()
+            var expressionConfiguration = new ExpressionConfiguration
             {
                 ReturnLabelTarget = Expression.Label(typeof(string)),
             };

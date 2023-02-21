@@ -19,7 +19,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Arrange
             var ruleResult = CreateTestRule();
             var expectedRule = ruleResult.Rule;
-            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (evaluationContext) => true;
+            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (_) => true;
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.CompiledDelegateKey] = expectedExpression;
             var conditions = new Dictionary<ConditionType, object>();
             var evaluationOptions = new EvaluationOptions
@@ -50,7 +50,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Arrange
             var ruleResult = CreateTestRule();
             var expectedRule = ruleResult.Rule;
-            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (evaluationContext) => true;
+            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (_) => true;
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.CompiledDelegateKey] = expectedExpression;
             var conditions = new Dictionary<ConditionType, object>();
             var evaluationOptions = new EvaluationOptions
@@ -81,7 +81,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Arrange
             var ruleResult = CreateTestRule();
             var expectedRule = ruleResult.Rule;
-            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (evaluationContext) => true;
+            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (_) => true;
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.CompiledDelegateKey] = expectedExpression;
             var conditions = new Dictionary<ConditionType, object>();
             var evaluationOptions = new EvaluationOptions

@@ -5,7 +5,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
-    internal partial class Benchmark3Data
+    internal partial class Benchmark3Data : IBenchmarkData<ContentTypes, ConditionTypes>
     {
         private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetStraightRules()
         {

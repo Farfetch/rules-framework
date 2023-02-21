@@ -32,7 +32,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
                     {
                         DataTypeConfiguration = DataTypeConfiguration.Create(DataTypes.Integer, typeof(int), 0),
                         LeftHandOperand = builder.GetParameter("leftHand"),
-                        RightHandOperand = builder.Constant<IEnumerable<int>>(new int[] { 1, 2, 3 }),
+                        RightHandOperand = builder.Constant<IEnumerable<int>>(new[] { 1, 2, 3 }),
                     };
                     var conditionExpression = inOneToManyConditionExpressionBuilder
                         .BuildConditionExpression(builder, args);
