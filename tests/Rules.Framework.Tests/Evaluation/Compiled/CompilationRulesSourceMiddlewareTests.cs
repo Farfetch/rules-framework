@@ -2,6 +2,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
     using FluentAssertions;
@@ -293,10 +294,12 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            expectedRule.RootCondition.Properties.Should().HaveCount(2);
-            expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
+            actualRules.Should().HaveCount(1);
+            var actualRule = actualRules.First();
+            actualRule.RootCondition.Properties.Should().HaveCount(2);
+            actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
                 .WhoseValue.Should().Be(true);
-            expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
+            actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
@@ -444,10 +447,12 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            expectedRule.RootCondition.Properties.Should().HaveCount(2);
-            expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
+            actualRules.Should().HaveCount(1);
+            var actualRule = actualRules.First();
+            actualRule.RootCondition.Properties.Should().HaveCount(2);
+            actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
                 .WhoseValue.Should().Be(true);
-            expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
+            actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 

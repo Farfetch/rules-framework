@@ -13,6 +13,10 @@ namespace Rules.Framework.Evaluation.Compiled
     {
         protected static readonly MethodInfo multiplicityEvaluateMethod = typeof(MultiplicityEvaluator)
             .GetMethod(nameof(MultiplicityEvaluator.Evaluate));
+
+        protected RuleConditionsExpressionBuilder()
+        {
+        }
     }
 
     internal sealed class RuleConditionsExpressionBuilder<TConditionType> : RuleConditionsExpressionBuilder, IRuleConditionsExpressionBuilder<TConditionType>
