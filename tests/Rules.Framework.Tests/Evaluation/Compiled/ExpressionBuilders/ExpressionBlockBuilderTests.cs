@@ -921,7 +921,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
         public void If_GivenTestExpressionAndNullThenExpression_ThrowsArgumentNullException()
         {
             // Arrange
-            var resultExpression = Expression.Variable(typeof(bool), "result");
             var testExpression = Expression.Equal(Expression.Variable(typeof(int), "x"), Expression.Constant(0, typeof(int)));
 
             var expressionConfiguration = new ExpressionConfiguration();
