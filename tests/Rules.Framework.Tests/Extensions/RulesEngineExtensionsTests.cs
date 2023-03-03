@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Extensions
     using Rules.Framework.Extension;
     using Rules.Framework.Generics;
     using Rules.Framework.Source;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Rules.Framework.Validation;
     using Xunit;
 

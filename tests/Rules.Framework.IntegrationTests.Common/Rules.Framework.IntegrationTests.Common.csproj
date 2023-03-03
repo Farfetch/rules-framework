@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Scenarios\Scenario1\rules-framework-tests.body-mass-index.datasource.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

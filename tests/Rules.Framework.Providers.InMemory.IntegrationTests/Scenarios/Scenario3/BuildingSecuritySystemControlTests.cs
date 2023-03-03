@@ -1,16 +1,31 @@
-namespace Rules.Framework.IntegrationTests.Tests.Scenario3
+namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario3
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.Extensions.DependencyInjection;
+    using Newtonsoft.Json;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
+    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
-    public class BuildingSecuritySystemControlTests
+    public class BuildingSecuritySystemControlTests : BaseScenarioTests
     {
+        private readonly InMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions> inMemoryRulesStorage;
+
+        public BuildingSecuritySystemControlTests()
+        {
+            this.inMemoryRulesStorage = new InMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions>();
+
+            this.LoadInMemoryStorage<SecuritySystemActionables, SecuritySystemConditions, SecuritySystemAction>(
+                DataSourceFilePath,
+                this.inMemoryRulesStorage,
+                (c) => JsonConvert.DeserializeObject<SecuritySystemAction>((string)c));
+        }
+
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario3/rules-framework-tests.security-system-actionables.json";
 
         [Fact]
@@ -39,13 +54,14 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
+            IServiceCollection serviceDescriptors = new ServiceCollection();
+            serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
+            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
 
             RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Build();
 
             // Act
@@ -88,13 +104,14 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
+            IServiceCollection serviceDescriptors = new ServiceCollection();
+            serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
+            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
 
             RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Build();
 
             // Act
@@ -136,13 +153,14 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
+            IServiceCollection serviceDescriptors = new ServiceCollection();
+            serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
+            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
 
             RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Build();
 
             // Act

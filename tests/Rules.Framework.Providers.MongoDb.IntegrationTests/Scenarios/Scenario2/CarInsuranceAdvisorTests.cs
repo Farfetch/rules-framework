@@ -1,4 +1,4 @@
-namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
+namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
 {
     using System;
     using System.Collections.Generic;
@@ -34,7 +34,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2
             this.mongoDbProviderSettings = CreateProviderSettings();
 
             Stream? rulesFile = Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario2.rules-framework-tests.car-insurance-advisor.json");
+                .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2.rules-framework-tests.car-insurance-advisor.json");
 
             IEnumerable<RuleDataModel> rules;
             using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))

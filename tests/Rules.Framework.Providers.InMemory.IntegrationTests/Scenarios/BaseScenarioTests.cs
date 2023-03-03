@@ -1,4 +1,4 @@
-namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests
+namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
 {
     using System;
     using System.Collections.Generic;

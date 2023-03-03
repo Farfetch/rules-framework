@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Evaluation
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class ConditionsTreeAnalyzerTests

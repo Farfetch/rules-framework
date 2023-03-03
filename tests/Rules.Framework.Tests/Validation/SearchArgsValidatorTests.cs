@@ -4,7 +4,7 @@ namespace Rules.Framework.Tests.Validation
     using System.Linq;
     using FluentAssertions;
     using FluentValidation.Results;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Rules.Framework.Validation;
     using Xunit;
 

@@ -1,17 +1,16 @@
-namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario5
+namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario5
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using MongoDB.Driver;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario5;
-    using Rules.Framework.Providers.MongoDb;
+    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
-    public sealed class BestServerTests : IDisposable
+    public class BestServerTests
     {
         public static readonly IEnumerable<object[]> DataTest = new List<object[]>
         {
@@ -71,15 +70,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario5
             }
         };
 
-        private readonly IMongoClient mongoClient;
-        private readonly MongoDbProviderSettings mongoDbProviderSettings;
-
-        public BestServerTests()
-        {
-            this.mongoClient = CreateMongoClient();
-            this.mongoDbProviderSettings = CreateProviderSettings();
-        }
-
         [Theory]
         [MemberData(nameof(DataTest))]
         public async Task BestServer_InEvaluation(IEnumerable<Condition<BestServerConditions>> conditions, string expectedRuleName)
@@ -88,7 +78,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario5
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<BestServerConfigurations>()
                 .WithConditionType<BestServerConditions>()
-                .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
+                .SetInMemoryDataSource()
                 .Build();
 
             // Act 1 - Create rule with "in" operator
@@ -164,19 +154,5 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Tests.Scenario5
             actual.Should().NotBeNull();
             actual.Name.Should().BeEquivalentTo(expectedRuleName);
         }
-
-        public void Dispose()
-        {
-            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-        }
-
-        private static MongoClient CreateMongoClient() => new($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
-
-        private static MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
-        {
-            DatabaseName = "rules-framework-tests",
-            RulesCollectionName = "best-server"
-        };
     }
 }
