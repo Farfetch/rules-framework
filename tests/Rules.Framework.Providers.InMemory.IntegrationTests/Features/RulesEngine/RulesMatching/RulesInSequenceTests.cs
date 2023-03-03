@@ -63,14 +63,14 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
         [Theory]
         [MemberData(nameof(TestCase))]
-        public async Task PackagingCostRules_GetRulesSpecifications_Match(
+        public async Task RulesEngine_MatchOneAsync_RulesInSequence(
            string expectedRuleName,
            DateTime matchDate,
            Condition<ConditionType>[] expectedConditions,
            string expectedValue)
         {
             // Act
-            var actualMatch = await MatchOneAsync(matchDate, expectedConditions).ConfigureAwait(false);
+            var actualMatch = await this.MatchOneAsync(matchDate, expectedConditions).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(expectedRuleName, actualMatch.Name);

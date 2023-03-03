@@ -26,8 +26,6 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesMatc
 
         protected RulesEngine<ContentType, ConditionType> RulesEngine { get; }
 
-        //protected abstract IEnumerable<RuleSpecification> RuleSpecifications { get; }
-
         protected void AddRules(IEnumerable<RuleSpecification> ruleSpecifications)
         {
             foreach (var ruleSpecification in ruleSpecifications)
