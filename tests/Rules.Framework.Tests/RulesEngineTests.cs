@@ -56,7 +56,7 @@ namespace Rules.Framework.Tests
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            rulesEngineOptions.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+            rulesEngineOptions.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
 
             RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
 
@@ -284,7 +284,7 @@ namespace Rules.Framework.Tests
             IValidatorProvider validatorProvider = Mock.Of<IValidatorProvider>();
             RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            rulesEngineOptions.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+            rulesEngineOptions.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
 
             RulesEngine<ContentType, ConditionType> sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
 

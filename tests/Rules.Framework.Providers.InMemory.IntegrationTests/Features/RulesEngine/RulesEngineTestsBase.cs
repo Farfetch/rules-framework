@@ -1,4 +1,4 @@
-namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesMatching
+namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngine
 {
     using System;
     using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesMatc
         {
             foreach (var ruleSpecification in ruleSpecifications)
             {
-                RulesEngine.AddRuleAsync(
+                this.RulesEngine.AddRuleAsync(
                     ruleSpecification.RuleBuilderResult.Rule,
                     ruleSpecification.RuleAddPriorityOption)
                     .ConfigureAwait(false)
@@ -42,9 +42,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesMatc
         protected async Task<Rule<ContentType, ConditionType>> MatchOneAsync(
             DateTime expectedMatchDate,
             Condition<ConditionType>[] expectedConditions) => await RulesEngine.MatchOneAsync(
-                  TestContentType,
-                  expectedMatchDate,
-                  expectedConditions)
-              .ConfigureAwait(false);
+                TestContentType,
+                expectedMatchDate,
+                expectedConditions)
+            .ConfigureAwait(false);
     }
 }

@@ -15,6 +15,28 @@ namespace Rules.Framework
         }
 
         /// <summary>
+        /// Gets the default values for each of the supported data types.
+        /// </summary>
+        public IDictionary<DataTypes, object> DataTypeDefaults { get; }
+
+        /// <summary>
+        /// <para>
+        /// Gets or sets the rules engine behavior when no condition with a specific type is
+        /// provided to rules engine to match with a rule's condition with the same type.
+        /// </para>
+        /// <para>
+        /// e.g. a rule with a condition of type "Age" is under evaluation but no condition of type
+        /// "Age" was supplied.
+        /// </para>
+        /// </summary>
+        public MissingConditionBehaviors MissingConditionBehavior { get; set; }
+
+        /// <summary>
+        /// Gets or sets the priority criteria to untie when multiples rules are matched.
+        /// </summary>
+        public PriorityCriterias PriorityCriteria { get; set; }
+
+        /// <summary>
         /// Creates a new set of rules engine options with framework-configured defaults.
         /// </summary>
         /// <remarks>
@@ -31,7 +53,7 @@ namespace Rules.Framework
             RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
             {
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                PriotityCriteria = PriorityCriterias.TopmostRuleWins
+                PriorityCriteria = PriorityCriterias.TopmostRuleWins
             };
 
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);
@@ -46,21 +68,5 @@ namespace Rules.Framework
 
             return rulesEngineOptions;
         }
-
-        /// <summary>
-        /// Gets the default values for each of the supported data types.
-        /// </summary>
-        public IDictionary<DataTypes, object> DataTypeDefaults { get; }
-
-        /// <summary>
-        /// <para>Gets or sets the rules engine behavior when no condition with a specific type is provided to rules engine to match with a rule's condition with the same type.</para>
-        /// <para>e.g. a rule with a condition of type "Age" is under evaluation but no condition of type "Age" was supplied.</para>
-        /// </summary>
-        public MissingConditionBehaviors MissingConditionBehavior { get; set; }
-
-        /// <summary>
-        /// Gets or sets the priority criteria to untie when multiples rules are matched.
-        /// </summary>
-        public PriorityCriterias PriotityCriteria { get; set; }
     }
 }

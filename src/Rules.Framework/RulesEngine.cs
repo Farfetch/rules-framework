@@ -74,7 +74,7 @@ namespace Rules.Framework
         /// <returns>Rules engine priority criterias</returns>
         public PriorityCriterias GetPriorityCriteria()
         {
-            return this.rulesEngineOptions.PriotityCriteria;
+            return this.rulesEngineOptions.PriorityCriteria;
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace Rules.Framework
 
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
-            return this.rulesEngineOptions.PriotityCriteria == PriorityCriterias.BottommostRuleWins
+            return this.rulesEngineOptions.PriorityCriteria == PriorityCriterias.BottommostRuleWins
                 ? rules.OrderByDescending(r => r.Priority).First()
                 : rules.OrderBy(r => r.Priority).First();
         }
