@@ -1,11 +1,10 @@
-namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngine.RulesMatching
+namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngine.RulesMatching
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Rules.Framework.Builder;
     using Rules.Framework.IntegrationTests.Common.Features;
-    using Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngine;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
 

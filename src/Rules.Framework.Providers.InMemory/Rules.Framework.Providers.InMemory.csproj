@@ -38,4 +38,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Rules.Framework" Version="1.7.5" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
+  </ItemGroup>
 </Project>

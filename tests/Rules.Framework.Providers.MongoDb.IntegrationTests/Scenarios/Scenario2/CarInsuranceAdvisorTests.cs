@@ -94,7 +94,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                    reo.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 
@@ -133,7 +133,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(reo =>
                 {
-                    reo.PriotityCriteria = PriorityCriterias.BottommostRuleWins;
+                    reo.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
 

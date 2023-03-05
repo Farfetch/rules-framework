@@ -128,8 +128,8 @@ namespace Rules.Framework
                 MatchMode = MatchModes.Exact,
             };
 
-            var dateBegin = matchDateTime.Date;
-            var dateEnd = matchDateTime.Date.AddDays(1);
+            var dateBegin = matchDateTime;
+            var dateEnd = matchDateTime;
 
             return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
         }
@@ -202,11 +202,6 @@ namespace Rules.Framework
                 ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
                 MatchMode = MatchModes.Search,
             };
-
-            if (dateBegin == dateEnd)
-            {
-                dateEnd = dateBegin.AddDays(1);
-            }
 
             return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions).ConfigureAwait(false);
         }
