@@ -558,6 +558,7 @@ typings/
 # Specific ones added
 coverage-outputs/**
 .env
+tmp/**
 
 ### Rules Framework Web UI ###
 !src/Rules.Framework.WebUI/node_modules/

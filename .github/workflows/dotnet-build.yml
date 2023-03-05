@@ -36,3 +36,58 @@ jobs:
         reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:Cobertura
         rm -rfv ../../coverage-outputs/*/
         ls -la ../../coverage-outputs
+
+  benchmarks:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Determine folders
+      id: determine-folders
+      run: |
+        HEAD_FOLDER=$(pwd)
+        HEAD_BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks/head
+
+        echo "head_folder=$HEAD_FOLDER" >> $GITHUB_OUTPUT
+        echo "head_benchmarks_folder=$HEAD_BENCH_FOLDER" >> $GITHUB_OUTPUT
+
+    - name: Git Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{github.event.pull_request.head.ref}}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
+
+    - name: Create benchmarks results folder (HEAD)
+      run: mkdir -p ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
+
+    - name: Restore dependencies (HEAD)
+      run: dotnet restore rules-framework.sln
+
+    - name: Build benchmarks (HEAD)
+      run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj --framework net6.0
+
+    - name: Run benchmarks (HEAD)
+      run: sudo dotnet run --project tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -c Release --framework net6.0 -- -a "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts"
+
+    - name: Determine results file (HEAD)
+      id: determine-results-file
+      run: |
+        cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
+        ls -lRA
+        sudo chmod -R 777 artifacts
+        MD_FILE=$(find artifacts/results -name '*.md')
+        echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$MD_FILE" >> $GITHUB_OUTPUT
+
+    - name: Find comment - report results
+      uses: peter-evans/find-comment@v2
+      id: find-comment
+      with:
+        issue-number: ${{ github.event.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Benchmark Results Report
+
+    - name: Create or update comment - report results
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        comment-id: ${{ steps.find-comment.outputs.comment-id }}
+        issue-number: ${{ github.event.number }}
+        body-file: ${{ steps.determine-results-file.outputs.file }}
+        edit-mode: replace
