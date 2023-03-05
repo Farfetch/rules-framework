@@ -31,7 +31,7 @@ namespace Rules.Framework
             RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
             {
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                PriotityCriteria = PriorityCriterias.TopmostRuleWins
+                PriorityCriteria = PriorityCriterias.TopmostRuleWins
             };
 
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);
@@ -61,6 +61,6 @@ namespace Rules.Framework
         /// <summary>
         /// Gets or sets the priority criteria to untie when multiples rules are matched.
         /// </summary>
-        public PriorityCriterias PriotityCriteria { get; set; }
+        public PriorityCriterias PriorityCriteria { get; set; }
     }
 }

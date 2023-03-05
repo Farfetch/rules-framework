@@ -22,6 +22,6 @@ namespace Rules.Framework
         /// <summary>
         /// Gets the priority criteria to untie when multiples rules are matched.
         /// </summary>
-        public PriorityCriterias PriotityCriteria { get; }
+        public PriorityCriterias PriorityCriteria { get; }
     }
 }

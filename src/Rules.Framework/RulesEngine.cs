@@ -74,7 +74,7 @@ namespace Rules.Framework
         /// <returns>Rules engine priority criterias</returns>
         public PriorityCriterias GetPriorityCriteria()
         {
-            return this.rulesEngineOptions.PriotityCriteria;
+            return this.rulesEngineOptions.PriorityCriteria;
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Rules.Framework
             };
 
             var dateBegin = matchDateTime.Date;
-            var dateEnd = matchDateTime.Date.AddDays(1);
+            var dateEnd = matchDateTime.Date;
 
             return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
         }
@@ -202,11 +202,6 @@ namespace Rules.Framework
                 ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
                 MatchMode = MatchModes.Search,
             };
-
-            if (dateBegin == dateEnd)
-            {
-                dateEnd = dateBegin.AddDays(1);
-            }
 
             return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions).ConfigureAwait(false);
         }
@@ -372,7 +367,7 @@ namespace Rules.Framework
 
         private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
         {
-            return this.rulesEngineOptions.PriotityCriteria == PriorityCriterias.BottommostRuleWins
+            return this.rulesEngineOptions.PriorityCriteria == PriorityCriterias.BottommostRuleWins
                 ? rules.OrderByDescending(r => r.Priority).First()
                 : rules.OrderBy(r => r.Priority).First();
         }
