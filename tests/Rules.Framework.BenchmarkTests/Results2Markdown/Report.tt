@@ -1,0 +1,77 @@
+<#@ template language="C#" #>
+<#@ output extension=".md" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="Newtonsoft.Json" #>
+<#@ parameter name="ResultsFile" type="string" #>
+<#
+    using var streamReader = File.OpenText(ResultsFile);
+    var rawJsonText = streamReader.ReadToEnd();
+    dynamic results = JsonConvert.DeserializeObject(rawJsonText);
+    dynamic hostEnvInfo = results.HostEnvironmentInfo;
+
+    dynamic baselines = ((IEnumerable<dynamic>)results.Benchmarks).Where(x => x.Baseline == "Yes");
+    dynamic nonBaselines = ((IEnumerable<dynamic>)results.Benchmarks).Where(x => x.Baseline == "No");
+#>
+# Benchmark Results Report
+
+Date & Time: <#= DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ssZ") #>
+
+## Environment
+
+><#= hostEnvInfo.BenchmarkDotNetCaption #> Version=<#= hostEnvInfo.BenchmarkDotNetVersion #>
+>
+>Processor=<#= hostEnvInfo.ProcessorName #>, <#= hostEnvInfo.PhysicalCoreCount #> physical cores, <#= hostEnvInfo.LogicalCoreCount #> logical cores
+>
+>Architecture=<#= hostEnvInfo.Architecture #>, Runtime=<#= hostEnvInfo.RuntimeVersion #>, Configuration=<#= hostEnvInfo.Configuration #>
+>
+>.NET CLI Version=<#= hostEnvInfo.DotNetCliVersion #>
+
+## Statistics
+
+| Name | Parameters | Mean | Std Error | Branch Instructions/Op | Branch Mispredictions/Op | GC Gen0 | Allocated Memory |
+| ---- | ---------- | ---- | --------- | ---------------------- | ------------------------ | ------- | ---------------- |
+<# foreach (dynamic benchmark in results.Benchmarks)
+{
+    var name = $"{benchmark.Type}.{benchmark.Method}";
+    var parameters = benchmark.Parameters;
+    var mean = Math.Round(Convert.ToDecimal(benchmark.Statistics.Mean), 2);
+    var stdError = Math.Round(Convert.ToDecimal(benchmark.Statistics.StandardError), 2);
+    var metrics = benchmark.Metrics as IEnumerable<dynamic>;
+    var branchInstructions = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "BranchInstructions")?.Value ?? 0), 0);
+    var branchMispredictions = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "BranchMispredictions")?.Value ?? 0), 0);
+    var gen0 = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "Gen0Collects")?.Value ?? 0), 0);
+    var allocatedMemory = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "Allocated Memory")?.Value ?? 0), 2);
+#>
+| <#= name #> | <#= parameters #> | <#= mean #> | <#= stdError #> | <#= branchInstructions #> | <#= branchMispredictions #> | <#= gen0 #> | <#= allocatedMemory #> |
+<#} #>
+
+## Baseline Comparison
+
+| Name | Baseline | Compare To | Mean [Baseline] | Mean [Compare To] | Mean [Compare %] | Allocated Memory [Baseline] | Allocated Memory [Compare To] | Allocated Memory [Compare %] |
+| ---- | -------- | ---------- | --------------- | ----------------- | ---------------- | --------------------------- | ----------------------------- | ---------------------------- |
+<#
+foreach (dynamic baseline in baselines)
+{
+    var key = $"{baseline.Type}.{baseline.Method}";
+    var nonBaselinesGroup = ((IEnumerable<dynamic>)nonBaselines).Where(x => $"{x.Type}.{x.Method}" == key);
+    foreach (dynamic nonBaseline in nonBaselinesGroup)
+    {
+        var name = key;
+        var baselineParameters = baseline.Parameters;
+        var compareToParameters = nonBaseline.Parameters;
+        var baselineMean = Math.Round(Convert.ToDecimal(baseline.Statistics.Mean), 2);
+        var compareToMean = Math.Round(Convert.ToDecimal(nonBaseline.Statistics.Mean), 2);
+        var meanCompareRate = Math.Round(Convert.ToDecimal((baselineMean - compareToMean) / baselineMean * 100), 2);
+        var baselineMetrics = baseline.Metrics as IEnumerable<dynamic>;
+        var compareToMetrics = nonBaseline.Metrics as IEnumerable<dynamic>;
+        var baselineAllocatedMemory = Math.Round(Convert.ToDecimal(baselineMetrics.FirstOrDefault(x => x.Descriptor.Id == "Allocated Memory")?.Value ?? 0), 2);
+        var compareToAllocatedMemory = Math.Round(Convert.ToDecimal(compareToMetrics.FirstOrDefault(x => x.Descriptor.Id == "Allocated Memory")?.Value ?? 0), 2);
+        var allocatedMemoryCompareRate = Math.Round(Convert.ToDecimal((baselineAllocatedMemory - compareToAllocatedMemory) / baselineAllocatedMemory * 100), 2);
+#>
+| <#= name #> | <#= baselineParameters #> | <#= compareToParameters #> | <#= baselineMean #> | <#= compareToMean #> | <#= meanCompareRate #> % | <#= baselineAllocatedMemory #> | <#= compareToAllocatedMemory #> | <#= allocatedMemoryCompareRate #> % |
+<#
+    }
+}
+#>
