@@ -25,7 +25,14 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             this.AddRules(this.CreateTestRules());
         }
 
-        public static IEnumerable<object[]> TestCases =>
+        public static IEnumerable<object[]> FailureCases =>
+           new List<object[]>
+           {
+                new object[] { rule1StartDate.AddMilliseconds(-1) }, // before 1st rule
+                new object[] { rule2EndDate }, // at rules end
+           };
+
+        public static IEnumerable<object[]> SuccessCases =>
             new List<object[]>
             {
                 new object[] { rule1StartDate, rule1Name, rule1Value }, // 1st rule
@@ -34,11 +41,11 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                 new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value }, // 2nd rule
             };
 
-        [Fact]
-        public async Task RulesEngine_MatchOneAsync_WithDataWhenRuleEnds_Failure()
+        [Theory]
+        [MemberData(nameof(FailureCases))]
+        public async Task RulesEngine_MatchOneAsync_WithDataWhenRuleEnds_Failure(DateTime matchDate)
         {
-            // Arrange
-            var matchDate = rule2EndDate;
+            // Arranges
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
 
             // Act
@@ -49,7 +56,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         }
 
         [Theory]
-        [MemberData(nameof(TestCases))]
+        [MemberData(nameof(SuccessCases))]
         public async Task RulesEngine_MatchOneAsync_WithRulesInSequence_ReturnsCorrectRule(DateTime matchDate, string expectedName, string expectedValue)
         {
             // Arrange
