@@ -1,5 +1,6 @@
 namespace Rules.Framework
 {
+    using System;
     using System.Collections.Generic;
     using Rules.Framework.Core;
 
@@ -18,6 +19,12 @@ namespace Rules.Framework
         /// rules engine to match with a rule's condition with the same type.
         /// </summary>
         public MissingConditionBehaviors MissingConditionBehavior { get; }
+
+        /// <summary>
+        /// Gets the priority criteria to untie when multiples rules are matched.
+        /// </summary>
+        [Obsolete("This property has a typo and has been replaced by PriorityCriteria.")]
+        public PriorityCriterias PriotityCriteria { get; }
 
         /// <summary>
         /// Gets the priority criteria to untie when multiples rules are matched.
