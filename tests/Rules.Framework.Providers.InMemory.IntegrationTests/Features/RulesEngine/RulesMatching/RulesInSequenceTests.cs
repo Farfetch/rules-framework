@@ -12,12 +12,12 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     public class RulesInSequenceTests : RulesEngineTestsBase
     {
         private static readonly string rule1Name = "DummyRule1";
-        private static readonly DateTime rule1StartDate = new DateTime(2020, 01, 01);
-        private static readonly string rule1Value = "DummyRule1 Value";
-        private static readonly DateTime rule2EndDate = new DateTime(2022, 01, 01);
         private static readonly string rule2Name = "DummyRule2";
+        private static readonly string rule1Value = "DummyRule1 Value";
         private static readonly string rule2Value = "DummyRule2 Value";
-        private static readonly DateTime ruleChangeDate = new DateTime(2021, 01, 01);
+        private static readonly DateTime rule1StartDate = new DateTime(2020, 01, 01);
+        private static readonly DateTime ruleChangeDate = new DateTime(2020, 07, 01, 14, 30, 00);
+        private static readonly DateTime rule2EndDate = new DateTime(2021, 02, 01);
         private static readonly ContentType TestContentType = ContentType.ContentType1;
 
         public RulesInSequenceTests() : base(TestContentType)
