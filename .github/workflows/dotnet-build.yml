@@ -148,15 +148,6 @@ jobs:
     - name: Clear Nuget locals
       run: dotnet nuget locals all --clear
 
-    - name: Restore dependencies w/ Rules.Framework project reference
-      run: dotnet restore
-
-    - name: Build w/ Rules.Framework project reference
-      run: dotnet build --no-restore -c Release
-
-    - name: Test w/ Rules.Framework project reference (no coverage)
-      run: dotnet test --no-build --verbosity normal -m:1 -c Release
-
     - name: Delete build tag if exists
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
       continue-on-error: true
