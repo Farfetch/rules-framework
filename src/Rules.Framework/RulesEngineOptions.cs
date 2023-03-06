@@ -19,22 +19,7 @@ namespace Rules.Framework
         /// </summary>
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }
 
-        /// <summary>
-        /// <para>
-        /// Gets or sets the rules engine behavior when no condition with a specific type is
-        /// provided to rules engine to match with a rule's condition with the same type.
-        /// </para>
-        /// <para>
-        /// e.g. a rule with a condition of type "Age" is under evaluation but no condition of type
-        /// "Age" was supplied.
-        /// </para>
-        /// </summary>
-        public MissingConditionBehaviors MissingConditionBehavior { get; set; }
 
-        /// <summary>
-        /// Gets or sets the priority criteria to untie when multiples rules are matched.
-        /// </summary>
-        public PriorityCriterias PriorityCriteria { get; set; }
 
         /// <summary>
         /// Creates a new set of rules engine options with framework-configured defaults.
@@ -68,5 +53,22 @@ namespace Rules.Framework
 
             return rulesEngineOptions;
         }
+
+        /// <summary>
+        /// <para>
+        /// Gets or sets the rules engine behavior when no condition with a specific type is
+        /// provided to rules engine to match with a rule's condition with the same type.
+        /// </para>
+        /// <para>
+        /// e.g. a rule with a condition of type "Age" is under evaluation but no condition of type
+        /// "Age" was supplied.
+        /// </para>
+        /// </summary>
+        public MissingConditionBehaviors MissingConditionBehavior { get; set; }
+
+        /// <summary>
+        /// Gets or sets the priority criteria to untie when multiples rules are matched.
+        /// </summary>
+        public PriorityCriterias PriorityCriteria { get; set; }
     }
 }
