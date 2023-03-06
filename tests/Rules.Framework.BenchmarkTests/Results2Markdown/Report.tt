@@ -9,14 +9,11 @@
     using var streamReader = File.OpenText(ResultsFile);
     var rawJsonText = streamReader.ReadToEnd();
     dynamic results = JsonConvert.DeserializeObject(rawJsonText);
-    dynamic hostEnvInfo = results.HostEnvironmentInfo;
-
-    dynamic baselines = ((IEnumerable<dynamic>)results.Benchmarks).Where(x => x.Baseline == "Yes");
-    dynamic nonBaselines = ((IEnumerable<dynamic>)results.Benchmarks).Where(x => x.Baseline == "No");
+    dynamic hostEnvInfo = results.Environment;
 #>
 # Benchmark Results Report
 
-Date & Time: <#= DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ssZ") #>
+Date & Time: <#= results.Date.ToString("yyyy-MM-dd HH:mm:ss") #>
 
 ## Environment
 
@@ -24,54 +21,46 @@ Date & Time: <#= DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ssZ") #>
 >
 >Processor=<#= hostEnvInfo.ProcessorName #>, <#= hostEnvInfo.PhysicalCoreCount #> physical cores, <#= hostEnvInfo.LogicalCoreCount #> logical cores
 >
->Architecture=<#= hostEnvInfo.Architecture #>, Runtime=<#= hostEnvInfo.RuntimeVersion #>, Configuration=<#= hostEnvInfo.Configuration #>
+>Architecture=<#= hostEnvInfo.Architecture #>, Runtime=<#= hostEnvInfo.DotNetRuntimeVersion #>, Configuration=<#= hostEnvInfo.BuildConfiguration #>
 >
 >.NET CLI Version=<#= hostEnvInfo.DotNetCliVersion #>
 
 ## Statistics
 
-| Name | Parameters | Mean | Std Error | Branch Instructions/Op | Branch Mispredictions/Op | GC Gen0 | Allocated Memory |
-| ---- | ---------- | ---- | --------- | ---------------------- | ------------------------ | ------- | ---------------- |
-<# foreach (dynamic benchmark in results.Benchmarks)
+| Name | Parameters | Mean Time Taken | Std Error | Branch<br/>Instructions/Op | Branch<br/>Mispredictions/Op | GC Gen0 | Allocated Memory |
+| ---- | ---------- | --------------- | --------- | -------------------------- | ---------------------------- | ------- | ---------------- |
+<# foreach (dynamic statisticsItem in results.Statistics)
 {
-    var name = $"{benchmark.Type}.{benchmark.Method}";
-    var parameters = benchmark.Parameters;
-    var mean = Math.Round(Convert.ToDecimal(benchmark.Statistics.Mean), 2);
-    var stdError = Math.Round(Convert.ToDecimal(benchmark.Statistics.StandardError), 2);
-    var metrics = benchmark.Metrics as IEnumerable<dynamic>;
-    var branchInstructions = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "BranchInstructions")?.Value ?? 0), 0);
-    var branchMispredictions = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "BranchMispredictions")?.Value ?? 0), 0);
-    var gen0 = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "Gen0Collects")?.Value ?? 0), 0);
-    var allocatedMemory = Math.Round(Convert.ToDecimal(metrics.FirstOrDefault(x => x.Descriptor.Id == "Allocated Memory")?.Value ?? 0), 2);
+    var name = statisticsItem.Key;
+    var parameters = statisticsItem.Parameters;
+    var mean = $"{statisticsItem.MeanTimeTaken.Value.ToString((string)statisticsItem.MeanTimeTaken.Format)} {statisticsItem.MeanTimeTaken.Unit}";
+    var stdError = $"{statisticsItem.StandardError.Value.ToString((string)statisticsItem.StandardError.Format)} {statisticsItem.StandardError.Unit}";
+    var branchInstructionsPerOp = statisticsItem.BranchInstructionsPerOp.Value.ToString((string)statisticsItem.BranchInstructionsPerOp.Format);
+    var branchMispredictionsPerOp = statisticsItem.BranchMispredictionsPerOp.Value.ToString((string)statisticsItem.BranchMispredictionsPerOp.Format);
+    var gen0Collects = statisticsItem.Gen0Collects.Value.ToString((string)statisticsItem.Gen0Collects.Format);
+    var allocatedMemory = $"{statisticsItem.AllocatedMemory.Value.ToString((string)statisticsItem.AllocatedMemory.Format)} {statisticsItem.AllocatedMemory.Unit}";
 #>
-| <#= name #> | <#= parameters #> | <#= mean #> | <#= stdError #> | <#= branchInstructions #> | <#= branchMispredictions #> | <#= gen0 #> | <#= allocatedMemory #> |
+| <#= name #> | <#= parameters #> | <#= mean #> | <#= stdError #> | <#= branchInstructionsPerOp #> | <#= branchMispredictionsPerOp #> | <#= gen0Collects #> | <#= allocatedMemory #> |
 <#} #>
 
-## Baseline Comparison
+## Statistics Comparison
 
-| Name | Baseline | Compare To | Mean [Baseline] | Mean [Compare To] | Mean [Compare %] | Allocated Memory [Baseline] | Allocated Memory [Compare To] | Allocated Memory [Compare %] |
-| ---- | -------- | ---------- | --------------- | ----------------- | ---------------- | --------------------------- | ----------------------------- | ---------------------------- |
+| Name | Baseline | Compare | Mean Time Taken<br/>[Baseline] | Mean Time Taken<br/>[Compare] | Mean Time Taken<br/>[Comparison %] | Allocated Memory<br/>[Baseline] | Allocated Memory<br/>[Compare] | Allocated Memory<br/>[Comparison %] |
+| ---- | -------- | ------- | ------------------------------ | ----------------------------- | ---------------------------------- | ------------------------------- | ------------------------------ | ----------------------------------- |
 <#
-foreach (dynamic baseline in baselines)
+foreach (dynamic statisticsComparisonItem in results.StatisticsComparison)
 {
-    var key = $"{baseline.Type}.{baseline.Method}";
-    var nonBaselinesGroup = ((IEnumerable<dynamic>)nonBaselines).Where(x => $"{x.Type}.{x.Method}" == key);
-    foreach (dynamic nonBaseline in nonBaselinesGroup)
-    {
-        var name = key;
-        var baselineParameters = baseline.Parameters;
-        var compareToParameters = nonBaseline.Parameters;
-        var baselineMean = Math.Round(Convert.ToDecimal(baseline.Statistics.Mean), 2);
-        var compareToMean = Math.Round(Convert.ToDecimal(nonBaseline.Statistics.Mean), 2);
-        var meanCompareRate = Math.Round(Convert.ToDecimal((baselineMean - compareToMean) / baselineMean * 100), 2);
-        var baselineMetrics = baseline.Metrics as IEnumerable<dynamic>;
-        var compareToMetrics = nonBaseline.Metrics as IEnumerable<dynamic>;
-        var baselineAllocatedMemory = Math.Round(Convert.ToDecimal(baselineMetrics.FirstOrDefault(x => x.Descriptor.Id == "Allocated Memory")?.Value ?? 0), 2);
-        var compareToAllocatedMemory = Math.Round(Convert.ToDecimal(compareToMetrics.FirstOrDefault(x => x.Descriptor.Id == "Allocated Memory")?.Value ?? 0), 2);
-        var allocatedMemoryCompareRate = Math.Round(Convert.ToDecimal((baselineAllocatedMemory - compareToAllocatedMemory) / baselineAllocatedMemory * 100), 2);
+    var name = statisticsComparisonItem.Key;
+    var baselineParameters = statisticsComparisonItem.BaselineParameters;
+    var compareToParameters = statisticsComparisonItem.CompareParameters;
+    var baselineMean = $"{statisticsComparisonItem.BaselineMeanTimeTaken.Value.ToString((string)statisticsComparisonItem.BaselineMeanTimeTaken.Format)} {statisticsComparisonItem.BaselineMeanTimeTaken.Unit}";
+    var compareToMean = $"{statisticsComparisonItem.CompareMeanTimeTaken.Value.ToString((string)statisticsComparisonItem.CompareMeanTimeTaken.Format)} {statisticsComparisonItem.CompareMeanTimeTaken.Unit}";
+    var meanCompareRate = $"{statisticsComparisonItem.MeanTimeTakenCompareRate.Value.ToString((string)statisticsComparisonItem.MeanTimeTakenCompareRate.Format)} {statisticsComparisonItem.MeanTimeTakenCompareRate.Unit}";
+    var baselineAllocatedMemory = $"{statisticsComparisonItem.BaselineAllocatedMemory.Value.ToString((string)statisticsComparisonItem.BaselineAllocatedMemory.Format)} {statisticsComparisonItem.BaselineAllocatedMemory.Unit}";
+    var compareToAllocatedMemory = $"{statisticsComparisonItem.CompareAllocatedMemory.Value.ToString((string)statisticsComparisonItem.CompareAllocatedMemory.Format)} {statisticsComparisonItem.CompareAllocatedMemory.Unit}";
+    var allocatedMemoryCompareRate = $"{statisticsComparisonItem.AllocatedMemoryRate.Value.ToString((string)statisticsComparisonItem.AllocatedMemoryRate.Format)} {statisticsComparisonItem.AllocatedMemoryRate.Unit}";
 #>
-| <#= name #> | <#= baselineParameters #> | <#= compareToParameters #> | <#= baselineMean #> | <#= compareToMean #> | <#= meanCompareRate #> % | <#= baselineAllocatedMemory #> | <#= compareToAllocatedMemory #> | <#= allocatedMemoryCompareRate #> % |
+| <#= name #> | <#= baselineParameters #> | <#= compareToParameters #> | <#= baselineMean #> | <#= compareToMean #> | <#= meanCompareRate #> | <#= baselineAllocatedMemory #> | <#= compareToAllocatedMemory #> | <#= allocatedMemoryCompareRate #> |
 <#
-    }
 }
 #>

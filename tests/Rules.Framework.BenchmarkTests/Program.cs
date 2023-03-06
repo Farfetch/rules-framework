@@ -6,6 +6,7 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using McMaster.Extensions.CommandLineUtils;
 using Rules.Framework.BenchmarkTests;
+using Rules.Framework.BenchmarkTests.Exporters.Json;
 
 [assembly: SimpleJob(RuntimeMoniker.Net60)]
 
@@ -31,7 +32,7 @@ internal static class Program
             manualConfig.AddDiagnoser(MemoryDiagnoser.Default);
             manualConfig.AddHardwareCounters(HardwareCounter.BranchInstructions, HardwareCounter.BranchMispredictions);
             manualConfig.AddExporter(HtmlExporter.Default);
-            manualConfig.AddExporter(CustomJsonExporter.Full);
+            manualConfig.AddExporter(CustomJsonExporter.Indented);
             manualConfig.WithOption(ConfigOptions.JoinSummary, true);
 
             var artifactsPath = artifactsPathOption.Value();
