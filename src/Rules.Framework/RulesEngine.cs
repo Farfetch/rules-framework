@@ -128,8 +128,8 @@ namespace Rules.Framework
                 MatchMode = MatchModes.Exact,
             };
 
-            var dateBegin = matchDateTime.Date;
-            var dateEnd = matchDateTime.Date;
+            var dateBegin = matchDateTime;
+            var dateEnd = matchDateTime;
 
             return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
         }
