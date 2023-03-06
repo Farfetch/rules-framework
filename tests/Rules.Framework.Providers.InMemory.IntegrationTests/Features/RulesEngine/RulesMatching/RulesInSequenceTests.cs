@@ -43,7 +43,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
         [Theory]
         [MemberData(nameof(FailureCases))]
-        public async Task RulesEngine_MatchOneAsync_WithDataWhenRuleEnds_Failure(DateTime matchDate)
+        public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate)
         {
             // Arranges
             var emptyConditions = Array.Empty<Condition<ConditionType>>();

@@ -36,7 +36,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
 
         public void Dispose()
         {
-            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
         }
 

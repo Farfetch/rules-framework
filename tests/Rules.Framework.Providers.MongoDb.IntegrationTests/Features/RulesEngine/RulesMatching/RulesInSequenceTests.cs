@@ -42,7 +42,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
 
         [Theory]
         [MemberData(nameof(FailureCases))]
-        public async Task RulesEngine_MatchOneAsync_WithDataWhenRuleEnds_Failure(DateTime matchDate)
+        public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate)
         {
             // Arranges
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
