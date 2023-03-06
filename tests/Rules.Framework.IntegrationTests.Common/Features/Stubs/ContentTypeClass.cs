@@ -2,8 +2,8 @@ namespace Rules.Framework.Tests.Stubs
 {
     public class ContentTypeClass
     {
-        public int DummyContentTypeProperty1 { get; set; }
+        public int ContentTypeProperty1 { get; set; }
 
-        public string DummyContentTypeProperty2 { get; set; }
+        public string ContentTypeProperty2 { get; set; }
     }
 }

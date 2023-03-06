@@ -37,8 +37,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             {
                 new object[] { rule1StartDate, rule1Name, rule1Value }, // 1st rule
                 new object[] { ruleChangeDate.AddMilliseconds(-1), rule1Name, rule1Value }, // immediatly before change
-                new object[] { ruleChangeDate, rule2Name, rule2Value }, // time of change
-                new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value }, // 2nd rule
+                new object[] { ruleChangeDate, rule2Name, rule2Value }, // 2nd rule
+                new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value }, // immediatly before rules end
             };
 
         [Theory]
@@ -80,7 +80,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                 .NewRule<ContentType, ConditionType>()
                 .WithName(rule1Name)
                 .WithContent(TestContentType, rule1Value)
-                .WithDatesInterval(rule1StartDate, ruleChangeDate) //.AddMilliseconds(-1))
+                .WithDatesInterval(rule1StartDate, ruleChangeDate)
                 .Build();
 
             ruleSpecs.Add(new RuleSpecification(rule1, RuleAddPriorityOption.ByPriorityNumber(1)));
@@ -93,7 +93,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                 .WithDatesInterval(ruleChangeDate, rule2EndDate)
                 .Build();
 
-            ruleSpecs.Add(new RuleSpecification(rule2, RuleAddPriorityOption.ByPriorityNumber(2)));
+            ruleSpecs.Add(new RuleSpecification(rule2, RuleAddPriorityOption.ByPriorityNumber(1)));
 
             return ruleSpecs;
         }

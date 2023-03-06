@@ -36,8 +36,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             {
                 new object[] { rule1StartDate, rule1Name, rule1Value }, // 1st rule
                 new object[] { ruleChangeDate.AddMilliseconds(-1), rule1Name, rule1Value }, // immediatly before change
-                new object[] { ruleChangeDate, rule2Name, rule2Value }, // time of change
-                new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value }, // 2nd rule
+                new object[] { ruleChangeDate, rule2Name, rule2Value }, // 2nd rule
+                new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value }, // immediatly before rules end
             };
 
         [Theory]
