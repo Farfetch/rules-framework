@@ -22,13 +22,13 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 new InMemoryRulesDataSource<ContentTypes, ConditionTypes>(Enumerable.Empty<Rule<ContentTypes, ConditionTypes>>());
 
             // Arrange
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
-            RuleBuilderResult<ContentTypes, ConditionTypes> newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
@@ -44,10 +44,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                     .Build())
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule1 = newRuleResult1.Rule;
-            RuleAddPriorityOption ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
+            var newRule1 = newRuleResult1.Rule;
+            var ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
 
-            RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Sample rule")
                 .WithDateBegin(DateTime.Parse("2021-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
@@ -57,12 +57,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 }))
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule2 = ruleBuilderResult2.Rule;
-            RuleAddPriorityOption ruleAddPriorityOption2 = RuleAddPriorityOption.ByPriorityNumber(4);
+            var newRule2 = ruleBuilderResult2.Rule;
+            var ruleAddPriorityOption2 = RuleAddPriorityOption.ByPriorityNumber(4);
 
             // Act
-            RuleOperationResult ruleOperationResult1 = await rulesEngine.AddRuleAsync(newRule1, ruleAddPriorityOption1).ConfigureAwait(false);
-            RuleOperationResult ruleOperationResult2 = await rulesEngine.AddRuleAsync(newRule2, ruleAddPriorityOption2).ConfigureAwait(false);
+            var ruleOperationResult1 = await rulesEngine.AddRuleAsync(newRule1, ruleAddPriorityOption1).ConfigureAwait(false);
+            var ruleOperationResult2 = await rulesEngine.AddRuleAsync(newRule2, ruleAddPriorityOption2).ConfigureAwait(false);
 
             // Assert
             ruleOperationResult1.Should().NotBeNull();
@@ -71,7 +71,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             ruleOperationResult2.Should().NotBeNull();
             ruleOperationResult2.IsSuccess.Should().BeTrue();
 
-            IEnumerable<Rule<ContentTypes, ConditionTypes>> rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
+            var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(2);
             rules.Should().ContainEquivalentOf(newRule1);
             newRule1.Priority.Should().Be(1, "rule should to priority 1 if inserted at priority 1");
@@ -82,16 +82,16 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
         public async Task AddRule_AddingNewRuleWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter()
         {
             // Arrange
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
+            var rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
 
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
-            RuleBuilderResult<ContentTypes, ConditionTypes> newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
@@ -107,10 +107,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                     .Build())
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule1 = newRuleResult1.Rule;
-            RuleAddPriorityOption ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
+            var newRule1 = newRuleResult1.Rule;
+            var ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
 
-            RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Sample rule")
                 .WithDateBegin(DateTime.Parse("2021-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
@@ -120,12 +120,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 }))
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule2 = ruleBuilderResult2.Rule;
-            RuleAddPriorityOption ruleAddPriorityOption2 = RuleAddPriorityOption.ByPriorityNumber(4);
+            var newRule2 = ruleBuilderResult2.Rule;
+            var ruleAddPriorityOption2 = RuleAddPriorityOption.ByPriorityNumber(4);
 
             // Act
-            RuleOperationResult ruleOperationResult1 = await rulesEngine.AddRuleAsync(newRule1, ruleAddPriorityOption1).ConfigureAwait(false);
-            RuleOperationResult ruleOperationResult2 = await rulesEngine.AddRuleAsync(newRule2, ruleAddPriorityOption2).ConfigureAwait(false);
+            var ruleOperationResult1 = await rulesEngine.AddRuleAsync(newRule1, ruleAddPriorityOption1).ConfigureAwait(false);
+            var ruleOperationResult2 = await rulesEngine.AddRuleAsync(newRule2, ruleAddPriorityOption2).ConfigureAwait(false);
 
             // Assert
             ruleOperationResult1.Should().NotBeNull();
@@ -134,7 +134,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             ruleOperationResult2.Should().NotBeNull();
             ruleOperationResult2.IsSuccess.Should().BeTrue();
 
-            IEnumerable<Rule<ContentTypes, ConditionTypes>> rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
+            var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(3);
             rules.Should().ContainEquivalentOf(newRule1);
             newRule1.Priority.Should().Be(1, "rule should to priority 1 if inserted at priority 1");
@@ -145,16 +145,16 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
         public async Task AddRule_AddingNewRuleWithAgeConditionOnTop_NewRuleIsInsertedAndExistentRulePriorityUpdated()
         {
             // Arrange
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
+            var rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
 
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
-            RuleBuilderResult<ContentTypes, ConditionTypes> newRuleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var newRuleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
@@ -170,20 +170,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                     .Build())
                 .Build();
 
-            Rule<ContentTypes, ConditionTypes> newRule = newRuleResult.Rule;
-            RuleAddPriorityOption ruleAddPriorityOption = new RuleAddPriorityOption
+            var newRule = newRuleResult.Rule;
+            var ruleAddPriorityOption = new RuleAddPriorityOption
             {
                 PriorityOption = PriorityOptions.AtTop
             };
 
             // Act
-            RuleOperationResult ruleOperationResult = await rulesEngine.AddRuleAsync(newRule, ruleAddPriorityOption).ConfigureAwait(false);
+            var ruleOperationResult = await rulesEngine.AddRuleAsync(newRule, ruleAddPriorityOption).ConfigureAwait(false);
 
             // Assert
             ruleOperationResult.Should().NotBeNull();
             ruleOperationResult.IsSuccess.Should().BeTrue();
 
-            IEnumerable<Rule<ContentTypes, ConditionTypes>> rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
+            var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(2);
             rules.Should().ContainEquivalentOf(newRule);
             newRule.Priority.Should().Be(1, "rule should to priority 1 if inserted at top.");
@@ -196,24 +196,24 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             string expectedFormulaDescription = "Body Mass Index default formula";
             string expectedFormulaValue = "weight / (height ^ 2)";
             const ContentTypes expectedContent = ContentTypes.BodyMassIndexFormula;
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[0];
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new Condition<ConditionTypes>[0];
 
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource = await RulesFromJsonFile.Load
+            var rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
 
-            RulesEngine<ContentTypes, ConditionTypes> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act
-            Rule<ContentTypes, ConditionTypes> actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
-            Formula actualFormula = actual.ContentContainer.GetContentAs<Formula>();
+            var actualFormula = actual.ContentContainer.GetContentAs<Formula>();
             actualFormula.Description.Should().Be(expectedFormulaDescription);
             actualFormula.Value.Should().Be(expectedFormulaValue);
         }

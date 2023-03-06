@@ -1,11 +1,9 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Xunit;
 
@@ -19,8 +17,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new Condition<SecuritySystemConditions>[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -39,24 +37,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
+            var rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
 
-            IEnumerable<SecuritySystemAction> securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
-
-            securitySystemActions.Should().Contain(ssa => ssa.ActionName == "CallFireBrigade")
+            actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList()
+                .Should().Contain(ssa => ssa.ActionName == "CallFireBrigade")
                 .And.Contain(ssa => ssa.ActionName == "CallPolice")
                 .And.Contain(ssa => ssa.ActionName == "ActivateSprinklers")
                 .And.HaveCount(3);
@@ -68,8 +65,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new Condition<SecuritySystemConditions>[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -88,24 +85,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
+            var rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
 
-            IEnumerable<SecuritySystemAction> securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
-
-            securitySystemActions.Should().Contain(ssa => ssa.ActionName == "EnableEmergencyLights")
+            actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList()
+                .Should().Contain(ssa => ssa.ActionName == "EnableEmergencyLights")
                 .And.Contain(ssa => ssa.ActionName == "EnableEmergencyPower")
                 .And.Contain(ssa => ssa.ActionName == "CallPowerGridPicket");
         }
@@ -116,8 +112,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new Condition<SecuritySystemConditions>[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -136,24 +132,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
                 }
             };
 
-            IRulesDataSource<SecuritySystemActionables, SecuritySystemConditions> rulesDataSource = await RulesFromJsonFile.Load
+            var rulesDataSource = await RulesFromJsonFile.Load
                 .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
 
-            IEnumerable<SecuritySystemAction> securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
-
-            securitySystemActions.Should().Contain(ssa => ssa.ActionName == "EnableEmergencyLights")
+            actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList()
+                .Should().Contain(ssa => ssa.ActionName == "EnableEmergencyLights")
                 .And.HaveCount(1);
         }
     }

@@ -5,7 +5,6 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario4;
     using Xunit;
@@ -23,17 +22,17 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_Adding15PercentRulePerBrandAndEvaluatingOneOfTheBrands_Returns15PercentDiscountRate()
         {
             // Arrange
-            IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
+            var rulesDataSource
                 = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
 
-            RulesEngine<DiscountConfigurations, DiscountConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act 1 - Create rule with "in" operator
-            RuleBuilderResult<DiscountConfigurations, DiscountConditions> ruleBuilderResult = RuleBuilder.NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = RuleBuilder.NewRule<DiscountConfigurations, DiscountConditions>()
                 .WithName("Discounts Weekend MAY2021")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => 15m))
@@ -57,22 +56,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
-            string errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
+            var errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
             ruleBuilderResult.IsSuccess.Should().BeTrue(
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 2 - Add new rule with "in" operator
-            Rule<DiscountConfigurations, DiscountConditions> rule = ruleBuilderResult.Rule;
+            var rule = ruleBuilderResult.Rule;
 
-            RuleOperationResult addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Evaluate new rule with "in" operator
-            DateTime matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            Condition<DiscountConditions>[] conditions = new[]
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
+            var conditions = new[]
             {
                 new Condition<DiscountConditions>
                 {
@@ -86,7 +85,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 }
             };
 
-            Rule<DiscountConfigurations, DiscountConditions> actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -97,17 +96,17 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_Adding20PercentRulePerProductTierAndEvaluatingOneOfTheTiers_Returns20PercentDiscountRate()
         {
             // Arrange
-            IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
+            var rulesDataSource
                 = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
 
-            RulesEngine<DiscountConfigurations, DiscountConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act 1 - Create rule with "in" operator
-            RuleBuilderResult<DiscountConfigurations, DiscountConditions> ruleBuilderResult = RuleBuilder.NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = RuleBuilder.NewRule<DiscountConfigurations, DiscountConditions>()
                 .WithName("Discounts Weekend MAY2021 - Tiered discount")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => 15m))
@@ -131,22 +130,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
-            string errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
+            var errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
             ruleBuilderResult.IsSuccess.Should().BeTrue(
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 2 - Add new rule with "in" operator
-            Rule<DiscountConfigurations, DiscountConditions> rule = ruleBuilderResult.Rule;
+            var rule = ruleBuilderResult.Rule;
 
-            RuleOperationResult addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Evaluate new rule with "in" operator
-            DateTime matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            Condition<DiscountConditions>[] conditions = new[]
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
+            var conditions = new[]
             {
                 new Condition<DiscountConditions>
                 {
@@ -165,7 +164,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 }
             };
 
-            Rule<DiscountConfigurations, DiscountConditions> actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -176,17 +175,17 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_Adding5PercentRuleWithNotContainsTestConditionAndInputWithMatchingConditions_Return5PercentDiscountRate()
         {
             // Arrange
-            IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
+            var rulesDataSource
                 = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
 
-            RulesEngine<DiscountConfigurations, DiscountConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act 1 - Create rule with "not contains" operator
-            RuleBuilderResult<DiscountConfigurations, DiscountConditions> ruleBuilderResult =
+            var ruleBuilderResult =
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Not a staff discount")
@@ -202,22 +201,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
-            string errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
+            var errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
             ruleBuilderResult.IsSuccess.Should().BeTrue(
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 2 - Add new rule with "not contains" operator
-            Rule<DiscountConfigurations, DiscountConditions> rule = ruleBuilderResult.Rule;
+            var rule = ruleBuilderResult.Rule;
 
-            RuleOperationResult addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Evaluate new rule with "not contains" operator
-            DateTime matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            Condition<DiscountConditions>[] conditions = new[]
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
+            var conditions = new[]
             {
                 new Condition<DiscountConditions>
                 {
@@ -226,7 +225,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 }
             };
 
-            Rule<DiscountConfigurations, DiscountConditions> actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -237,17 +236,17 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithMatchingConditions_ReturnNotNull()
         {
             // Arrange
-            IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
+            var rulesDataSource
                 = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
 
-            RulesEngine<DiscountConfigurations, DiscountConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act 1 - Create rule with "equal" operator
-            RuleBuilderResult<DiscountConfigurations, DiscountConditions> ruleBuilderResult =
+            var ruleBuilderResult =
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
@@ -263,22 +262,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
-            string errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
+            var errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
             ruleBuilderResult.IsSuccess.Should().BeTrue(
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 2 - Add new rule with "in" operator
-            Rule<DiscountConfigurations, DiscountConditions> rule = ruleBuilderResult.Rule;
+            var rule = ruleBuilderResult.Rule;
 
-            RuleOperationResult addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Evaluate new rule with "in" operator
-            DateTime matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            Condition<DiscountConditions>[] conditions = new[]
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
+            var conditions = new[]
             {
                 new Condition<DiscountConditions>
                 {
@@ -287,7 +286,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 }
             };
 
-            Rule<DiscountConfigurations, DiscountConditions> actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -298,17 +297,17 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutConditions_ReturnNull()
         {
             // Arrange
-            IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
+            var rulesDataSource
                 = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
 
-            RulesEngine<DiscountConfigurations, DiscountConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act 1 - Create rule with "equal" operator
-            RuleBuilderResult<DiscountConfigurations, DiscountConditions> ruleBuilderResult =
+            var ruleBuilderResult =
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
@@ -324,24 +323,24 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
-            string errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
+            var errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
             ruleBuilderResult.IsSuccess.Should().BeTrue(
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 2 - Add new rule with "in" operator
-            Rule<DiscountConfigurations, DiscountConditions> rule = ruleBuilderResult.Rule;
+            var rule = ruleBuilderResult.Rule;
 
-            RuleOperationResult addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Evaluate new rule with "in" operator
-            DateTime matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new List<Condition<DiscountConditions>>();
 
-            Rule<DiscountConfigurations, DiscountConditions> actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
 
             // Assert 3
             actual.Should().BeNull();
@@ -351,17 +350,17 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutMatchingConditions_ReturnNull()
         {
             // Arrange
-            IRulesDataSource<DiscountConfigurations, DiscountConditions> rulesDataSource
+            var rulesDataSource
                 = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
 
-            RulesEngine<DiscountConfigurations, DiscountConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
                 .SetDataSource(rulesDataSource)
                 .Build();
 
             // Act 1 - Create rule with "equal" operator
-            RuleBuilderResult<DiscountConfigurations, DiscountConditions> ruleBuilderResult =
+            var ruleBuilderResult =
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
@@ -377,22 +376,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
-            string errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
+            var errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
             ruleBuilderResult.IsSuccess.Should().BeTrue(
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 2 - Add new rule with "in" operator
-            Rule<DiscountConfigurations, DiscountConditions> rule = ruleBuilderResult.Rule;
+            var rule = ruleBuilderResult.Rule;
 
-            RuleOperationResult addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Evaluate new rule with "in" operator
-            DateTime matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            Condition<DiscountConditions>[] conditions = new[]
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
+            var conditions = new[]
             {
                 new Condition<DiscountConditions>
                 {
@@ -401,7 +400,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 }
             };
 
-            Rule<DiscountConfigurations, DiscountConditions> actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
 
             // Assert 3
             actual.Should().BeNull();
