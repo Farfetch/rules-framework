@@ -45,7 +45,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         [MemberData(nameof(FailureCases))]
         public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate)
         {
-            // Arranges
+            // Arrange
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
 
             // Act
