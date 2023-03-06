@@ -1,5 +1,6 @@
 namespace Rules.Framework
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
@@ -57,6 +58,12 @@ namespace Rules.Framework
         /// <para>e.g. a rule with a condition of type "Age" is under evaluation but no condition of type "Age" was supplied.</para>
         /// </summary>
         public MissingConditionBehaviors MissingConditionBehavior { get; set; }
+
+        /// <summary>
+        /// Gets or sets the priority criteria to untie when multiples rules are matched.
+        /// </summary>
+        [Obsolete("This property has a typo and has been replaced by PriorityCriteria.")]
+        public PriorityCriterias PriotityCriteria { get; set; }
 
         /// <summary>
         /// Gets or sets the priority criteria to untie when multiples rules are matched.
