@@ -209,16 +209,16 @@ jobs:
           echo "benchmarks_folder=$BENCH_FOLDER" >> $GITHUB_OUTPUT
 
       - name: Create benchmarks results folder (HEAD)
-        run: mkdir -p ${{ steps.determine-folders.output.head_benchmarks_folder }}
+        run: mkdir -p ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
 
       - name: Restore dependencies (HEAD)
         run: dotnet restore rules-framework.sln
 
       - name: Build benchmarks (HEAD)
-        run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -o "${{ steps.determine-folders.output.head_benchmarks_folder }}/bin" --framework net6.0
+        run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -o "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/bin" --framework net6.0
 
       - name: Change working directory (HEAD)
-        run: cd ${{ steps.determine-folders.output.head_benchmarks_folder }}
+        run: cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
 
       - name: Run benchmarks (HEAD)
         run: |
@@ -229,16 +229,16 @@ jobs:
         id: determine-results-file
         run: |
           JSON_FILE=$(find artifacts/results -name '*.json')
-          echo "file=${{ steps.determine-folders.output.head_benchmarks_folder }}/$JSON_FILE" >> $GITHUB_OUTPUT
+          echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$JSON_FILE" >> $GITHUB_OUTPUT
 
       - name: Change working directory (benchmarks)
-        run: cd ${{ steps.determine-folders.output.benchmarks_folder }}
+        run: cd ${{ steps.determine-folders.outputs.benchmarks_folder }}
 
       - name: Get report dependencies
         run: grab newtonsoft.json@13.0.2
 
       - name: Generate report
-        run: t4 -p:ResultsFile="${{ steps.determine-results-file.outputs.file }}" -P="packages/newtonsoft.json/13.0.2/lib/net6.0" -r="Newtonsoft.Json.dll" -o "report.md" "${{ steps.determine-folders.output.head_folder }}/tests/Rules.Framework.BenchmarkTests/Results2Markdown/Report.tt"
+        run: t4 -p:ResultsFile="${{ steps.determine-results-file.outputs.file }}" -P="packages/newtonsoft.json/13.0.2/lib/net6.0" -r="Newtonsoft.Json.dll" -o "report.md" "${{ steps.determine-folders.outputs.head_folder }}/tests/Rules.Framework.BenchmarkTests/Results2Markdown/Report.tt"
 
       - name: Publish report results
         uses: peter-evans/create-or-update-comment@v2
