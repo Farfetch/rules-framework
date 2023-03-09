@@ -25,11 +25,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\..\LICENSE.md">
+		<None Include="..\..\LICENSE.md" Link="Providers.InMemory\LICENSE.md">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
 		</None>
 	</ItemGroup>
+    
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation" Version="10.3.6" />
@@ -41,5 +42,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
 	</ItemGroup>
 </Project>
