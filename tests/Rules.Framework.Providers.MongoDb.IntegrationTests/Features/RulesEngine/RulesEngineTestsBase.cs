@@ -17,7 +17,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
         private readonly ContentType TestContentType;
 
-        internal RulesEngineTestsBase(ContentType testContentType)
+        public RulesEngineTestsBase(ContentType testContentType)
         {
             this.mongoClient = CreateMongoClient();
             this.mongoDbProviderSettings = CreateProviderSettings();
