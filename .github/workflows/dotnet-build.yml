@@ -206,7 +206,7 @@ jobs:
           echo "head_folder=$HEAD_FOLDER" >> $GITHUB_OUTPUT
           echo "head_benchmarks_folder=$HEAD_BENCH_FOLDER" >> $GITHUB_OUTPUT
           echo "master_benchmarks_folder=$MASTER_BENCH_FOLDER" >> $GITHUB_OUTPUT
-          echo "benchmarks_folder::$BENCH_FOLDER" >> $GITHUB_OUTPUT
+          echo "benchmarks_folder=$BENCH_FOLDER" >> $GITHUB_OUTPUT
 
       - name: Create benchmarks results folder (HEAD)
         run: mkdir -p ${{ steps.determine-folders.output.head_benchmarks_folder }}
