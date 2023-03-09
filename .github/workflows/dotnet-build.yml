@@ -189,59 +189,65 @@ jobs:
   benchmarks:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Grab tool
-        run: dotnet tool install dotnet-grab --global --ignore-failed-sources
+    - name: Setup Grab tool
+      run: dotnet tool install dotnet-grab --global --ignore-failed-sources
 
-      - name: Setup T4 tool
-        run: dotnet tool install dotnet-t4 --global --ignore-failed-sources
+    - name: Setup T4 tool
+      run: dotnet tool install dotnet-t4 --global --ignore-failed-sources
 
-      - name: Determine folders
-        id: determine-folders
-        run: |
-          HEAD_FOLDER=$(pwd)
-          HEAD_BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks/head
-          MASTER_BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks/master
-          BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks
+    - name: Determine folders
+      id: determine-folders
+      run: |
+        HEAD_FOLDER=$(pwd)
+        HEAD_BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks/head
+        MASTER_BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks/master
+        BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks
 
-          echo "head_folder=$HEAD_FOLDER" >> $GITHUB_OUTPUT
-          echo "head_benchmarks_folder=$HEAD_BENCH_FOLDER" >> $GITHUB_OUTPUT
-          echo "master_benchmarks_folder=$MASTER_BENCH_FOLDER" >> $GITHUB_OUTPUT
-          echo "benchmarks_folder=$BENCH_FOLDER" >> $GITHUB_OUTPUT
+        echo "head_folder=$HEAD_FOLDER" >> $GITHUB_OUTPUT
+        echo "head_benchmarks_folder=$HEAD_BENCH_FOLDER" >> $GITHUB_OUTPUT
+        echo "master_benchmarks_folder=$MASTER_BENCH_FOLDER" >> $GITHUB_OUTPUT
+        echo "benchmarks_folder=$BENCH_FOLDER" >> $GITHUB_OUTPUT
 
-      - name: Create benchmarks results folder (HEAD)
-        run: mkdir -p ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
+    - name: Git Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{github.event.pull_request.head.ref}}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
 
-      - name: Restore dependencies (HEAD)
-        run: dotnet restore rules-framework.sln
+    - name: Create benchmarks results folder (HEAD)
+      run: mkdir -p ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
 
-      - name: Build benchmarks (HEAD)
-        run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -o "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/bin" --framework net6.0
+    - name: Restore dependencies (HEAD)
+      run: dotnet restore rules-framework.sln
 
-      - name: Change working directory (HEAD)
-        run: cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
+    - name: Build benchmarks (HEAD)
+      run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -o "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/bin" --framework net6.0
 
-      - name: Run benchmarks (HEAD)
-        run: |
-          chmod +x bin/Rules.Framework.BenchmarkTests
-          bin/Rules.Framework.BenchmarkTests -a artifacts
+    - name: Change working directory (HEAD)
+      run: cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
 
-      - name: Determine results file (HEAD)
-        id: determine-results-file
-        run: |
-          JSON_FILE=$(find artifacts/results -name '*.json')
-          echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$JSON_FILE" >> $GITHUB_OUTPUT
+    - name: Run benchmarks (HEAD)
+      run: |
+        chmod +x bin/Rules.Framework.BenchmarkTests
+        bin/Rules.Framework.BenchmarkTests -a artifacts
 
-      - name: Change working directory (benchmarks)
-        run: cd ${{ steps.determine-folders.outputs.benchmarks_folder }}
+    - name: Determine results file (HEAD)
+      id: determine-results-file
+      run: |
+        JSON_FILE=$(find artifacts/results -name '*.json')
+        echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$JSON_FILE" >> $GITHUB_OUTPUT
 
-      - name: Get report dependencies
-        run: grab newtonsoft.json@13.0.2
+    - name: Change working directory (benchmarks)
+      run: cd ${{ steps.determine-folders.outputs.benchmarks_folder }}
 
-      - name: Generate report
-        run: t4 -p:ResultsFile="${{ steps.determine-results-file.outputs.file }}" -P="packages/newtonsoft.json/13.0.2/lib/net6.0" -r="Newtonsoft.Json.dll" -o "report.md" "${{ steps.determine-folders.outputs.head_folder }}/tests/Rules.Framework.BenchmarkTests/Results2Markdown/Report.tt"
+    - name: Get report dependencies
+      run: grab newtonsoft.json@13.0.2
 
-      - name: Publish report results
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body-file: report.md
+    - name: Generate report
+      run: t4 -p:ResultsFile="${{ steps.determine-results-file.outputs.file }}" -P="packages/newtonsoft.json/13.0.2/lib/net6.0" -r="Newtonsoft.Json.dll" -o "report.md" "${{ steps.determine-folders.outputs.head_folder }}/tests/Rules.Framework.BenchmarkTests/Results2Markdown/Report.tt"
+
+    - name: Publish report results
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        body-file: report.md
