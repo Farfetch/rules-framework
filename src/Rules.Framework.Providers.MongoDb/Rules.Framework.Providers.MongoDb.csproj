@@ -41,9 +41,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
+<<<<<<< HEAD
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
+=======
+>>>>>>> master
   </ItemGroup>
 </Project>
