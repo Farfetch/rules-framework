@@ -11,7 +11,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     {
         private readonly ContentType TestContentType;
 
-        public RulesEngineTestsBase(ContentType testContentType)
+        protected RulesEngineTestsBase(ContentType testContentType)
         {
             this.TestContentType = testContentType;
 
