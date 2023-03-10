@@ -47,7 +47,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Rules.Framework" Version="1.7.5" />
+	  <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
