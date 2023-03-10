@@ -2,11 +2,10 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
 
-    internal class DeferredEval : IDeferredEval
+    internal sealed class DeferredEval : IDeferredEval
     {
         private readonly IConditionEvalDispatchProvider conditionEvalDispatchProvider;
         private readonly RulesEngineOptions rulesEngineOptions;
@@ -19,7 +18,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
-        public Func<IEnumerable<Condition<TConditionType>>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
+        public Func<IDictionary<TConditionType, object>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
         {
             return valueConditionNode switch
             {
@@ -32,20 +31,20 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
             };
         }
 
-        private bool Eval<TConditionNode, TConditionType, T>(IEnumerable<Condition<TConditionType>> conditions, TConditionNode valueConditionNode, MatchModes matchMode)
+        private bool Eval<TConditionNode, TConditionType, T>(IDictionary<TConditionType, object> conditions, TConditionNode valueConditionNode, MatchModes matchMode)
             where TConditionNode : ValueConditionNodeTemplate<T, TConditionType>
             where T : IComparable
             // To be removed on a future major release, when obsolete value condition nodes are removed.
             => this.Eval(conditions, valueConditionNode, valueConditionNode.Operand, matchMode);
 
-        private bool Eval<TConditionType>(IEnumerable<Condition<TConditionType>> conditions, ValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
+        private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, ValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
             => this.Eval(conditions, valueConditionNode, valueConditionNode.Operand, matchMode);
 
-        private bool Eval<TConditionType>(IEnumerable<Condition<TConditionType>> conditions, IValueConditionNode<TConditionType> valueConditionNode, object rightOperand, MatchModes matchMode)
+        private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, IValueConditionNode<TConditionType> valueConditionNode, object rightOperand, MatchModes matchMode)
         {
-            Condition<TConditionType> leftOperandCondition = conditions.FirstOrDefault(c => object.Equals(c.Type, valueConditionNode.ConditionType));
+            conditions.TryGetValue(valueConditionNode.ConditionType, out var leftOperand);
 
-            if (leftOperandCondition is null)
+            if (leftOperand is null)
             {
                 if (this.rulesEngineOptions.MissingConditionBehavior == MissingConditionBehaviors.Discard)
                 {
@@ -58,8 +57,6 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                     return true;
                 }
             }
-
-            object leftOperand = leftOperandCondition?.Value;
 
             IConditionEvalDispatcher conditionEvalDispatcher = this.conditionEvalDispatchProvider.GetEvalDispatcher(leftOperand, valueConditionNode.Operator, rightOperand);
 

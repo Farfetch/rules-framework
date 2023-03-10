@@ -2,7 +2,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 {
     using System;
 
-    internal class LesserThanOrEqualOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
+    internal sealed class LesserThanOrEqualOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
         public bool Eval(object leftOperand, object rightOperand)
         {

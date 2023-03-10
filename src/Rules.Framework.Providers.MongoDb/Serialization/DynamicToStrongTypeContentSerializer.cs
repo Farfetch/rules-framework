@@ -9,7 +9,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
     using System.Runtime.Serialization;
     using Rules.Framework.Serialization;
 
-    internal class DynamicToStrongTypeContentSerializer : IContentSerializer
+    internal sealed class DynamicToStrongTypeContentSerializer : IContentSerializer
     {
         public object Deserialize(object serializedContent, Type type)
         {
@@ -23,7 +23,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
                 throw new ArgumentNullException(nameof(type));
             }
 
-            Type serializedContentType = serializedContent.GetType();
+            var serializedContentType = serializedContent.GetType();
             if (serializedContentType.IsValueType || typeof(string).IsAssignableFrom(serializedContentType))
             {
                 return Parse(serializedContent, type);
@@ -34,8 +34,10 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
                 throw new NotSupportedException($"The serialized content type is not supported for deserialization: {serializedContent.GetType().FullName}");
             }
 
-            IDictionary<string, object> serializedContentDictionary = serializedContent as IDictionary<string, object>;
-            IDictionary<string, PropertyInfo> reflectionInformation = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).ToDictionary(x => x.Name);
+            var serializedContentDictionary = serializedContent as IDictionary<string, object>;
+            var reflectionInformation = type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .ToDictionary(x => x.Name, StringComparer.Ordinal);
             object deserializedRepresentation = null;
 
             try
@@ -51,7 +53,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
             {
                 if (reflectionInformation.TryGetValue(key, out PropertyInfo currentPropertyInfo))
                 {
-                    object serializedPropertyValue = serializedContentDictionary[key];
+                    var serializedPropertyValue = serializedContentDictionary[key];
 
                     try
                     {
@@ -71,23 +73,22 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
             return deserializedRepresentation;
         }
 
+        public object Serialize(object content) => throw new NotSupportedException();
+
         private static object Parse(object value, Type type)
         {
             if (type.IsEnum)
             {
                 return Enum.Parse(type, value.ToString());
             }
-            else if (typeof(Guid).IsAssignableFrom(type))
+
+            if (typeof(Guid).IsAssignableFrom(type))
             {
                 return Guid.Parse(value.ToString());
             }
-            else
-            {
-                // InvariantCulture for all formats is an assumption.
-                return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
-            }
-        }
 
-        public object Serialize(object content) => throw new NotImplementedException();
+            // InvariantCulture for all formats is an assumption.
+            return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+        }
     }
 }

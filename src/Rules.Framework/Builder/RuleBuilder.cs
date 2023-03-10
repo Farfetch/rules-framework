@@ -2,12 +2,13 @@ namespace Rules.Framework.Builder
 {
     using System;
     using System.Linq;
-    using FluentValidation.Results;
     using Rules.Framework.Builder.Validation;
     using Rules.Framework.Core;
 
-    internal class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
+    internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
+        private static readonly RuleValidator<TContentType, TConditionType> ruleValidator = new();
+
         private ContentContainer<TContentType> contentContainer;
         private DateTime dateBegin;
         private DateTime? dateEnd;
@@ -17,18 +18,17 @@ namespace Rules.Framework.Builder
 
         public RuleBuilderResult<TContentType, TConditionType> Build()
         {
-            Rule<TContentType, TConditionType> rule = new Rule<TContentType, TConditionType>
+            var rule = new Rule<TContentType, TConditionType>
             {
                 ContentContainer = this.contentContainer,
                 DateBegin = this.dateBegin,
                 DateEnd = this.dateEnd,
                 Name = this.name,
                 Priority = this.priority.GetValueOrDefault(0),
-                RootCondition = this.rootCondition
+                RootCondition = this.rootCondition,
             };
 
-            RuleValidator<TContentType, TConditionType> ruleValidator = new RuleValidator<TContentType, TConditionType>();
-            ValidationResult validationResult = ruleValidator.Validate(rule);
+            var validationResult = ruleValidator.Validate(rule);
 
             if (validationResult.IsValid)
             {
@@ -47,9 +47,9 @@ namespace Rules.Framework.Builder
 
         public IRuleBuilder<TContentType, TConditionType> WithCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
         {
-            ConditionNodeBuilder<TConditionType> conditionNodeBuilder = new ConditionNodeBuilder<TConditionType>();
+            var conditionNodeBuilder = new ConditionNodeBuilder<TConditionType>();
 
-            IConditionNode<TConditionType> condition = conditionFunc.Invoke(conditionNodeBuilder);
+            var condition = conditionFunc.Invoke(conditionNodeBuilder);
 
             return this.WithCondition(condition);
         }

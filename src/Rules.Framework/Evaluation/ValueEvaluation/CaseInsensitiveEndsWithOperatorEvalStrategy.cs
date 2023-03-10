@@ -3,7 +3,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
     using System;
     using System.Globalization;
 
-    internal class CaseInsensitiveEndsWithOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
+    internal sealed class CaseInsensitiveEndsWithOperatorEvalStrategy : IOneToOneOperatorEvalStrategy
     {
         public bool Eval(object leftOperand, object rightOperand)
         {

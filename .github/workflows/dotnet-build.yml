@@ -115,17 +115,12 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: | 
+          3.1.x
+          6.0.x
 
     - name: Setup Report Generator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
-      
-    - name: Setup Java
-      run: |
-        sudo update-alternatives --query java
-        sudo update-alternatives --auto java
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
-        export PATH=$PATH:$JAVA_HOME
         
     - name: MongoDB in GitHub Actions
       uses: supercharge/mongodb-github-action@1.6.0
@@ -150,24 +145,8 @@ jobs:
     - name: Clean
       run: dotnet clean -c Release
 
-    - name: Replace Rules.Framework package references w/ project references
-      run: |
-        dotnet remove src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj package Rules.Framework
-        dotnet remove src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj package Rules.Framework
-        dotnet add src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj reference src/Rules.Framework/Rules.Framework.csproj
-        dotnet add src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj reference src/Rules.Framework/Rules.Framework.csproj
-
     - name: Clear Nuget locals
       run: dotnet nuget locals all --clear
-
-    - name: Restore dependencies w/ Rules.Framework project reference
-      run: dotnet restore
-
-    - name: Build w/ Rules.Framework project reference
-      run: dotnet build --no-restore -c Release
-
-    - name: Test w/ Rules.Framework project reference (no coverage)
-      run: dotnet test --no-build --verbosity normal -m:1 -c Release
 
     - name: Delete build tag if exists
       uses: dev-drprasad/delete-tag-and-release@v0.2.0

@@ -2,7 +2,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation.Dispatchers
 {
     using Rules.Framework.Core;
 
-    internal class OneToOneConditionEvalDispatcher : ConditionEvalDispatcherBase, IConditionEvalDispatcher
+    internal sealed class OneToOneConditionEvalDispatcher : ConditionEvalDispatcherBase, IConditionEvalDispatcher
     {
         private readonly IOperatorEvalStrategyFactory operatorEvalStrategyFactory;
 

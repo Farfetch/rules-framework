@@ -44,7 +44,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
         public void SetInMemoryDataSource_GivenServiceProvider_RequestsInMemoryRulesStorageAndSetsOnSelector()
         {
             // Arrange
-            InMemoryRulesStorage<ContentType, ConditionType> inMemoryRulesStorage = Mock.Of<InMemoryRulesStorage<ContentType, ConditionType>>();
+            var inMemoryRulesStorage = new InMemoryRulesStorage<ContentType, ConditionType>();
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
             serviceDescriptors.AddSingleton(inMemoryRulesStorage);

@@ -10,7 +10,7 @@ namespace Rules.Framework.Providers.MongoDb
     using Rules.Framework.Providers.MongoDb.DataModel;
     using Rules.Framework.Serialization;
 
-    internal class RuleFactory<TContentType, TConditionType> : IRuleFactory<TContentType, TConditionType>
+    internal sealed class RuleFactory<TContentType, TConditionType> : IRuleFactory<TContentType, TConditionType>
     {
         private readonly IContentSerializationProvider<TContentType> contentSerializationProvider;
 
@@ -26,12 +26,12 @@ namespace Rules.Framework.Providers.MongoDb
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
-            TContentType contentType = Parse<TContentType>(ruleDataModel.ContentType);
+            var contentType = Parse<TContentType>(ruleDataModel.ContentType);
 
-            RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
+            var ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
-                .WithCondition(cnb => ruleDataModel.RootCondition is { } ? this.ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
+                .WithCondition(cnb => ruleDataModel.RootCondition is { } ? ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
                 .WithSerializedContent(contentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
                 .Build();
 
@@ -59,9 +59,9 @@ namespace Rules.Framework.Providers.MongoDb
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            dynamic content = rule.ContentContainer.GetContentAs<dynamic>();
+            var content = rule.ContentContainer.GetContentAs<dynamic>();
 
-            RuleDataModel ruleDataModel = new RuleDataModel
+            var ruleDataModel = new RuleDataModel
             {
                 Content = content,
                 ContentType = Convert.ToString(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
@@ -69,11 +69,76 @@ namespace Rules.Framework.Providers.MongoDb
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
-                RootCondition = rule.RootCondition is { } ? this.ConvertConditionNode(rule.RootCondition) : null
+                RootCondition = rule.RootCondition is { } ? ConvertConditionNode(rule.RootCondition) : null,
             };
 
             return ruleDataModel;
         }
+
+        private static ValueConditionNodeDataModel ConvertBooleanConditionNode(BooleanConditionNode<TConditionType> booleanConditionNode) => new ValueConditionNodeDataModel
+        {
+            ConditionType = Convert.ToString(booleanConditionNode.ConditionType, CultureInfo.InvariantCulture),
+            LogicalOperator = LogicalOperators.Eval,
+            DataType = booleanConditionNode.DataType,
+            Operand = booleanConditionNode.Operand,
+            Operator = booleanConditionNode.Operator,
+        };
+
+        private static IConditionNode<TConditionType> ConvertConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        {
+            if (conditionNodeDataModel.LogicalOperator == LogicalOperators.Eval)
+            {
+                return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel as ValueConditionNodeDataModel);
+            }
+
+            ComposedConditionNodeDataModel composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
+
+            IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
+                .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
+
+            foreach (ConditionNodeDataModel child in composedConditionNodeDataModel.ChildConditionNodes)
+            {
+                composedConditionNodeBuilder.AddCondition(cnb => ConvertConditionNode(cnb, child));
+            }
+
+            return composedConditionNodeBuilder.Build();
+        }
+
+        private static ValueConditionNodeDataModel ConvertDecimalConditionNode(DecimalConditionNode<TConditionType> decimalConditionNode) => new ValueConditionNodeDataModel
+        {
+            ConditionType = Convert.ToString(decimalConditionNode.ConditionType, CultureInfo.InvariantCulture),
+            LogicalOperator = LogicalOperators.Eval,
+            DataType = decimalConditionNode.DataType,
+            Operand = decimalConditionNode.Operand,
+            Operator = decimalConditionNode.Operator,
+        };
+
+        private static ValueConditionNodeDataModel ConvertIntegerConditionNode(IntegerConditionNode<TConditionType> integerConditionNode) => new ValueConditionNodeDataModel
+        {
+            ConditionType = Convert.ToString(integerConditionNode.ConditionType, CultureInfo.InvariantCulture),
+            LogicalOperator = LogicalOperators.Eval,
+            DataType = integerConditionNode.DataType,
+            Operand = integerConditionNode.Operand,
+            Operator = integerConditionNode.Operator,
+        };
+
+        private static ValueConditionNodeDataModel ConvertStringConditionNode(StringConditionNode<TConditionType> stringConditionNode) => new ValueConditionNodeDataModel
+        {
+            ConditionType = Convert.ToString(stringConditionNode.ConditionType, CultureInfo.InvariantCulture),
+            LogicalOperator = LogicalOperators.Eval,
+            DataType = stringConditionNode.DataType,
+            Operand = stringConditionNode.Operand,
+            Operator = stringConditionNode.Operator,
+        };
+
+        private static ValueConditionNodeDataModel ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode) => new ValueConditionNodeDataModel
+        {
+            ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
+            LogicalOperator = LogicalOperators.Eval,
+            DataType = valueConditionNode.DataType,
+            Operand = valueConditionNode.Operand,
+            Operator = valueConditionNode.Operator,
+        };
 
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ValueConditionNodeDataModel conditionNodeDataModel)
         {
@@ -100,6 +165,27 @@ namespace Rules.Framework.Providers.MongoDb
                    .WithComparisonOperator(conditionNodeDataModel.Operator)
                    .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                     .Build(),
+
+                DataTypes.ArrayInteger => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<int>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<int>)
+                    .Build(),
+                DataTypes.ArrayDecimal => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<decimal>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<decimal>)
+                    .Build(),
+                DataTypes.ArrayString => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<string>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<string>)
+                    .Build(),
+                DataTypes.ArrayBoolean => conditionNodeBuilder.AsValued(conditionType)
+                    .OfDataType<IEnumerable<bool>>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<bool>)
+                    .Build(),
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
             };
         }
@@ -110,26 +196,19 @@ namespace Rules.Framework.Providers.MongoDb
         private static object Parse(string value, Type type)
             => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
-        private IConditionNode<TConditionType> ConvertConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private ConditionNodeDataModel ConvertComposedConditionNode(ComposedConditionNode<TConditionType> composedConditionNode)
         {
-            if (conditionNodeDataModel.LogicalOperator == LogicalOperators.Eval)
+            List<ConditionNodeDataModel> conditionNodeDataModels = new List<ConditionNodeDataModel>(composedConditionNode.ChildConditionNodes.Count());
+            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
             {
-                return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel as ValueConditionNodeDataModel);
+                conditionNodeDataModels.Add(this.ConvertConditionNode(child));
             }
-            else
+
+            return new ComposedConditionNodeDataModel
             {
-                ComposedConditionNodeDataModel composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
-
-                IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
-                    .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
-
-                foreach (ConditionNodeDataModel child in composedConditionNodeDataModel.ChildConditionNodes)
-                {
-                    composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, child));
-                }
-
-                return composedConditionNodeBuilder.Build();
-            }
+                ChildConditionNodes = conditionNodeDataModels,
+                LogicalOperator = composedConditionNode.LogicalOperator,
+            };
         }
 
         private ConditionNodeDataModel ConvertConditionNode(IConditionNode<TConditionType> conditionNode)
@@ -138,65 +217,17 @@ namespace Rules.Framework.Providers.MongoDb
             {
                 return conditionNode switch
                 {
-                    BooleanConditionNode<TConditionType> booleanConditionNode => new ValueConditionNodeDataModel
-                    {
-                        ConditionType = Convert.ToString(booleanConditionNode.ConditionType, CultureInfo.InvariantCulture),
-                        LogicalOperator = LogicalOperators.Eval,
-                        DataType = booleanConditionNode.DataType,
-                        Operand = booleanConditionNode.Operand,
-                        Operator = booleanConditionNode.Operator
-                    },
-                    DecimalConditionNode<TConditionType> decimalConditionNode => new ValueConditionNodeDataModel
-                    {
-                        ConditionType = Convert.ToString(decimalConditionNode.ConditionType, CultureInfo.InvariantCulture),
-                        LogicalOperator = LogicalOperators.Eval,
-                        DataType = decimalConditionNode.DataType,
-                        Operand = decimalConditionNode.Operand,
-                        Operator = decimalConditionNode.Operator
-                    },
-                    IntegerConditionNode<TConditionType> integerConditionNode => new ValueConditionNodeDataModel
-                    {
-                        ConditionType = Convert.ToString(integerConditionNode.ConditionType, CultureInfo.InvariantCulture),
-                        LogicalOperator = LogicalOperators.Eval,
-                        DataType = integerConditionNode.DataType,
-                        Operand = integerConditionNode.Operand,
-                        Operator = integerConditionNode.Operator
-                    },
-                    StringConditionNode<TConditionType> stringConditionNode => new ValueConditionNodeDataModel
-                    {
-                        ConditionType = Convert.ToString(stringConditionNode.ConditionType, CultureInfo.InvariantCulture),
-                        LogicalOperator = LogicalOperators.Eval,
-                        DataType = stringConditionNode.DataType,
-                        Operand = stringConditionNode.Operand,
-                        Operator = stringConditionNode.Operator
-                    },
-                    ValueConditionNode<TConditionType> valueConditionNode => new ValueConditionNodeDataModel
-                    {
-                        ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
-                        LogicalOperator = LogicalOperators.Eval,
-                        DataType = valueConditionNode.DataType,
-                        Operand = valueConditionNode.Operand,
-                        Operator = valueConditionNode.Operator
-                    },
+                    BooleanConditionNode<TConditionType> booleanConditionNode => ConvertBooleanConditionNode(booleanConditionNode),
+                    DecimalConditionNode<TConditionType> decimalConditionNode => ConvertDecimalConditionNode(decimalConditionNode),
+                    IntegerConditionNode<TConditionType> integerConditionNode => ConvertIntegerConditionNode(integerConditionNode),
+                    StringConditionNode<TConditionType> stringConditionNode => ConvertStringConditionNode(stringConditionNode),
+                    ValueConditionNode<TConditionType> valueConditionNode => ConvertValueConditionNode(valueConditionNode),
                     _ => throw new NotSupportedException($"Unsupported value condition node type: {conditionNode.GetType().FullName}."),
                 };
             }
-            else
-            {
-                ComposedConditionNode<TConditionType> composedConditionNode = conditionNode as ComposedConditionNode<TConditionType>;
 
-                List<ConditionNodeDataModel> conditionNodeDataModels = new List<ConditionNodeDataModel>(composedConditionNode.ChildConditionNodes.Count());
-                foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
-                {
-                    conditionNodeDataModels.Add(this.ConvertConditionNode(child));
-                }
-
-                return new ComposedConditionNodeDataModel
-                {
-                    ChildConditionNodes = conditionNodeDataModels,
-                    LogicalOperator = composedConditionNode.LogicalOperator
-                };
-            }
+            ComposedConditionNode<TConditionType> composedConditionNode = conditionNode as ComposedConditionNode<TConditionType>;
+            return ConvertComposedConditionNode(composedConditionNode);
         }
     }
 }

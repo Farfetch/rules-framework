@@ -5,7 +5,7 @@ namespace Rules.Framework.Builder
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal class ValueConditionNodeBuilder<TConditionType> : IValueConditionNodeBuilder<TConditionType>
+    internal sealed class ValueConditionNodeBuilder<TConditionType> : IValueConditionNodeBuilder<TConditionType>
     {
         private readonly TConditionType conditionType;
 
@@ -18,7 +18,7 @@ namespace Rules.Framework.Builder
             => new ValueConditionNodeBuilder<TConditionType, T>(this.conditionType);
     }
 
-    internal class ValueConditionNodeBuilder<TConditionType, TDataType> : IValueConditionNodeBuilder<TConditionType, TDataType>
+    internal sealed class ValueConditionNodeBuilder<TConditionType, TDataType> : IValueConditionNodeBuilder<TConditionType, TDataType>
     {
         private readonly TConditionType conditionType;
         private Operators comparisonOperator;
@@ -35,20 +35,28 @@ namespace Rules.Framework.Builder
             switch (this.operand)
             {
                 case decimal _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, this.operand);
+
                 case IEnumerable<decimal> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayDecimal, this.conditionType, this.comparisonOperator, this.operand);
 
                 case int _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, this.operand);
+
                 case IEnumerable<int> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayInteger, this.conditionType, this.comparisonOperator, this.operand);
 
                 case bool _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, this.operand);
+
                 case IEnumerable<bool> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayBoolean, this.conditionType, this.comparisonOperator, this.operand);
 
                 case string _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, this.operand);
+
                 case IEnumerable<string> _:
-                    return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, this.operand, this.internalId);
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayString, this.conditionType, this.comparisonOperator, this.operand);
 
                 default:
                     throw new NotSupportedException($"The data type is not supported: {typeof(TDataType).FullName}.");

@@ -23,6 +23,26 @@ namespace Rules.Framework.Core
         /// <summary>
         /// The boolean data type for condition nodes based on boolean values.
         /// </summary>
-        Boolean = 4
+        Boolean = 4,
+
+        /// <summary>
+        /// The array integer data type for condition nodes based on array integer values.
+        /// </summary>
+        ArrayInteger = 5,
+
+        /// <summary>
+        /// The array decimal data type for condition nodes based on array decimal values.
+        /// </summary>
+        ArrayDecimal = 6,
+
+        /// <summary>
+        /// The array string data type for condition nodes based on array string values.
+        /// </summary>
+        ArrayString = 7,
+
+        /// <summary>
+        /// The array boolean data type for condition nodes based on array boolean values.
+        /// </summary>
+        ArrayBoolean = 8
     }
 }

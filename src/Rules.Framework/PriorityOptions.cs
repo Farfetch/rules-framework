@@ -4,7 +4,7 @@ namespace Rules.Framework
     /// The priority options available to influence the priority at which a new rule is added to
     /// data source.
     /// </summary>
-    public enum PriorityOptions
+    public enum PriorityOptions : byte
     {
         /// <summary>
         /// Specifies to add rule positioned at top of priority values (smallest priority value).

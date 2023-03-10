@@ -20,7 +20,9 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: | 
+          3.1.x
+          6.0.x
 
     - name: Set packages authoring information
       id: set-packages-authoring-information
@@ -40,8 +42,8 @@ jobs:
     - name: Pack Rules.Framework.Providers.MongoDb
       run: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
       
-    - name: Pack Rules.Framework.Providers.InMemory
-      run: dotnet pack src/Rules.Framework.Providers.InMemory/Rules.Framework.Providers.InMemory.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
+    - name: Pack Rules.Framework.WebUI
+      run: dotnet pack src/Rules.Framework.WebUI/Rules.Framework.WebUI.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
         
     - name: Publish NuGet packages
       run: dotnet nuget push **/*.nupkg -s $NUGET_SOURCE -k $NUGET_API_KEY --skip-duplicate

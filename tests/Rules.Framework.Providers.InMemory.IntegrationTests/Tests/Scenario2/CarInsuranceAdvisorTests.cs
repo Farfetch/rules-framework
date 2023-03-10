@@ -29,23 +29,23 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario2/rules-framework-tests.car-insurance-advisor.json";
 
         [Fact]
-        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
+        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsPayOldCar()
         {
             // Arrange
-            CarInsuranceAdvices expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
+            CarInsuranceAdvices expected = CarInsuranceAdvices.PayOldCar;
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
+            DateTime expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
             Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
             {
                 new Condition<ConditionTypes>
                 {
                     Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
+                    Value = 0.0m
                 },
                 new Condition<ConditionTypes>
                 {
                     Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
+                    Value = 0.0m
                 }
             };
 
@@ -73,23 +73,23 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Tests.Scenario2
         }
 
         [Fact]
-        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsPayOldCar()
+        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
         {
             // Arrange
-            CarInsuranceAdvices expected = CarInsuranceAdvices.PayOldCar;
+            CarInsuranceAdvices expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
-            DateTime expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
+            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
             Condition<ConditionTypes>[] expectedConditions = new Condition<ConditionTypes>[]
             {
                 new Condition<ConditionTypes>
                 {
                     Type = ConditionTypes.RepairCosts,
-                    Value = 0.0m
+                    Value = 800.00000m
                 },
                 new Condition<ConditionTypes>
                 {
                     Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 0.0m
+                    Value = 23.45602m
                 }
             };
 

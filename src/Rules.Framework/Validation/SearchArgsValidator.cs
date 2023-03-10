@@ -3,7 +3,7 @@ namespace Rules.Framework.Validation
     using System;
     using FluentValidation;
 
-    internal class SearchArgsValidator<TContentType, TConditionType> : AbstractValidator<SearchArgs<TContentType, TConditionType>>
+    internal sealed class SearchArgsValidator<TContentType, TConditionType> : AbstractValidator<SearchArgs<TContentType, TConditionType>>
     {
         private readonly Type conditionTypeRuntimeType;
         private readonly Type contentTypeRuntimeType;

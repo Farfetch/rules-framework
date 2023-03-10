@@ -6,6 +6,6 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
 
     internal interface IDeferredEval
     {
-        Func<IEnumerable<Condition<TConditionType>>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode);
+        Func<IDictionary<TConditionType, object>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode);
     }
 }

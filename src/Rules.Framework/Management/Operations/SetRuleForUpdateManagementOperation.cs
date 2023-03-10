@@ -6,7 +6,7 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal class SetRuleForUpdateManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class SetRuleForUpdateManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
     {
         private readonly Rule<TContentType, TConditionType> updatedRule;
 

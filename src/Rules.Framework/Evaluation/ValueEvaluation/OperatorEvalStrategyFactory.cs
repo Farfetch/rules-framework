@@ -4,7 +4,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
     using System.Collections.Generic;
     using Rules.Framework.Core;
 
-    internal class OperatorEvalStrategyFactory : IOperatorEvalStrategyFactory
+    internal sealed class OperatorEvalStrategyFactory : IOperatorEvalStrategyFactory
     {
         private readonly IDictionary<Operators, object> strategies;
 
@@ -21,6 +21,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 { Operators.Contains, new ContainsOperatorEvalStrategy() },
                 { Operators.NotContains, new NotContainsOperatorEvalStrategy() },
                 { Operators.In, new InOperatorEvalStrategy() },
+                { Operators.NotIn, new NotInOperatorEvalStrategy() },
                 { Operators.StartsWith, new StartsWithOperatorEvalStrategy() },
                 { Operators.EndsWith, new EndsWithOperatorEvalStrategy() },
                 { Operators.CaseInsensitiveStartsWith, new CaseInsensitiveStartsWithOperatorEvalStrategy() },

@@ -1,12 +1,13 @@
 namespace Rules.Framework
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Rules.Framework.Core;
 
     /// <summary>
     /// The set of rules engine options that influence rules engine rules matching.
     /// </summary>
-    public class RulesEngineOptions
+    public class RulesEngineOptions : IRulesEngineOptions
     {
         private RulesEngineOptions()
         {
@@ -37,6 +38,11 @@ namespace Rules.Framework
             rulesEngineOptions.DataTypeDefaults[DataTypes.Decimal] = default(decimal);
             rulesEngineOptions.DataTypeDefaults[DataTypes.Integer] = default(int);
             rulesEngineOptions.DataTypeDefaults[DataTypes.String] = string.Empty;
+
+            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayBoolean] = Enumerable.Empty<bool>();
+            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayDecimal] = Enumerable.Empty<decimal>();
+            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayInteger] = Enumerable.Empty<int>();
+            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayString] = Enumerable.Empty<string>();
 
             return rulesEngineOptions;
         }

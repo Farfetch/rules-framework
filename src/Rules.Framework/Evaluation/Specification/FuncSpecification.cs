@@ -2,7 +2,7 @@ namespace Rules.Framework.Evaluation.Specification
 {
     using System;
 
-    internal class FuncSpecification<T> : SpecificationBase<T>
+    internal sealed class FuncSpecification<T> : SpecificationBase<T>
     {
         private readonly Func<T, bool> evalFunc;
 
