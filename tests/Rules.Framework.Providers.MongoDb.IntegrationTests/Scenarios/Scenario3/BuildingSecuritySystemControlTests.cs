@@ -10,7 +10,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
     using FluentAssertions;
     using MongoDB.Driver;
     using Newtonsoft.Json;
-    using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
@@ -30,11 +29,11 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3.rules-framework-tests.security-system-actionables.json");
 
             IEnumerable<RuleDataModel> rules;
-            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
+            using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
                 string json = streamReader.ReadToEnd();
 
-                IEnumerable<RuleDataModel> array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
+                var array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
@@ -51,9 +50,9 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 }).ToList();
             }
 
-            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-            IMongoCollection<RuleDataModel> mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
 
             mongoCollection.InsertMany(rules);
         }
@@ -64,8 +63,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -84,19 +83,19 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 }
             };
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Build();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
 
-            IEnumerable<SecuritySystemAction> securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
+            var securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
 
             securitySystemActions.Should().Contain(ssa => ssa.ActionName == "CallFireBrigade")
                 .And.Contain(ssa => ssa.ActionName == "CallPolice")
@@ -110,8 +109,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -130,19 +129,19 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 }
             };
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Build();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
 
-            IEnumerable<SecuritySystemAction> securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
+            var securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
 
             securitySystemActions.Should().Contain(ssa => ssa.ActionName == "EnableEmergencyLights")
                 .And.Contain(ssa => ssa.ActionName == "EnableEmergencyPower")
@@ -155,8 +154,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -175,19 +174,19 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 }
             };
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Build();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
 
-            IEnumerable<SecuritySystemAction> securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
+            var securitySystemActions = actual.Select(r => r.ContentContainer.GetContentAs<SecuritySystemAction>()).ToList();
 
             securitySystemActions.Should().Contain(ssa => ssa.ActionName == "EnableEmergencyLights")
                 .And.HaveCount(1);
@@ -195,7 +194,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
 
         public void Dispose()
         {
-            IMongoDatabase mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
         }
 

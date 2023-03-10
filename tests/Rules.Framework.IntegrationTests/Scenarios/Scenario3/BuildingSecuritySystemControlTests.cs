@@ -18,7 +18,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -66,7 +66,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>
                 {
@@ -113,7 +113,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>
                 {

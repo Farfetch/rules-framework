@@ -19,7 +19,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var expected = CarInsuranceAdvices.PerformInvestigation;
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2020, 06, 01);
-            var expectedConditions = new Condition<ConditionTypes>[]
+            var expectedConditions = new[]
             {
                 new Condition<ConditionTypes>
                 {
@@ -97,7 +97,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<ConditionTypes>[]
+            var expectedConditions = new[]
             {
                 new Condition<ConditionTypes>
                 {
