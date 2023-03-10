@@ -227,9 +227,7 @@ jobs:
       run: cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
 
     - name: Run benchmarks (HEAD)
-      run: |
-        chmod +x bin/Rules.Framework.BenchmarkTests
-        bin/Rules.Framework.BenchmarkTests -a artifacts
+      run: dotnet bin/Rules.Framework.BenchmarkTests.dll -a artifacts
 
     - name: Determine results file (HEAD)
       id: determine-results-file
