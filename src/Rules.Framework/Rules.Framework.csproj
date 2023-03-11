@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -30,6 +30,7 @@
 			<PackagePath></PackagePath>
 		</None>
 	</ItemGroup>
+    
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation" Version="10.3.6" />
@@ -41,5 +42,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
 	</ItemGroup>
 </Project>
