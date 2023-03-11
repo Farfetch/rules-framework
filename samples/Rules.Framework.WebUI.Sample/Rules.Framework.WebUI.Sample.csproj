@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj" />
     <ProjectReference Include="..\..\src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj" />
   </ItemGroup>
 

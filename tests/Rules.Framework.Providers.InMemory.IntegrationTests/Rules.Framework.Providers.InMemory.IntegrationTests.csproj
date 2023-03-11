@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Rules.Framework.Providers.InMemory\Rules.Framework.Providers.InMemory.csproj" />
+    <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
     <ProjectReference Include="..\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj" />
   </ItemGroup>
 
