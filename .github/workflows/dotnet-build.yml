@@ -212,7 +212,7 @@ jobs:
         ls -la bin
 
     - name: Run benchmarks (HEAD)
-      run: sudo ./bin/Rules.Framework.BenchmarkTests -a artifacts
+      run: sudo dotnet ./bin/Rules.Framework.BenchmarkTests.dll -a artifacts
 
     - name: Determine results file (HEAD)
       id: determine-results-file
