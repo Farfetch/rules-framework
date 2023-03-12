@@ -203,7 +203,7 @@ jobs:
       run: |
         cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
         ls -lRA
-        sudo chmod -R 777 $MD_FILE
+        sudo chmod -R 777 artifacts
         MD_FILE=$(find artifacts/results -name '*.md')
         echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts/results/$MD_FILE" >> $GITHUB_OUTPUT
 
