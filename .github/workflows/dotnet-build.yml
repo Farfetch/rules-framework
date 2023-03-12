@@ -203,7 +203,7 @@ jobs:
       run: dotnet restore rules-framework.sln
 
     - name: Build & Publish benchmarks (HEAD)
-      run: dotnet publish -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -o "${{ steps.determine-folders.outputs.head_benchmarks_folder }}" --framework net6.0 -r linux-x64
+      run: dotnet publish -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -o "${{ steps.determine-folders.outputs.head_benchmarks_folder }}" --framework net6.0 --no-self-contained
 
     - name: Change working directory (HEAD)
       run: |
@@ -211,7 +211,7 @@ jobs:
         ls -la
 
     - name: Run benchmarks (HEAD)
-      run: sudo ./Rules.Framework.BenchmarkTests -a artifacts
+      run: sudo dotnet Rules.Framework.BenchmarkTests.dll -a artifacts
 
     - name: Determine results file (HEAD)
       id: determine-results-file
