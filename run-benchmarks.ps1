@@ -44,27 +44,23 @@ Set-Location -Path $reportDir
 bin\Rules.Framework.BenchmarkTests.exe -a artifacts
 
 # Determine results file
-$filteredResultsFiles = Get-ChildItem -Path "$reportDir/artifacts/results" -File -Filter *.json
+$filteredResultsFiles = Get-ChildItem -Path artifacts/results -File -Filter *.md
 if ($filteredResultsFiles) {
     $resultsFile = $filteredResultsFiles.Name
 
-    # Get report dependencies
-    grab newtonsoft.json@13.0.2
+    # Copy results file
+    Copy-Item -Path artifacts/results/$resultsFile -Destination .
 
-    # Generate report
-    t4 -p:ResultsFile="$reportDir/artifacts/results/$resultsFile" -P="$reportDir/packages/newtonsoft.json/13.0.2/lib/net6.0" -r="Newtonsoft.Json.dll" `
-        -o "$reportDir/report.md" "$originalDir/tests/Rules.Framework.BenchmarkTests/Results2Markdown/Report.tt"
+    # Rename file
+    Rename-Item -Path $resultsFile -NewName report.md
 }
 
 if (!$KeepBenchmarksFiles) {
     if ($directoryFound = Get-ChildItem -Path $reportDir -Directory | Select-String -Pattern "artifacts") {
-        Remove-Item -Path "$reportDir/artifacts" -Recurse > $null
+        Remove-Item -Path artifacts -Recurse > $null
     }
     if ($directoryFound = Get-ChildItem -Path $reportDir -Directory | Select-String -Pattern "bin") {
-        Remove-Item -Path "$reportDir/bin" -Recurse > $null
-    }
-    if ($directoryFound = Get-ChildItem -Path $reportDir -Directory | Select-String -Pattern "packages") {
-        Remove-Item -Path "$reportDir/packages" -Recurse > $null
+        Remove-Item -Path bin -Recurse > $null
     }
 }
 

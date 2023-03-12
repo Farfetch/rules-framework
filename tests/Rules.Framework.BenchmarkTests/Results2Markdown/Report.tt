@@ -10,6 +10,10 @@
     var rawJsonText = streamReader.ReadToEnd();
     dynamic results = JsonConvert.DeserializeObject(rawJsonText);
     dynamic hostEnvInfo = results.Environment;
+    var hasBranchInstructionsPerOp = ((IEnumerable<dynamic>)results.Statistics).FirstOrDefault()?.BranchInstructionsPerOp.Key is null;
+    var hasBranchMispredictionsPerOp = ((IEnumerable<dynamic>)results.Statistics).FirstOrDefault()?.BranchMispredictionsPerOp.Key is null;
+    var hasGen0Collects = ((IEnumerable<dynamic>)results.Statistics).FirstOrDefault()?.Gen0Collects.Key is null;
+    var hasAllocatedMemory = ((IEnumerable<dynamic>)results.Statistics).FirstOrDefault()?.AllocatedMemory.Key is null;
 #>
 # Benchmark Results Report
 
@@ -35,10 +39,29 @@ Date & Time: <#= results.Date.ToString("yyyy-MM-dd HH:mm:ss") #>
     var parameters = statisticsItem.Parameters;
     var mean = $"{statisticsItem.MeanTimeTaken.Value.ToString((string)statisticsItem.MeanTimeTaken.Format)} {statisticsItem.MeanTimeTaken.Unit}";
     var stdError = $"{statisticsItem.StandardError.Value.ToString((string)statisticsItem.StandardError.Format)} {statisticsItem.StandardError.Unit}";
-    var branchInstructionsPerOp = statisticsItem.BranchInstructionsPerOp.Value.ToString((string)statisticsItem.BranchInstructionsPerOp.Format);
-    var branchMispredictionsPerOp = statisticsItem.BranchMispredictionsPerOp.Value.ToString((string)statisticsItem.BranchMispredictionsPerOp.Format);
-    var gen0Collects = statisticsItem.Gen0Collects.Value.ToString((string)statisticsItem.Gen0Collects.Format);
-    var allocatedMemory = $"{statisticsItem.AllocatedMemory.Value.ToString((string)statisticsItem.AllocatedMemory.Format)} {statisticsItem.AllocatedMemory.Unit}";
+    var branchInstructionsPerOp = string.Empty;
+    if (hasBranchInstructionsPerOp)
+    {
+        branchInstructionsPerOp = statisticsItem.BranchInstructionsPerOp.Value.ToString((string)statisticsItem.BranchInstructionsPerOp.Format);
+    }
+
+    var branchMispredictionsPerOp = string.Empty;
+    if (hasBranchMispredictionsPerOp)
+    {
+        branchMispredictionsPerOp = statisticsItem.BranchMispredictionsPerOp.Value.ToString((string)statisticsItem.BranchMispredictionsPerOp.Format);
+    }
+
+    var gen0Collects = string.Empty;
+    if (hasGen0Collects)
+    {
+        gen0Collects = statisticsItem.Gen0Collects.Value.ToString((string)statisticsItem.Gen0Collects.Format);
+    }
+
+    var allocatedMemory = string.Empty;
+    if (hasAllocatedMemory)
+    {
+        allocatedMemory = $"{statisticsItem.AllocatedMemory.Value.ToString((string)statisticsItem.AllocatedMemory.Format)} {statisticsItem.AllocatedMemory.Unit}";
+    }
 #>
 | <#= name #> | <#= parameters #> | <#= mean #> | <#= stdError #> | <#= branchInstructionsPerOp #> | <#= branchMispredictionsPerOp #> | <#= gen0Collects #> | <#= allocatedMemory #> |
 <#} #>
