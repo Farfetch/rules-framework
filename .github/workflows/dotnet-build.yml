@@ -206,7 +206,7 @@ jobs:
       run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj --framework net6.0
 
     - name: Run benchmarks (HEAD)
-      run: sudo dotnet run --project tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -- -a "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts"
+      run: sudo dotnet run --project tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj --framework net6.0 -- -a "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts"
 
     - name: Change working directory (HEAD)
       run: |
