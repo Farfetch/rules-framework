@@ -22,7 +22,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
+  
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj" />
 	</ItemGroup>
