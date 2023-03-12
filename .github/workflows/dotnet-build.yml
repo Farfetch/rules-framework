@@ -206,8 +206,8 @@ jobs:
     - name: Determine results file (HEAD)
       id: determine-results-file
       run: |
-        sudo chmod -R 777 artifacts
-        MD_FILE=$(find artifacts/results -name '*.md')
+        sudo chmod -R 777 ./artifacts
+        MD_FILE=$(find ./artifacts/results -name '*.md')
         echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$MD_FILE" >> $GITHUB_OUTPUT
 
     - name: Publish report results
