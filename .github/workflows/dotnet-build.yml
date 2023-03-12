@@ -198,18 +198,14 @@ jobs:
     - name: Run benchmarks (HEAD)
       run: sudo dotnet run --project tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -c Release --framework net6.0 -- -a "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts"
 
-    - name: Change working directory (HEAD)
-      run: |
-        cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
-        ls -lRA
-        cd artifacts/results
-
     - name: Determine results file (HEAD)
       id: determine-results-file
       run: |
-        MD_FILE=$(find . -name '*.md')
+        cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
+        ls -lRA
         sudo chmod -R 777 $MD_FILE
-        echo "file=$MD_FILE" >> $GITHUB_OUTPUT
+        MD_FILE=$(find artifacts/results -name '*.md')
+        echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts/results/$MD_FILE" >> $GITHUB_OUTPUT
 
     - name: Publish report results
       uses: peter-evans/create-or-update-comment@v2
