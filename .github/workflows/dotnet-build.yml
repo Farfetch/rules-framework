@@ -206,7 +206,10 @@ jobs:
       run: dotnet publish -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -o "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/bin" --framework net6.0
 
     - name: Change working directory (HEAD)
-      run: cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
+      run: |
+        cd ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
+        ls -la
+        ls -la bin
 
     - name: Run benchmarks (HEAD)
       run: sudo ./bin/Rules.Framework.BenchmarkTests -a artifacts
