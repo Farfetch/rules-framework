@@ -171,12 +171,6 @@ jobs:
   benchmarks:
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Grab tool
-      run: dotnet tool install dotnet-grab --global --ignore-failed-sources
-
-    - name: Setup T4 tool
-      run: dotnet tool install dotnet-t4 --global --ignore-failed-sources
-
     - name: Determine folders
       id: determine-folders
       run: |
@@ -202,7 +196,7 @@ jobs:
       run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj --framework net6.0
 
     - name: Run benchmarks (HEAD)
-      run: sudo dotnet run --project tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj --framework net6.0 -- -a "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts"
+      run: sudo dotnet run --project tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -c Release --framework net6.0 -- -a "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts"
 
     - name: Change working directory (HEAD)
       run: |

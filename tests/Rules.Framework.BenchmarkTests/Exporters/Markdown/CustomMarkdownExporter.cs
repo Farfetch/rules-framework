@@ -176,16 +176,16 @@ namespace Rules.Framework.BenchmarkTests.Exporters.Markdown
             var hasAllocatedMemory = benchmarkReport.Statistics.FirstOrDefault()?.AllocatedMemory is not null;
 
             stringBuilder.Append("|Name|Parameters|Mean Time Taken|Std Error|")
-                .AppendIf("Branch<br/>Instructions/Op|", () => hasBranchInstructionsPerOp)
-                .AppendIf("Branch<br/>Mispredictions/Op|", () => hasBranchMispredictionsPerOp)
-                .AppendIf("GC Gen0|", () => hasGen0Collects)
-                .AppendIf("Allocated Memory|", () => hasAllocatedMemory)
+                .AppendIf(() => "Branch<br/>Instructions/Op|", () => hasBranchInstructionsPerOp)
+                .AppendIf(() => "Branch<br/>Mispredictions/Op|", () => hasBranchMispredictionsPerOp)
+                .AppendIf(() => "GC Gen0|", () => hasGen0Collects)
+                .AppendIf(() => "Allocated Memory|", () => hasAllocatedMemory)
                 .AppendLine()
                 .Append("|---|---|---|---|")
-                .AppendIf("---|", () => hasBranchInstructionsPerOp)
-                .AppendIf("---|", () => hasBranchMispredictionsPerOp)
-                .AppendIf("---|", () => hasGen0Collects)
-                .AppendIf("---|", () => hasAllocatedMemory)
+                .AppendIf(() => "---|", () => hasBranchInstructionsPerOp)
+                .AppendIf(() => "---|", () => hasBranchMispredictionsPerOp)
+                .AppendIf(() => "---|", () => hasGen0Collects)
+                .AppendIf(() => "---|", () => hasAllocatedMemory)
                 .AppendLine();
 
             foreach (var statisticsItem in benchmarkReport.Statistics)
@@ -194,10 +194,10 @@ namespace Rules.Framework.BenchmarkTests.Exporters.Markdown
                     .Append($"|{statisticsItem.Parameters}")
                     .Append($"|{statisticsItem.MeanTimeTaken.Value.ToString((string)statisticsItem.MeanTimeTaken.Format)} {statisticsItem.MeanTimeTaken.Unit}")
                     .Append($"|{statisticsItem.StandardError.Value.ToString((string)statisticsItem.StandardError.Format)} {statisticsItem.StandardError.Unit}")
-                    .AppendIf($"|{statisticsItem.BranchInstructionsPerOp.Value.ToString((string)statisticsItem.BranchInstructionsPerOp.Format)}", () => hasBranchInstructionsPerOp)
-                    .AppendIf($"|{statisticsItem.BranchMispredictionsPerOp.Value.ToString((string)statisticsItem.BranchMispredictionsPerOp.Format)}", () => hasBranchMispredictionsPerOp)
-                    .AppendIf($"|{statisticsItem.Gen0Collects.Value.ToString((string)statisticsItem.Gen0Collects.Format)}", () => hasGen0Collects)
-                    .AppendIf($"|{statisticsItem.AllocatedMemory.Value.ToString((string)statisticsItem.AllocatedMemory.Format)} {statisticsItem.AllocatedMemory.Unit}", () => hasAllocatedMemory)
+                    .AppendIf(() => $"|{statisticsItem.BranchInstructionsPerOp.Value.ToString((string)statisticsItem.BranchInstructionsPerOp.Format)}", () => hasBranchInstructionsPerOp)
+                    .AppendIf(() => $"|{statisticsItem.BranchMispredictionsPerOp.Value.ToString((string)statisticsItem.BranchMispredictionsPerOp.Format)}", () => hasBranchMispredictionsPerOp)
+                    .AppendIf(() => $"|{statisticsItem.Gen0Collects.Value.ToString((string)statisticsItem.Gen0Collects.Format)}", () => hasGen0Collects)
+                    .AppendIf(() => $"|{statisticsItem.AllocatedMemory.Value.ToString((string)statisticsItem.AllocatedMemory.Format)} {statisticsItem.AllocatedMemory.Unit}", () => hasAllocatedMemory)
                     .AppendLine("|");
             }
 
@@ -205,10 +205,10 @@ namespace Rules.Framework.BenchmarkTests.Exporters.Markdown
                 .AppendLine("## Statistics Comparison")
                 .AppendLine()
                 .Append("|Name|Baseline|Compare|Mean Time Taken<br/>[Baseline]|Mean Time Taken<br/>[Compare]|Mean Time Taken<br/>[Comparison %]")
-                .AppendIf("|Allocated Memory<br/>[Baseline]|Allocated Memory<br/>[Compare]|Allocated Memory<br/>[Comparison %]", () => hasAllocatedMemory)
+                .AppendIf(() => "|Allocated Memory<br/>[Baseline]|Allocated Memory<br/>[Compare]|Allocated Memory<br/>[Comparison %]", () => hasAllocatedMemory)
                 .AppendLine("|")
                 .Append("|---|---|---|---|---|---")
-                .AppendIf("|---|---|---", () => hasAllocatedMemory)
+                .AppendIf(() => "|---|---|---", () => hasAllocatedMemory)
                 .AppendLine("|");
 
             foreach (var statisticsComparisonItem in benchmarkReport.StatisticsComparison)
@@ -219,9 +219,9 @@ namespace Rules.Framework.BenchmarkTests.Exporters.Markdown
                     .Append($"|{statisticsComparisonItem.BaselineMeanTimeTaken.Value.ToString((string)statisticsComparisonItem.BaselineMeanTimeTaken.Format)} {statisticsComparisonItem.BaselineMeanTimeTaken.Unit}")
                     .Append($"|{statisticsComparisonItem.CompareMeanTimeTaken.Value.ToString((string)statisticsComparisonItem.CompareMeanTimeTaken.Format)} {statisticsComparisonItem.CompareMeanTimeTaken.Unit}")
                     .Append($"|{statisticsComparisonItem.MeanTimeTakenCompareRate.Value.ToString((string)statisticsComparisonItem.MeanTimeTakenCompareRate.Format)} {statisticsComparisonItem.MeanTimeTakenCompareRate.Unit}")
-                    .AppendIf($"|{statisticsComparisonItem.BaselineAllocatedMemory.Value.ToString((string)statisticsComparisonItem.BaselineAllocatedMemory.Format)} {statisticsComparisonItem.BaselineAllocatedMemory.Unit}", () => hasAllocatedMemory)
-                    .AppendIf($"|{statisticsComparisonItem.CompareAllocatedMemory.Value.ToString((string)statisticsComparisonItem.CompareAllocatedMemory.Format)} {statisticsComparisonItem.CompareAllocatedMemory.Unit}", () => hasAllocatedMemory)
-                    .AppendIf($"|{statisticsComparisonItem.AllocatedMemoryRate.Value.ToString((string)statisticsComparisonItem.AllocatedMemoryRate.Format)} {statisticsComparisonItem.AllocatedMemoryRate.Unit}", () => hasAllocatedMemory)
+                    .AppendIf(() => $"|{statisticsComparisonItem.BaselineAllocatedMemory.Value.ToString((string)statisticsComparisonItem.BaselineAllocatedMemory.Format)} {statisticsComparisonItem.BaselineAllocatedMemory.Unit}", () => hasAllocatedMemory)
+                    .AppendIf(() => $"|{statisticsComparisonItem.CompareAllocatedMemory.Value.ToString((string)statisticsComparisonItem.CompareAllocatedMemory.Format)} {statisticsComparisonItem.CompareAllocatedMemory.Unit}", () => hasAllocatedMemory)
+                    .AppendIf(() => $"|{statisticsComparisonItem.AllocatedMemoryRate.Value.ToString((string)statisticsComparisonItem.AllocatedMemoryRate.Format)} {statisticsComparisonItem.AllocatedMemoryRate.Unit}", () => hasAllocatedMemory)
                     .AppendLine("|");
             }
 
