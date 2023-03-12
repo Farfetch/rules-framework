@@ -205,7 +205,7 @@ jobs:
         ls -lRA
         sudo chmod -R 777 artifacts
         MD_FILE=$(find artifacts/results -name '*.md')
-        echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts/results/$MD_FILE" >> $GITHUB_OUTPUT
+        echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$MD_FILE" >> $GITHUB_OUTPUT
 
     - name: Publish report results
       uses: peter-evans/create-or-update-comment@v2
