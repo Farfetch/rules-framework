@@ -210,5 +210,5 @@ jobs:
     - name: Publish report results
       uses: peter-evans/create-or-update-comment@v2
       with:
-        issue-number: ${{ github.event.issue.number }}
+        issue-number: ${{ github.event.number }}
         body-file: ${{ steps.determine-results-file.outputs.file }}
