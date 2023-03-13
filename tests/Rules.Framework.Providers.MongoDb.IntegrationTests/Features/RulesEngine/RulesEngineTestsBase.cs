@@ -45,7 +45,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             foreach (var ruleSpecification in ruleSpecifications)
             {
                 this.RulesEngine.AddRuleAsync(
-                    ruleSpecification.RuleBuilderResult.Rule,
+                    ruleSpecification.Rule,
                     ruleSpecification.RuleAddPriorityOption)
                     .ConfigureAwait(false)
                     .GetAwaiter()
@@ -54,11 +54,11 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         }
 
         protected async Task<Rule<ContentType, ConditionType>> MatchOneAsync(
-            DateTime expectedMatchDate,
-            Condition<ConditionType>[] expectedConditions) => await RulesEngine.MatchOneAsync(
+            DateTime matchDate,
+            Condition<ConditionType>[] conditions) => await RulesEngine.MatchOneAsync(
                 TestContentType,
-                expectedMatchDate,
-                expectedConditions)
+                matchDate,
+                conditions)
             .ConfigureAwait(false);
 
         private static MongoClient CreateMongoClient()

@@ -141,7 +141,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var searchArgs = new SearchArgs<ContentTypes, ConditionTypes>(expectedContent, expectedMatchDate, expectedMatchDate)
             {
-                Conditions = new Condition<ConditionTypes>[]
+                Conditions = new[]
                 {
                     new Condition<ConditionTypes>
                     {
@@ -186,7 +186,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var searchArgs = new SearchArgs<ContentTypes, ConditionTypes>(expectedContent, expectedMatchDate, expectedMatchDate)
             {
-                Conditions = new Condition<ConditionTypes>[]
+                Conditions = new[]
                 {
                     new Condition<ConditionTypes>
                     {
@@ -226,7 +226,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<ConditionTypes>[]
+            var expectedConditions = new[]
             {
                 new Condition<ConditionTypes>
                 {

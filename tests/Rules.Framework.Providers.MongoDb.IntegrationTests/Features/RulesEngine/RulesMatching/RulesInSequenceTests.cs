@@ -11,12 +11,12 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
     public class RulesInSequenceTests : RulesEngineTestsBase
     {
         private static readonly string rule1Name = "DummyRule1";
-        private static readonly string rule2Name = "DummyRule2";
-        private static readonly string rule1Value = "DummyRule1 Value";
-        private static readonly string rule2Value = "DummyRule2 Value";
         private static readonly DateTime rule1StartDate = new DateTime(2020, 01, 01);
-        private static readonly DateTime ruleChangeDate = new DateTime(2020, 07, 01, 14, 30, 00);
+        private static readonly string rule1Value = "DummyRule1 Value";
         private static readonly DateTime rule2EndDate = new DateTime(2021, 02, 01);
+        private static readonly string rule2Name = "DummyRule2";
+        private static readonly string rule2Value = "DummyRule2 Value";
+        private static readonly DateTime ruleChangeDate = new DateTime(2020, 07, 01, 14, 30, 00);
         private static readonly ContentType TestContentType = ContentType.ContentType1;
 
         public RulesInSequenceTests() : base(TestContentType)
@@ -79,10 +79,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
                 .NewRule<ContentType, ConditionType>()
                 .WithName(rule1Name)
                 .WithContent(TestContentType, rule1Value)
-                .WithDatesInterval(rule1StartDate, ruleChangeDate) //.AddMilliseconds(-1))
+                .WithDatesInterval(rule1StartDate, ruleChangeDate)
                 .Build();
 
-            ruleSpecs.Add(new RuleSpecification(rule1, RuleAddPriorityOption.ByPriorityNumber(1)));
+            ruleSpecs.Add(new RuleSpecification(rule1.Rule, RuleAddPriorityOption.ByPriorityNumber(1)));
 
             var rule2 =
                 RuleBuilder
@@ -92,7 +92,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
                 .WithDatesInterval(ruleChangeDate, rule2EndDate)
                 .Build();
 
-            ruleSpecs.Add(new RuleSpecification(rule2, RuleAddPriorityOption.ByPriorityNumber(2)));
+            ruleSpecs.Add(new RuleSpecification(rule2.Rule, RuleAddPriorityOption.ByPriorityNumber(2)));
 
             return ruleSpecs;
         }
