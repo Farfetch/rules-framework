@@ -1,17 +1,5 @@
 param ([switch] $KeepBenchmarksFiles)
 
-$globalTools = dotnet tool list -g
-$grabTool = $globalTools | Select-String -Pattern "dotnet-grab"
-$t4Tool = $globalTools | Select-String -Pattern "dotnet-t4"
-
-if (!$grabTool) {
-    dotnet tool install dotnet-grab --global --ignore-failed-sources
-}
-
-if (!$t4Tool) {
-    dotnet tool install dotnet-t4 --global --ignore-failed-sources
-}
-
 $originalDir = (Get-Location).Path
 $timestamp = [DateTime]::UtcNow.ToString("yyyyMMdd_hhmmss")
 

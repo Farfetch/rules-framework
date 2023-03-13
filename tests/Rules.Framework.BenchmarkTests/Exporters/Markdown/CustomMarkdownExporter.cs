@@ -10,10 +10,6 @@ namespace Rules.Framework.BenchmarkTests.Exporters.Markdown
 
     internal class CustomMarkdownExporter : ExporterBase
     {
-        public CustomMarkdownExporter()
-        {
-        }
-
         public static IExporter Default => new CustomMarkdownExporter();
 
         protected override string FileExtension => "md";
