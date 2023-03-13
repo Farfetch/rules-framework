@@ -207,8 +207,18 @@ jobs:
         MD_FILE=$(find artifacts/results -name '*.md')
         echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$MD_FILE" >> $GITHUB_OUTPUT
 
-    - name: Publish report results
-      uses: peter-evans/create-or-update-comment@v2
+    - name: Find comment - report results
+      uses: peter-evans/find-comment@v2
+      id: find-comment
       with:
         issue-number: ${{ github.event.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Benchmark Results Report
+
+    - name: Create or update comment - report results
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        comment-id: ${{ steps.find-comment.outputs.comment-id }}
+        issue-number: ${{ github.event.number }}
         body-file: ${{ steps.determine-results-file.outputs.file }}
+        edit-mode: replace
