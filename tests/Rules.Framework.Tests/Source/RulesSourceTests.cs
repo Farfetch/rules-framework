@@ -8,7 +8,7 @@ namespace Rules.Framework.Tests.Source
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Source;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class RulesSourceTests

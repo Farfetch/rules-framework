@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
-    <None Remove="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
+    <None Remove="Scenarios\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
+    <None Remove="Scenarios\Scenario3\rules-framework-tests.security-system-actionables.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
-    <EmbeddedResource Include="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
+    <EmbeddedResource Include="Scenarios\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
+    <EmbeddedResource Include="Scenarios\Scenario3\rules-framework-tests.security-system-actionables.json" />
   </ItemGroup>
 </Project>
