@@ -9,7 +9,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.ValueEvaluation;
     using Rules.Framework.Evaluation.ValueEvaluation.Dispatchers;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class DeferredEvalTests
