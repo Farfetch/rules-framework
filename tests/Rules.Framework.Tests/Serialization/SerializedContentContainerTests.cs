@@ -4,7 +4,7 @@ namespace Rules.Framework.Tests.Serialization
     using FluentAssertions;
     using Moq;
     using Rules.Framework.Serialization;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class SerializedContentContainerTests

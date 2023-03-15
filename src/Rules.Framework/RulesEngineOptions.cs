@@ -1,5 +1,6 @@
 namespace Rules.Framework
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
@@ -39,7 +40,17 @@ namespace Rules.Framework
         /// <summary>
         /// Gets or sets the priority criteria to untie when multiples rules are matched.
         /// </summary>
-        public PriorityCriterias PriotityCriteria { get; set; }
+        public PriorityCriterias PriorityCriteria { get; set; }
+
+        /// <summary>
+        /// Gets or sets the priority criteria to untie when multiples rules are matched.
+        /// </summary>
+        [Obsolete("This property has a typo and has been replaced by PriorityCriteria.")]
+        public PriorityCriterias PriotityCriteria
+        {
+            get { return this.PriorityCriteria; }
+            set { this.PriorityCriteria = value; }
+        }
 
         /// <summary>
         /// Creates a new set of rules engine options with framework-configured defaults.
@@ -58,7 +69,7 @@ namespace Rules.Framework
             RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
             {
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                PriotityCriteria = PriorityCriterias.TopmostRuleWins
+                PriorityCriteria = PriorityCriterias.TopmostRuleWins
             };
 
             rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);

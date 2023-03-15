@@ -105,6 +105,7 @@ namespace Rules.Framework.IntegrationTests
             var dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
             var integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
             var @operator = RulesFromJsonFile.Parse<Operators>(conditionNodeDataModel.Operator);
+
             switch (dataType)
             {
                 case DataTypes.Integer:

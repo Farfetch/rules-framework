@@ -13,7 +13,7 @@ namespace Rules.Framework.Providers.MongoDb
     /// </summary>
     /// <typeparam name="TContentType">The type of the content type.</typeparam>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    /// <seealso cref="Rules.Framework.IRulesDataSource{TContentType, TConditionType}" />
+    /// <seealso cref="Rules.Framework.IRulesDataSource{TContentType, TConditionType}"/>
     public class MongoDbProviderRulesDataSource<TContentType, TConditionType> : IRulesDataSource<TContentType, TConditionType>
     {
         private readonly IMongoDatabase mongoDatabase;
@@ -49,7 +49,8 @@ namespace Rules.Framework.Providers.MongoDb
         }
 
         /// <summary>
-        /// Gets the rules categorized with specified <paramref name="contentType" /> between <paramref name="dateBegin" /> and <paramref name="dateEnd" />.
+        /// Gets the rules categorized with specified <paramref name="contentType"/> between
+        /// <paramref name="dateBegin"/> and <paramref name="dateEnd"/>.
         /// </summary>
         /// <param name="contentType">the content type categorization.</param>
         /// <param name="dateBegin">the filtering begin date.</param>
@@ -113,25 +114,14 @@ namespace Rules.Framework.Providers.MongoDb
         {
             var contentTypeFilter = Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, contentType.ToString());
 
-            // To fetch rules that begin during filtered interval but end after it.
-            var dateBeginFilter = Builders<RuleDataModel>.Filter.And(
-                Builders<RuleDataModel>.Filter.Gte(x => x.DateBegin, dateBegin),
-                Builders<RuleDataModel>.Filter.Lt(x => x.DateBegin, dateEnd));
-
-            // To fetch rules that begun before filtered interval but end during it.
-            var dateEndFilter = Builders<RuleDataModel>.Filter.And(
-                Builders<RuleDataModel>.Filter.Ne(x => x.DateEnd, null),
-                Builders<RuleDataModel>.Filter.Gte(x => x.DateEnd, dateBegin),
-                Builders<RuleDataModel>.Filter.Lt(x => x.DateEnd, dateEnd));
-
-            // To fetch rules that begun before and end after filtered interval.
-            var slicingFilter = Builders<RuleDataModel>.Filter.And(
-                Builders<RuleDataModel>.Filter.Lt(x => x.DateBegin, dateBegin),
+            var datesFilter = Builders<RuleDataModel>.Filter.And(
+                Builders<RuleDataModel>.Filter.Lte(rule => rule.DateBegin, dateEnd),
                 Builders<RuleDataModel>.Filter.Or(
-                    Builders<RuleDataModel>.Filter.Eq(x => x.DateEnd, null),
-                    Builders<RuleDataModel>.Filter.Gt(x => x.DateEnd, dateEnd)));
+                    Builders<RuleDataModel>.Filter.Gt(rule => rule.DateEnd, dateBegin),
+                    Builders<RuleDataModel>.Filter.Eq(rule => rule.DateEnd, null))
+                );
 
-            return Builders<RuleDataModel>.Filter.And(contentTypeFilter, Builders<RuleDataModel>.Filter.Or(dateBeginFilter, dateEndFilter, slicingFilter));
+            return Builders<RuleDataModel>.Filter.And(contentTypeFilter, datesFilter);
         }
 
         private static FilterDefinition<RuleDataModel> BuildFilterFromRulesFilterArgs(RulesFilterArgs<TContentType> rulesFilterArgs)
