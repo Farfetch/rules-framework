@@ -1,6 +1,7 @@
 namespace Rules.Framework.Evaluation.Compiled
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.Source;
@@ -33,18 +34,19 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
-            foreach (var rule in rules)
+            var compiledRulesTasks = rules.Select(async (r) =>
             {
-                bool compiled = this.TryCompile(rule);
+                bool compiled = this.TryCompile(r);
                 if (compiled)
                 {
                     // Commit compilation result to data source, so that next time rule is loaded,
                     // it won't go through the compilation process again.
-                    await this.rulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
+                    await this.rulesDataSource.UpdateRuleAsync(r).ConfigureAwait(false);
                 }
-            }
+                return r;
+            });
 
-            return rules;
+            return await Task.WhenAll(compiledRulesTasks).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesFilteredAsync(
@@ -53,18 +55,19 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
-            foreach (var rule in rules)
+            var compiledRulesTasks = rules.Select(async (r) =>
             {
-                bool compiled = this.TryCompile(rule);
+                bool compiled = this.TryCompile(r);
                 if (compiled)
                 {
                     // Commit compilation result to data source, so that next time rule is loaded,
                     // it won't go through the compilation process again.
-                    await this.rulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
+                    await this.rulesDataSource.UpdateRuleAsync(r).ConfigureAwait(false);
                 }
-            }
+                return r;
+            });
 
-            return rules;
+            return await Task.WhenAll(compiledRulesTasks).ConfigureAwait(false);
         }
 
         public async Task HandleUpdateRuleAsync(

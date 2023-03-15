@@ -194,7 +194,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -244,7 +244,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -351,7 +351,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -399,7 +399,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)

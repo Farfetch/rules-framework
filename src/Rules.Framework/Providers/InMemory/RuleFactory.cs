@@ -87,6 +87,7 @@ namespace Rules.Framework.Providers.InMemory
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator,
+                Properties = composedConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
             };
         }
 
@@ -107,7 +108,13 @@ namespace Rules.Framework.Providers.InMemory
                 composedConditionNodeBuilder.AddCondition(cnb => ConvertConditionNode(cnb, child));
             }
 
-            return composedConditionNodeBuilder.Build();
+            var composedConditionNode = composedConditionNodeBuilder.Build();
+            foreach (var property in composedConditionNodeDataModel.Properties)
+            {
+                composedConditionNode.Properties[property.Key] = property.Value;
+            }
+
+            return composedConditionNode;
         }
 
         private static ConditionNodeDataModel<TConditionType> ConvertConditionNode(IConditionNode<TConditionType> conditionNode)
@@ -163,11 +170,12 @@ namespace Rules.Framework.Providers.InMemory
             DataType = valueConditionNode.DataType,
             Operand = valueConditionNode.Operand,
             Operator = valueConditionNode.Operator,
+            Properties = valueConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
         };
 
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ValueConditionNodeDataModel<TConditionType> conditionNodeDataModel)
         {
-            return conditionNodeDataModel.DataType switch
+            var valueConditionNode = conditionNodeDataModel.DataType switch
             {
                 DataTypes.Integer => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
                     .OfDataType<int>()
@@ -212,6 +220,13 @@ namespace Rules.Framework.Providers.InMemory
                     .Build(),
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
             };
+
+            foreach (var property in conditionNodeDataModel.Properties)
+            {
+                valueConditionNode.Properties[property.Key] = property.Value;
+            }
+
+            return valueConditionNode;
         }
     }
 }

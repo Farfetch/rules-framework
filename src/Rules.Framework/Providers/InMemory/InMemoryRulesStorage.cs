@@ -37,7 +37,7 @@ namespace Rules.Framework.Providers.InMemory
         {
             List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(contentType);
 
-            return contentTypeRules.AsReadOnly();
+            return contentTypeRules.ToList().AsReadOnly();
         }
 
         public void UpdateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
