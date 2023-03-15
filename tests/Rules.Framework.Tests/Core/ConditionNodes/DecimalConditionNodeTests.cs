@@ -12,20 +12,20 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
         public void Init_GivenSetupWithDecimalValue_ReturnsSettedValues()
         {
             // Arrange
-            ConditionType expectedConditionType = ConditionType.PluviosityRate;
-            Operators expectedOperator = Operators.NotEqual;
+            var expectedConditionType = ConditionType.PluviosityRate;
+            var expectedOperator = Operators.NotEqual;
             decimal expectedOperand = 5682.2654m;
-            LogicalOperators expectedLogicalOperator = LogicalOperators.Eval;
-            DataTypes expectedDataType = DataTypes.Decimal;
+            var expectedLogicalOperator = LogicalOperators.Eval;
+            var expectedDataType = DataTypes.Decimal;
 
-            DecimalConditionNode<ConditionType> sut = new DecimalConditionNode<ConditionType>(expectedConditionType, expectedOperator, expectedOperand);
+            var sut = new ValueConditionNode<ConditionType>(DataTypes.Decimal, expectedConditionType, expectedOperator, expectedOperand);
 
             // Act
-            ConditionType actualConditionType = sut.ConditionType;
-            Operators actualOperator = sut.Operator;
-            DataTypes actualDataType = sut.DataType;
-            LogicalOperators actualLogicalOperator = sut.LogicalOperator;
-            decimal actualOperand = sut.Operand;
+            var actualConditionType = sut.ConditionType;
+            var actualOperator = sut.Operator;
+            var actualDataType = sut.DataType;
+            var actualLogicalOperator = sut.LogicalOperator;
+            var actualOperand = sut.Operand;
 
             // Assert
             actualConditionType.Should().Be(expectedConditionType);

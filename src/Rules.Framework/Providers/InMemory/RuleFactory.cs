@@ -66,18 +66,10 @@ namespace Rules.Framework.Providers.InMemory
             return ruleDataModel;
         }
 
-        private static ValueConditionNodeDataModel<TConditionType> ConvertBooleanConditionNode(BooleanConditionNode<TConditionType> booleanConditionNode) => new ValueConditionNodeDataModel<TConditionType>
-        {
-            ConditionType = booleanConditionNode.ConditionType,
-            LogicalOperator = LogicalOperators.Eval,
-            DataType = booleanConditionNode.DataType,
-            Operand = booleanConditionNode.Operand,
-            Operator = booleanConditionNode.Operator,
-        };
-
         private static ConditionNodeDataModel<TConditionType> ConvertComposedConditionNode(ComposedConditionNode<TConditionType> composedConditionNode)
         {
-            List<ConditionNodeDataModel<TConditionType>> conditionNodeDataModels = new List<ConditionNodeDataModel<TConditionType>>(composedConditionNode.ChildConditionNodes.Count());
+            var conditionNodeDataModels = new List<ConditionNodeDataModel<TConditionType>>(composedConditionNode.ChildConditionNodes.Count());
+
             foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels.Add(ConvertConditionNode(child));
@@ -116,10 +108,6 @@ namespace Rules.Framework.Providers.InMemory
             {
                 return conditionNode switch
                 {
-                    BooleanConditionNode<TConditionType> booleanConditionNode => ConvertBooleanConditionNode(booleanConditionNode),
-                    DecimalConditionNode<TConditionType> decimalConditionNode => ConvertDecimalConditionNode(decimalConditionNode),
-                    IntegerConditionNode<TConditionType> integerConditionNode => ConvertIntegerConditionNode(integerConditionNode),
-                    StringConditionNode<TConditionType> stringConditionNode => ConvertStringConditionNode(stringConditionNode),
                     ValueConditionNode<TConditionType> valueConditionNode => ConvertValueConditionNode(valueConditionNode),
                     _ => throw new NotSupportedException($"Unsupported value condition node type: {conditionNode.GetType().FullName}."),
                 };
@@ -128,33 +116,6 @@ namespace Rules.Framework.Providers.InMemory
             ComposedConditionNode<TConditionType> composedConditionNode = conditionNode as ComposedConditionNode<TConditionType>;
             return ConvertComposedConditionNode(composedConditionNode);
         }
-
-        private static ValueConditionNodeDataModel<TConditionType> ConvertDecimalConditionNode(DecimalConditionNode<TConditionType> decimalConditionNode) => new ValueConditionNodeDataModel<TConditionType>
-        {
-            ConditionType = decimalConditionNode.ConditionType,
-            LogicalOperator = LogicalOperators.Eval,
-            DataType = decimalConditionNode.DataType,
-            Operand = decimalConditionNode.Operand,
-            Operator = decimalConditionNode.Operator,
-        };
-
-        private static ValueConditionNodeDataModel<TConditionType> ConvertIntegerConditionNode(IntegerConditionNode<TConditionType> integerConditionNode) => new ValueConditionNodeDataModel<TConditionType>
-        {
-            ConditionType = integerConditionNode.ConditionType,
-            LogicalOperator = LogicalOperators.Eval,
-            DataType = integerConditionNode.DataType,
-            Operand = integerConditionNode.Operand,
-            Operator = integerConditionNode.Operator,
-        };
-
-        private static ValueConditionNodeDataModel<TConditionType> ConvertStringConditionNode(StringConditionNode<TConditionType> stringConditionNode) => new ValueConditionNodeDataModel<TConditionType>
-        {
-            ConditionType = stringConditionNode.ConditionType,
-            LogicalOperator = LogicalOperators.Eval,
-            DataType = stringConditionNode.DataType,
-            Operand = stringConditionNode.Operand,
-            Operator = stringConditionNode.Operator,
-        };
 
         private static ValueConditionNodeDataModel<TConditionType> ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode) => new ValueConditionNodeDataModel<TConditionType>
         {

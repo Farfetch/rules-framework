@@ -12,20 +12,20 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
         public void Init_GivenSetupWithStringValue_ReturnsSettedValues()
         {
             // Arrange
-            ConditionType expectedConditionType = ConditionType.IsoCountryCode;
-            Operators expectedOperator = Operators.NotEqual;
-            string expectedOperand = "Such operand, much wow.";
-            LogicalOperators expectedLogicalOperator = LogicalOperators.Eval;
-            DataTypes expectedDataType = DataTypes.String;
+            var expectedConditionType = ConditionType.IsoCountryCode;
+            var expectedOperator = Operators.NotEqual;
+            var expectedOperand = "Such operand, much wow.";
+            var expectedLogicalOperator = LogicalOperators.Eval;
+            var expectedDataType = DataTypes.String;
 
-            StringConditionNode<ConditionType> sut = new StringConditionNode<ConditionType>(expectedConditionType, expectedOperator, expectedOperand);
+            var sut = new ValueConditionNode<ConditionType>(DataTypes.String, expectedConditionType, expectedOperator, expectedOperand);
 
             // Act
-            ConditionType actualConditionType = sut.ConditionType;
-            Operators actualOperator = sut.Operator;
-            DataTypes actualDataType = sut.DataType;
-            LogicalOperators actualLogicalOperator = sut.LogicalOperator;
-            string actualOperand = sut.Operand;
+            var actualConditionType = sut.ConditionType;
+            var actualOperator = sut.Operator;
+            var actualDataType = sut.DataType;
+            var actualLogicalOperator = sut.LogicalOperator;
+            var actualOperand = sut.Operand;
 
             // Assert
             actualConditionType.Should().Be(expectedConditionType);

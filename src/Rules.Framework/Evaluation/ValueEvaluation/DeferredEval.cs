@@ -22,20 +22,10 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
         {
             return valueConditionNode switch
             {
-                IntegerConditionNode<TConditionType> integerConditionNode => (conditions) => Eval<IntegerConditionNode<TConditionType>, TConditionType, int>(conditions, integerConditionNode, matchMode),
-                DecimalConditionNode<TConditionType> decimalConditionNode => (conditions) => Eval<DecimalConditionNode<TConditionType>, TConditionType, decimal>(conditions, decimalConditionNode, matchMode),
-                StringConditionNode<TConditionType> stringConditionNode => (conditions) => Eval<StringConditionNode<TConditionType>, TConditionType, string>(conditions, stringConditionNode, matchMode),
-                BooleanConditionNode<TConditionType> booleanConditionNode => (conditions) => Eval<BooleanConditionNode<TConditionType>, TConditionType, bool>(conditions, booleanConditionNode, matchMode),
                 ValueConditionNode<TConditionType> valueConditionNodeImpl => (conditions) => Eval(conditions, valueConditionNodeImpl, matchMode),
                 _ => throw new NotSupportedException($"Unsupported value condition node: '{valueConditionNode.GetType().Name}'."),
             };
         }
-
-        private bool Eval<TConditionNode, TConditionType, T>(IDictionary<TConditionType, object> conditions, TConditionNode valueConditionNode, MatchModes matchMode)
-            where TConditionNode : ValueConditionNodeTemplate<T, TConditionType>
-            where T : IComparable
-            // To be removed on a future major release, when obsolete value condition nodes are removed.
-            => this.Eval(conditions, valueConditionNode, valueConditionNode.Operand, matchMode);
 
         private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, ValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
             => this.Eval(conditions, valueConditionNode, valueConditionNode.Operand, matchMode);
