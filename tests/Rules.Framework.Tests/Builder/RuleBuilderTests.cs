@@ -5,7 +5,7 @@ namespace Rules.Framework.Tests.Builder
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class RuleBuilderTests
