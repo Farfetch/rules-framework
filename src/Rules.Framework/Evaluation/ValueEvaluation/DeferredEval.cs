@@ -27,11 +27,10 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
             };
         }
 
-        private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, ValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
-            => this.Eval(conditions, valueConditionNode, valueConditionNode.Operand, matchMode);
-
-        private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, IValueConditionNode<TConditionType> valueConditionNode, object rightOperand, MatchModes matchMode)
+        private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
         {
+            var rightOperand = valueConditionNode.Operand;
+
             conditions.TryGetValue(valueConditionNode.ConditionType, out var leftOperand);
 
             if (leftOperand is null)
@@ -40,7 +39,8 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 {
                     return false;
                 }
-                else if (matchMode == MatchModes.Search)
+
+                if (matchMode == MatchModes.Search)
                 {
                     // When match mode is search, if condition is missing, it is not used as search
                     // criteria, so we don't filter out the rule.
@@ -48,7 +48,7 @@ namespace Rules.Framework.Evaluation.ValueEvaluation
                 }
             }
 
-            IConditionEvalDispatcher conditionEvalDispatcher = this.conditionEvalDispatchProvider.GetEvalDispatcher(leftOperand, valueConditionNode.Operator, rightOperand);
+            var conditionEvalDispatcher = this.conditionEvalDispatchProvider.GetEvalDispatcher(leftOperand, valueConditionNode.Operator, rightOperand);
 
             return conditionEvalDispatcher.EvalDispatch(valueConditionNode.DataType, leftOperand, valueConditionNode.Operator, rightOperand);
         }

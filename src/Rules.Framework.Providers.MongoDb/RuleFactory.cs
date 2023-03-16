@@ -75,16 +75,17 @@ namespace Rules.Framework.Providers.MongoDb
             return ruleDataModel;
         }
 
-        private static IConditionNode<TConditionType> ConvertConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private static IConditionNode<TConditionType> ConvertConditionNode(
+            IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             if (conditionNodeDataModel.LogicalOperator == LogicalOperators.Eval)
             {
                 return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel as ValueConditionNodeDataModel);
             }
 
-            ComposedConditionNodeDataModel composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
+            var composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel;
 
-            IComposedConditionNodeBuilder<TConditionType> composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
+            var composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
                 .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
 
             foreach (ConditionNodeDataModel child in composedConditionNodeDataModel.ChildConditionNodes)
@@ -162,8 +163,9 @@ namespace Rules.Framework.Providers.MongoDb
 
         private ConditionNodeDataModel ConvertComposedConditionNode(ComposedConditionNode<TConditionType> composedConditionNode)
         {
-            List<ConditionNodeDataModel> conditionNodeDataModels = new List<ConditionNodeDataModel>(composedConditionNode.ChildConditionNodes.Count());
-            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
+            var conditionNodeDataModels = new List<ConditionNodeDataModel>(composedConditionNode.ChildConditionNodes.Count());
+
+            foreach (var child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels.Add(this.ConvertConditionNode(child));
             }
@@ -179,15 +181,10 @@ namespace Rules.Framework.Providers.MongoDb
         {
             if (conditionNode.LogicalOperator == LogicalOperators.Eval)
             {
-                return conditionNode switch
-                {
-                    ValueConditionNode<TConditionType> valueConditionNode => ConvertValueConditionNode(valueConditionNode),
-                    _ => throw new NotSupportedException($"Unsupported value condition node type: {conditionNode.GetType().FullName}."),
-                };
+                return ConvertValueConditionNode(conditionNode as ValueConditionNode<TConditionType>);
             }
 
-            ComposedConditionNode<TConditionType> composedConditionNode = conditionNode as ComposedConditionNode<TConditionType>;
-            return ConvertComposedConditionNode(composedConditionNode);
+            return ConvertComposedConditionNode(conditionNode as ComposedConditionNode<TConditionType>);
         }
     }
 }
