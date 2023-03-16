@@ -60,14 +60,5 @@ namespace Rules.Framework.Builder
         /// <param name="name">The name.</param>
         /// <returns></returns>
         IRuleBuilder<TContentType, TConditionType> WithName(string name);
-
-        /// <summary>
-        /// Sets the new rule with the specified priority.
-        /// </summary>
-        /// <param name="priority">The priority.</param>
-        /// <returns></returns>
-        [Obsolete("This method is obsolete and will be removed on a future release. " +
-            "Please use RuleAddPriorityOption.ByPriorityNumber(number) instead if you are adding a new rule or use Priority property if updating.")]
-        IRuleBuilder<TContentType, TConditionType> WithPriority(int priority);
     }
 }
