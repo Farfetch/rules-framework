@@ -123,6 +123,20 @@ namespace Rules.Framework.Providers.SqlServer.Tests
         }
 
         [Fact]
+        public void RuleFactory_CreateRule_DataModel_ThrowsExcpetion()
+        {
+            // Arrange
+            Rule rule = null;
+
+            var contentSerializationProvider = new Mock<IContentSerializationProvider<MockContentType>>();
+
+            var ruleFactory = new RuleFactory<MockContentType, MockConditionType>(contentSerializationProvider.Object);
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(rule));
+        }
+
+        [Fact]
         public void RuleFactory_CreateRule_InvalidRuleName_ThrowsInvalidRuleExcpetion()
         {
             // Arrange
