@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
-    <None Remove="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
+    <None Remove="Scenarios\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
+    <None Remove="Scenarios\Scenario3\rules-framework-tests.security-system-actionables.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
     <PackageReference Include="DotEnv.Core" Version="2.3.1" />
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Tests\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
-    <EmbeddedResource Include="Tests\Scenario3\rules-framework-tests.security-system-actionables.json" />
+    <EmbeddedResource Include="Scenarios\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
+    <EmbeddedResource Include="Scenarios\Scenario3\rules-framework-tests.security-system-actionables.json" />
   </ItemGroup>
 </Project>

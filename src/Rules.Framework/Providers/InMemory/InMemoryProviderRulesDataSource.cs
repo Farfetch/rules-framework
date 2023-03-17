@@ -59,12 +59,12 @@ namespace Rules.Framework.Providers.InMemory
         {
             return Task.Run(() =>
             {
-                IEnumerable<RuleDataModel<TContentType, TConditionType>> ruleDataModels = this.inMemoryRulesStorage.GetRulesBy(contentType);
+                var filteredByContent = this.inMemoryRulesStorage.GetRulesBy(contentType);
 
-                IEnumerable<RuleDataModel<TContentType, TConditionType>> filteredByDate = ruleDataModels.Where(r =>
-                    (r.DateBegin >= dateBegin && r.DateBegin < dateEnd)
-                    || (!(r.DateEnd is null) && r.DateEnd >= dateBegin && r.DateEnd < dateEnd)
-                    || (r.DateBegin < dateBegin && (r.DateEnd is null || r.DateEnd > dateEnd)));
+                var filteredByDate = filteredByContent.Where(rule =>
+                    rule.DateBegin <= dateEnd
+                    && (rule.DateEnd is null || rule.DateEnd > dateBegin)
+                );
 
                 return filteredByDate.Select(r => this.ruleFactory.CreateRule(r)).AsEnumerable();
             });

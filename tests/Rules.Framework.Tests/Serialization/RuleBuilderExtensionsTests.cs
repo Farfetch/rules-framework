@@ -6,7 +6,7 @@ namespace Rules.Framework.Tests.Serialization
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Serialization;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class RuleBuilderExtensionsTests
