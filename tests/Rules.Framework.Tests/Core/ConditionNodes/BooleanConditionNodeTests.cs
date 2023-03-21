@@ -12,20 +12,20 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
         public void Init_GivenSetupWithBooleanValue_ReturnsSettedValues()
         {
             // Arrange
-            ConditionType expectedConditionType = ConditionType.IsoCountryCode;
-            Operators expectedOperator = Operators.NotEqual;
-            bool expectedOperand = false;
-            LogicalOperators expectedLogicalOperator = LogicalOperators.Eval;
-            DataTypes expectedDataType = DataTypes.Boolean;
+            var expectedConditionType = ConditionType.IsoCountryCode;
+            var expectedOperator = Operators.NotEqual;
+            var expectedOperand = false;
+            var expectedLogicalOperator = LogicalOperators.Eval;
+            var expectedDataType = DataTypes.Boolean;
 
-            BooleanConditionNode<ConditionType> sut = new BooleanConditionNode<ConditionType>(expectedConditionType, expectedOperator, expectedOperand);
+            var sut = new ValueConditionNode<ConditionType>(DataTypes.Boolean, expectedConditionType, expectedOperator, expectedOperand);
 
             // Act
-            ConditionType actualConditionType = sut.ConditionType;
-            Operators actualOperator = sut.Operator;
-            DataTypes actualDataType = sut.DataType;
-            LogicalOperators actualLogicalOperator = sut.LogicalOperator;
-            bool actualOperand = sut.Operand;
+            var actualConditionType = sut.ConditionType;
+            var actualOperator = sut.Operator;
+            var actualDataType = sut.DataType;
+            var actualLogicalOperator = sut.LogicalOperator;
+            var actualOperand = sut.Operand;
 
             // Assert
             actualConditionType.Should().Be(expectedConditionType);
