@@ -84,13 +84,6 @@ namespace Rules.Framework
 
             rule.Active = false;
 
-            var validationResult = this.ruleValidator.Validate(rule);
-
-            if (!validationResult.IsValid)
-            {
-                return Task.FromResult(RuleOperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage)));
-            }
-
             return this.UpdateRuleInternalAsync(rule);
         }
 
@@ -243,13 +236,6 @@ namespace Rules.Framework
             if (rule is null)
             {
                 throw new ArgumentNullException(nameof(rule));
-            }
-
-            var validationResult = this.ruleValidator.Validate(rule);
-
-            if (!validationResult.IsValid)
-            {
-                return Task.FromResult(RuleOperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage)));
             }
 
             return this.UpdateRuleInternalAsync(rule);
@@ -418,6 +404,13 @@ namespace Rules.Framework
             if (existentRule is null)
             {
                 return RuleOperationResult.Error(new[] { $"Rule with name '{rule.Name}' does not exist." });
+            }
+
+            var validationResult = this.ruleValidator.Validate(rule);
+
+            if (!validationResult.IsValid)
+            {
+                return RuleOperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage));
             }
 
             var topPriorityThreshold = Math.Min(rule.Priority, existentRule.Priority);
