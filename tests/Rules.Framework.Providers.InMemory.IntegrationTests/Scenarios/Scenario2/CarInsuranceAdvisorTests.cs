@@ -153,9 +153,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithPriority(1)
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
                 .Build();
+
             var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>
             {
                 Name = "Car Insurance Advise on repair costs lower than franchise boundary"
