@@ -97,6 +97,7 @@ namespace Rules.Framework.Tests.Generics
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Test rule",
                     Priority = 3,
+                    Active = true,
                     RootCondition = new GenericValueConditionNode
                     {
                         ConditionTypeName =  ConditionType.IsoCountryCode.ToString(),

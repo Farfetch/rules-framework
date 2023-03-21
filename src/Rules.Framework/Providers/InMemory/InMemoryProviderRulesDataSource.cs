@@ -62,6 +62,7 @@ namespace Rules.Framework.Providers.InMemory
                 var filteredByContent = this.inMemoryRulesStorage.GetRulesBy(contentType);
 
                 var filteredByDate = filteredByContent.Where(rule =>
+                    rule.Active &&
                     rule.DateBegin <= dateEnd
                     && (rule.DateEnd is null || rule.DateEnd > dateBegin)
                 );

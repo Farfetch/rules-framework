@@ -82,7 +82,7 @@ namespace Rules.Framework
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            rule.DateEnd = rule.DateBegin;
+            rule.Active = false;
 
             var validationResult = this.ruleValidator.Validate(rule);
 

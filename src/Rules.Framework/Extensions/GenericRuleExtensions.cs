@@ -48,7 +48,8 @@ namespace Rules.Framework.Extensions
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
-                Priority = rule.Priority
+                Priority = rule.Priority,
+                Active = rule.Active,
             };
         }
     }

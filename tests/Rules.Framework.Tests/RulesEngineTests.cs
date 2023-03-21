@@ -103,9 +103,6 @@ namespace Rules.Framework.Tests
 
             var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
 
-            testRule.DateEnd = testRule.DateBegin.AddDays(-1);
-            testRule.Priority = 1;
-
             // Act
             var actual = await sut.DeactivateRuleAsync(testRule).ConfigureAwait(false);
 

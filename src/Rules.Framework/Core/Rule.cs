@@ -12,6 +12,11 @@ namespace Rules.Framework.Core
     public class Rule<TContentType, TConditionType>
     {
         /// <summary>
+        /// Gets and sets the if the rules ia active.
+        /// </summary>
+        public bool Active { get; set; } = true;
+
+        /// <summary>
         /// Gets the content container which contains the rule content.
         /// </summary>
         public ContentContainer<TContentType> ContentContainer { get; internal set; }
@@ -53,7 +58,8 @@ namespace Rules.Framework.Core
                 DateEnd = this.DateEnd,
                 Name = this.Name,
                 Priority = this.Priority,
-                RootCondition = this.RootCondition?.Clone()
+                RootCondition = this.RootCondition?.Clone(),
+                Active = this.Active,
             };
     }
 }

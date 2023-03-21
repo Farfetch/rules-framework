@@ -221,7 +221,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario5
             // Act 3 - Create rule default
             var ruleBuilderResultDefault = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Default")
-                .WithDatesInterval(DateTime.Parse("2021-05-31Z"), DateTime.Parse("2021-06-05"))
+                .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                  .WithContentContainer(new ContentContainer<BestServerConfigurations>(BestServerConfigurations.BestServerEvaluation, t => "Default"))
                 .Build();
 
@@ -239,7 +239,7 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario5
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 5 - Evaluate new rule with "in" operator
-            var matchDateTime = DateTime.Parse("2021-05-31Z");
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new[]
             {
                 new Condition<BestServerConditions>
@@ -270,8 +270,8 @@ namespace Rules.Framework.IntegrationTests.Tests.Scenario5
             actual.Should().NotBeNull();
             actual.Should().BeEquivalentTo(rule);
 
-            // Act 6 - Update Best Server Top5 rule date end
-            rule.DateEnd = DateTime.Parse("2021-05-30T11:00:00Z");
+            // Act 6 - Update Best Server Top5 date end
+            rule.DateEnd = DateTime.Parse("2021-05-29T12:10:00Z");
             var updateRuleResult = await rulesEngine.UpdateRuleAsync(rule).ConfigureAwait(false);
 
             // Assert 6
