@@ -914,7 +914,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
 
             // Assert
             action.Should().Throw<ArgumentNullException>()
-                .Which.ParamName.Should().Be("testExpressionBuilder");
+                .Which.ParamName.Should().Be("evaluationExpressionBuilder");
         }
 
         [Fact]

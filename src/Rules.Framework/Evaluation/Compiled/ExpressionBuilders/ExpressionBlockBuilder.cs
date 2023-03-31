@@ -225,18 +225,18 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
             => Expression.GreaterThanOrEqual(left, right);
 
         public void If(
-            Func<IExpressionBlockBuilder, Expression> testExpressionBuilder,
+            Func<IExpressionBlockBuilder, Expression> evaluationExpressionBuilder,
             Func<IExpressionBlockBuilder, Expression> thenExpressionBuilder)
-            => this.If(testExpressionBuilder, thenExpressionBuilder, elseExpressionBuilder: null);
+            => this.If(evaluationExpressionBuilder, thenExpressionBuilder, elseExpressionBuilder: null);
 
         public void If(
-            Func<IExpressionBlockBuilder, Expression> testExpressionBuilder,
+            Func<IExpressionBlockBuilder, Expression> evaluationExpressionBuilder,
             Func<IExpressionBlockBuilder, Expression> thenExpressionBuilder,
             Func<IExpressionBlockBuilder, Expression> elseExpressionBuilder)
         {
-            if (testExpressionBuilder is null)
+            if (evaluationExpressionBuilder is null)
             {
-                throw new ArgumentNullException(nameof(testExpressionBuilder));
+                throw new ArgumentNullException(nameof(evaluationExpressionBuilder));
             }
 
             if (thenExpressionBuilder is null)
@@ -244,7 +244,7 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
                 throw new ArgumentNullException(nameof(thenExpressionBuilder));
             }
 
-            var testExpression = testExpressionBuilder.Invoke(this);
+            var testExpression = evaluationExpressionBuilder.Invoke(this);
             var thenExpression = thenExpressionBuilder.Invoke(this);
 
             Expression expression;

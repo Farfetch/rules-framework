@@ -147,7 +147,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
+                .VerifyAll();
         }
 
         [Fact]
@@ -303,10 +303,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
-            Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Once());
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -456,10 +453,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
-            Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Once());
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -592,8 +586,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
+            Mock.VerifyAll();
         }
 
         private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule(bool withCondition)

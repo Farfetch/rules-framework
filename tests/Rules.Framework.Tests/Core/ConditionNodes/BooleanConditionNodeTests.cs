@@ -35,7 +35,7 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
             valueConditionNode.LogicalOperator.Should().Be(expectedLogicalOperator);
             valueConditionNode.Operator.Should().Be(expectedOperator);
             valueConditionNode.Operand.Should().Be(expectedOperand);
-            valueConditionNode.Properties.Should().BeEmpty();
+            valueConditionNode.Properties.Should().BeEquivalentTo(sut.Properties);
         }
 
         [Fact]

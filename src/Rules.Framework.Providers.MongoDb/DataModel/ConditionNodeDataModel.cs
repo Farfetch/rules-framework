@@ -2,7 +2,9 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
 {
     using System;
     using System.Collections.Generic;
+    using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
+    using MongoDB.Bson.Serialization.Options;
     using Rules.Framework.Core;
 
     [BsonKnownTypes(typeof(ComposedConditionNodeDataModel), typeof(ValueConditionNodeDataModel))]
@@ -13,10 +15,10 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
             this.Properties = new Dictionary<string, object>(StringComparer.Ordinal);
         }
 
-        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        [BsonRepresentation(BsonType.String)]
         public LogicalOperators LogicalOperator { get; set; }
 
-        [BsonDictionaryOptions(Representation = MongoDB.Bson.Serialization.Options.DictionaryRepresentation.Document)]
+        [BsonDictionaryOptions(Representation = DictionaryRepresentation.Document)]
         public IDictionary<string, object> Properties { get; set; }
     }
 }

@@ -34,16 +34,16 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
-            var compiledRulesTasks = rules.Select(async (r) =>
+            var compiledRulesTasks = rules.Select(async (rule) =>
             {
-                bool compiled = this.TryCompile(r);
+                bool compiled = this.TryCompile(rule);
                 if (compiled)
                 {
                     // Commit compilation result to data source, so that next time rule is loaded,
                     // it won't go through the compilation process again.
-                    await this.rulesDataSource.UpdateRuleAsync(r).ConfigureAwait(false);
+                    await this.rulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
                 }
-                return r;
+                return rule;
             });
 
             return await Task.WhenAll(compiledRulesTasks).ConfigureAwait(false);
@@ -55,16 +55,16 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
-            var compiledRulesTasks = rules.Select(async (r) =>
+            var compiledRulesTasks = rules.Select(async (rule) =>
             {
-                bool compiled = this.TryCompile(r);
+                bool compiled = this.TryCompile(rule);
                 if (compiled)
                 {
                     // Commit compilation result to data source, so that next time rule is loaded,
                     // it won't go through the compilation process again.
-                    await this.rulesDataSource.UpdateRuleAsync(r).ConfigureAwait(false);
+                    await this.rulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
                 }
-                return r;
+                return rule;
             });
 
             return await Task.WhenAll(compiledRulesTasks).ConfigureAwait(false);

@@ -62,11 +62,11 @@ namespace Rules.Framework.Evaluation.Compiled.ExpressionBuilders
         Expression GreaterThanOrEqual(Expression left, Expression right);
 
         void If(
-            Func<IExpressionBlockBuilder, Expression> testExpressionBuilderFunc,
+            Func<IExpressionBlockBuilder, Expression> evaluationExpressionBuilderFunc,
             Func<IExpressionBlockBuilder, Expression> thenExpressionBuilderFunc);
 
         void If(
-            Func<IExpressionBlockBuilder, Expression> testExpressionBuilderFunc,
+            Func<IExpressionBlockBuilder, Expression> evaluationExpressionBuilderFunc,
             Func<IExpressionBlockBuilder, Expression> thenExpressionBuilderFunc,
             Func<IExpressionBlockBuilder, Expression> elseExpressionBuilderFunc);
 

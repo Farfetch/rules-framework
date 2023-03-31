@@ -45,8 +45,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Evaluation\Compiled\ExpressionBuilders\StateMachine\" />
-  </ItemGroup>
 </Project>

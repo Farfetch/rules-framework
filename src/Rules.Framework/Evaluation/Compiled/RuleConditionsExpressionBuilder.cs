@@ -9,17 +9,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
 
-    internal class RuleConditionsExpressionBuilder
-    {
-        protected static readonly MethodInfo multiplicityEvaluateMethod = typeof(MultiplicityEvaluator)
-            .GetMethod(nameof(MultiplicityEvaluator.Evaluate));
-
-        protected RuleConditionsExpressionBuilder()
-        {
-        }
-    }
-
-    internal sealed class RuleConditionsExpressionBuilder<TConditionType> : RuleConditionsExpressionBuilder, IRuleConditionsExpressionBuilder<TConditionType>
+    internal sealed class RuleConditionsExpressionBuilder<TConditionType> : RuleConditionsExpressionBuilderBase, IRuleConditionsExpressionBuilder<TConditionType>
     {
         private static readonly MethodInfo conditionsGetterMethod = typeof(EvaluationContext<TConditionType>)
             .GetProperty("Conditions")
