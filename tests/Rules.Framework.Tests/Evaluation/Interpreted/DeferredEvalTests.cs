@@ -18,7 +18,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenBooleanConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new BooleanConditionNode<ConditionType>(ConditionType.IsVip, Operators.NotEqual, true);
+            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.Boolean, ConditionType.IsVip, Operators.NotEqual, true);
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -54,7 +54,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenDecimalConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new DecimalConditionNode<ConditionType>(ConditionType.PluviosityRate, Operators.GreaterThan, 50);
+            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.Decimal, ConditionType.PluviosityRate, Operators.GreaterThan, 50);
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -90,7 +90,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenIntegerConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new IntegerConditionNode<ConditionType>(ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
+            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.Integer, ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -126,7 +126,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenStringConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -162,7 +162,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToDiscardWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
-            var conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -199,7 +199,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToUseDataTypeDefaultWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
-            var conditionNode = new StringConditionNode<ConditionType>(ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.Equal, "EUR");
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))

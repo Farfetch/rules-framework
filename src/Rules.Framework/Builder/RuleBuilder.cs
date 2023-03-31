@@ -82,14 +82,5 @@ namespace Rules.Framework.Builder
 
             return this;
         }
-
-        [Obsolete("This method is obsolete and will be removed on a future release. " +
-            "Please use RuleAddPriorityOption.ByPriorityNumber(number) instead if you are adding a new rule or use Priority property if updating.")]
-        public IRuleBuilder<TContentType, TConditionType> WithPriority(int priority)
-        {
-            this.priority = priority;
-
-            return this;
-        }
     }
 }
