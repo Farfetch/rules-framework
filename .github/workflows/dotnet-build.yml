@@ -20,6 +20,8 @@ jobs:
           3.1.x
           6.0.x
         dotnet-quality: ga
+    - name: Setup Report Generator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
     - name: MongoDB in GitHub Actions
       uses: supercharge/mongodb-github-action@1.9.0
       with:
@@ -28,5 +30,11 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore -c Release
+    # Gemerate code coverage reports, which are recovered by Codacy afterwards.
     - name: Test
-      run: dotnet test --no-build --verbosity normal -m:1 -c Release
+      run: dotnet test --no-build --verbosity normal -m:1 -c Release --collect:"XPlat Code Coverage" --results-directory:"../../coverage-outputs"
+    - name: Merge coverage results
+      run: |
+        reportgenerator -reports:"../../coverage-outputs/**/*.xml" -targetdir:"../../coverage-outputs" -reporttypes:Cobertura
+        rm -rfv ../../coverage-outputs/*/
+        ls -la ../../coverage-outputs
