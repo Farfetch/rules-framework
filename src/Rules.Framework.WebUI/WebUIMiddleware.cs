@@ -12,7 +12,7 @@ namespace Rules.Framework.WebUI
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-#if NETSTANDARD2_0
+#if NETSTANDARD2_1
 
     using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
