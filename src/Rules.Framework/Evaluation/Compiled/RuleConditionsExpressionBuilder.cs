@@ -5,6 +5,8 @@ namespace Rules.Framework.Evaluation.Compiled
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Text;
+    using System.Text.RegularExpressions;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
@@ -43,7 +45,7 @@ namespace Rules.Framework.Evaluation.Compiled
                 .HavingReturn<bool>(defaultValue: false)
                 .SetImplementation(x =>
                 {
-                    var resultVariableExpression = x.CreateVariable<bool>("result");
+                    var resultVariableExpression = x.CreateVariable<bool>("Result");
 
                     this.BuildExpression(rootConditionNode, x);
 
@@ -58,9 +60,9 @@ namespace Rules.Framework.Evaluation.Compiled
 
         private static void BuildExpressionForBehaviorOnNullLeftOperand(IExpressionBlockBuilder builder)
         {
-            var leftOperandVariableExpression = builder.GetVariable("leftOperand");
-            var resultVariableExpression = builder.GetVariable("result");
-            var jumpToLabelTarget = builder.GetLabelTarget("Label_EndValueConditionNode");
+            var leftOperandVariableExpression = builder.GetVariable("LeftOperand");
+            var resultVariableExpression = builder.GetVariable("Result");
+            var jumpToLabelTarget = builder.GetLabelTarget("LabelEndValueConditionNode");
             var parameterExpression = builder.GetParameter("evaluationContext");
 
             builder.If(
@@ -93,10 +95,23 @@ namespace Rules.Framework.Evaluation.Compiled
                     var counter = 0;
                     foreach (var childConditionNode in composedConditionNode.ChildConditionNodes)
                     {
-                        string scopeName = $"{builder.ScopeName}_C{counter}";
+                        var scopeNameBuilder = new StringBuilder(builder.ScopeName);
+
+                        if (scopeNameBuilder.Length == 0)
+                        {
+                            scopeNameBuilder.Append("cnd")
+                                .Append(counter);
+                        }
+                        else
+                        {
+                            scopeNameBuilder.Append("InnerCnd")
+                                .Append(counter);
+                        }
+
+                        var scopeName = scopeNameBuilder.ToString();
                         var blockExpression = builder.Block(scopeName, x =>
                         {
-                            var childResultVariableExpression = x.CreateVariable<bool>("result");
+                            var childResultVariableExpression = x.CreateVariable<bool>("Result");
                             this.BuildExpression(childConditionNode, x);
                             conditionExpressions.Add(childResultVariableExpression);
                         });
@@ -110,15 +125,15 @@ namespace Rules.Framework.Evaluation.Compiled
                         LogicalOperators.Or => builder.OrElse(conditionExpressions),
                         _ => throw new NotSupportedException($"Unsupported logical operator on composed condition node: '{conditionNode.LogicalOperator}'.")
                     };
-                    var composedResultVariableExpression = builder.GetVariable("result");
+                    var composedResultVariableExpression = builder.GetVariable("Result");
                     builder.Assign(composedResultVariableExpression, conditionExpression);
                     break;
 
                 case ValueConditionNode<TConditionType> valueConditionNode:
                     // Variables, constants, and labels.
-                    var leftOperandVariableExpression = builder.CreateVariable<object>("leftOperand");
-                    var rightOperandVariableExpression = builder.CreateVariable<object>("rightOperand");
-                    var jumpToLabelTarget = builder.CreateLabelTarget("Label_EndValueConditionNode");
+                    var leftOperandVariableExpression = builder.CreateVariable<object>("LeftOperand");
+                    var rightOperandVariableExpression = builder.CreateVariable<object>("RightOperand");
+                    var jumpToLabelTarget = builder.CreateLabelTarget("LabelEndValueConditionNode");
                     var parameterExpression = builder.GetParameter("evaluationContext");
 
                     // Line 1.
@@ -146,10 +161,10 @@ namespace Rules.Framework.Evaluation.Compiled
             ValueConditionNode<TConditionType> valueConditionNode)
         {
             var operatorConstantExpression = builder.Constant(valueConditionNode.Operator);
-            var multiplicityVariableExpression = builder.CreateVariable("multiplicity", typeof(string));
-            var leftOperandVariableExpression = builder.GetVariable("leftOperand");
-            var rightOperandVariableExpression = builder.GetVariable("rightOperand");
-            var resultVariableExpression = builder.GetVariable("result");
+            var multiplicityVariableExpression = builder.CreateVariable("Multiplicity", typeof(string));
+            var leftOperandVariableExpression = builder.GetVariable("LeftOperand");
+            var rightOperandVariableExpression = builder.GetVariable("RightOperand");
+            var resultVariableExpression = builder.GetVariable("Result");
             // Line 4.
             builder.Assign(multiplicityVariableExpression, builder.Call(
                 instance: null,
@@ -163,7 +178,10 @@ namespace Rules.Framework.Evaluation.Compiled
 
                 foreach (var multiplicity in operatorMetadata.SupportedMultiplicities)
                 {
-                    string scopeName = $"{valueConditionNode.ConditionType}_{multiplicity.Replace('-', '_')}";
+                    var scopeName = new StringBuilder(builder.ScopeName)
+                        .Append(valueConditionNode.ConditionType)
+                        .Append(Regex.Replace(multiplicity, "\\b\\p{Ll}", match => match.Value.ToUpperInvariant()).Replace("-", string.Empty))
+                        .ToString();
                     @switch.Case(
                         builder.Constant(multiplicity),
                         caseBuilder => caseBuilder.Block(scopeName, block =>

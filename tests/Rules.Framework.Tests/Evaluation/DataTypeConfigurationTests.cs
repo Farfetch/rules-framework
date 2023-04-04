@@ -1,13 +1,9 @@
 namespace Rules.Framework.Tests.Evaluation
 {
+    using System;
     using FluentAssertions;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Xunit;
 
     public class DataTypeConfigurationTests
@@ -16,12 +12,12 @@ namespace Rules.Framework.Tests.Evaluation
         public void Create_GivenDataTypeWithNonNullSystemTypeAndADefault_ReturnsNewInstance()
         {
             // Arrange
-            DataTypes dataType = DataTypes.Integer;
-            Type type = typeof(int);
-            object @default = 0;
+            var dataType = DataTypes.Integer;
+            var type = typeof(int);
+            var @default = 0;
 
             // Act
-            DataTypeConfiguration dataTypeConfiguration = DataTypeConfiguration.Create(dataType, type, @default);
+            var dataTypeConfiguration = DataTypeConfiguration.Create(dataType, type, @default);
 
             // Assert
             dataTypeConfiguration.Should().NotBeNull();
@@ -34,16 +30,15 @@ namespace Rules.Framework.Tests.Evaluation
         public void Create_GivenDataTypeWithNullSystemTypeAndADefault_ThrowsArgumentNullExcetion()
         {
             // Assert
-            DataTypes dataType = DataTypes.Integer;
-            Type type = null;
-            object @default = 0;
+            var dataType = DataTypes.Integer;
+            var @default = 0;
 
             // Act
-            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => DataTypeConfiguration.Create(dataType, type, @default));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => DataTypeConfiguration.Create(dataType, null, @default));
 
             // Assert
             argumentNullException.Should().NotBeNull();
-            argumentNullException.ParamName.Should().Be(nameof(type));
+            argumentNullException.ParamName.Should().Be("type");
         }
     }
 }

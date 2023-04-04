@@ -2,19 +2,22 @@ private CultureInfo CultureInfo1;
 
 public bool Main(object leftOperand, object rightOperand)
 {
-    object coalescedLeftOperand;
+    bool result;
+    object testCoalescedLeftOperand;
+    string testConvertedLeftOperand;
+    IEnumerable<string> testConvertedRightOperand;
 
     if (leftOperand != null)
     {
-        coalescedLeftOperand = leftOperand;
+        testCoalescedLeftOperand = leftOperand;
     }
     else
     {
-        coalescedLeftOperand = null;
+        testCoalescedLeftOperand = null;
     }
-    string convertedLeftOperand = (string)Convert.ChangeType(coalescedLeftOperand, typeof(string), CultureInfo1);
-    IEnumerable<string> convertedRightOperand = (IEnumerable<string>)rightOperand;
-    bool result = true && true;
+    testConvertedLeftOperand = (string)Convert.ChangeType(testCoalescedLeftOperand, typeof(string), CultureInfo1);
+    testConvertedRightOperand = (IEnumerable<string>)rightOperand;
+    result = true && true;
     return result;
 
 }

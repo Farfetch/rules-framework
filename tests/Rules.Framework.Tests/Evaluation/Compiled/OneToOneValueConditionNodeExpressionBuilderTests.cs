@@ -45,7 +45,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .Setup(x => x.GetConditionExpressionBuilderFor(Operators.Equal, Multiplicities.OneToOne))
                 .Returns(conditionExpressionBuilder);
 
-            var manyToManyValueConditionNodeCompiler =
+            var oneToOneValueConditionNodeCompiler =
                 new OneToOneValueConditionNodeExpressionBuilder(conditionExpressionBuilderProvider);
 
             // Act
@@ -68,7 +68,11 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                         RightOperandVariableExpression = builder.GetParameter("rightOperand"),
                     };
 
-                    manyToManyValueConditionNodeCompiler.Build(builder, args);
+                    var blockExpression = builder.Block("test", innerBuilder =>
+                    {
+                        oneToOneValueConditionNodeCompiler.Build(innerBuilder, args);
+                    });
+                    builder.AddExpression(blockExpression);
 
                     builder.Return(resultVariableExpression);
                 })

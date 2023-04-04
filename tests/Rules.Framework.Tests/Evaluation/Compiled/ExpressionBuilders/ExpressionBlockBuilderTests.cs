@@ -498,7 +498,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
             // Arrange
             var labelTargetName = "testLabel";
             var scopeName = "childScopeTest";
-            var parentLabelTargetName = $"{scopeName}_{labelTargetName}";
+            var parentLabelTargetName = $"{scopeName}{labelTargetName}";
 
             var expressionConfiguration = new ExpressionConfiguration();
             var expressionBuilderFactory = Mock.Of<IExpressionBuilderFactory>();
@@ -628,7 +628,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ExpressionBuilders
             var variableName = "testVariable";
             var variableType = typeof(int);
             var scopeName = "childScopeTest";
-            var parentLabelTargetName = $"{scopeName}_{variableName}";
+            var parentLabelTargetName = $"{scopeName}{variableName}";
 
             var expressionConfiguration = new ExpressionConfiguration();
             var expressionBuilderFactory = Mock.Of<IExpressionBuilderFactory>();

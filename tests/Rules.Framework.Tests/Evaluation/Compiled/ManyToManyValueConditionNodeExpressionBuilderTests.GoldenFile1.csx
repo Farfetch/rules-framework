@@ -1,18 +1,21 @@
 public bool Main(object leftOperand, object rightOperand)
 {
-    object coalescedLeftOperand;
+    bool result;
+    object testCoalescedLeftOperand;
+    IEnumerable<string> testConvertedLeftOperand;
+    IEnumerable<string> testConvertedRightOperand;
 
     if (leftOperand != null)
     {
-        coalescedLeftOperand = leftOperand;
+        testCoalescedLeftOperand = leftOperand;
     }
     else
     {
-        coalescedLeftOperand = null;
+        testCoalescedLeftOperand = null;
     }
-    IEnumerable<string> convertedLeftOperand = (IEnumerable<string>)coalescedLeftOperand;
-    IEnumerable<string> convertedRightOperand = (IEnumerable<string>)rightOperand;
-    bool result = true && true;
+    testConvertedLeftOperand = (IEnumerable<string>)testCoalescedLeftOperand;
+    testConvertedRightOperand = (IEnumerable<string>)rightOperand;
+    result = true && true;
     return result;
 
 }

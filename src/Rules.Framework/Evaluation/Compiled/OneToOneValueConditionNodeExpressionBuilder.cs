@@ -28,9 +28,9 @@ namespace Rules.Framework.Evaluation.Compiled
             IExpressionBlockBuilder builder,
             BuildValueConditionNodeExpressionArgs args)
         {
-            var coalescedLeftOperandExpression = builder.CreateVariable<object>("coalescedLeftOperand");
-            var convertedLeftOperandExpression = builder.CreateVariable("convertedLeftOperand", args.DataTypeConfiguration.Type);
-            var convertedRightOperandExpression = builder.CreateVariable("convertedRightOperand", args.DataTypeConfiguration.Type);
+            var coalescedLeftOperandExpression = builder.CreateVariable<object>("CoalescedLeftOperand");
+            var convertedLeftOperandExpression = builder.CreateVariable("ConvertedLeftOperand", args.DataTypeConfiguration.Type);
+            var convertedRightOperandExpression = builder.CreateVariable("ConvertedRightOperand", args.DataTypeConfiguration.Type);
 
             // Line 1.
             var fallbackExpression = builder.Constant<object>(value: null);
