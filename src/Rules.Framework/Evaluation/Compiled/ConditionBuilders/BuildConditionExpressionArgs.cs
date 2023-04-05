@@ -21,12 +21,6 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
                 && EqualityComparer<Expression>.Default.Equals(this.RightHandOperand, other.RightHandOperand);
 
         public override readonly int GetHashCode()
-        {
-            int hashCode = 157372928;
-            hashCode = hashCode * -1521134295 + EqualityComparer<DataTypeConfiguration>.Default.GetHashCode(this.DataTypeConfiguration);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Expression>.Default.GetHashCode(this.LeftHandOperand);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Expression>.Default.GetHashCode(this.RightHandOperand);
-            return hashCode;
-        }
+            => HashCode.Combine(this.DataTypeConfiguration, this.LeftHandOperand, this.RightHandOperand);
     }
 }

@@ -18,12 +18,7 @@ namespace Rules.Framework.Evaluation
                 && this.MatchMode == other.MatchMode;
 
         public override int GetHashCode()
-        {
-            int hashCode = -1260975221;
-            hashCode = hashCode * -1521134295 + this.ExcludeRulesWithoutSearchConditions.GetHashCode();
-            hashCode = hashCode * -1521134295 + this.MatchMode.GetHashCode();
-            return hashCode;
-        }
+            => HashCode.Combine(this.ExcludeRulesWithoutSearchConditions, this.MatchMode);
 
         public static bool operator ==(EvaluationOptions left, EvaluationOptions right) => left.Equals(right);
 

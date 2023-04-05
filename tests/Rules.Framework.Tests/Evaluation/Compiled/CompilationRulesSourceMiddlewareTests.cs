@@ -146,8 +146,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .VerifyAll();
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder));
         }
 
         [Fact]
@@ -303,7 +303,9 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.VerifyAll();
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder),
+                Mock.Get(rulesDataSource));
         }
 
         [Fact]
@@ -453,7 +455,9 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.VerifyAll();
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder),
+                Mock.Get(rulesDataSource));
         }
 
         [Fact]
@@ -586,7 +590,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.VerifyAll();
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder));
         }
 
         private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule(bool withCondition)
