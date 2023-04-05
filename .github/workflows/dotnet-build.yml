@@ -16,9 +16,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: | 
-          3.1.x
-          6.0.x
+        dotnet-version: 6.0.x
         dotnet-quality: ga
     - name: Setup Report Generator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
@@ -30,7 +28,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore -c Release
-    # Gemerate code coverage reports, which are recovered by Codacy afterwards.
+    # Generate code coverage reports, which are recovered by Codacy afterwards.
     - name: Test
       run: dotnet test --no-build --verbosity normal -m:1 -c Release --collect:"XPlat Code Coverage" --results-directory:"../../coverage-outputs"
     - name: Merge coverage results

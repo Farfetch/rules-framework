@@ -3,7 +3,7 @@
   <PropertyGroup>		
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>	
 	<SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
-	<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+	<TargetFrameworks>net6.0</TargetFrameworks>
 	<Authors></Authors>
 	<Version></Version>
 	<PackageVersion></PackageVersion>
@@ -35,14 +35,7 @@
 	  <EmbeddedResource Include="node_modules/rules_list.ico" />
   </ItemGroup>
 	
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
-		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.9" />
-		<PackageReference Include="System.Text.Json" Version="6.0.6" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
+	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
