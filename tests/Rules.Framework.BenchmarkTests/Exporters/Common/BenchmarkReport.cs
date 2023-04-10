@@ -1,4 +1,4 @@
-namespace Rules.Framework.BenchmarkTests.Exporters.Markdown
+namespace Rules.Framework.BenchmarkTests.Exporters.Common
 {
     using System;
 

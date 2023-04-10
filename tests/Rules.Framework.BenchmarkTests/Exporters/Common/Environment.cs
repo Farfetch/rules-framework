@@ -1,4 +1,4 @@
-namespace Rules.Framework.BenchmarkTests.Exporters.Json
+namespace Rules.Framework.BenchmarkTests.Exporters.Common
 {
     internal class Environment
     {

@@ -1,4 +1,4 @@
-namespace Rules.Framework.BenchmarkTests.Exporters.Json
+namespace Rules.Framework.BenchmarkTests.Exporters.Common
 {
     internal class BenchmarkStatisticsComparisonItem
     {
@@ -8,15 +8,15 @@ namespace Rules.Framework.BenchmarkTests.Exporters.Json
 
         public BenchmarkStatisticsValue? BaselineMeanTimeTaken { get; set; }
 
-        public string BaselineParameters { get; set; } = string.Empty;
+        public string? BaselineParameters { get; set; }
 
         public BenchmarkStatisticsValue? CompareAllocatedMemory { get; set; }
 
         public BenchmarkStatisticsValue? CompareMeanTimeTaken { get; set; }
 
-        public string CompareParameters { get; set; } = string.Empty;
+        public string? CompareParameters { get; set; }
 
-        public string Key { get; set; } = string.Empty;
+        public string? Key { get; set; }
 
         public BenchmarkStatisticsValue? MeanTimeTakenCompareRate { get; set; }
     }
