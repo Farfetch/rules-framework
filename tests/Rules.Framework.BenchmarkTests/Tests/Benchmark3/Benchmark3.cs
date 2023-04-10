@@ -1,15 +1,14 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using BenchmarkDotNet.Attributes;
-    using Rules.Framework.Core;
+    using Rules.Framework.Providers.InMemory;
 
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark3 : IBenchmark
     {
         private readonly Benchmark3Data benchmarkData = new Benchmark3Data();
-        private RulesEngine<ContentTypes, ConditionTypes> rulesEngine;
+        private RulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
@@ -17,7 +16,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         [Benchmark]
         public async Task RunAsync()
         {
-            await this.rulesEngine.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
+            await this.rulesEngine!.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
         }
 
         [GlobalSetup]
@@ -26,7 +25,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
             this.rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(new InMemoryRulesDataSource<ContentTypes, ConditionTypes>(Enumerable.Empty<Rule<ContentTypes, ConditionTypes>>()))
+                .SetInMemoryDataSource()
                 .Configure(options =>
                 {
                     options.EnableCompilation = this.EnableCompilation;
