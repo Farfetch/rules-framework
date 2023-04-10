@@ -28,8 +28,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario3/rules-framework-tests.security-system-actionables.json";
 
-        [Fact]
-        public async Task BuildingSecuritySystem_FireScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_FireScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
@@ -62,6 +64,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act
@@ -78,8 +84,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .And.HaveCount(3);
         }
 
-        [Fact]
-        public async Task BuildingSecuritySystem_PowerFailureScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_PowerFailureScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
@@ -112,6 +120,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act
@@ -127,8 +139,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .And.Contain(ssa => ssa.ActionName == "CallPowerGridPicket");
         }
 
-        [Fact]
-        public async Task BuildingSecuritySystem_PowerShutdownScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_PowerShutdownScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
@@ -161,6 +175,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act

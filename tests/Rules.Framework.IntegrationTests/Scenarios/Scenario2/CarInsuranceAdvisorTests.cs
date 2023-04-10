@@ -12,8 +12,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
     {
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario2/rules-framework-tests.car-insurance-advisor.json";
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_ClaimDescriptionContionsAlcoholOrDrugs_ReturnsPerformInvestigation()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_ClaimDescriptionContionsAlcoholOrDrugs_ReturnsPerformInvestigation(bool enableCompilation)
         {
             // Arrange
             var expected = CarInsuranceAdvices.PerformInvestigation;
@@ -48,6 +50,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
+                    opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
 
@@ -90,8 +93,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             actualContent.Should().Be(expected);
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise(bool enableCompilation)
         {
             // Arrange
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
@@ -121,6 +126,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
+                    opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
 
@@ -133,8 +139,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             actualContent.Should().Be(expected);
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_SearchForRulesExcludingRulesWithoutSearchConditions_ReturnsNoRules()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_SearchForRulesExcludingRulesWithoutSearchConditions_ReturnsNoRules(bool enableCompilation)
         {
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
@@ -167,6 +175,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
+                    opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
 
@@ -178,8 +187,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             actual.Should().HaveCount(0);
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_SearchForRulesWithRepairCostsGreaterThan1000_Returns2Rules()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_SearchForRulesWithRepairCostsGreaterThan1000_Returns2Rules(bool enableCompilation)
         {
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
@@ -207,6 +218,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
+                    opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
 
@@ -220,8 +232,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             actual.Should().Contain(r => r.Name == "Car Insurance Advise on repair costs lesser than 80% of commercial value");
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay(bool enableCompilation)
         {
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
@@ -250,6 +264,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
+                    opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
 

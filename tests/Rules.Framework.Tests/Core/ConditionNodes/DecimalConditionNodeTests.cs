@@ -9,12 +9,42 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
     public class DecimalConditionNodeTests
     {
         [Fact]
+        public void Clone_NoConditions_ReturnsCloneInstance()
+        {
+            // Arrange
+            var expectedConditionType = ConditionType.PluviosityRate;
+            var expectedOperator = Operators.NotEqual;
+            var expectedOperand = 5682.2654m;
+            var expectedLogicalOperator = LogicalOperators.Eval;
+            var expectedDataType = DataTypes.Decimal;
+
+            var sut = new ValueConditionNode<ConditionType>(expectedDataType, expectedConditionType, expectedOperator, expectedOperand);
+            sut.Properties["test"] = "test";
+
+            // Act
+            var actual = sut.Clone();
+
+            // Assert
+            actual.Should()
+                .NotBeNull()
+                .And
+                .BeOfType<ValueConditionNode<ConditionType>>();
+            var valueConditionNode = actual.As<ValueConditionNode<ConditionType>>();
+            valueConditionNode.ConditionType.Should().Be(expectedConditionType);
+            valueConditionNode.DataType.Should().Be(expectedDataType);
+            valueConditionNode.LogicalOperator.Should().Be(expectedLogicalOperator);
+            valueConditionNode.Operator.Should().Be(expectedOperator);
+            valueConditionNode.Operand.Should().Be(expectedOperand);
+            valueConditionNode.Properties.Should().BeEquivalentTo(sut.Properties);
+        }
+
+        [Fact]
         public void Init_GivenSetupWithDecimalValue_ReturnsSettedValues()
         {
             // Arrange
             var expectedConditionType = ConditionType.PluviosityRate;
             var expectedOperator = Operators.NotEqual;
-            decimal expectedOperand = 5682.2654m;
+            var expectedOperand = 5682.2654m;
             var expectedLogicalOperator = LogicalOperators.Eval;
             var expectedDataType = DataTypes.Decimal;
 

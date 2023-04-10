@@ -1,11 +1,9 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario1;
     using Xunit;
@@ -15,8 +13,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
     {
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario1/rules-framework-tests.body-mass-index.datasource.json";
 
-        [Fact]
-        public async Task AddRule_AddingNewRuleFromScratchWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task AddRule_AddingNewRuleFromScratchWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter(bool enableCompilation)
         {
             IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource =
                 new InMemoryRulesDataSource<ContentTypes, ConditionTypes>(Enumerable.Empty<Rule<ContentTypes, ConditionTypes>>());
@@ -26,6 +26,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             var newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
@@ -78,8 +82,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             newRule2.Priority.Should().Be(2, "rule should have priority 2 if inserted at priority 2, given that last rule after insert was at priority 2.");
         }
 
-        [Fact]
-        public async Task AddRule_AddingNewRuleWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task AddRule_AddingNewRuleWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter(bool enableCompilation)
         {
             // Arrange
             var rulesDataSource = await RulesFromJsonFile.Load
@@ -89,6 +95,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             var newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
@@ -141,8 +151,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             newRule2.Priority.Should().Be(3, "rule should have priority 3 if inserted at priority 3, given that last rule after insert was at priority 2.");
         }
 
-        [Fact]
-        public async Task AddRule_AddingNewRuleWithAgeConditionOnTop_NewRuleIsInsertedAndExistentRulePriorityUpdated()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task AddRule_AddingNewRuleWithAgeConditionOnTop_NewRuleIsInsertedAndExistentRulePriorityUpdated(bool enableCompilation)
         {
             // Arrange
             var rulesDataSource = await RulesFromJsonFile.Load
@@ -152,6 +164,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             var newRuleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
@@ -185,12 +201,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
 
             var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(2);
-            rules.Should().ContainEquivalentOf(newRule);
+            rules.Should().ContainEquivalentOf(newRule, o => o.Excluding(x => x.RootCondition.Properties));
             newRule.Priority.Should().Be(1, "rule should to priority 1 if inserted at top.");
         }
 
-        [Fact]
-        public async Task BodyMassIndex_NoConditions_ReturnsDefaultFormula()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BodyMassIndex_NoConditions_ReturnsDefaultFormula(bool enableCompilation)
         {
             // Arrange
             string expectedFormulaDescription = "Body Mass Index default formula";
@@ -206,6 +224,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetDataSource(rulesDataSource)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act

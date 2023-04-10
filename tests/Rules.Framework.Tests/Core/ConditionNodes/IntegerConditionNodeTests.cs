@@ -9,6 +9,36 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
     public class IntegerConditionNodeTests
     {
         [Fact]
+        public void Clone_NoConditions_ReturnsCloneInstance()
+        {
+            // Arrange
+            var expectedConditionType = ConditionType.IsoCountryCode;
+            var expectedOperator = Operators.NotEqual;
+            var expectedOperand = 1616;
+            var expectedLogicalOperator = LogicalOperators.Eval;
+            var expectedDataType = DataTypes.Integer;
+
+            var sut = new ValueConditionNode<ConditionType>(expectedDataType, expectedConditionType, expectedOperator, expectedOperand);
+            sut.Properties["test"] = "test";
+
+            // Act
+            var actual = sut.Clone();
+
+            // Assert
+            actual.Should()
+                .NotBeNull()
+                .And
+                .BeOfType<ValueConditionNode<ConditionType>>();
+            var valueConditionNode = actual.As<ValueConditionNode<ConditionType>>();
+            valueConditionNode.ConditionType.Should().Be(expectedConditionType);
+            valueConditionNode.DataType.Should().Be(expectedDataType);
+            valueConditionNode.LogicalOperator.Should().Be(expectedLogicalOperator);
+            valueConditionNode.Operator.Should().Be(expectedOperator);
+            valueConditionNode.Operand.Should().Be(expectedOperand);
+            valueConditionNode.Properties.Should().BeEquivalentTo(sut.Properties);
+        }
+
+        [Fact]
         public void Init_GivenSetupWithIntegerValue_ReturnsSettedValues()
         {
             // Arrange
@@ -18,7 +48,7 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
             var expectedLogicalOperator = LogicalOperators.Eval;
             var expectedDataType = DataTypes.Integer;
 
-            var sut = new ValueConditionNode<ConditionType>(DataTypes.Integer, expectedConditionType, expectedOperator, expectedOperand);
+            var sut = new ValueConditionNode<ConditionType>(expectedDataType, expectedConditionType, expectedOperator, expectedOperand);
 
             // Act
             var actualConditionType = sut.ConditionType;

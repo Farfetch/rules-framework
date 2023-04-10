@@ -101,6 +101,7 @@ namespace Rules.Framework.Tests.Generics
                     {
                         ConditionTypeName =  ConditionType.IsoCountryCode.ToString(),
                         DataType = DataTypes.String,
+                        LogicalOperator = LogicalOperators.Eval,
                         Operator = Operators.Equal,
                         Operand = "USA"
                     }

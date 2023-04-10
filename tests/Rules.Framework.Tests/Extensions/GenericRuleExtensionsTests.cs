@@ -26,6 +26,7 @@ namespace Rules.Framework.Tests.Extensions
                     {
                         ConditionTypeName = ConditionType.IsVip.ToString(),
                         DataType = DataTypes.Boolean,
+                        LogicalOperator = LogicalOperators.Eval,
                         Operand = true,
                         Operator = Operators.Equal
                     },
@@ -37,6 +38,7 @@ namespace Rules.Framework.Tests.Extensions
                             {
                                 ConditionTypeName = ConditionType.IsoCurrency.ToString(),
                                 DataType = DataTypes.String,
+                                LogicalOperator = LogicalOperators.Eval,
                                 Operand = "EUR",
                                 Operator = Operators.Equal
                             },
@@ -44,6 +46,7 @@ namespace Rules.Framework.Tests.Extensions
                             {
                                 ConditionTypeName = ConditionType.IsoCurrency.ToString(),
                                 DataType = DataTypes.String,
+                                LogicalOperator = LogicalOperators.Eval,
                                 Operand = "USD",
                                 Operator = Operators.Equal
                             }
@@ -150,10 +153,11 @@ namespace Rules.Framework.Tests.Extensions
             genericRule.RootCondition.Should().BeOfType<GenericValueConditionNode>();
 
             var genericValueRootCondition = genericRule.RootCondition as GenericValueConditionNode;
-            genericValueRootCondition.Should().BeEquivalentTo(expectedRootCondition, config => config
-                .Excluding(r => r.ConditionType)
-                .Excluding(r => r.LogicalOperator));
             genericValueRootCondition.ConditionTypeName.Should().Be(expectedRootCondition.ConditionType.ToString());
+            genericValueRootCondition.DataType.Should().Be(expectedRootCondition.DataType);
+            genericValueRootCondition.LogicalOperator.Should().Be(expectedRootCondition.LogicalOperator);
+            genericValueRootCondition.Operand.Should().Be(expectedRootCondition.Operand);
+            genericValueRootCondition.Operator.Should().Be(expectedRootCondition.Operator);
         }
     }
 }
