@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/DeferredEvalTests.cs
-namespace Rules.Framework.Tests.Evaluation.Classic
-========
 namespace Rules.Framework.Tests.Evaluation.Interpreted
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/DeferredEvalTests.cs
 {
     using System;
     using System.Collections.Generic;
@@ -11,15 +7,9 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/DeferredEvalTests.cs
-    using Rules.Framework.Evaluation.Classic;
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers;
-    using Rules.Framework.Tests.TestStubs;
-========
     using Rules.Framework.Evaluation.Interpreted;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers;
     using Rules.Framework.Tests.Stubs;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/DeferredEvalTests.cs
     using Xunit;
 
     public class DeferredEvalTests

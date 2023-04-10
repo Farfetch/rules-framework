@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ValueEvaluation/GreaterThanOperatorEvalStrategy.cs
-namespace Rules.Framework.Evaluation.Classic.ValueEvaluation
-========
 namespace Rules.Framework.Evaluation.Interpreted.ValueEvaluation
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/ValueEvaluation/GreaterThanOperatorEvalStrategy.cs
 {
     using System;
 

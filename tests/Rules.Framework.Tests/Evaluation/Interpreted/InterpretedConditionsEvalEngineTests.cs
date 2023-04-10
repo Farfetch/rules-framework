@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ClassicConditionsEvalEngineTests.cs
-namespace Rules.Framework.Tests.Evaluation.Classic
-========
 namespace Rules.Framework.Tests.Evaluation.Interpreted
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/InterpretedConditionsEvalEngineTests.cs
 {
     using System;
     using System.Collections.Generic;
@@ -11,19 +7,11 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Evaluation;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ClassicConditionsEvalEngineTests.cs
-    using Rules.Framework.Evaluation.Classic;
-    using Rules.Framework.Tests.TestStubs;
-    using Xunit;
-
-    public class ClassicConditionsEvalEngineTests
-========
     using Rules.Framework.Evaluation.Interpreted;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class InterpretedConditionsEvalEngineTests
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/InterpretedConditionsEvalEngineTests.cs
     {
         [Fact]
         public void Eval_GivenComposedConditionNodeWithAndOperatorAndMissingConditionWithSearchMode_EvalsAndReturnsResult()
@@ -67,11 +55,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
                 .Throws(new NotImplementedException("Shouldn't have gotten any more deferred evals."));
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ClassicConditionsEvalEngineTests.cs
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
-========
             var sut = new InterpretedConditionsEvalEngine<ConditionType>(mockDeferredEval.Object, conditionsTreeAnalyzer);
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/InterpretedConditionsEvalEngineTests.cs
 
             // Act
             var actual = sut.Eval(composedConditionNode, conditions, evaluationOptions);
@@ -113,11 +97,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             var deferredEval = Mock.Of<IDeferredEval>();
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ClassicConditionsEvalEngineTests.cs
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(deferredEval, conditionsTreeAnalyzer);
-========
             var sut = new InterpretedConditionsEvalEngine<ConditionType>(deferredEval, conditionsTreeAnalyzer);
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/InterpretedConditionsEvalEngineTests.cs
 
             // Act
             var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.Eval(composedConditionNode, conditions, evaluationOptions));
@@ -160,11 +140,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             var deferredEval = Mock.Of<IDeferredEval>();
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ClassicConditionsEvalEngineTests.cs
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(deferredEval, conditionsTreeAnalyzer);
-========
             var sut = new InterpretedConditionsEvalEngine<ConditionType>(deferredEval, conditionsTreeAnalyzer);
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/InterpretedConditionsEvalEngineTests.cs
 
             // Act
             var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.Eval(composedConditionNode, conditions, evaluationOptions));
@@ -218,11 +194,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
                 .Throws(new NotImplementedException("Shouldn't have gotten any more deferred evals."));
             var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
 
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ClassicConditionsEvalEngineTests.cs
-            var sut = new ClassicConditionsEvalEngine<ConditionType>(deferredEval, conditionsTreeAnalyzer);
-========
             var sut = new InterpretedConditionsEvalEngine<ConditionType>(deferredEval, conditionsTreeAnalyzer);
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/InterpretedConditionsEvalEngineTests.cs
 
             // Act
             var actual = sut.Eval(composedConditionNode, conditions, evaluationOptions);

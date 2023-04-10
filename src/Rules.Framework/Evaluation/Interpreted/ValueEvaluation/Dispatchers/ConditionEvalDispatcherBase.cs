@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ValueEvaluation/Dispatchers/ConditionEvalDispatcherBase.cs
-namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
-========
 namespace Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/ValueEvaluation/Dispatchers/ConditionEvalDispatcherBase.cs
 {
     using System;
     using System.Collections;

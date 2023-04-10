@@ -1,17 +1,9 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/DeferredEval.cs
-namespace Rules.Framework.Evaluation.Classic
-========
 namespace Rules.Framework.Evaluation.Interpreted
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/DeferredEval.cs
 {
     using System;
     using System.Collections.Generic;
     using Rules.Framework.Core.ConditionNodes;
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/DeferredEval.cs
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers;
-========
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers;
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/DeferredEval.cs
 
     internal sealed class DeferredEval : IDeferredEval
     {

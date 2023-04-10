@@ -1,17 +1,9 @@
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/InOperatorEvalStrategyTests.cs
-namespace Rules.Framework.Tests.Evaluation.Classic.ValueEvaluation
-========
 namespace Rules.Framework.Tests.Evaluation.Interpreted.ValueEvaluation
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/InOperatorEvalStrategyTests.cs
 {
     using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/InOperatorEvalStrategyTests.cs
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-========
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/InOperatorEvalStrategyTests.cs
     using Xunit;
 
     public class InOperatorEvalStrategyTests

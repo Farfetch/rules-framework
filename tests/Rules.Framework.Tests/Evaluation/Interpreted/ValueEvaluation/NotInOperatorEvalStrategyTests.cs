@@ -1,16 +1,8 @@
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/NotInOperatorEvalStrategyTests.cs
-namespace Rules.Framework.Tests.Evaluation.Classic.ValueEvaluation
-{
-    using System.Linq;
-    using FluentAssertions;
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-========
 namespace Rules.Framework.Tests.Evaluation.Interpreted.ValueEvaluation
 {
     using System.Linq;
     using FluentAssertions;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/NotInOperatorEvalStrategyTests.cs
     using Xunit;
 
     public class NotInOperatorEvalStrategyTests

@@ -1,17 +1,9 @@
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/OperatorEvalStrategyFactoryTests.cs
-namespace Rules.Framework.Tests.Evaluation.Classic.ValueEvaluation
-========
 namespace Rules.Framework.Tests.Evaluation.Interpreted.ValueEvaluation
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/OperatorEvalStrategyFactoryTests.cs
 {
     using System;
     using FluentAssertions;
     using Rules.Framework.Core;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/OperatorEvalStrategyFactoryTests.cs
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-========
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/OperatorEvalStrategyFactoryTests.cs
     using Xunit;
 
     public class OperatorEvalStrategyFactoryTests

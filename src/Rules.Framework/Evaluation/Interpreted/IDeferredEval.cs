@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/IDeferredEval.cs
-namespace Rules.Framework.Evaluation.Classic
-========
 namespace Rules.Framework.Evaluation.Interpreted
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/IDeferredEval.cs
 {
     using System;
     using System.Collections.Generic;

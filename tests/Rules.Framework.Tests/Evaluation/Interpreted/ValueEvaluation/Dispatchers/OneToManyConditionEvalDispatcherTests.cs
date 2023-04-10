@@ -6,13 +6,8 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation.Dispatchers
     using Moq;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/Dispatchers/OneToManyConditionEvalDispatcherTests.cs
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers;
-========
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/Dispatchers/OneToManyConditionEvalDispatcherTests.cs
     using Xunit;
 
     public class OneToManyConditionEvalDispatcherTests

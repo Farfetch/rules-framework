@@ -1,31 +1,17 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ClassicConditionsEvalEngine.cs
-namespace Rules.Framework.Evaluation.Classic
-========
 namespace Rules.Framework.Evaluation.Interpreted
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/InterpretedConditionsEvalEngine.cs
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ClassicConditionsEvalEngine.cs
-    using Rules.Framework.Evaluation.Specification;
-
-    internal sealed class ClassicConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
-========
 
     internal sealed class InterpretedConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/InterpretedConditionsEvalEngine.cs
     {
         private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
         private readonly IDeferredEval deferredEval;
 
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ClassicConditionsEvalEngine.cs
-        public ClassicConditionsEvalEngine(
-========
         public InterpretedConditionsEvalEngine(
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/InterpretedConditionsEvalEngine.cs
             IDeferredEval deferredEval,
             IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer)
         {

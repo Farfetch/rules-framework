@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ValueEvaluation/Dispatchers/ManyToOneConditionEvalDispatcher.cs
-namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
-========
 namespace Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/ValueEvaluation/Dispatchers/ManyToOneConditionEvalDispatcher.cs
 {
     using System.Collections.Generic;
     using System.Linq;

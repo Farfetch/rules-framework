@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ValueEvaluation/OperatorEvalStrategyFactory.cs
-namespace Rules.Framework.Evaluation.Classic.ValueEvaluation
-========
 namespace Rules.Framework.Evaluation.Interpreted.ValueEvaluation
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/ValueEvaluation/OperatorEvalStrategyFactory.cs
 {
     using System;
     using System.Collections.Generic;

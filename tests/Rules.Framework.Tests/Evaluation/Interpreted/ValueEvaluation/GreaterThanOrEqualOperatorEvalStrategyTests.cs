@@ -1,17 +1,9 @@
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/GreaterThanOrEqualOperatorEvalStrategyTests.cs
-namespace Rules.Framework.Tests.Evaluation.Classic.ValueEvaluation
-========
 namespace Rules.Framework.Tests.Evaluation.Interpreted.ValueEvaluation
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/GreaterThanOrEqualOperatorEvalStrategyTests.cs
 {
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/GreaterThanOrEqualOperatorEvalStrategyTests.cs
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-========
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/GreaterThanOrEqualOperatorEvalStrategyTests.cs
     using Xunit;
 
     public class GreaterThanOrEqualOperatorEvalStrategyTests

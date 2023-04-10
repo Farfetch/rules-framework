@@ -1,11 +1,7 @@
 namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 {
     using System;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/NotStartsWithOperatorEvalStrategyTests.cs
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-========
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/NotStartsWithOperatorEvalStrategyTests.cs
     using Xunit;
 
     public class NotStartsWithOperatorEvalStrategyTests

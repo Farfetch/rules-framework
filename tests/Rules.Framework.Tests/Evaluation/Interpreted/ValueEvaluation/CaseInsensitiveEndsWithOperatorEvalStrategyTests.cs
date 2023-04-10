@@ -1,16 +1,8 @@
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/CaseInsensitiveEndsWithOperatorEvalStrategyTests.cs
-namespace Rules.Framework.Tests.Evaluation.Classic.ValueEvaluation
-{
-    using System;
-    using FluentAssertions;
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-========
 namespace Rules.Framework.Tests.Evaluation.Interpreted.ValueEvaluation
 {
     using System;
     using FluentAssertions;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/CaseInsensitiveEndsWithOperatorEvalStrategyTests.cs
     using Xunit;
 
     public class CaseInsensitiveEndsWithOperatorEvalStrategyTests

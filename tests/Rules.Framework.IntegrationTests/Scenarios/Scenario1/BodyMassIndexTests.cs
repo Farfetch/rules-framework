@@ -146,9 +146,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
 
             var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(3);
-            rules.Should().ContainEquivalentOf(expectedRule1);
-            expectedRule1.Priority.Should().Be(1, "rule should to priority 1 if inserted at priority 1");
-            expectedRule2.Priority.Should().Be(3, "rule should have priority 3 if inserted at priority 3, given that last rule after insert was at priority 2.");
+            rules.Should().ContainEquivalentOf(newRule1);
+            newRule1.Priority.Should().Be(1, "rule should to priority 1 if inserted at priority 1");
+            newRule2.Priority.Should().Be(3, "rule should have priority 3 if inserted at priority 3, given that last rule after insert was at priority 2.");
         }
 
         [Theory]

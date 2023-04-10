@@ -1,11 +1,7 @@
 namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 {
     using System;
-<<<<<<<< HEAD:tests/Rules.Framework.Tests/Evaluation/Classic/ValueEvaluation/NotEndsWithOperatorEvalStrategyTests.cs
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-========
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
->>>>>>>> master:tests/Rules.Framework.Tests/Evaluation/Interpreted/ValueEvaluation/NotEndsWithOperatorEvalStrategyTests.cs
     using Xunit;
 
     public class NotEndsWithOperatorEvalStrategyTests
@@ -30,18 +26,6 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
             Assert.Contains(nameof(String), exception.Message);
         }
 
-        [Theory]
-        [InlineData("Sample text", "random")]
-        [InlineData("Sample text", "Text")]
-        public void Eval_GivenLeftOperandNotEndingWithRightOperand_ReturnsTrue(string leftOperand, string rightOperand)
-        {
-            // Act
-            var evaluation = evalStrategy.Eval(leftOperand, rightOperand);
-
-            // Assert
-            Assert.True(evaluation);
-        }
-
         [Fact]
         public void Eval_GivenLeftOperandEndingWithRightOperand_ReturnsFalse()
         {
@@ -54,6 +38,18 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation
 
             // Assert
             Assert.False(evaluation);
+        }
+
+        [Theory]
+        [InlineData("Sample text", "random")]
+        [InlineData("Sample text", "Text")]
+        public void Eval_GivenLeftOperandNotEndingWithRightOperand_ReturnsTrue(string leftOperand, string rightOperand)
+        {
+            // Act
+            var evaluation = evalStrategy.Eval(leftOperand, rightOperand);
+
+            // Assert
+            Assert.True(evaluation);
         }
     }
 }

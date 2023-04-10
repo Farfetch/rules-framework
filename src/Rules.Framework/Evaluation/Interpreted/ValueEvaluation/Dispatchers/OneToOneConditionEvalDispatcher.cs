@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ValueEvaluation/Dispatchers/OneToOneConditionEvalDispatcher.cs
-namespace Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers
-========
 namespace Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers
->>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/ValueEvaluation/Dispatchers/OneToOneConditionEvalDispatcher.cs
 {
     using Rules.Framework.Core;
 
