@@ -13,7 +13,7 @@ Why use rules? Most of us at some point, while developing software to support a 
 |---------------------------------|----|---------|
 |Rules.Framework|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.svg?logo=nuget)](https://www.nuget.org/packages/Rules.Framework/)|[![Rules.Framework on fuget.org](https://www.fuget.org/packages/Rules.Framework/badge.svg)](https://www.fuget.org/packages/Rules.Framework)|
 |Rules.Framework.Providers.MongoDb|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.Providers.MongoDb?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.Providers.MongoDb/)|[![Rules.Framework.Providers.MongoDb on fuget.org](https://www.fuget.org/packages/Rules.Framework.Providers.MongoDb/badge.svg)](https://www.fuget.org/packages/Rules.Framework.Providers.MongoDb)|
-|Rules.Framework.Providers.InMemory|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.Providers.InMemory?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.Providers.InMemory/)|[![Rules.Framework.Providers.InMemory on fuget.org](https://www.fuget.org/packages/Rules.Framework.Providers.InMemory/badge.svg)](https://www.fuget.org/packages/Rules.Framework.Providers.InMemory)|
+|Rules.Framework.WebUI|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.WebUI?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.WebUI/)|[![Rules.Framework.WebUI on fuget.org](https://www.fuget.org/packages/Rules.Framework.WebUI/badge.svg)](https://www.fuget.org/packages/Rules.Framework.WebUI)|
 
 ## Features
 
@@ -25,9 +25,10 @@ The following listing presents features implemented and features to be implement
 - [x] Rules content serializarion
 - [ ] Rules data source caching
 - [x] Rules management (Create, Read, Update)
-- [X] In-memory data source support
+- [x] In-memory data source support
 - [x] MongoDB data source support
 - [ ] SQL Server data source support
+- [x] Rules evaluation modes (interpreted, compiled)
 
 ## How it works
 

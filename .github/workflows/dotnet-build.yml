@@ -45,28 +45,21 @@ jobs:
       run: |
         HEAD_FOLDER=$(pwd)
         HEAD_BENCH_FOLDER=$HEAD_FOLDER/tmp/benchmarks/head
-
         echo "head_folder=$HEAD_FOLDER" >> $GITHUB_OUTPUT
         echo "head_benchmarks_folder=$HEAD_BENCH_FOLDER" >> $GITHUB_OUTPUT
-
     - name: Git Checkout
       uses: actions/checkout@v2
       with:
         ref: ${{github.event.pull_request.head.ref}}
         repository: ${{github.event.pull_request.head.repo.full_name}}
-
     - name: Create benchmarks results folder (HEAD)
       run: mkdir -p ${{ steps.determine-folders.outputs.head_benchmarks_folder }}
-
     - name: Restore dependencies (HEAD)
       run: dotnet restore rules-framework.sln
-
     - name: Build benchmarks (HEAD)
       run: dotnet build -c Release tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj --framework net6.0
-
     - name: Run benchmarks (HEAD)
       run: sudo dotnet run --project tests/Rules.Framework.BenchmarkTests/Rules.Framework.BenchmarkTests.csproj -c Release --framework net6.0 -- -a "${{ steps.determine-folders.outputs.head_benchmarks_folder }}/artifacts"
-
     - name: Determine results file (HEAD)
       id: determine-results-file
       run: |
@@ -75,7 +68,7 @@ jobs:
         sudo chmod -R 777 artifacts
         MD_FILE=$(find artifacts/results -name '*.md')
         echo "file=${{ steps.determine-folders.outputs.head_benchmarks_folder }}/$MD_FILE" >> $GITHUB_OUTPUT
-
+      # Tries to find a comment ID.
     - name: Find comment - report results
       uses: peter-evans/find-comment@v2
       id: find-comment
@@ -83,7 +76,7 @@ jobs:
         issue-number: ${{ github.event.number }}
         comment-author: 'github-actions[bot]'
         body-includes: Benchmark Results Report
-
+      # If a prior comment ID is not found, creates a new comment, otherwise updates the existent one.
     - name: Create or update comment - report results
       uses: peter-evans/create-or-update-comment@v2
       with:
