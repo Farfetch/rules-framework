@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors></Authors>
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meziantou.Analyzer" Version="2.0.15">
+    <PackageReference Include="Meziantou.Analyzer" Version="2.0.29">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -36,10 +36,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
+    </ItemGroup>
 </Project>

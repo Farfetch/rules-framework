@@ -3,7 +3,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     using System.Collections.Generic;
     using FluentAssertions;
     using Rules.Framework.Evaluation.Compiled;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class ConditionsValueLookupExtensionTests

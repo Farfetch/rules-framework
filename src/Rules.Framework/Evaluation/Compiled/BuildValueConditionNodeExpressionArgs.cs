@@ -28,14 +28,6 @@ namespace Rules.Framework.Evaluation.Compiled
             => obj is BuildValueConditionNodeExpressionArgs args && this.Equals(args);
 
         public override readonly int GetHashCode()
-        {
-            int hashCode = 274727839;
-            hashCode = hashCode * -1521134295 + EqualityComparer<DataTypeConfiguration>.Default.GetHashCode(this.DataTypeConfiguration);
-            hashCode = hashCode * -1521134295 + EqualityComparer<ParameterExpression>.Default.GetHashCode(this.LeftOperandVariableExpression);
-            hashCode = hashCode * -1521134295 + this.Operator.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<ParameterExpression>.Default.GetHashCode(this.ResultVariableExpression);
-            hashCode = hashCode * -1521134295 + EqualityComparer<ParameterExpression>.Default.GetHashCode(this.RightOperandVariableExpression);
-            return hashCode;
-        }
+            => HashCode.Combine(this.DataTypeConfiguration, this.LeftOperandVariableExpression, this.Operator, this.ResultVariableExpression, this.RightOperandVariableExpression);
     }
 }

@@ -29,14 +29,14 @@ namespace Rules.Framework.Evaluation.Compiled
             BuildValueConditionNodeExpressionArgs args)
         {
             var enumerableOfDataType = enumerableType.MakeGenericType(args.DataTypeConfiguration.Type);
-            var coalescedLeftOperandExpression = builder.CreateVariable<object>("coalescedLeftOperand");
-            var convertedLeftOperandExpression = builder.CreateVariable("convertedLeftOperand", args.DataTypeConfiguration.Type);
-            var convertedRightOperandExpression = builder.CreateVariable("convertedRightOperand", enumerableOfDataType);
+            var coalescedLeftOperandExpression = builder.CreateVariable<object>("CoalescedLeftOperand");
+            var convertedLeftOperandExpression = builder.CreateVariable("ConvertedLeftOperand", args.DataTypeConfiguration.Type);
+            var convertedRightOperandExpression = builder.CreateVariable("ConvertedRightOperand", enumerableOfDataType);
 
             // Line 1.
             var fallbackExpression = builder.Constant<object>(value: null);
             builder.If(
-                test => test.NotEqual(args.LeftOperandVariableExpression, fallbackExpression),
+                evaluation => evaluation.NotEqual(args.LeftOperandVariableExpression, fallbackExpression),
                 then => then.Block(block => block.Assign(coalescedLeftOperandExpression, args.LeftOperandVariableExpression)),
                 @else => @else.Block(block => block.Assign(coalescedLeftOperandExpression, block.Constant(args.DataTypeConfiguration.Default))));
 

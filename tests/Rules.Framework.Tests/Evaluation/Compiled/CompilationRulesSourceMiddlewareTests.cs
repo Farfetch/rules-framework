@@ -11,7 +11,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation.Compiled;
     using Rules.Framework.Source;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class CompilationRulesSourceMiddlewareTests
@@ -146,8 +146,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder));
         }
 
         [Fact]
@@ -194,7 +194,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -244,7 +244,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -303,10 +303,9 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
-            Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Once());
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder),
+                Mock.Get(rulesDataSource));
         }
 
         [Fact]
@@ -351,7 +350,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -399,7 +398,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
 
             // Assert
-            actualRules.Should().BeSameAs(expectedRules);
+            actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
@@ -456,10 +455,9 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
-            Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Once());
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder),
+                Mock.Get(rulesDataSource));
         }
 
         [Fact]
@@ -592,8 +590,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
-            Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Once());
+            Mock.VerifyAll(
+                Mock.Get(ruleConditionsExpressionBuilder));
         }
 
         private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule(bool withCondition)

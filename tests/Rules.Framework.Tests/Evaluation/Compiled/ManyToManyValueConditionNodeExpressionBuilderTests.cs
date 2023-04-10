@@ -69,7 +69,11 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                         RightOperandVariableExpression = builder.GetParameter("rightOperand"),
                     };
 
-                    manyToManyValueConditionNodeCompiler.Build(builder, args);
+                    var blockExpression = builder.Block("test", innerBuilder =>
+                    {
+                        manyToManyValueConditionNodeCompiler.Build(innerBuilder, args);
+                    });
+                    builder.AddExpression(blockExpression);
 
                     builder.Return(resultVariableExpression);
                 })

@@ -3,73 +3,73 @@ private Func<IDictionary<ConditionType, object>, ConditionType, object> GetValue
 
 internal bool Main(EvaluationContext<ConditionType> evaluationContext)
 {
-    bool _C0_result;
-    object _C0_leftOperand;
-    object _C0_rightOperand;
-    string _C0_multiplicity;
-    bool _C1_result;
-    object _C1_leftOperand;
-    object _C1_rightOperand;
-    string _C1_multiplicity;
+    bool cnd0Result;
+    object cnd0LeftOperand;
+    object cnd0RightOperand;
+    string cnd0Multiplicity;
+    bool cnd1Result;
+    object cnd1LeftOperand;
+    object cnd1RightOperand;
+    string cnd1Multiplicity;
 
-    _C0_leftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), ConditionType.NumberOfSales);
-    _C0_rightOperand = 100;
+    cnd0LeftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), ConditionType.NumberOfSales);
+    cnd0RightOperand = 100;
 
-    if (_C0_leftOperand == null)
+    if (cnd0LeftOperand == null)
     {
         if (evaluationContext.get_MissingConditionBehavior() == MissingConditionBehaviors.Discard)
         {
-            _C0_result = false;
-            goto _C0_Label_EndValueConditionNode;
+            cnd0Result = false;
+            goto cnd0LabelEndValueConditionNode;
         }
 
         if (evaluationContext.get_MatchMode() == MatchModes.Search)
         {
-            _C0_result = true;
-            goto _C0_Label_EndValueConditionNode;
+            cnd0Result = true;
+            goto cnd0LabelEndValueConditionNode;
         }
     }
-    _C0_multiplicity = Evaluate1.Invoke(_C0_leftOperand, Operators.Equal, _C0_rightOperand);
+    cnd0Multiplicity = Evaluate1.Invoke(cnd0LeftOperand, Operators.Equal, cnd0RightOperand);
 
-    switch (_C0_multiplicity)
+    switch (cnd0Multiplicity)
     {
         case "one-to-one":
-            _C0_result = true;
+            cnd0Result = true;
             break;
         default:
             break;
     }
-_C0_Label_EndValueConditionNode:
+cnd0LabelEndValueConditionNode:
 
-    _C1_leftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), ConditionType.IsoCountryCode);
-    _C1_rightOperand = "GB";
+    cnd1LeftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), ConditionType.IsoCountryCode);
+    cnd1RightOperand = "GB";
 
-    if (_C1_leftOperand == null)
+    if (cnd1LeftOperand == null)
     {
         if (evaluationContext.get_MissingConditionBehavior() == MissingConditionBehaviors.Discard)
         {
-            _C1_result = false;
-            goto _C1_Label_EndValueConditionNode;
+            cnd1Result = false;
+            goto cnd1LabelEndValueConditionNode;
         }
 
         if (evaluationContext.get_MatchMode() == MatchModes.Search)
         {
-            _C1_result = true;
-            goto _C1_Label_EndValueConditionNode;
+            cnd1Result = true;
+            goto cnd1LabelEndValueConditionNode;
         }
     }
-    _C1_multiplicity = Evaluate1.Invoke(_C1_leftOperand, Operators.Equal, _C1_rightOperand);
+    cnd1Multiplicity = Evaluate1.Invoke(cnd1LeftOperand, Operators.Equal, cnd1RightOperand);
 
-    switch (_C1_multiplicity)
+    switch (cnd1Multiplicity)
     {
         case "one-to-one":
-            _C1_result = true;
+            cnd1Result = true;
             break;
         default:
             break;
     }
-_C1_Label_EndValueConditionNode:
-    bool result = _C0_result || _C1_result;
-    return result;
+cnd1LabelEndValueConditionNode:
+    bool Result = cnd0Result || cnd1Result;
+    return Result;
 
 }

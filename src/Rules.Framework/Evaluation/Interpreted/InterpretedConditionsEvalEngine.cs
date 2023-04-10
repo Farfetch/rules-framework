@@ -1,0 +1,77 @@
+<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ClassicConditionsEvalEngine.cs
+namespace Rules.Framework.Evaluation.Classic
+========
+namespace Rules.Framework.Evaluation.Interpreted
+>>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/InterpretedConditionsEvalEngine.cs
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
+<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ClassicConditionsEvalEngine.cs
+    using Rules.Framework.Evaluation.Specification;
+
+    internal sealed class ClassicConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
+========
+
+    internal sealed class InterpretedConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
+>>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/InterpretedConditionsEvalEngine.cs
+    {
+        private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
+        private readonly IDeferredEval deferredEval;
+
+<<<<<<<< HEAD:src/Rules.Framework/Evaluation/Classic/ClassicConditionsEvalEngine.cs
+        public ClassicConditionsEvalEngine(
+========
+        public InterpretedConditionsEvalEngine(
+>>>>>>>> master:src/Rules.Framework/Evaluation/Interpreted/InterpretedConditionsEvalEngine.cs
+            IDeferredEval deferredEval,
+            IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer)
+        {
+            this.deferredEval = deferredEval;
+            this.conditionsTreeAnalyzer = conditionsTreeAnalyzer;
+        }
+
+        public bool Eval(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions, EvaluationOptions evaluationOptions)
+        {
+            if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !this.conditionsTreeAnalyzer.AreAllSearchConditionsPresent(conditionNode, conditions))
+            {
+                return false;
+            }
+
+            ISpecification<IDictionary<TConditionType, object>> specification = this.BuildSpecification(conditionNode, evaluationOptions.MatchMode);
+
+            return specification.IsSatisfiedBy(conditions);
+        }
+
+        private ISpecification<IDictionary<TConditionType, object>> BuildSpecification(IConditionNode<TConditionType> conditionNode, MatchModes matchMode)
+        {
+            return conditionNode switch
+            {
+                IValueConditionNode<TConditionType> valueConditionNode => this.BuildSpecificationForValueNode(valueConditionNode, matchMode),
+                ComposedConditionNode<TConditionType> composedConditionNode => this.BuildSpecificationForComposedNode(composedConditionNode, matchMode),
+                _ => throw new NotSupportedException($"Unsupported condition node: '{conditionNode.GetType().Name}'."),
+            };
+        }
+
+        private ISpecification<IDictionary<TConditionType, object>> BuildSpecificationForComposedNode(ComposedConditionNode<TConditionType> composedConditionNode, MatchModes matchMode)
+        {
+            IEnumerable<ISpecification<IDictionary<TConditionType, object>>> childConditionNodesSpecifications = composedConditionNode
+                .ChildConditionNodes
+                .Select(cn => this.BuildSpecification(cn, matchMode));
+
+            return composedConditionNode.LogicalOperator switch
+            {
+                LogicalOperators.And => childConditionNodesSpecifications.Aggregate((s1, s2) => s1.And(s2)),
+                LogicalOperators.Or => childConditionNodesSpecifications.Aggregate((s1, s2) => s1.Or(s2)),
+                _ => throw new NotSupportedException($"Unsupported logical operator: '{composedConditionNode.LogicalOperator}'."),
+            };
+        }
+
+        private ISpecification<IDictionary<TConditionType, object>> BuildSpecificationForValueNode(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
+        {
+            return new FuncSpecification<IDictionary<TConditionType, object>>(this.deferredEval.GetDeferredEvalFor(valueConditionNode, matchMode));
+        }
+    }
+}

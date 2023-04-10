@@ -8,7 +8,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled;
-    using Rules.Framework.Tests.TestStubs;
+    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class CompiledConditionsEvalEngineTests

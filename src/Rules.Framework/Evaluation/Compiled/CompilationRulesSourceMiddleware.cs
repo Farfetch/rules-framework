@@ -1,6 +1,7 @@
 namespace Rules.Framework.Evaluation.Compiled
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.Source;
@@ -33,7 +34,7 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
-            foreach (var rule in rules)
+            var compiledRulesTasks = rules.Select(async (rule) =>
             {
                 bool compiled = this.TryCompile(rule);
                 if (compiled)
@@ -42,9 +43,10 @@ namespace Rules.Framework.Evaluation.Compiled
                     // it won't go through the compilation process again.
                     await this.rulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
                 }
-            }
+                return rule;
+            });
 
-            return rules;
+            return await Task.WhenAll(compiledRulesTasks).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesFilteredAsync(
@@ -53,7 +55,7 @@ namespace Rules.Framework.Evaluation.Compiled
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
-            foreach (var rule in rules)
+            var compiledRulesTasks = rules.Select(async (rule) =>
             {
                 bool compiled = this.TryCompile(rule);
                 if (compiled)
@@ -62,9 +64,10 @@ namespace Rules.Framework.Evaluation.Compiled
                     // it won't go through the compilation process again.
                     await this.rulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
                 }
-            }
+                return rule;
+            });
 
-            return rules;
+            return await Task.WhenAll(compiledRulesTasks).ConfigureAwait(false);
         }
 
         public async Task HandleUpdateRuleAsync(

@@ -4,11 +4,11 @@ namespace Rules.Framework.Builder
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Evaluation;
-    using Rules.Framework.Evaluation.Classic;
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation;
-    using Rules.Framework.Evaluation.Classic.ValueEvaluation.Dispatchers;
     using Rules.Framework.Evaluation.Compiled;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
+    using Rules.Framework.Evaluation.Interpreted;
+    using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
+    using Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers;
     using Rules.Framework.Source;
     using Rules.Framework.Validation;
 
@@ -48,12 +48,12 @@ namespace Rules.Framework.Builder
             }
             else
             {
-                // Use classic conditions eval engine that runs throught all conditions and
+                // Use interpreted conditions eval engine that runs throught all conditions and
                 // interprets them at each evaluation.
                 var operatorEvalStrategyFactory = new OperatorEvalStrategyFactory();
                 var conditionEvalDispatchProvider = new ConditionEvalDispatchProvider(operatorEvalStrategyFactory, multiplicityEvaluator, dataTypesConfigurationProvider);
                 var deferredEval = new DeferredEval(conditionEvalDispatchProvider, this.rulesEngineOptions);
-                conditionsEvalEngine = new ClassicConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
+                conditionsEvalEngine = new InterpretedConditionsEvalEngine<TConditionType>(deferredEval, conditionsTreeAnalyzer);
             }
 
             var conditionTypeExtractor = new ConditionTypeExtractor<TContentType, TConditionType>();

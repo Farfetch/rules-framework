@@ -12,12 +12,6 @@ namespace Rules.Framework.WebUI
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-#if NETSTANDARD2_0
-
-    using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-
-#endif
-
     internal sealed class WebUIMiddleware
     {
         private readonly IEnumerable<IHttpRequestHandler> httpRequestHandlers;

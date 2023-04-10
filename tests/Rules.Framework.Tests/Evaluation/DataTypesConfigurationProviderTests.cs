@@ -1,5 +1,8 @@
 namespace Rules.Framework.Tests.Evaluation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
@@ -19,12 +22,12 @@ namespace Rules.Framework.Tests.Evaluation
         public void GetDataTypeConfiguration_GivenMappedDataType_ReturnsDataTypeConfiguration(DataTypes dataType)
         {
             // Arrange
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DataTypesConfigurationProvider dataTypesConfigurationProvider = new DataTypesConfigurationProvider(rulesEngineOptions);
+            var dataTypesConfigurationProvider = new DataTypesConfigurationProvider(rulesEngineOptions);
 
             // Act
-            DataTypeConfiguration dataTypeConfiguration = dataTypesConfigurationProvider.GetDataTypeConfiguration(dataType);
+            var dataTypeConfiguration = dataTypesConfigurationProvider.GetDataTypeConfiguration(dataType);
 
             // Assert
             dataTypeConfiguration.Should().NotBeNull();
@@ -35,13 +38,13 @@ namespace Rules.Framework.Tests.Evaluation
         public void GetDataTypeConfiguration_GivenUnkownDataType_ThrowsNotSupportedException()
         {
             // Arrange
-            DataTypes dataType = (DataTypes)0;
-            RulesEngineOptions rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var dataType = (DataTypes)0;
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            DataTypesConfigurationProvider dataTypesConfigurationProvider = new DataTypesConfigurationProvider(rulesEngineOptions);
+            var dataTypesConfigurationProvider = new DataTypesConfigurationProvider(rulesEngineOptions);
 
             // Act
-            NotSupportedException notSupportedException = Assert.Throws<NotSupportedException>(() => dataTypesConfigurationProvider.GetDataTypeConfiguration(dataType));
+            var notSupportedException = Assert.Throws<NotSupportedException>(() => dataTypesConfigurationProvider.GetDataTypeConfiguration(dataType));
 
             // Assert
             notSupportedException.Should().NotBeNull();

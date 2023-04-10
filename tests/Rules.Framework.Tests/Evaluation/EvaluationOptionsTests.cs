@@ -1,5 +1,7 @@
 namespace Rules.Framework.Tests.Evaluation
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
     using Rules.Framework.Evaluation;
     using System;
@@ -35,14 +37,14 @@ namespace Rules.Framework.Tests.Evaluation
         public void Equals_GivenObject_ReturnsComparisonResult(object compared, bool expetedResult)
         {
             // Arrange
-            EvaluationOptions evaluationOptions = new EvaluationOptions
+            var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
                 MatchMode = MatchModes.Exact
             };
 
             // Act
-            bool actualResult = evaluationOptions.Equals(compared);
+            var actualResult = evaluationOptions.Equals(compared);
 
             // Assert
             actualResult.Should().Be(expetedResult);
@@ -52,14 +54,14 @@ namespace Rules.Framework.Tests.Evaluation
         public void GetHashCode_NoConditions_ReturnsHashCode()
         {
             // Arrange
-            EvaluationOptions evaluationOptions = new EvaluationOptions
+            var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
                 MatchMode = MatchModes.Exact
             };
 
             // Act
-            int hashCode = evaluationOptions.GetHashCode();
+            var hashCode = evaluationOptions.GetHashCode();
 
             // Assert
             hashCode.Should().NotBe(0);
@@ -70,15 +72,15 @@ namespace Rules.Framework.Tests.Evaluation
         public void OperatorEquality_GivenOtherInstance_ReturnsComparisonResult(object compared, bool expetedResult)
         {
             // Arrange
-            EvaluationOptions evaluationOptions = new EvaluationOptions
+            var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
                 MatchMode = MatchModes.Exact
             };
-            EvaluationOptions comparedEvaluationOptions = (EvaluationOptions)compared;
+            var comparedEvaluationOptions = (EvaluationOptions)compared;
 
             // Act
-            bool actualResult = evaluationOptions == comparedEvaluationOptions;
+            var actualResult = evaluationOptions == comparedEvaluationOptions;
 
             // Assert
             actualResult.Should().Be(expetedResult);
@@ -89,15 +91,15 @@ namespace Rules.Framework.Tests.Evaluation
         public void OperatorInequality_GivenOtherInstance_ReturnsComparisonResult(object compared, bool expetedResult)
         {
             // Arrange
-            EvaluationOptions evaluationOptions = new EvaluationOptions
+            var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
                 MatchMode = MatchModes.Exact
             };
-            EvaluationOptions comparedEvaluationOptions = (EvaluationOptions)compared;
+            var comparedEvaluationOptions = (EvaluationOptions)compared;
 
             // Act
-            bool actualResult = evaluationOptions != comparedEvaluationOptions;
+            var actualResult = evaluationOptions != comparedEvaluationOptions;
 
             // Assert
             actualResult.Should().Be(expetedResult);
