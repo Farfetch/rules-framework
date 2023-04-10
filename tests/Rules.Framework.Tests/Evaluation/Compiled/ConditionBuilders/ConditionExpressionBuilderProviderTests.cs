@@ -7,11 +7,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Xunit;
 
     public class ConditionExpressionBuilderProviderTests

@@ -26,18 +26,18 @@ internal static class Program
 
         app.OnExecute(() =>
         {
-        Console.WriteLine("Starting benchmark tests.");
-        Console.WriteLine();
+            Console.WriteLine("Starting benchmark tests.");
+            Console.WriteLine();
 
-        var manualConfig = ManualConfig.CreateMinimumViable();
-        manualConfig.AddDiagnoser(MemoryDiagnoser.Default);
+            var manualConfig = ManualConfig.CreateMinimumViable();
+            manualConfig.AddDiagnoser(MemoryDiagnoser.Default);
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-        manualConfig.AddHardwareCounters(HardwareCounter.BranchInstructions, HardwareCounter.BranchMispredictions);
+                manualConfig.AddHardwareCounters(HardwareCounter.BranchInstructions, HardwareCounter.BranchMispredictions);
             }
 
-        manualConfig.AddExporter(HtmlExporter.Default);
+            manualConfig.AddExporter(HtmlExporter.Default);
             manualConfig.AddExporter(CustomMarkdownExporter.Default);
             manualConfig.WithOption(ConfigOptions.JoinSummary, true);
 
@@ -51,7 +51,7 @@ internal static class Program
                 bc => bc.Parameters.Items.Any(p => p.Name == "EnableCompilation" && (bool)p.Value == false));
             manualConfig.AddColumn(column);
 
-        _ = BenchmarkRunner.Run(typeof(Program).Assembly, manualConfig);
+            _ = BenchmarkRunner.Run(typeof(Program).Assembly, manualConfig);
         });
 
         return app.Execute(args);

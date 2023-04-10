@@ -6,9 +6,6 @@ namespace Rules.Framework.Tests.Evaluation
     using FluentAssertions;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using Xunit;
 
     public class DataTypesConfigurationProviderTests
