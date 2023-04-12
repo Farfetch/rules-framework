@@ -17,6 +17,13 @@ namespace Rules.Framework.Builder
         RuleBuilderResult<TContentType, TConditionType> Build();
 
         /// <summary>
+        /// Sets the new rule with the specified active status.
+        /// </summary>
+        /// <param name="active">The active status.</param>
+        /// <returns></returns>
+        IRuleBuilder<TContentType, TConditionType> WithActive(bool? active);
+
+        /// <summary>
         /// Sets the new rule with a specified condition.
         /// </summary>
         /// <param name="conditionFunc">

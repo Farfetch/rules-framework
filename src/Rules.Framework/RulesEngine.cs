@@ -45,6 +45,24 @@ namespace Rules.Framework
         }
 
         /// <summary>
+        /// Activates the specified existing rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
+        public Task<RuleOperationResult> ActivateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            rule.Active = true;
+
+            return this.UpdateRuleInternalAsync(rule);
+        }
+
+        /// <summary>
         /// Adds a new rule.
         /// </summary>
         /// <param name="rule">The rule.</param>
@@ -378,7 +396,7 @@ namespace Rules.Framework
             var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
 
             var matchedRules = rules
-                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions))
+                .Where(r => r.Active && (r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions)))
                 .ToList();
 
             return matchedRules;

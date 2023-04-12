@@ -669,7 +669,7 @@ namespace Rules.Framework.Tests
 
             var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
 
-            testRule.DateEnd = testRule.DateBegin.AddDays(-1);
+            testRule.DateEnd = testRule.DateBegin.AddYears(-2);
             testRule.Priority = 1;
 
             // Act
@@ -679,7 +679,7 @@ namespace Rules.Framework.Tests
             actual.IsSuccess.Should().BeFalse();
             actual.Errors.Should().NotBeEmpty();
 
-            mockRulesSource.Verify(x => x.GetRulesFilteredAsync(It.IsAny<GetRulesFilteredArgs<ContentType>>()), Times.Never());
+            mockRulesSource.Verify(x => x.GetRulesFilteredAsync(It.IsAny<GetRulesFilteredArgs<ContentType>>()), Times.Once());
             mockConditionsEvalEngine.Verify(x => x.Eval(
                 It.IsAny<IConditionNode<ConditionType>>(),
                 It.IsAny<IDictionary<ConditionType, object>>(),
