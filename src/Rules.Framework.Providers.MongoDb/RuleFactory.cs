@@ -95,7 +95,13 @@ namespace Rules.Framework.Providers.MongoDb
                 composedConditionNodeBuilder.AddCondition(cnb => ConvertConditionNode(cnb, child));
             }
 
-            return composedConditionNodeBuilder.Build();
+            var composedConditionNode = composedConditionNodeBuilder.Build();
+            foreach (var property in composedConditionNodeDataModel.Properties)
+            {
+                composedConditionNode.Properties[property.Key] = property.Value;
+            }
+
+            return composedConditionNode;
         }
 
         private static ValueConditionNodeDataModel ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode) => new ValueConditionNodeDataModel
@@ -105,12 +111,13 @@ namespace Rules.Framework.Providers.MongoDb
             DataType = valueConditionNode.DataType,
             Operand = valueConditionNode.Operand,
             Operator = valueConditionNode.Operator,
+            Properties = valueConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
         };
 
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ValueConditionNodeDataModel conditionNodeDataModel)
         {
             TConditionType conditionType = Parse<TConditionType>(conditionNodeDataModel.ConditionType);
-            return conditionNodeDataModel.DataType switch
+            var valueConditionNode = conditionNodeDataModel.DataType switch
             {
                 DataTypes.Integer => conditionNodeBuilder.AsValued(conditionType)
                     .OfDataType<int>()
@@ -155,6 +162,13 @@ namespace Rules.Framework.Providers.MongoDb
                     .Build(),
                 _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
             };
+
+            foreach (var property in conditionNodeDataModel.Properties)
+            {
+                valueConditionNode.Properties[property.Key] = property.Value;
+            }
+
+            return valueConditionNode;
         }
 
         private static T Parse<T>(string value)
@@ -176,6 +190,7 @@ namespace Rules.Framework.Providers.MongoDb
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator,
+                Properties = composedConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
             };
         }
 

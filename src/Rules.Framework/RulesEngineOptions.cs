@@ -21,6 +21,11 @@ namespace Rules.Framework
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }
 
         /// <summary>
+        /// Gets or sets wether rules' conditions is enabled or not.
+        /// </summary>
+        public bool EnableCompilation { get; set; }
+
+        /// <summary>
         /// <para>
         /// Gets or sets the rules engine behavior when no condition with a specific type is
         /// provided to rules engine to match with a rule's condition with the same type.

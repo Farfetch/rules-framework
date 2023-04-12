@@ -18,8 +18,9 @@ namespace Rules.Framework.Extensions
                 {
                     ConditionTypeName = condition.ConditionType.ToString(),
                     DataType = condition.DataType,
+                    LogicalOperator = condition.LogicalOperator,
                     Operand = condition.Operand,
-                    Operator = condition.Operator
+                    Operator = condition.Operator,
                 };
             }
 
@@ -35,7 +36,7 @@ namespace Rules.Framework.Extensions
             return new GenericComposedConditionNode
             {
                 ChildConditionNodes = conditionNodeDataModels,
-                LogicalOperator = composedConditionNode.LogicalOperator
+                LogicalOperator = composedConditionNode.LogicalOperator,
             };
         }
 

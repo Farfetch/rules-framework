@@ -2,6 +2,7 @@ namespace Rules.Framework.IntegrationTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -20,12 +21,12 @@ namespace Rules.Framework.IntegrationTests
         public async Task<IRulesDataSource<TContentType, TConditionType>> FromJsonFileAsync<TContentType, TConditionType>(string filePath, bool serializedContent = true)
             where TContentType : new()
         {
-            JsonContentSerializationProvider<TContentType> serializationProvider = new JsonContentSerializationProvider<TContentType>();
+            var serializationProvider = new JsonContentSerializationProvider<TContentType>();
 
             using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (var streamReader = new StreamReader(fileStream))
             {
-                string contents = await streamReader.ReadToEndAsync();
+                var contents = await streamReader.ReadToEndAsync();
                 var ruleDataModels = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents));
 
                 var rules = new List<Rule<TContentType, TConditionType>>(ruleDataModels.Count());
@@ -76,12 +77,11 @@ namespace Rules.Framework.IntegrationTests
             => (T)Parse(value, typeof(T));
 
         private static object Parse(string value, Type type)
-            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type);
+            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
         private IConditionNode<TConditionType> ConvertConditionNode<TConditionType>(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
-
             if (logicalOperator == LogicalOperators.Eval)
             {
                 return this.CreateValueConditionNode<TConditionType>(conditionNodeBuilder, conditionNodeDataModel);
@@ -91,7 +91,7 @@ namespace Rules.Framework.IntegrationTests
                 var composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
                     .WithLogicalOperator(logicalOperator);
 
-                foreach (ConditionNodeDataModel child in conditionNodeDataModel.ChildConditionNodes)
+                foreach (var child in conditionNodeDataModel.ChildConditionNodes)
                 {
                     composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, child));
                 }
@@ -112,14 +112,14 @@ namespace Rules.Framework.IntegrationTests
                     return conditionNodeBuilder.AsValued(integrationTestsConditionType)
                         .OfDataType<int>()
                         .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand))
+                        .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                         .Build();
 
                 case DataTypes.Decimal:
                     return conditionNodeBuilder.AsValued(integrationTestsConditionType)
                         .OfDataType<decimal>()
                         .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand))
+                        .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                         .Build();
 
                 case DataTypes.String:
@@ -133,7 +133,7 @@ namespace Rules.Framework.IntegrationTests
                     return conditionNodeBuilder.AsValued(integrationTestsConditionType)
                         .OfDataType<bool>()
                         .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand))
+                        .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                         .Build();
 
                 default:

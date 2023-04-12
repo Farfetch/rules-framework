@@ -1,9 +1,0 @@
-namespace Rules.Framework.Evaluation.ValueEvaluation
-{
-    using System.Collections.Generic;
-
-    internal interface IManyToOneOperatorEvalStrategy
-    {
-        bool Eval(IEnumerable<object> leftOperand, object rightOperand);
-    }
-}
