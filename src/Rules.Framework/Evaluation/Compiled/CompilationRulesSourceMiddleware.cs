@@ -44,7 +44,7 @@ namespace Rules.Framework.Evaluation.Compiled
                     await this.rulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
                 }
                 return rule;
-            });
+            }).ToList();
 
             return await Task.WhenAll(compiledRulesTasks).ConfigureAwait(false);
         }

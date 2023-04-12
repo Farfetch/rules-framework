@@ -4,8 +4,8 @@ namespace Rules.Framework.IntegrationTests.DataSource
 
     internal class RuleDataModel
     {
+        public bool? Active { get; set; }
         public string Content { get; set; }
-
         public short ContentTypeCode { get; set; }
 
         public DateTime DateBegin { get; set; }

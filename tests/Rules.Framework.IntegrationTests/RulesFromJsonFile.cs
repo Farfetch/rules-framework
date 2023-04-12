@@ -36,6 +36,7 @@ namespace Rules.Framework.IntegrationTests
 
                     var ruleBuilder = RuleBuilder.NewRule<TContentType, TConditionType>()
                         .WithName(ruleDataModel.Name)
+                        .WithActive(ruleDataModel.Active)
                         .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd);
 
                     if (ruleDataModel.RootCondition is { })

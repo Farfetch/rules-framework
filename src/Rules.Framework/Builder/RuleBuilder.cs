@@ -9,7 +9,7 @@ namespace Rules.Framework.Builder
     {
         private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
 
-        private bool active;
+        private bool? active;
         private ContentContainer<TContentType> contentContainer;
         private DateTime dateBegin;
         private DateTime? dateEnd;
@@ -27,7 +27,7 @@ namespace Rules.Framework.Builder
                 Name = this.name,
                 Priority = this.priority.GetValueOrDefault(0),
                 RootCondition = this.rootCondition,
-                Active = this.active
+                Active = this.active ?? true,
             };
 
             var validationResult = this.ruleValidator.Validate(rule);
@@ -42,7 +42,7 @@ namespace Rules.Framework.Builder
 
         public IRuleBuilder<TContentType, TConditionType> WithActive(bool? active)
         {
-            this.active = active ?? true;
+            this.active = active;
 
             return this;
         }
