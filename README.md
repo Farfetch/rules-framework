@@ -60,7 +60,7 @@ var ruleForDogSound = RuleBuilder
 rulesEngine.AddRuleAsync(ruleForDogSound.Rule, RuleAddPriorityOption.ByPriorityNumber(1));
 ```
 
-Get a matchingRule by using the `MatchOneAsync()` and passing relevant date and conditions.
+Get a matchingRule by using the `MatchOneAsync()` and passing a valid date and relevant conditions.
 
 ```csharp
 var matchDate = new DateTime(2021, 04, 13);
