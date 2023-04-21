@@ -75,7 +75,7 @@ var matchingRule = rulesEngine.MatchOneAsync(AnimalContentType.Sound, new DateTi
 
 To understand how the Rules.Framework can be used in various business scenarios please check the [Documentation](#documentation).
 
-You can also check the test scenarios and samples available in the source-code.
+You can also check the testscenarios and samples available in the source-code.
 
 ## Features
 
