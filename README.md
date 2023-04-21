@@ -23,7 +23,7 @@ By using rules, we're able to support a multiplicity of business scenarios throu
 
 ## Basic usage
 
-To set up a rules engine, define the content and condition types to be used.
+To set up a `RulesEngine`, define the content types and condition types to be used.
 
 ```csharp
 enum AnimalContentType { Sound, IsDomestic, IsDangerous }
@@ -48,8 +48,8 @@ var ruleForDogSound = RuleBuilder
     .NewRule<AnimalContentType, AnimalConditionType>()
     .WithName("Rule for the sound of the dog.")
     .WithContent(AnimalContentType.Sound, "Bark")
-    .WithCondition(c => 
-        c.AsValued(AnimalConditionType.Animal)
+    .WithCondition(c => c
+        .AsValued(AnimalConditionType.Animal)
         .OfDataType<string>()
         .WithComparisonOperator(Operators.Equal)
         .SetOperand("Dog")
@@ -60,15 +60,16 @@ var ruleForDogSound = RuleBuilder
 rulesEngine.AddRuleAsync(ruleForDogSound.Rule, RuleAddPriorityOption.ByPriorityNumber(1));
 ```
 
-You get a matchingRule by creating the relevant condition(s) and by using the `MatchOneAsync()`.
+Get a matchingRule by using the `MatchOneAsync()` and passing relevant date and conditions.
 
 ```csharp
+var matchDate = new DateTime(2021, 04, 13);
 var matchConditions = new[]
 {
     new Condition<AnimalConditionType> { Type = AnimalConditionType.Animal, Value = "Dog" },
 };
 
-var matchingRule = rulesEngine.MatchOneAsync(AnimalContentType.Sound, new DateTime(2021, 04, 13), matchConditions);
+var matchingRule = rulesEngine.MatchOneAsync(AnimalContentType.Sound, matchDate, matchConditions);
 ```
 
 ## Complex scenarios
