@@ -15,7 +15,7 @@ Rules.Framework is a generic framework that allows defining and evaluating rules
 
 ## What is a rule?
 
-A rule is a data structure limited in time (`date begin` and `date end`), whose content is categorized by a `content type`. Its applicability is constrained by `conditions`, and a `priority` value is used as untie criteria when there are multiple matches.
+A rule is a data structure limited in time (`date begin` and `date end`), whose content is categorized by a `content type`. Its applicability is constrained by `conditions`, and a `priority` value is used as untie criteria when there are multiple rule matches.
 
 ## Why use rules?
 
@@ -81,16 +81,16 @@ You can also check the test scenarios and samples available in the source-code.
 ## Features
 
 The following listing presents features implemented and features to be implemented:
-- [x] Rules evaluation (match one)
-- [x] Rules evaluation (match many)
-- [x] Rules search
-- [x] Rules content serialization
-- [x] Rules management (Create, Read, Update)
-- [x] In-memory data source support
-- [x] MongoDB data source support
-- [ ] SQL Server data source support
-- [ ] Rules data source caching
-- [x] Rules WebUI for visualization
+- ✅ Rules evaluation (match one)
+- ✅ Rules evaluation (match many)
+- ✅ Rules search
+- ✅ Rules content serialization
+- ✅ Rules management (Create, Read, Update)
+- ✅ In-memory data source support
+- ✅ MongoDB data source support
+- 🚧 SQL Server data source support
+- 🚧 Rules data source caching
+- ✅ Rules WebUI for visualization
 
 ## Documentation
 
