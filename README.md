@@ -11,6 +11,7 @@ Rules.Framework is a generic framework that allows defining and evaluating rules
 |---------------------------------|----|---------|
 |Rules.Framework|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.svg?logo=nuget)](https://www.nuget.org/packages/Rules.Framework/)|[![Rules.Framework on fuget.org](https://www.fuget.org/packages/Rules.Framework/badge.svg)](https://www.fuget.org/packages/Rules.Framework)|
 |Rules.Framework.Providers.MongoDb|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.Providers.MongoDb?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.Providers.MongoDb/)|[![Rules.Framework.Providers.MongoDb on fuget.org](https://www.fuget.org/packages/Rules.Framework.Providers.MongoDb/badge.svg)](https://www.fuget.org/packages/Rules.Framework.Providers.MongoDb)|
+|Rules.Framework.WebUI|[![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.WebUI?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.WebUI/)|[![Rules.Framework.WebUI on fuget.org](https://www.fuget.org/packages/Rules.Framework.WebUI/badge.svg)](https://www.fuget.org/packages/Rules.Framework.WebUI)|
 
 ## What is a rule?
 
@@ -18,7 +19,7 @@ A rule is a data structure limited in time (`date begin` and `date end`), whose 
 
 ## Why use rules?
 
-By using rules, one is able to support a multiplicity of business scenarios through rule configurations, instead of heavy code development efforts. Rules enable a fast response to change and a better control of the business logic by the product teams.
+By using rules, we're able to support a multiplicity of business scenarios through rule configurations, instead of heavy code development efforts. Rules enable a fast response to change and a better control of the business logic by the product owners.
 
 ## Basic usage
 
@@ -26,7 +27,7 @@ To set up a rules engine, define the content and condition types to be used.
 
 ```csharp
 enum AnimalContentType { Sound, IsDomestic, IsDangerous }
-enum AnimalConditionType { Animal, Breed, Family }
+enum AnimalConditionType { Animal, Breed }
 ```
 
 Use the `RulesEngineBuilder` to build the rules engine.
@@ -37,7 +38,7 @@ var rulesEngine = RulesEngineBuilder
     .WithContentType<AnimalContentType>()
     .WithConditionType<AnimalConditionType>()
     .SetInMemoryDataSource()
-    .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
+    .Configure(c => c.PriorityCriteria = PriorityCriterias.BottommostRuleWins)
     .Build();
 ```
 
@@ -49,7 +50,8 @@ var ruleForDogSound = RuleBuilder
     .WithContent(AnimalContentType.Sound, "Bark")
     .WithCondition(c => 
         c.AsValued(AnimalConditionType.Animal)
-        .OfDataType<string>().WithComparisonOperator(Operators.Equal)
+        .OfDataType<string>()
+        .WithComparisonOperator(Operators.Equal)
         .SetOperand("Dog")
         .Build())
     .WithDateBegin(new DateTime(2020, 01, 01))
@@ -58,8 +60,7 @@ var ruleForDogSound = RuleBuilder
 rulesEngine.AddRuleAsync(ruleForDogSound.Rule, RuleAddPriorityOption.ByPriorityNumber(1));
 ```
 
-
-You can then get a matchingRule by creating the necessary condition(s) and by using the `MatchOneAsync()`.
+You get a matchingRule by creating the relevant condition(s) and by using the `MatchOneAsync()`.
 
 ```csharp
 var matchConditions = new[]
@@ -74,7 +75,7 @@ var matchingRule = rulesEngine.MatchOneAsync(AnimalContentType.Sound, new DateTi
 
 To understand how the Rules.Framework can be used in various business scenarios please check the [Documentation](#documentation).
 
-You can also check the scenarios and samples available in the source-code.
+You can also check the test scenarios and samples available in the source-code.
 
 ## Features
 
