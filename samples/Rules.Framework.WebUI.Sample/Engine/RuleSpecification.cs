@@ -4,10 +4,13 @@ namespace Rules.Framework.WebUI.Sample.Engine
     using global::Rules.Framework.Builder;
     using global::Rules.Framework.WebUI.Sample.Enums;
 
-    internal class RuleSpecification
+    internal class RuleSpecification : RuleSpecificationBase<ContentTypes, ConditionTypes>
     {
-        public RuleAddPriorityOption RuleAddPriorityOption { get; set; }
-
-        public RuleBuilderResult<ContentTypes, ConditionTypes> RuleBuilderResult { get; set; }
+        public RuleSpecification(
+            RuleBuilderResult<ContentTypes, ConditionTypes> ruleBuilderResult,
+            RuleAddPriorityOption ruleAddPriorityOption)
+            : base(ruleBuilderResult, ruleAddPriorityOption)
+        {
+        }
     }
 }

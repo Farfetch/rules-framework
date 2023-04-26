@@ -106,12 +106,8 @@ namespace Rules.Framework.WebUI.Sample.Rules
 
         private void Add(
             RuleBuilderResult<ContentTypes, ConditionTypes> rule,
-            RuleAddPriorityOption ruleAddPriorityOption, List<RuleSpecification> rulesSpecifications) => rulesSpecifications.Add(
-                new RuleSpecification
-                {
-                    RuleBuilderResult = rule,
-                    RuleAddPriorityOption = ruleAddPriorityOption,
-                });
+            RuleAddPriorityOption ruleAddPriorityOption, List<RuleSpecification> rulesSpecifications)
+            => rulesSpecifications.Add(new RuleSpecification(rule, ruleAddPriorityOption));
 
         private DateTime CreateRandomDateBegin(int year)
         {
