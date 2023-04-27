@@ -82,9 +82,9 @@ var matchingRule = rulesEngine.MatchOneAsync(
 
 ### Complex scenarios
 
-To understand how the Rules.Framework can be used in various business scenarios, please check the [Wiki](https://github.com/Farfetch/rules-framework/wiki). 
+For a more thorough explanation of the Rules.Framework and all it enables, check the [Wiki](https://github.com/Farfetch/rules-framework/wiki). 
 
-Check also the test scenarios and samples available within the source-code.
+Check also the test scenarios and samples available within the source-code, to see more elaborated examples of its application.
 
 ## Rules.Framework.Providers.MongoDB
 [![Nuget Package](https://img.shields.io/nuget/v/Rules.Framework.Providers.MongoDb?logo=nuget)](https://www.nuget.org/packages/Rules.Framework.Providers.MongoDb/)
