@@ -5,11 +5,11 @@ Rules.Framework is a generic framework that allows defining and evaluating rules
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8b48f4541fba4d4b8bad2e9a8563ede3)](https://app.codacy.com/gh/Farfetch/rules-framework?utm_source=github.com&utm_medium=referral&utm_content=Farfetch/rules-framework&utm_campaign=Badge_Grade_Settings)
 [![.NET build](https://github.com/luispfgarces/rules-framework/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/luispfgarces/rules-framework/actions/workflows/dotnet-build.yml)
 
-## What is a rule?
+## What is a rule
 
 A rule is a data structure limited in time (`date begin` and `date end`), whose content is categorized by a `content type`. Its applicability is constrained by `conditions`, and a `priority` value is used as untie criteria when there are multiple rules applicable.
 
-## Why use rules?
+## Why use rules
 
 By using rules, we're able to abstract a multiplicity of business scenarios through rules configurations, instead of heavy code developments. Rules enable a fast response to change and a better control of the business logic by the product owners.
 
@@ -42,7 +42,7 @@ var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
     .WithContentType<ContentType>()
     .WithConditionType<ConditionType>()
     .SetInMemoryDataSource()
-    .Configure(c => c.PriorityCriteria = PriorityCriterias.BottommostRuleWins)
+    .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
     .Build();
 ```
 Use the `RuleBuilder` to assemble a rule.
@@ -111,7 +111,7 @@ Access is done via the endpoint `{host}/rules/index.html`.
 
 ## Features
 
-The following list presents features already available and others projected:
+The following list presents features already available and others planned:
 - [x] Rules evaluation (match one)
 - [x] Rules evaluation (match many)
 - [x] Rules content serialization
