@@ -3,8 +3,10 @@ namespace Rules.Framework.Providers.SqlServer
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
 
+    [ExcludeFromCodeCoverage]
     internal class RulesSchemaCreator : IRulesSchemaCreator
     {
         private readonly IEnumerable<Script> schemaScripts;

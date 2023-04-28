@@ -12,9 +12,9 @@ namespace Rules.Framework.Providers.SqlServer
     {
         private readonly IRuleFactory<TContentType, TConditionType> ruleFactory;
 
-        private readonly RulesFrameworkDbContext rulesFrameworkDbContext;
+        private readonly IRulesFrameworkDbContext rulesFrameworkDbContext;
 
-        public SqlServerProviderRulesDataSource(RulesFrameworkDbContext rulesFrameworkDbContext,
+        public SqlServerProviderRulesDataSource(IRulesFrameworkDbContext rulesFrameworkDbContext,
             IRuleFactory<TContentType, TConditionType> ruleFactory)
         {
             //this.sqlConnection = sqlConnection ?? throw new ArgumentNullException(nameof(sqlConnection));

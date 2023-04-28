@@ -1,7 +1,9 @@
 namespace Rules.Framework.Providers.SqlServer
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public class SqlServerDbSettings
     {
         public SqlServerDbSettings(string connectionString, string databaseName)

@@ -2,11 +2,13 @@ namespace Rules.Framework.Providers.SqlServer
 {
     using System.Collections.Generic;
     using System.Data.SqlClient;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
 
+    [ExcludeFromCodeCoverage]
     public static class SqlServerHelper
     {
         public static async Task RecreateSqlSchema(string databaseName, string connectionString)
