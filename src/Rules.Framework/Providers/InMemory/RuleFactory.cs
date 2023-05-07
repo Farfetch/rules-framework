@@ -1,10 +1,8 @@
 namespace Rules.Framework.Providers.InMemory
 {
     using System;
-    using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
-    using Rules.Framework.Builder;
+    using System.Runtime.CompilerServices;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Providers.InMemory.DataModel;
@@ -19,28 +17,18 @@ namespace Rules.Framework.Providers.InMemory
             }
 
             var contentContainer = new ContentContainer<TContentType>(ruleDataModel.ContentType, (_) => ruleDataModel.Content);
-            var ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
-                .WithName(ruleDataModel.Name)
-                .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
-                .WithCondition(cnb => ruleDataModel.RootCondition is { } ? ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
-                .WithContentContainer(contentContainer)
-                .Build();
 
-            if (!ruleBuilderResult.IsSuccess)
+            var rule = new Rule<TContentType, TConditionType>()
             {
-                throw new InvalidRuleException($"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}", ruleBuilderResult.Errors);
-            }
+                ContentContainer = contentContainer,
+                DateBegin = ruleDataModel.DateBegin,
+                DateEnd = ruleDataModel.DateEnd,
+                Name = ruleDataModel.Name,
+                Priority = ruleDataModel.Priority,
+                RootCondition = ruleDataModel.RootCondition is { } ? ConvertConditionNode(ruleDataModel.RootCondition) : null!,
+            };
 
-            ruleBuilderResult.Rule.Priority = ruleDataModel.Priority;
-
-            if (ruleBuilderResult.Rule.Priority <= 0)
-            {
-                throw new InvalidRuleException(
-                    $"An invalid rule was loaded from data source. Rule Name: {ruleDataModel.Name}",
-                    new[] { $"Loaded rule priority number is invalid: {ruleBuilderResult.Rule.Priority}." });
-            }
-
-            return ruleBuilderResult.Rule;
+            return rule;
         }
 
         public RuleDataModel<TContentType, TConditionType> CreateRule(Rule<TContentType, TConditionType> rule)
@@ -60,118 +48,75 @@ namespace Rules.Framework.Providers.InMemory
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
-                RootCondition = rule.RootCondition is { } ? ConvertConditionNode(rule.RootCondition) : null,
+                RootCondition = rule.RootCondition is { } ? ConvertConditionNode(rule.RootCondition) : null!,
             };
 
             return ruleDataModel;
         }
 
-        private static IConditionNode<TConditionType> ConvertConditionNode(
-            IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel<TConditionType> conditionNodeDataModel)
+        private static IConditionNode<TConditionType> ConvertConditionNode(ConditionNodeDataModel<TConditionType> conditionNodeDataModel)
         {
             if (conditionNodeDataModel.LogicalOperator == LogicalOperators.Eval)
             {
-                return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel as ValueConditionNodeDataModel<TConditionType>);
+                return CreateValueConditionNode((ValueConditionNodeDataModel<TConditionType>)conditionNodeDataModel);
             }
 
-            var composedConditionNodeDataModel = conditionNodeDataModel as ComposedConditionNodeDataModel<TConditionType>;
+            var composedConditionNodeDataModel = (ComposedConditionNodeDataModel<TConditionType>)conditionNodeDataModel;
+            var childConditionNodes = new IConditionNode<TConditionType>[composedConditionNodeDataModel.ChildConditionNodes.Count()];
+            var i = 0;
 
-            var composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
-                .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
-
-            foreach (ConditionNodeDataModel<TConditionType> child in composedConditionNodeDataModel.ChildConditionNodes)
+            foreach (var childConditionNodeDataModel in composedConditionNodeDataModel.ChildConditionNodes)
             {
-                composedConditionNodeBuilder.AddCondition(cnb => ConvertConditionNode(cnb, child));
+                childConditionNodes[i++] = ConvertConditionNode(childConditionNodeDataModel);
             }
 
-            var composedConditionNode = composedConditionNodeBuilder.Build();
-            foreach (var property in composedConditionNodeDataModel.Properties)
-            {
-                composedConditionNode.Properties[property.Key] = property.Value;
-            }
-
-            return composedConditionNode;
+            return new ComposedConditionNode<TConditionType>(
+                composedConditionNodeDataModel.LogicalOperator,
+                childConditionNodes,
+                new PropertiesDictionary(conditionNodeDataModel.Properties));
         }
 
-        private static ValueConditionNodeDataModel<TConditionType> ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode) => new ValueConditionNodeDataModel<TConditionType>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ValueConditionNodeDataModel<TConditionType> ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode)
         {
-            ConditionType = valueConditionNode.ConditionType,
-            LogicalOperator = LogicalOperators.Eval,
-            DataType = valueConditionNode.DataType,
-            Operand = valueConditionNode.Operand,
-            Operator = valueConditionNode.Operator,
-            Properties = valueConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
-        };
-
-        private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ValueConditionNodeDataModel<TConditionType> conditionNodeDataModel)
-        {
-            var valueConditionNode = conditionNodeDataModel.DataType switch
+            return new ValueConditionNodeDataModel<TConditionType>
             {
-                DataTypes.Integer => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                    .OfDataType<int>()
-                    .WithComparisonOperator(conditionNodeDataModel.Operator)
-                    .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                    .Build(),
-                DataTypes.Decimal => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                   .OfDataType<decimal>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
-                   .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                   .Build(),
-                DataTypes.String => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                   .OfDataType<string>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
-                   .SetOperand(Convert.ToString(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                   .Build(),
-                DataTypes.Boolean => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                   .OfDataType<bool>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
-                   .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                    .Build(),
-
-                DataTypes.ArrayInteger => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                    .OfDataType<IEnumerable<int>>()
-                    .WithComparisonOperator(conditionNodeDataModel.Operator)
-                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<int>)
-                    .Build(),
-                DataTypes.ArrayDecimal => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                    .OfDataType<IEnumerable<decimal>>()
-                    .WithComparisonOperator(conditionNodeDataModel.Operator)
-                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<decimal>)
-                    .Build(),
-                DataTypes.ArrayString => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                    .OfDataType<IEnumerable<string>>()
-                    .WithComparisonOperator(conditionNodeDataModel.Operator)
-                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<string>)
-                    .Build(),
-                DataTypes.ArrayBoolean => conditionNodeBuilder.AsValued(conditionNodeDataModel.ConditionType)
-                    .OfDataType<IEnumerable<bool>>()
-                    .WithComparisonOperator(conditionNodeDataModel.Operator)
-                    .SetOperand(conditionNodeDataModel.Operand as IEnumerable<bool>)
-                    .Build(),
-                _ => throw new NotSupportedException($"Unsupported data type: {conditionNodeDataModel.DataType}."),
+                ConditionType = valueConditionNode.ConditionType,
+                LogicalOperator = LogicalOperators.Eval,
+                DataType = valueConditionNode.DataType,
+                Operand = valueConditionNode.Operand,
+                Operator = valueConditionNode.Operator,
+                Properties = new PropertiesDictionary(valueConditionNode.Properties),
             };
-
-            foreach (var property in conditionNodeDataModel.Properties)
-            {
-                valueConditionNode.Properties[property.Key] = property.Value;
-            }
-
-            return valueConditionNode;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IConditionNode<TConditionType> CreateValueConditionNode(ValueConditionNodeDataModel<TConditionType> conditionNodeDataModel)
+        {
+            return new ValueConditionNode<TConditionType>(
+                conditionNodeDataModel.DataType,
+                conditionNodeDataModel.ConditionType,
+                conditionNodeDataModel.Operator,
+                conditionNodeDataModel.Operand,
+                new PropertiesDictionary(conditionNodeDataModel.Properties));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private ConditionNodeDataModel<TConditionType> ConvertComposedConditionNode(ComposedConditionNode<TConditionType> composedConditionNode)
         {
-            var conditionNodeDataModels = new List<ConditionNodeDataModel<TConditionType>>(composedConditionNode.ChildConditionNodes.Count());
+            var conditionNodeDataModels = new ConditionNodeDataModel<TConditionType>[composedConditionNode.ChildConditionNodes.Count()];
+            var i = 0;
 
             foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
             {
-                conditionNodeDataModels.Add(ConvertConditionNode(child));
+                conditionNodeDataModels[i++] = ConvertConditionNode(child);
             }
 
             return new ComposedConditionNodeDataModel<TConditionType>
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator,
+                Properties = new PropertiesDictionary(composedConditionNode.Properties),
             };
         }
 
@@ -179,10 +124,10 @@ namespace Rules.Framework.Providers.InMemory
         {
             if (conditionNode.LogicalOperator == LogicalOperators.Eval)
             {
-                return ConvertValueConditionNode(conditionNode as ValueConditionNode<TConditionType>);
+                return ConvertValueConditionNode((ValueConditionNode<TConditionType>)conditionNode);
             }
 
-            return ConvertComposedConditionNode(conditionNode as ComposedConditionNode<TConditionType>);
+            return ConvertComposedConditionNode((ComposedConditionNode<TConditionType>)conditionNode);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Rules.Framework.Evaluation.Compiled
                 throw new ArgumentException("Condition node does not contain compiled information.", nameof(conditionNode));
             }
 
-            var conditionFunc = conditionFuncAux as Func<EvaluationContext<TConditionType>, bool>;
+            var conditionFunc = (Func<EvaluationContext<TConditionType>, bool>)conditionFuncAux;
             var compiledConditionsEvaluationContext = new EvaluationContext<TConditionType>(
                 conditions,
                 evaluationOptions.MatchMode,

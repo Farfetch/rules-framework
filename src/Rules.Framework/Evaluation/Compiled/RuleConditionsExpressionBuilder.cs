@@ -66,7 +66,7 @@ namespace Rules.Framework.Evaluation.Compiled
             var parameterExpression = builder.GetParameter("evaluationContext");
 
             builder.If(
-                test => test.Equal(leftOperandVariableExpression, test.Constant<object>(value: null)),
+                test => test.Equal(leftOperandVariableExpression, test.Constant<object>(value: null!)),
                 then => then.Block(block1 =>
                 {
                     block1.If(
@@ -96,19 +96,8 @@ namespace Rules.Framework.Evaluation.Compiled
                     foreach (var childConditionNode in composedConditionNode.ChildConditionNodes)
                     {
                         var scopeNameBuilder = new StringBuilder(builder.ScopeName);
-
-                        if (scopeNameBuilder.Length == 0)
-                        {
-                            scopeNameBuilder.Append("cnd")
-                                .Append(counter);
-                        }
-                        else
-                        {
-                            scopeNameBuilder.Append("InnerCnd")
-                                .Append(counter);
-                        }
-
-                        var scopeName = scopeNameBuilder.ToString();
+                        _ = scopeNameBuilder.Length == 0 ? scopeNameBuilder.Append("cnd") : scopeNameBuilder.Append("InnerCnd");
+                        var scopeName = scopeNameBuilder.Append(counter).ToString();
                         var blockExpression = builder.Block(scopeName, x =>
                         {
                             var childResultVariableExpression = x.CreateVariable<bool>("Result");
@@ -139,7 +128,7 @@ namespace Rules.Framework.Evaluation.Compiled
                     // Line 1.
                     var getConditionsCallExpression = builder.Call(parameterExpression, conditionsGetterMethod);
                     var getConditionValueCallExpression = builder
-                        .Call(instance: null, getValueOrDefaultMethod, new Expression[] { getConditionsCallExpression, builder.Constant(valueConditionNode.ConditionType) });
+                        .Call(instance: null!, getValueOrDefaultMethod, new Expression[] { getConditionsCallExpression, builder.Constant(valueConditionNode.ConditionType) });
                     builder.Assign(leftOperandVariableExpression, getConditionValueCallExpression);
                     // Line 2.
                     builder.Assign(rightOperandVariableExpression, builder.Constant(valueConditionNode.Operand));
@@ -167,7 +156,7 @@ namespace Rules.Framework.Evaluation.Compiled
             var resultVariableExpression = builder.GetVariable("Result");
             // Line 4.
             builder.Assign(multiplicityVariableExpression, builder.Call(
-                instance: null,
+                instance: null!,
                 multiplicityEvaluateMethod,
                 new Expression[] { leftOperandVariableExpression, operatorConstantExpression, rightOperandVariableExpression }));
             // Line 5.
@@ -178,9 +167,10 @@ namespace Rules.Framework.Evaluation.Compiled
 
                 foreach (var multiplicity in operatorMetadata.SupportedMultiplicities)
                 {
+                    string multiplicityTransformed = Regex.Replace(multiplicity, "\\b\\p{Ll}", match => match.Value.ToUpperInvariant(), RegexOptions.None, TimeSpan.FromSeconds(1)).Replace("-", string.Empty, StringComparison.Ordinal);
                     var scopeName = new StringBuilder(builder.ScopeName)
                         .Append(valueConditionNode.ConditionType)
-                        .Append(Regex.Replace(multiplicity, "\\b\\p{Ll}", match => match.Value.ToUpperInvariant()).Replace("-", string.Empty))
+                        .Append(multiplicityTransformed)
                         .ToString();
                     @switch.Case(
                         builder.Constant(multiplicity),

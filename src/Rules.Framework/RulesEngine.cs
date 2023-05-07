@@ -6,7 +6,6 @@ namespace Rules.Framework
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using FluentValidation;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Extensions;
@@ -120,7 +119,10 @@ namespace Rules.Framework
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
+        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(
+            TContentType contentType,
+            DateTime matchDateTime,
+            IEnumerable<Condition<TConditionType>> conditions)
         {
             var evaluationOptions = new EvaluationOptions
             {
@@ -128,10 +130,16 @@ namespace Rules.Framework
                 MatchMode = MatchModes.Exact,
             };
 
-            var dateBegin = matchDateTime;
-            var dateEnd = matchDateTime;
+            var getRulesArgs = new GetRulesArgs<TContentType>
+            {
+                ContentType = contentType,
+                DateBegin = matchDateTime,
+                DateEnd = matchDateTime,
+            };
 
-            return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
+            var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
+            var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
+            return this.EvalAll(orderedRules, evaluationOptions, conditionsAsDictionary);
         }
 
         /// <summary>
@@ -152,11 +160,29 @@ namespace Rules.Framework
         /// </para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions)
+        public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(
+            TContentType contentType,
+            DateTime matchDateTime,
+            IEnumerable<Condition<TConditionType>> conditions)
         {
-            var matchedRules = await this.MatchManyAsync(contentType, matchDateTime, conditions).ConfigureAwait(false);
+            var evaluationOptions = new EvaluationOptions
+            {
+                ExcludeRulesWithoutSearchConditions = false,
+                MatchMode = MatchModes.Exact,
+            };
 
-            return matchedRules.Any() ? this.SelectRuleByPriorityCriteria(matchedRules) : null;
+            var getRulesArgs = new GetRulesArgs<TContentType>
+            {
+                ContentType = contentType,
+                DateBegin = matchDateTime,
+                DateEnd = matchDateTime,
+            };
+
+            var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
+            var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
+            return this.rulesEngineOptions.PriorityCriteria == PriorityCriterias.TopmostRuleWins
+                ? EvalOneTraverse(orderedRules, evaluationOptions, conditionsAsDictionary)
+                : EvalOneReverse(orderedRules, evaluationOptions, conditionsAsDictionary);
         }
 
         /// <summary>
@@ -194,16 +220,22 @@ namespace Rules.Framework
                 throw new ArgumentException(stringBuilder.ToString(), nameof(searchArgs));
             }
 
-            var dateBegin = searchArgs.DateBegin;
-            var dateEnd = searchArgs.DateEnd;
-
             var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
                 MatchMode = MatchModes.Search,
             };
 
-            return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions).ConfigureAwait(false);
+            var getRulesArgs = new GetRulesArgs<TContentType>
+            {
+                ContentType = searchArgs.ContentType,
+                DateBegin = searchArgs.DateBegin,
+                DateEnd = searchArgs.DateEnd,
+            };
+
+            var conditionsAsDictionary = searchArgs.Conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
+            var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
+            return this.EvalAll(orderedRules, evaluationOptions, conditionsAsDictionary);
         }
 
         /// <summary>
@@ -340,36 +372,80 @@ namespace Rules.Framework
                 .ConfigureAwait(false);
         }
 
-        private async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchAsync(
-            TContentType contentType,
-            DateTime matchDateBegin,
-            DateTime matchDateEnd,
-            IEnumerable<Condition<TConditionType>> conditions,
-            EvaluationOptions evaluationOptions)
+        private IEnumerable<Rule<TContentType, TConditionType>> EvalAll(List<Rule<TContentType, TConditionType>> orderedRules, EvaluationOptions evaluationOptions, Dictionary<TConditionType, object> conditionsAsDictionary)
         {
-            var getRulesArgs = new GetRulesArgs<TContentType>
+            // Begins evaluation at the first element of the given list as parameter. Returns all
+            // rules that match. Assumes given list is ordered.
+            var matchedRules = new List<Rule<TContentType, TConditionType>>(orderedRules.Count);
+            foreach (var rule in orderedRules)
             {
-                ContentType = contentType,
-                DateBegin = matchDateBegin,
-                DateEnd = matchDateEnd,
-            };
+                if (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions))
+                {
+                    matchedRules.Add(rule);
+                }
+            }
 
-            var rules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
-
-            var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
-
-            var matchedRules = rules
-                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions))
-                .ToList();
-
-            return matchedRules;
+            return matchedRules.AsReadOnly();
         }
 
-        private Rule<TContentType, TConditionType> SelectRuleByPriorityCriteria(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        private Rule<TContentType, TConditionType> EvalOneReverse(List<Rule<TContentType, TConditionType>> rules, EvaluationOptions evaluationOptions, Dictionary<TConditionType, object> conditionsAsDictionary)
         {
-            return this.rulesEngineOptions.PriorityCriteria == PriorityCriterias.BottommostRuleWins
-                ? rules.OrderByDescending(r => r.Priority).First()
-                : rules.OrderBy(r => r.Priority).First();
+            // Begins evaluation at the last element of the given list as parameter. Returns the
+            // first rule that matches. Assumes given list is ordered.
+            for (int i = rules.Count - 1; i >= 0; i--)
+            {
+                var rule = rules[i];
+                if (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions))
+                {
+                    return rule;
+                }
+            }
+
+            return null!;
+        }
+
+        private Rule<TContentType, TConditionType> EvalOneTraverse(List<Rule<TContentType, TConditionType>> rules, EvaluationOptions evaluationOptions, Dictionary<TConditionType, object> conditionsAsDictionary)
+        {
+            // Begins evaluation at the first element of the given list as parameter. Returns the
+            // first rule that matches. Assumes given list is ordered.
+            for (int i = 0; i < rules.Count; i++)
+            {
+                var rule = rules[i];
+                if (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions))
+                {
+                    return rule;
+                }
+            }
+
+            return null!;
+        }
+
+        private async Task<List<Rule<TContentType, TConditionType>>> GetRulesOrderedAscendingAsync(GetRulesArgs<TContentType> getRulesArgs)
+        {
+            var rules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
+            var orderedRules = new List<Rule<TContentType, TConditionType>>(rules.Count());
+            var greatestPriority = 0;
+            foreach (var rule in rules)
+            {
+                if (orderedRules.Count == 0 || rule.Priority > greatestPriority)
+                {
+                    orderedRules.Add(rule);
+                    greatestPriority = rule.Priority;
+                    continue;
+                }
+
+                for (int i = 0; i < orderedRules.Count; i++)
+                {
+                    var currentRule = orderedRules[i];
+                    if (rule.Priority < currentRule.Priority)
+                    {
+                        orderedRules.Insert(i, rule);
+                        break;
+                    }
+                }
+            }
+
+            return orderedRules;
         }
 
         private async Task<RuleOperationResult> UpdateRuleInternalAsync(Rule<TContentType, TConditionType> rule)

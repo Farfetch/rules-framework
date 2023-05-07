@@ -22,7 +22,7 @@ namespace Rules.Framework.Core.ConditionNodes
         /// <param name="operator">The operator.</param>
         /// <param name="operand">The operand.</param>
         public ValueConditionNode(DataTypes dataType, TConditionType conditionType, Operators @operator, object operand)
-            : this(dataType, conditionType, @operator, operand, new Dictionary<string, object>(StringComparer.Ordinal))
+            : this(dataType, conditionType, @operator, operand, new PropertiesDictionary(Constants.DefaultPropertiesDictionarySize))
         {
         }
 
@@ -79,7 +79,12 @@ namespace Rules.Framework.Core.ConditionNodes
         /// </summary>
         /// <returns></returns>
         public IConditionNode<TConditionType> Clone()
-            => new ValueConditionNode<TConditionType>(this.DataType, this.ConditionType, this.Operator, this.Operand, new Dictionary<string, object>(this.Properties, StringComparer.Ordinal));
+            => new ValueConditionNode<TConditionType>(
+                this.DataType,
+                this.ConditionType,
+                this.Operator,
+                this.Operand,
+                new PropertiesDictionary(this.Properties));
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object"/>, is equal to this instance.

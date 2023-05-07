@@ -20,11 +20,27 @@ namespace Rules.Framework.Core.ConditionNodes
         /// </summary>
         /// <param name="logicalOperator">the logical operator.</param>
         /// <param name="childConditionNodes">the set of child condition nodes.</param>
-        public ComposedConditionNode(LogicalOperators logicalOperator, IEnumerable<IConditionNode<TConditionNode>> childConditionNodes)
+        public ComposedConditionNode(
+            LogicalOperators logicalOperator,
+            IEnumerable<IConditionNode<TConditionNode>> childConditionNodes)
+            : this(logicalOperator, childConditionNodes, new PropertiesDictionary(Constants.DefaultPropertiesDictionarySize))
+        {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ComposedConditionNode{TConditionNode}"/>.
+        /// </summary>
+        /// <param name="logicalOperator">the logical operator.</param>
+        /// <param name="childConditionNodes">the set of child condition nodes.</param>
+        /// <param name="properties">the properties.</param>
+        public ComposedConditionNode(
+            LogicalOperators logicalOperator,
+            IEnumerable<IConditionNode<TConditionNode>> childConditionNodes,
+            IDictionary<string, object> properties)
         {
             this.LogicalOperator = logicalOperator;
             this.ChildConditionNodes = childConditionNodes;
-            this.Properties = new Dictionary<string, object>(StringComparer.Ordinal);
+            this.Properties = properties;
         }
 
         /// <summary>
@@ -47,7 +63,10 @@ namespace Rules.Framework.Core.ConditionNodes
         /// </summary>
         /// <returns></returns>
         public IConditionNode<TConditionNode> Clone()
-            => new ComposedConditionNode<TConditionNode>(this.LogicalOperator, this.ChildConditionNodes.Select(cn => cn.Clone()).ToList().AsReadOnly());
+            => new ComposedConditionNode<TConditionNode>(
+                this.LogicalOperator,
+                this.ChildConditionNodes.Select(cn => cn.Clone()).ToList().AsReadOnly(),
+                new PropertiesDictionary(this.Properties));
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object"/>, is equal to this instance.
