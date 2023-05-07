@@ -1,7 +1,8 @@
-namespace Rules.Framework.Providers.InMemory
+namespace Rules.Framework
 {
     using System;
     using Rules.Framework.Builder;
+    using Rules.Framework.Providers.InMemory;
 
     /// <summary>
     /// Rules data source selector extensions from in-memory provider.
