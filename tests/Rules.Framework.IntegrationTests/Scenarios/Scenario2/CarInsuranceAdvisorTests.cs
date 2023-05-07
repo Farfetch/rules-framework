@@ -4,8 +4,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
+    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class CarInsuranceAdvisorTests
@@ -40,19 +42,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 }
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
 
             var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on on accident under the effect of drugs or alcohol")
@@ -116,19 +122,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 }
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
 
             // Act
             var actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
@@ -165,19 +175,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 ExcludeRulesWithoutSearchConditions = true
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
 
             // Act
             var actual = await rulesEngine.SearchAsync(searchArgs);
@@ -208,19 +222,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 ExcludeRulesWithoutSearchConditions = false
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
 
             // Act
             var actual = await rulesEngine.SearchAsync(searchArgs);
@@ -254,13 +272,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 }
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath, serializedContent: false);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(opt =>
                 {
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
@@ -268,12 +287,17 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 })
                 .Build();
 
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
+
             var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
                 .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
                 .Build();
 
+            var inMemoryRulesStorage = serviceProvider.GetService<IInMemoryRulesStorage<ContentTypes, ConditionTypes>>();
+            var rulesDataSource = CreateRulesDataSource(inMemoryRulesStorage);
             var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>
             {
                 Name = "Car Insurance Advise on repair costs lower than franchise boundary"
@@ -317,7 +341,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 AtRuleNameOptionValue = "Car Insurance Advise on repair costs lower than franchise boundary"
             });
 
-            var eval2 = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var eval2 = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions).ConfigureAwait(false);
 
             var rules2 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>());
 
@@ -383,6 +407,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var rule34 = rules3.FirstOrDefault(r => r.Name == "Car Insurance Advise on repair costs lower than franchise boundary");
             rule34.Should().NotBeNull();
             rule34.Priority.Should().Be(4);
+        }
+
+        private static IRulesDataSource<ContentTypes, ConditionTypes> CreateRulesDataSource(IInMemoryRulesStorage<ContentTypes, ConditionTypes> inMemoryRulesStorage)
+        {
+            var ruleFactory = new RuleFactory<ContentTypes, ConditionTypes>();
+            return new InMemoryProviderRulesDataSource<ContentTypes, ConditionTypes>(inMemoryRulesStorage, ruleFactory);
         }
     }
 }

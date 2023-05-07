@@ -10,7 +10,6 @@ namespace Rules.Framework.IntegrationTests
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.DataSource;
-    using Rules.Framework.Serialization;
 
     internal class RulesFromJsonFile
     {
@@ -18,7 +17,7 @@ namespace Rules.Framework.IntegrationTests
 
         public static RulesFromJsonFile Load => instance;
 
-        public async Task<IRulesDataSource<TContentType, TConditionType>> FromJsonFileAsync<TContentType, TConditionType>(string filePath, bool serializedContent = true)
+        public async Task FromJsonFileAsync<TContentType, TConditionType>(RulesEngine<TContentType, TConditionType> rulesEngine, string filePath, Type contentRuntimeType, bool serializedContent = true)
             where TContentType : new()
         {
             var serializationProvider = new JsonContentSerializationProvider<TContentType>();
@@ -43,30 +42,29 @@ namespace Rules.Framework.IntegrationTests
                         ruleBuilder.WithCondition(b => this.ConvertConditionNode(b, ruleDataModel.RootCondition));
                     }
 
+                    object content;
                     if (serializedContent)
                     {
-                        ruleBuilder.WithSerializedContent(contentType, ruleDataModel.Content, serializationProvider);
+                        content = JsonConvert.DeserializeObject(ruleDataModel.Content, contentRuntimeType);
                     }
                     else
                     {
-                        ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (t) => RulesFromJsonFile.Parse(ruleDataModel.Content, t)));
+                        content = RulesFromJsonFile.Parse(ruleDataModel.Content, contentRuntimeType);
                     }
 
+                    ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (t) => content));
                     var ruleBuilderResult = ruleBuilder.Build();
 
                     if (ruleBuilderResult.IsSuccess)
                     {
                         var rule = ruleBuilderResult.Rule;
-                        rule.Priority = ruleDataModel.Priority;
-                        rules.Add(rule);
+                        await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.ByPriorityNumber(ruleDataModel.Priority));
                     }
                     else
                     {
                         throw new InvalidRuleException($"Loaded invalid rule from file. Rule name: {ruleDataModel.Name}");
                     }
                 }
-
-                return new InMemoryRulesDataSource<TContentType, TConditionType>(rules);
             }
         }
 

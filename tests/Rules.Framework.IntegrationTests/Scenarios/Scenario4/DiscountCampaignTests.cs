@@ -5,8 +5,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario4;
+    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class DiscountCampaignTests
@@ -24,13 +26,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_Adding15PercentRulePerBrandAndEvaluatingOneOfTheBrands_Returns15PercentDiscountRate(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
@@ -104,13 +107,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_Adding20PercentRulePerProductTierAndEvaluatingOneOfTheTiers_Returns20PercentDiscountRate(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
@@ -189,13 +193,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_Adding5PercentRuleWithNotContainsTestConditionAndInputWithMatchingConditions_Return5PercentDiscountRate(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
@@ -256,13 +261,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithMatchingConditions_ReturnNotNull(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
@@ -323,13 +329,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutConditions_ReturnNull(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
@@ -382,13 +389,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         public async Task DiscountsWeekend_AddingRuleWithNullTestConditionAndInputWithoutMatchingConditions_ReturnNull(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(Enumerable.Empty<Rule<DiscountConfigurations, DiscountConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<DiscountConfigurations>()
                 .WithConditionType<DiscountConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
