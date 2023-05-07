@@ -4,7 +4,6 @@ namespace Rules.Framework.IntegrationTests
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Rules.Framework.Builder;
@@ -20,15 +19,12 @@ namespace Rules.Framework.IntegrationTests
         public async Task FromJsonFileAsync<TContentType, TConditionType>(RulesEngine<TContentType, TConditionType> rulesEngine, string filePath, Type contentRuntimeType, bool serializedContent = true)
             where TContentType : new()
         {
-            var serializationProvider = new JsonContentSerializationProvider<TContentType>();
-
             using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (var streamReader = new StreamReader(fileStream))
             {
                 var contents = await streamReader.ReadToEndAsync();
                 var ruleDataModels = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents));
 
-                var rules = new List<Rule<TContentType, TConditionType>>(ruleDataModels.Count());
                 foreach (var ruleDataModel in ruleDataModels)
                 {
                     var contentType = GetContentType<TContentType>(ruleDataModel.ContentTypeCode);
@@ -52,7 +48,7 @@ namespace Rules.Framework.IntegrationTests
                         content = RulesFromJsonFile.Parse(ruleDataModel.Content, contentRuntimeType);
                     }
 
-                    ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (t) => content));
+                    ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (_) => content));
                     var ruleBuilderResult = ruleBuilder.Build();
 
                     if (ruleBuilderResult.IsSuccess)

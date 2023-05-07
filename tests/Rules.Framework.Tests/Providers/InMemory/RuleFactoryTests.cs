@@ -244,7 +244,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
             var rule1 = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("My rule used for testing purposes")
                 .WithDateBegin(new DateTime(2020, 1, 1))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.ContentTypeSample, (t) => (object)content))
+                .WithContentContainer(new ContentContainer<ContentType>(ContentType.ContentTypeSample, (_) => (object)content))
                 .WithCondition(cnb => cnb.AsComposed()
                     .WithLogicalOperator(LogicalOperators.And)
                     .AddCondition(cnb1 => booleanConditionNode = cnb1.AsValued(ConditionType.SampleBooleanCondition)
