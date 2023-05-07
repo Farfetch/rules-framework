@@ -1,6 +1,6 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    internal class SingleCombinationPokerScore
+    public class SingleCombinationPokerScore
     {
         public int BasePoints { get; set; }
 

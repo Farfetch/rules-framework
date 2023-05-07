@@ -1,20 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <LangVersion>10.0</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>10.0</LangVersion>
+		<DebugType>pdbonly</DebugType>
+		<DebugSymbols>true</DebugSymbols>
 
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-  </ItemGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+		<PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.5" />
+		<PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
+		<ProjectReference Include="..\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj" />
+	</ItemGroup>
 </Project>
