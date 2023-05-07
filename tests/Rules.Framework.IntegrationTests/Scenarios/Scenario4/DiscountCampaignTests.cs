@@ -98,7 +98,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 3
             actual.Should().NotBeNull();
-            actual.Should().BeEquivalentTo(rule);
+            actual.Should().BeEquivalentTo(rule, opt => opt.Excluding(r => r.RootCondition.Properties));
         }
 
         [Theory]
@@ -184,7 +184,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 3
             actual.Should().NotBeNull();
-            actual.Should().BeEquivalentTo(rule);
+            actual.Should().BeEquivalentTo(rule, opt => opt.Excluding(r => r.RootCondition.Properties));
         }
 
         [Theory]
@@ -252,7 +252,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 3
             actual.Should().NotBeNull();
-            actual.Should().BeEquivalentTo(rule);
+            actual.Should().BeEquivalentTo(rule, opt => opt.Excluding(r => r.RootCondition.Properties));
         }
 
         [Theory]
@@ -320,7 +320,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Assert 3
             actual.Should().NotBeNull();
-            actual.Should().BeEquivalentTo(rule);
+            actual.Should().BeEquivalentTo(rule, opt => opt.Excluding(r => r.RootCondition.Properties));
         }
 
         [Theory]

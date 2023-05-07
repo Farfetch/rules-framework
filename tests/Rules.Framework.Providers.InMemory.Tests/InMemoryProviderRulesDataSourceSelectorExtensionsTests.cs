@@ -17,7 +17,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             IRulesDataSourceSelector<ContentType, ConditionType> rulesDataSourceSelector = null;
 
             // Act
-            ArgumentNullException actual = Assert.Throws<ArgumentNullException>(() => rulesDataSourceSelector.SetInMemoryDataSource());
+            var actual = Assert.Throws<ArgumentNullException>(() => rulesDataSourceSelector.SetInMemoryDataSource());
 
             // Assert
             actual.Should().NotBeNull();
@@ -30,10 +30,10 @@ namespace Rules.Framework.Providers.InMemory.Tests
             // Arrange
             IServiceProvider serviceProvider = null;
 
-            IRulesDataSourceSelector<ContentType, ConditionType> rulesDataSourceSelector = Mock.Of<IRulesDataSourceSelector<ContentType, ConditionType>>();
+            var rulesDataSourceSelector = Mock.Of<IRulesDataSourceSelector<ContentType, ConditionType>>();
 
             // Act
-            ArgumentNullException actual = Assert.Throws<ArgumentNullException>(() => rulesDataSourceSelector.SetInMemoryDataSource(serviceProvider));
+            var actual = Assert.Throws<ArgumentNullException>(() => rulesDataSourceSelector.SetInMemoryDataSource(serviceProvider));
 
             // Assert
             actual.Should().NotBeNull();
@@ -44,13 +44,13 @@ namespace Rules.Framework.Providers.InMemory.Tests
         public void SetInMemoryDataSource_GivenServiceProvider_RequestsInMemoryRulesStorageAndSetsOnSelector()
         {
             // Arrange
-            var inMemoryRulesStorage = new InMemoryRulesStorage<ContentType, ConditionType>();
+            IInMemoryRulesStorage<ContentType, ConditionType> inMemoryRulesStorage = new InMemoryRulesStorage<ContentType, ConditionType>();
 
-            IServiceCollection serviceDescriptors = new ServiceCollection();
+            var serviceDescriptors = new ServiceCollection();
             serviceDescriptors.AddSingleton(inMemoryRulesStorage);
-            IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
+            var serviceProvider = serviceDescriptors.BuildServiceProvider();
 
-            IRulesDataSourceSelector<ContentType, ConditionType> rulesDataSourceSelector = Mock.Of<IRulesDataSourceSelector<ContentType, ConditionType>>();
+            var rulesDataSourceSelector = Mock.Of<IRulesDataSourceSelector<ContentType, ConditionType>>();
 
             IRulesDataSource<ContentType, ConditionType> actualRulesDataSource = null;
             Mock.Get(rulesDataSourceSelector)
@@ -74,7 +74,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
         public void SetInMemoryDataSource_NoParametersGiven_CreatesTransientInMemoryRulesStorageAndSetsOnSelector()
         {
             // Arrange
-            IRulesDataSourceSelector<ContentType, ConditionType> rulesDataSourceSelector = Mock.Of<IRulesDataSourceSelector<ContentType, ConditionType>>();
+            var rulesDataSourceSelector = Mock.Of<IRulesDataSourceSelector<ContentType, ConditionType>>();
 
             IRulesDataSource<ContentType, ConditionType> actualRulesDataSource = null;
             Mock.Get(rulesDataSourceSelector)
