@@ -2,7 +2,6 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
     public partial class Scenario8Data : IScenarioData<ContentTypes, ConditionTypes>
@@ -22,8 +21,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             .Value(ConditionTypes.QueenOfClubs, Operators.Equal, true)
                             .Value(ConditionTypes.KingOfClubs, Operators.Equal, true)
                             .Value(ConditionTypes.AceOfClubs, Operators.Equal, true)
+                            )
                         )
-                    )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Royal flush of Diamonds: Ace, King, Queen, Jack, 10")
@@ -36,8 +35,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             .Value(ConditionTypes.QueenOfDiamonds, Operators.Equal, true)
                             .Value(ConditionTypes.KingOfDiamonds, Operators.Equal, true)
                             .Value(ConditionTypes.AceOfDiamonds, Operators.Equal, true)
+                            )
                         )
-                    )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Royal flush of Hearts: Ace, King, Queen, Jack, 10")
@@ -50,8 +49,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             .Value(ConditionTypes.QueenOfHearts, Operators.Equal, true)
                             .Value(ConditionTypes.KingOfHearts, Operators.Equal, true)
                             .Value(ConditionTypes.AceOfHearts, Operators.Equal, true)
+                            )
                         )
-                    )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Royal flush of Spades: Ace, King, Queen, Jack, 10")
@@ -64,8 +63,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             .Value(ConditionTypes.QueenOfSpades, Operators.Equal, true)
                             .Value(ConditionTypes.KingOfSpades, Operators.Equal, true)
                             .Value(ConditionTypes.AceOfSpades, Operators.Equal, true)
+                            )
                         )
-                    )
                     .Build().Rule,
             };
         }

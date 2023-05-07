@@ -3,7 +3,6 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
     using System;
     using System.Collections.Generic;
     using Rules.Framework;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
     public class Scenario7Data : IScenarioData<ContentTypes, ConditionTypes>
