@@ -1,4 +1,4 @@
-namespace Rules.Framework.Providers.InMemory.Tests.TestStubs
+namespace Rules.Framework.Tests.Providers.InMemory.TestStubs
 {
     internal enum ContentType
     {

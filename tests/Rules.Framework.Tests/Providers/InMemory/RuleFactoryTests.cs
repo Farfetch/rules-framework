@@ -1,14 +1,14 @@
-namespace Rules.Framework.Providers.InMemory.Tests
+namespace Rules.Framework.Tests.Providers.InMemory
 {
     using System;
-    using System.Collections.Generic;
     using System.Dynamic;
     using System.Linq;
     using FluentAssertions;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Providers.InMemory;
     using Rules.Framework.Providers.InMemory.DataModel;
-    using Rules.Framework.Providers.InMemory.Tests.TestStubs;
+    using Rules.Framework.Tests.Providers.InMemory.TestStubs;
     using Xunit;
 
     public class RuleFactoryTests
@@ -22,7 +22,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             content.Prop2 = "Sample string";
             content.Prop3 = 500.34m;
 
-            RuleDataModel<ContentType, ConditionType> ruleDataModel = new RuleDataModel<ContentType, ConditionType>
+            var ruleDataModel = new RuleDataModel<ContentType, ConditionType>
             {
                 Content = content,
                 ContentType = ContentType.ContentTypeSample,
@@ -33,10 +33,10 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 RootCondition = null
             };
 
-            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>();
+            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
 
             // Act
-            InvalidRuleException invalidRuleException = Assert.Throws<InvalidRuleException>(() => ruleFactory.CreateRule(ruleDataModel));
+            var invalidRuleException = Assert.Throws<InvalidRuleException>(() => ruleFactory.CreateRule(ruleDataModel));
 
             // Assert
             invalidRuleException.Should().NotBeNull();
@@ -53,7 +53,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             content.Prop2 = "Sample string";
             content.Prop3 = 500.34m;
 
-            RuleDataModel<ContentType, ConditionType> ruleDataModel = new RuleDataModel<ContentType, ConditionType>
+            var ruleDataModel = new RuleDataModel<ContentType, ConditionType>
             {
                 Content = content,
                 ContentType = ContentType.ContentTypeSample,
@@ -64,10 +64,10 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 RootCondition = null
             };
 
-            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>();
+            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
 
             // Act
-            InvalidRuleException invalidRuleException = Assert.Throws<InvalidRuleException>(() => ruleFactory.CreateRule(ruleDataModel));
+            var invalidRuleException = Assert.Throws<InvalidRuleException>(() => ruleFactory.CreateRule(ruleDataModel));
 
             // Assert
             invalidRuleException.Should().NotBeNull();
@@ -81,10 +81,10 @@ namespace Rules.Framework.Providers.InMemory.Tests
             // Arrange
             Rule<ContentType, ConditionType> rule = null;
 
-            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>();
+            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
 
             // Act
-            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(rule));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(rule));
 
             // Assert
             argumentNullException.Should().NotBeNull();
@@ -97,10 +97,10 @@ namespace Rules.Framework.Providers.InMemory.Tests
             // Arrange
             RuleDataModel<ContentType, ConditionType> ruleDataModel = null;
 
-            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>();
+            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
 
             // Act
-            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(ruleDataModel));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => ruleFactory.CreateRule(ruleDataModel));
 
             // Assert
             argumentNullException.Should().NotBeNull();
@@ -116,7 +116,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             content.Prop2 = "Sample string";
             content.Prop3 = 500.34m;
 
-            ValueConditionNodeDataModel<ConditionType> integerConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
+            var integerConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
             {
                 ConditionType = ConditionType.SampleIntegerCondition,
                 DataType = DataTypes.Integer,
@@ -125,7 +125,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 Operator = Operators.GreaterThan
             };
 
-            ValueConditionNodeDataModel<ConditionType> stringConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
+            var stringConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
             {
                 ConditionType = ConditionType.SampleStringCondition,
                 DataType = DataTypes.String,
@@ -134,7 +134,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 Operator = Operators.Equal
             };
 
-            ValueConditionNodeDataModel<ConditionType> decimalConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
+            var decimalConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
             {
                 ConditionType = ConditionType.SampleDecimalCondition,
                 DataType = DataTypes.Decimal,
@@ -143,7 +143,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 Operator = Operators.LesserThanOrEqual
             };
 
-            ValueConditionNodeDataModel<ConditionType> booleanConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
+            var booleanConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
             {
                 ConditionType = ConditionType.SampleBooleanCondition,
                 DataType = DataTypes.Boolean,
@@ -152,7 +152,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 Operator = Operators.NotEqual
             };
 
-            RuleDataModel<ContentType, ConditionType> ruleDataModel = new RuleDataModel<ContentType, ConditionType>
+            var ruleDataModel = new RuleDataModel<ContentType, ConditionType>
             {
                 Content = content,
                 ContentType = ContentType.ContentTypeSample,
@@ -173,10 +173,10 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 }
             };
 
-            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>();
+            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
 
             // Act
-            Rule<ContentType, ConditionType> rule = ruleFactory.CreateRule(ruleDataModel);
+            var rule = ruleFactory.CreateRule(ruleDataModel);
 
             // Assert
             rule.Should().NotBeNull();
@@ -188,13 +188,13 @@ namespace Rules.Framework.Providers.InMemory.Tests
             rule.Priority.Should().Be(ruleDataModel.Priority);
             rule.RootCondition.Should().BeOfType<ComposedConditionNode<ConditionType>>();
 
-            ComposedConditionNode<ConditionType> composedConditionNode = rule.RootCondition.As<ComposedConditionNode<ConditionType>>();
+            var composedConditionNode = rule.RootCondition.As<ComposedConditionNode<ConditionType>>();
             composedConditionNode.LogicalOperator.Should().Be(LogicalOperators.And);
             composedConditionNode.ChildConditionNodes.Should().HaveCount(4);
 
-            IEnumerable<ValueConditionNode<ConditionType>> valueConditionNodes = composedConditionNode.ChildConditionNodes.OfType<ValueConditionNode<ConditionType>>();
+            var valueConditionNodes = composedConditionNode.ChildConditionNodes.OfType<ValueConditionNode<ConditionType>>();
             valueConditionNodes.Should().HaveCount(4);
-            ValueConditionNode<ConditionType> integerConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Integer);
+            var integerConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Integer);
             integerConditionNode.Should().NotBeNull();
             integerConditionNode.ConditionType.Should().Match(x => x == integerConditionNodeDataModel.ConditionType);
             integerConditionNode.DataType.Should().Be(integerConditionNodeDataModel.DataType);
@@ -202,7 +202,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             integerConditionNode.Operand.Should().Match(x => object.Equals(x, integerConditionNodeDataModel.Operand));
             integerConditionNode.Operator.Should().Be(integerConditionNodeDataModel.Operator);
 
-            ValueConditionNode<ConditionType> stringConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.String);
+            var stringConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.String);
             stringConditionNode.Should().NotBeNull();
             stringConditionNode.ConditionType.Should().Match(x => x == stringConditionNodeDataModel.ConditionType);
             stringConditionNode.DataType.Should().Be(stringConditionNodeDataModel.DataType);
@@ -210,7 +210,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             stringConditionNode.Operand.Should().Match(x => object.Equals(x, stringConditionNodeDataModel.Operand));
             stringConditionNode.Operator.Should().Be(stringConditionNodeDataModel.Operator);
 
-            ValueConditionNode<ConditionType> decimalConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Decimal);
+            var decimalConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Decimal);
             decimalConditionNode.Should().NotBeNull();
             decimalConditionNode.ConditionType.Should().Match(x => x == decimalConditionNodeDataModel.ConditionType);
             decimalConditionNode.DataType.Should().Be(decimalConditionNodeDataModel.DataType);
@@ -218,7 +218,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             decimalConditionNode.Operand.Should().Match(x => object.Equals(x, decimalConditionNodeDataModel.Operand));
             decimalConditionNode.Operator.Should().Be(decimalConditionNodeDataModel.Operator);
 
-            ValueConditionNode<ConditionType> booleanConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Boolean);
+            var booleanConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Boolean);
             booleanConditionNode.Should().NotBeNull();
             booleanConditionNode.ConditionType.Should().Match(x => x == booleanConditionNodeDataModel.ConditionType);
             booleanConditionNode.DataType.Should().Be(booleanConditionNodeDataModel.DataType);
@@ -241,7 +241,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             ValueConditionNode<ConditionType> integerConditionNode = null;
             ValueConditionNode<ConditionType> stringConditionNode = null;
 
-            Rule<ContentType, ConditionType> rule1 = RuleBuilder.NewRule<ContentType, ConditionType>()
+            var rule1 = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("My rule used for testing purposes")
                 .WithDateBegin(new DateTime(2020, 1, 1))
                 .WithContentContainer(new ContentContainer<ContentType>(ContentType.ContentTypeSample, (t) => (object)content))
@@ -270,10 +270,10 @@ namespace Rules.Framework.Providers.InMemory.Tests
                     .Build())
                 .Build().Rule;
 
-            RuleFactory<ContentType, ConditionType> ruleFactory = new RuleFactory<ContentType, ConditionType>();
+            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
 
             // Act
-            RuleDataModel<ContentType, ConditionType> rule = ruleFactory.CreateRule(rule1);
+            var rule = ruleFactory.CreateRule(rule1);
 
             // Assert
             rule.Should().NotBeNull();
@@ -286,13 +286,13 @@ namespace Rules.Framework.Providers.InMemory.Tests
             rule.Priority.Should().Be(rule.Priority);
             rule.RootCondition.Should().BeOfType<ComposedConditionNodeDataModel<ConditionType>>();
 
-            ComposedConditionNodeDataModel<ConditionType> composedConditionNodeDataModel = rule.RootCondition.As<ComposedConditionNodeDataModel<ConditionType>>();
+            var composedConditionNodeDataModel = rule.RootCondition.As<ComposedConditionNodeDataModel<ConditionType>>();
             composedConditionNodeDataModel.LogicalOperator.Should().Be(LogicalOperators.And);
             composedConditionNodeDataModel.ChildConditionNodes.Should().HaveCount(4);
 
-            IEnumerable<ValueConditionNodeDataModel<ConditionType>> valueConditionNodeDataModels = composedConditionNodeDataModel.ChildConditionNodes.OfType<ValueConditionNodeDataModel<ConditionType>>();
+            var valueConditionNodeDataModels = composedConditionNodeDataModel.ChildConditionNodes.OfType<ValueConditionNodeDataModel<ConditionType>>();
             valueConditionNodeDataModels.Should().HaveCount(4);
-            ValueConditionNodeDataModel<ConditionType> integerConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Integer);
+            var integerConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Integer);
             integerConditionNodeDataModel.Should().NotBeNull();
             integerConditionNodeDataModel.ConditionType.Should().Match(x => integerConditionNode.ConditionType == x);
             integerConditionNodeDataModel.DataType.Should().Be(integerConditionNode.DataType);
@@ -300,7 +300,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             integerConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, integerConditionNode.Operand));
             integerConditionNodeDataModel.Operator.Should().Be(integerConditionNode.Operator);
 
-            ValueConditionNodeDataModel<ConditionType> stringConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.String);
+            var stringConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.String);
             stringConditionNodeDataModel.Should().NotBeNull();
             stringConditionNodeDataModel.ConditionType.Should().Match(x => stringConditionNode.ConditionType == x);
             stringConditionNodeDataModel.DataType.Should().Be(stringConditionNode.DataType);
@@ -308,7 +308,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             stringConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, stringConditionNode.Operand));
             stringConditionNodeDataModel.Operator.Should().Be(stringConditionNode.Operator);
 
-            ValueConditionNodeDataModel<ConditionType> decimalConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Decimal);
+            var decimalConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Decimal);
             decimalConditionNodeDataModel.Should().NotBeNull();
             decimalConditionNodeDataModel.ConditionType.Should().Match(x => decimalConditionNode.ConditionType == x);
             decimalConditionNodeDataModel.DataType.Should().Be(decimalConditionNode.DataType);
@@ -316,7 +316,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
             decimalConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, decimalConditionNode.Operand));
             decimalConditionNodeDataModel.Operator.Should().Be(decimalConditionNode.Operator);
 
-            ValueConditionNodeDataModel<ConditionType> booleanConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Boolean);
+            var booleanConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Boolean);
             booleanConditionNodeDataModel.Should().NotBeNull();
             booleanConditionNodeDataModel.ConditionType.Should().Match(x => booleanConditionNode.ConditionType == x);
             booleanConditionNodeDataModel.DataType.Should().Be(booleanConditionNode.DataType);

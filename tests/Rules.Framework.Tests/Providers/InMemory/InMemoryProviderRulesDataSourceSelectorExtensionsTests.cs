@@ -1,11 +1,12 @@
-namespace Rules.Framework.Providers.InMemory.Tests
+namespace Rules.Framework.Tests.Providers.InMemory
 {
     using System;
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
     using Moq;
     using Rules.Framework.Builder;
-    using Rules.Framework.Providers.InMemory.Tests.TestStubs;
+    using Rules.Framework.Providers.InMemory;
+    using Rules.Framework.Tests.Providers.InMemory.TestStubs;
     using Xunit;
 
     public class InMemoryProviderRulesDataSourceSelectorExtensionsTests
