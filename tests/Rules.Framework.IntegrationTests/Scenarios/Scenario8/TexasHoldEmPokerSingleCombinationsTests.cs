@@ -1,6 +1,7 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
 {
     using System;
+    using System.Threading.Tasks;
     using FluentAssertions;
     using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
     using Rules.Framework.IntegrationTests.Common.Scenarios;
@@ -12,7 +13,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public async void PokerCombinations_Given_EvaluatesStraightCombination(bool enableCompilation)
+        public async Task PokerCombinations_Given_EvaluatesStraightCombination(bool enableCompilation)
         {
             // Arrange
             var matchDate = new DateTime(2023, 1, 1);
