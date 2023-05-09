@@ -2,6 +2,7 @@ namespace Rules.Framework.WebUI.Sample
 {
     using global::Rules.Framework.Extension;
     using global::Rules.Framework.WebUI.Sample.Engine;
+    using global::Rules.Framework.WebUI.Sample.ReadmeExample;
     using global::Rules.Framework.WebUI.Sample.Rules;
 
     public static class Program
@@ -32,7 +33,7 @@ namespace Rules.Framework.WebUI.Sample
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            AddRulesFrameworkUI(app);
+            AddRulesFrameworkUI(app, true);
 
             app.MapControllerRoute(
                 name: "default",
@@ -41,18 +42,25 @@ namespace Rules.Framework.WebUI.Sample
             app.Run();
         }
 
-        private static void AddRulesFrameworkUI(IApplicationBuilder app)
+        private static void AddRulesFrameworkUI(IApplicationBuilder app, bool useReadmeExample = false)
         {
+            if (useReadmeExample)
+            {
+                app.UseRulesFrameworkWebUI(new BasicRulesEngineExample().RulesEngine.CreateGenericEngine());
+
+                return;
+            }
+
             var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
             {
                 new RulesRandomFactory()
             }));
 
             var rulesEngine = rulesProvider
-            .GetRulesEngineAsync()
-            .ConfigureAwait(false)
-            .GetAwaiter()
-            .GetResult();
+                .GetRulesEngineAsync()
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
 
             app.UseRulesFrameworkWebUI(rulesEngine.CreateGenericEngine());
         }

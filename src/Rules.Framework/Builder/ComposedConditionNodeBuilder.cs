@@ -17,17 +17,40 @@ namespace Rules.Framework.Builder
             this.conditions = new List<IConditionNode<TConditionType>>(2); // Most probable number of conditions, so that collection is initialized with right size most times.
         }
 
-        public IComposedConditionNodeBuilder<TConditionType> WithLogicalOperator(LogicalOperators logicalOperator)
+        public IComposedConditionNodeBuilder<TConditionType> AddComposedCondition(
+            LogicalOperators logicOperator,
+            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> addConditionFunc)
         {
-            this.logicalOperator = logicalOperator;
+            var composedConditionNodeBuilder = new ConditionNodeBuilder<TConditionType>()
+                .AsComposed()
+                .WithLogicalOperator(logicOperator);
+
+            var composedConditionBuilder = addConditionFunc.Invoke(composedConditionNodeBuilder);
+
+            this.conditions.Add(composedConditionBuilder.Build());
 
             return this;
         }
 
         public IComposedConditionNodeBuilder<TConditionType> AddCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> addConditionFunc)
         {
-            IConditionNode<TConditionType> conditionNode = addConditionFunc.Invoke(this.conditionNodeBuilder);
+            var conditionNode = addConditionFunc.Invoke(this.conditionNodeBuilder);
+
             this.conditions.Add(conditionNode);
+
+            return this;
+        }
+
+        public IComposedConditionNodeBuilder<TConditionType> AddValueCondition<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand)
+        {
+            var valueCondition = new ConditionNodeBuilder<TConditionType>()
+                .AsValued(conditionType)
+                .OfDataType<TDataType>()
+                .WithComparisonOperator(condOperator)
+                .SetOperand(operand)
+                .Build();
+
+            this.conditions.Add(valueCondition);
 
             return this;
         }
@@ -35,6 +58,13 @@ namespace Rules.Framework.Builder
         public IConditionNode<TConditionType> Build()
         {
             return new ComposedConditionNode<TConditionType>(this.logicalOperator, this.conditions);
+        }
+
+        public IComposedConditionNodeBuilder<TConditionType> WithLogicalOperator(LogicalOperators logicalOperator)
+        {
+            this.logicalOperator = logicalOperator;
+
+            return this;
         }
     }
 }

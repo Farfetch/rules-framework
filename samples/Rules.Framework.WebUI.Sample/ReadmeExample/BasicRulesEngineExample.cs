@@ -42,12 +42,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .NewRule<BasicContentType, BasicConditionType>()
                 .WithName("Rule for January sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "SmallPerfumeSample")
-                .WithCondition(c => c
-                    .AsValued(BasicConditionType.ClientType)
-                    .OfDataType<string>()
-                    .WithComparisonOperator(Operators.Equal)
-                    .SetOperand("Premium")
-                    .Build())
+                .WithValueCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 01, 01), new DateTime(2023, 02, 01))
                 .Build();
 
@@ -55,12 +50,15 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .NewRule<BasicContentType, BasicConditionType>()
                 .WithName("Rule for April sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ShampooSample")
-                .WithCondition(c => c
-                    .AsValued(BasicConditionType.ClientType)
-                    .OfDataType<string>()
-                    .WithComparisonOperator(Operators.Equal)
-                    .SetOperand("Premium")
-                    .Build())
+                .WithValueCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
+                //.WithComposedCondition(LogicalOperators.And, x => x
+                //    .AddValueCondition(BasicConditionType.ClientType, Operators.Equal, "Queen")
+                //    .AddValueCondition(BasicConditionType.ClientType, Operators.In, new[] { "Portugal", "Spain" })
+                //    .AddComposedCondition(LogicalOperators.Or, y => y
+                //        .AddValueCondition(BasicConditionType.Country, Operators.Equal, "Brazil")
+                //        .AddValueCondition(BasicConditionType.Country, Operators.NotEqual, "United States")
+                //        )
+                //    )
                 .WithDatesInterval(new DateTime(2023, 04, 01), new DateTime(2023, 05, 01))
                 .Build();
 
@@ -68,12 +66,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .NewRule<BasicContentType, BasicConditionType>()
                 .WithName("Rule for September sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ConditionerSample")
-                .WithCondition(c => c
-                    .AsValued(BasicConditionType.ClientType)
-                    .OfDataType<string>()
-                    .WithComparisonOperator(Operators.Equal)
-                    .SetOperand("Premium")
-                    .Build())
+                .WithValueCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 09, 01), new DateTime(2023, 10, 01))
                 .Build();
 
