@@ -64,9 +64,9 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             Assert.Equal(success, updateResult.IsSuccess);
             if (success)
             {
-                var actualMatch1 = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
-                Assert.NotNull(actualMatch1);
-                Assert.Equal(rule2.Name, actualMatch1.Name);
+                var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+                Assert.NotNull(actualMatch);
+                Assert.Equal(rule2.Name, actualMatch.Name);
             }
         }
 

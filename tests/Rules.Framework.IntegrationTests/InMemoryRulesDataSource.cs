@@ -28,9 +28,9 @@ namespace Rules.Framework.IntegrationTests
             DateTime dateEnd)
         {
             var filteredByDate = this.rules.Where(r =>
-                    object.Equals(r.ContentContainer.ContentType, contentType) &&
-                    r.Active &&
-                    r.DateBegin <= dateEnd
+                    object.Equals(r.ContentContainer.ContentType, contentType)
+                    && r.Active
+                    && r.DateBegin <= dateEnd
                     && (r.DateEnd is null || r.DateEnd > dateBegin));
 
             return Task.FromResult(filteredByDate);

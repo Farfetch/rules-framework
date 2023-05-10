@@ -5,6 +5,7 @@ namespace Rules.Framework.Providers.InMemory.DataModel
     internal sealed class RuleDataModel<TContentType, TConditionType>
     {
         public bool Active { get; set; } = true;
+
         public dynamic Content { get; set; }
 
         public TContentType ContentType { get; set; }
@@ -14,6 +15,7 @@ namespace Rules.Framework.Providers.InMemory.DataModel
         public DateTime? DateEnd { get; set; }
 
         public string Name { get; set; }
+
         public int Priority { get; set; }
 
         public ConditionNodeDataModel<TConditionType> RootCondition { get; set; }

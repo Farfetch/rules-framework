@@ -14,7 +14,7 @@ namespace Rules.Framework.Core
         /// <summary>
         /// Gets and sets the if the rules ia active.
         /// </summary>
-        public bool Active { get; set; } = true;
+        public bool Active { get; internal set; } = true;
 
         /// <summary>
         /// Gets the content container which contains the rule content.
