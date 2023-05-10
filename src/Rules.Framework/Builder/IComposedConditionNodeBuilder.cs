@@ -10,21 +10,33 @@ namespace Rules.Framework.Builder
     public interface IComposedConditionNodeBuilder<TConditionType>
     {
         /// <summary>
-        /// Adds a composed condition to the composed condition node builder.
-        /// </summary>
-        /// <param name="logicOperator">The logical operator.</param>
-        /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
-        /// <returns></returns>
-        IComposedConditionNodeBuilder<TConditionType> AddComposedCondition(
-            LogicalOperators logicOperator,
-            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> conditionFunc);
-
-        /// <summary>
         /// Adds a condition to the composed condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
         IComposedConditionNodeBuilder<TConditionType> AddCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
+
+        /// <summary>
+        /// Adds a composed and condition to the composed condition node builder.
+        /// </summary>
+        /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
+        /// <returns></returns>
+        public IComposedConditionNodeBuilder<TConditionType> And(
+            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> conditionFunc);
+
+        /// <summary>
+        /// Builds the composed condition node.
+        /// </summary>
+        /// <returns></returns>
+        IConditionNode<TConditionType> Build();
+
+        /// <summary>
+        /// Adds a composed or condition to the composed condition node builder.
+        /// </summary>
+        /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
+        /// <returns></returns>
+        public IComposedConditionNodeBuilder<TConditionType> Or(
+            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
         /// Adds a value condition to the composed condition node builder.
@@ -33,13 +45,7 @@ namespace Rules.Framework.Builder
         /// <param name="condOperator">The condition operator.</param>
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
-        IComposedConditionNodeBuilder<TConditionType> AddValueCondition<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
-
-        /// <summary>
-        /// Builds the composed condition node.
-        /// </summary>
-        /// <returns></returns>
-        IConditionNode<TConditionType> Build();
+        IComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
 
         /// <summary>
         /// Sets the composed condition node with the specified logical operator.
