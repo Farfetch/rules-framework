@@ -20,8 +20,8 @@ namespace Rules.Framework.WebUI.Extensions
                 {
                     ConditionTypeName = condition.ConditionTypeName,
                     DataType = condition.DataType.ToString(),
-                    Operand = condition.Operand.ToString(),
-                    Operator = condition.Operator.ToString()
+                    Operand = condition.Operand,
+                    Operator = condition.Operator.ToString(),
                 };
             }
 

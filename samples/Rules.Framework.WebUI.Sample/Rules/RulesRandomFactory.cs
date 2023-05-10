@@ -60,9 +60,9 @@ namespace Rules.Framework.WebUI.Sample.Rules
                                             .SetOperand(7)
                                             .Build())
                                         .AddCondition(condition => condition
-                                            .AsValued(ConditionTypes.SumAll).OfDataType<int>()
-                                            .WithComparisonOperator(Operators.Equal)
-                                            .SetOperand(9)
+                                            .AsValued(ConditionTypes.SumAll).OfDataType<IEnumerable<int>>()
+                                            .WithComparisonOperator(Operators.In)
+                                            .SetOperand(new int[] { 9, 8, 6 })
                                             .Build())
                                         .AddCondition(condition => condition.AsComposed()
                                             .WithLogicalOperator(LogicalOperators.And)

@@ -31,7 +31,7 @@ namespace Rules.Framework.Providers.MongoDb
             var ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
-                .WithActive(ruleDataModel.Active)
+                .WithActive(ruleDataModel.Active ?? true)
                 .WithCondition(cnb => ruleDataModel.RootCondition is { } ? ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
                 .WithSerializedContent(contentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
                 .Build();
