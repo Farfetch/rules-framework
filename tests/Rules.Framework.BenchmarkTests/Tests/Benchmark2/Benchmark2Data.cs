@@ -25,82 +25,27 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
                 .WithName("Benchmark 2 - Bohemian Rapsody")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.Songs, "Bohemian Rapsody")
-                .WithCondition(x =>
-                {
-                    return x.AsComposed()
-                        .WithLogicalOperator(LogicalOperators.And)
-                        .AddCondition(c =>
-                            c.AsValued(ConditionTypes.Artist)
-                                .OfDataType<string>()
-                                .WithComparisonOperator(Operators.Equal)
-                                .SetOperand("Queen")
-                                .Build())
-                        .AddCondition(c =>
-                            c.AsValued(ConditionTypes.Lyrics)
-                                .OfDataType<string>()
-                                .WithComparisonOperator(Operators.Contains)
-                                .SetOperand("real life")
-                                .Build())
-                        .AddCondition(c =>
-                            c.AsValued(ConditionTypes.ReleaseYear)
-                                .OfDataType<int>()
-                                .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                                .SetOperand(1973)
-                                .Build())
-                        .AddCondition(c =>
-                            c.AsValued(ConditionTypes.ReleaseYear)
-                                .OfDataType<int>()
-                                .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                                .SetOperand(1977)
-                                .Build())
-                        .Build();
-                })
+                .WithConditions(LogicalOperators.And, c => c
+                    .Value(ConditionTypes.Artist, Operators.Equal, "Queen")
+                    .Value(ConditionTypes.Lyrics, Operators.Contains, "real life")
+                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
+                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
+                )
                 .Build();
 
             var rule2Result = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Benchmark 2 - Stairway to Heaven")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.Songs, "Stairway to Heaven")
-                .WithCondition(x =>
-                {
-                    return x.AsComposed()
-                        .WithLogicalOperator(LogicalOperators.And)
-                        .AddCondition(c =>
-                            c.AsValued(ConditionTypes.Artist)
-                                .OfDataType<string>()
-                                .WithComparisonOperator(Operators.Equal)
-                                .SetOperand("Led Zeppelin")
-                                .Build())
-                        .AddCondition(c =>
-                            c.AsComposed()
-                                .WithLogicalOperator(LogicalOperators.Or)
-                                .AddCondition(y =>
-                                    y.AsValued(ConditionTypes.Lyrics)
-                                        .OfDataType<string>()
-                                        .WithComparisonOperator(Operators.Contains)
-                                        .SetOperand("all that glitters is gold")
-                                        .Build())
-                                .AddCondition(y =>
-                                    y.AsValued(ConditionTypes.Lyrics)
-                                        .OfDataType<string>()
-                                        .WithComparisonOperator(Operators.Contains)
-                                        .SetOperand("it makes me wonder")
-                                        .Build())
-                                .Build())
-                        .AddCondition(c =>
-                            c.AsValued(ConditionTypes.ReleaseYear)
-                                .OfDataType<int>()
-                                .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                                .SetOperand(1973)
-                                .Build())
-                        .AddCondition(c =>
-                            c.AsValued(ConditionTypes.ReleaseYear)
-                                .OfDataType<int>()
-                                .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                                .SetOperand(1977)
-                                .Build())
-                        .Build();
-                })
+                .WithConditions(LogicalOperators.And, c => c
+                    .Value(ConditionTypes.Artist, Operators.Equal, "Led Zeppelin")
+                    .Or(sub => sub
+                        .Value(ConditionTypes.Lyrics, Operators.Contains, "all that glitters is gold")
+                        .Value(ConditionTypes.Lyrics, Operators.Contains, "it makes me wonder")
+                    )
+                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)    
+                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)    
+                )
                 .Build();
 
             return new[] { rule1Result.Rule, rule2Result.Rule };
