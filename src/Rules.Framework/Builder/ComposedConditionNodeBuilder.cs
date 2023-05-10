@@ -49,7 +49,7 @@ namespace Rules.Framework.Builder
             return this.AddValueCondition(conditionType, condOperator, operand);
         }
 
-        [Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
+        //[Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
         public IComposedConditionNodeBuilder<TConditionType> WithLogicalOperator(LogicalOperators logicalOperator)
         {
             this.logicalOperator = logicalOperator;

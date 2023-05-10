@@ -53,7 +53,7 @@ namespace Rules.Framework.Builder
         /// </summary>
         /// <param name="logicalOperator">The logical operator.</param>
         /// <returns></returns>
-        [Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
+        //[Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
         IComposedConditionNodeBuilder<TConditionType> WithLogicalOperator(LogicalOperators logicalOperator);
     }
 }
