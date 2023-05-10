@@ -1,12 +1,10 @@
 namespace Rules.Framework.Source
 {
     using System;
-    using System.Collections.Generic;
-    using System.Runtime.InteropServices;
-    using System.Text;
 
     internal sealed class GetRulesArgs<TContentType>
     {
+        public bool? Active { get; set; }
         public TContentType ContentType { get; set; }
 
         public DateTime DateBegin { get; set; }

@@ -51,7 +51,7 @@ namespace Rules.Framework.WebUI.Extensions
                 Value = rule.Content,
                 DateEnd = !rule.DateEnd.HasValue ? null : rule.DateEnd.Value.ToString(dateFormat),
                 DateBegin = rule.DateBegin.ToString(dateFormat),
-                Status = ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
+                Status = !rule.Active ? RuleStatusDto.Deactivated.ToString() : ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
             };
         }
     }

@@ -168,7 +168,7 @@ namespace Rules.Framework
             var dateBegin = matchDateTime;
             var dateEnd = matchDateTime;
 
-            return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
+            return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions, active: true);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Rules.Framework
                 MatchMode = MatchModes.Search,
             };
 
-            return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions).ConfigureAwait(false);
+            return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions, searchArgs.Active).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -382,13 +382,15 @@ namespace Rules.Framework
             DateTime matchDateBegin,
             DateTime matchDateEnd,
             IEnumerable<Condition<TConditionType>> conditions,
-            EvaluationOptions evaluationOptions)
+            EvaluationOptions evaluationOptions,
+            bool? active)
         {
             var getRulesArgs = new GetRulesArgs<TContentType>
             {
                 ContentType = contentType,
                 DateBegin = matchDateBegin,
                 DateEnd = matchDateEnd,
+                Active = active,
             };
 
             var rules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
@@ -396,7 +398,7 @@ namespace Rules.Framework
             var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
 
             var matchedRules = rules
-                .Where(r => r.Active && (r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions)))
+                .Where(r => (active is null || r.Active == active) && (r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions)))
                 .ToList();
 
             return matchedRules;
