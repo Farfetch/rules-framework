@@ -17,6 +17,7 @@ namespace Rules.Framework.Builder
             this.conditions = new List<IConditionNode<TConditionType>>(2); // Most probable number of conditions, so that collection is initialized with right size most times.
         }
 
+        [Obsolete("This way of adding conditions has been deprecated. Please use Value(), Or() or And() methods.")]
         public IComposedConditionNodeBuilder<TConditionType> AddCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
         {
             var conditionNode = conditionFunc.Invoke(this.conditionNodeBuilder);
@@ -48,6 +49,7 @@ namespace Rules.Framework.Builder
             return this.AddValueCondition(conditionType, condOperator, operand);
         }
 
+        [Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
         public IComposedConditionNodeBuilder<TConditionType> WithLogicalOperator(LogicalOperators logicalOperator)
         {
             this.logicalOperator = logicalOperator;
