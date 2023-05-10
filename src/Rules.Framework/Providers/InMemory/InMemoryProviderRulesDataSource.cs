@@ -4,7 +4,6 @@ namespace Rules.Framework.Providers.InMemory
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
-    using Rules.Framework.Providers.InMemory.DataModel;
 
     /// <summary>
     /// The rules data source implementation for usage backed with a in-memory database.
@@ -38,7 +37,7 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            RuleDataModel<TContentType, TConditionType> ruleDataModel = this.ruleFactory.CreateRule(rule);
+            var ruleDataModel = this.ruleFactory.CreateRule(rule);
 
             this.inMemoryRulesStorage.AddRule(ruleDataModel);
 
@@ -138,7 +137,7 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            RuleDataModel<TContentType, TConditionType> newRuleDataModel = this.ruleFactory.CreateRule(rule);
+            var newRuleDataModel = this.ruleFactory.CreateRule(rule);
 
             this.inMemoryRulesStorage.UpdateRule(newRuleDataModel);
 

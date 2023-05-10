@@ -62,12 +62,14 @@ namespace Rules.Framework.Providers.InMemory
             }
 
             var composedConditionNodeDataModel = (ComposedConditionNodeDataModel<TConditionType>)conditionNodeDataModel;
-            var childConditionNodes = new IConditionNode<TConditionType>[composedConditionNodeDataModel.ChildConditionNodes.Count()];
-            var i = 0;
+            var count = composedConditionNodeDataModel.ChildConditionNodes.Length;
+            var childConditionNodeDataModels = composedConditionNodeDataModel.ChildConditionNodes;
+            var childConditionNodes = new IConditionNode<TConditionType>[count];
+            var i = -1;
 
-            foreach (var childConditionNodeDataModel in composedConditionNodeDataModel.ChildConditionNodes)
+            while (++i < count)
             {
-                childConditionNodes[i++] = ConvertConditionNode(childConditionNodeDataModel);
+                childConditionNodes[i] = ConvertConditionNode(childConditionNodeDataModels[i]);
             }
 
             return new ComposedConditionNode<TConditionType>(

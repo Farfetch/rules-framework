@@ -17,7 +17,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
 
         internal ConditionNodeDataModel<TConditionType> CreateConditionNodeDataModel<TConditionType>(dynamic conditionNode)
         {
-            LogicalOperators logicalOperator = this.Parse<LogicalOperators>((string)conditionNode.LogicalOperator);
+            var logicalOperator = this.Parse<LogicalOperators>((string)conditionNode.LogicalOperator);
 
             if (logicalOperator == LogicalOperators.Eval)
             {
@@ -32,12 +32,13 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             }
             else
             {
-                IEnumerable<dynamic> childConditionNodes = conditionNode.ChildConditionNodes as IEnumerable<dynamic>;
+                var childConditionNodes = conditionNode.ChildConditionNodes as IEnumerable<dynamic>;
 
-                List<ConditionNodeDataModel<TConditionType>> conditionNodeDataModels = new List<ConditionNodeDataModel<TConditionType>>(childConditionNodes.Count());
+                var conditionNodeDataModels = new ConditionNodeDataModel<TConditionType>[childConditionNodes.Count()];
+                var i = 0;
                 foreach (dynamic child in childConditionNodes)
                 {
-                    conditionNodeDataModels.Add(this.CreateConditionNodeDataModel<TConditionType>(child));
+                    conditionNodeDataModels[i++] = this.CreateConditionNodeDataModel<TConditionType>(child);
                 }
 
                 return new ComposedConditionNodeDataModel<TConditionType>
@@ -50,7 +51,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
 
         internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(InMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
         {
-            IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>();
+            var ruleFactory = new RuleFactory<TContentType, TConditionType>();
             return new InMemoryProviderRulesDataSource<TContentType, TConditionType>(inMemoryRulesStorage, ruleFactory);
         }
 
@@ -59,14 +60,14 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage,
             Func<dynamic, TContent> contentConvertFunc)
         {
-            Stream rulesFile = File.OpenRead(dataSourceFilePath);
+            var rulesFile = File.OpenRead(dataSourceFilePath);
 
             IEnumerable<RuleDataModel<TContentType, TConditionType>> rules;
-            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
+            using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
-                string json = streamReader.ReadToEnd();
+                var json = streamReader.ReadToEnd();
 
-                IEnumerable<dynamic> array = JsonConvert.DeserializeObject(json, new JsonSerializerSettings
+                var array = JsonConvert.DeserializeObject(json, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
                 }) as IEnumerable<dynamic>;
