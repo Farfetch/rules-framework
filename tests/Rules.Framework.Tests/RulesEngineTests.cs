@@ -31,6 +31,50 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
+        public async Task ActivateRuleAsync_GivenEmptyRuleDataSource_ActivatesRuleSuccessfully()
+        {
+            // Arrange
+            var contentType = ContentType.Type1;
+
+            var testRule = new Rule<ContentType, ConditionType>
+            {
+                ContentContainer = new ContentContainer<ContentType>(contentType, (t) => new object()),
+                DateBegin = new DateTime(2018, 01, 01),
+                DateEnd = new DateTime(2019, 01, 01),
+                Name = "Update test rule",
+                Priority = 3,
+                Active = false,
+                RootCondition = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            };
+
+            var evaluationOptions = new EvaluationOptions
+            {
+                MatchMode = MatchModes.Exact
+            };
+
+            mockRulesSource.Setup(s => s.GetRulesFilteredAsync(It.IsAny<GetRulesFilteredArgs<ContentType>>()))
+                .ReturnsAsync(new List<Rule<ContentType, ConditionType>> { testRule });
+
+            var validatorProvider = Mock.Of<IValidatorProvider>();
+            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+
+            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+
+            // Act
+            var actual = await sut.ActivateRuleAsync(testRule).ConfigureAwait(false);
+
+            // Assert
+            actual.IsSuccess.Should().BeTrue();
+            actual.Errors.Should().BeEmpty();
+
+            mockRulesSource.Verify(x => x.GetRulesFilteredAsync(It.IsAny<GetRulesFilteredArgs<ContentType>>()), Times.Once());
+            mockConditionsEvalEngine.Verify(x => x.Eval(
+                It.IsAny<IConditionNode<ConditionType>>(),
+                It.IsAny<IDictionary<ConditionType, object>>(),
+                It.Is<EvaluationOptions>(eo => eo == evaluationOptions)), Times.Never());
+        }
+
+        [Fact]
         public async Task AddRuleAsync_GivenEmptyRuleDataSource_AddsRuleSuccesfully()
         {
             // Arrange
