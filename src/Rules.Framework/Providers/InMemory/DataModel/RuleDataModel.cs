@@ -4,6 +4,8 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 
     internal sealed class RuleDataModel<TContentType, TConditionType>
     {
+        public bool Active { get; set; } = true;
+
         public dynamic Content { get; set; }
 
         public TContentType ContentType { get; set; }

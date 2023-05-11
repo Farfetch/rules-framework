@@ -8,6 +8,11 @@ namespace Rules.Framework.Generics
     public sealed class GenericRule
     {
         /// <summary>
+        /// Gets and sets the if the rules ia active.
+        /// </summary>
+        public bool Active { get; internal set; }
+
+        /// <summary>
         /// Gets the content which contains the rule content.
         /// </summary>
         public object Content { get; internal set; }
@@ -18,7 +23,7 @@ namespace Rules.Framework.Generics
         public DateTime DateBegin { get; internal set; }
 
         /// <summary>
-        /// Gets the date from which the rule ceases to be applicable.
+        /// Gets and sets the date from which the rule ceases to be applicable.
         /// </summary>
         public DateTime? DateEnd { get; internal set; }
 

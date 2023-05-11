@@ -6,7 +6,7 @@ namespace Rules.Framework.WebUI.Dto
 
         public string DataType { get; internal set; }
 
-        public string Operand { get; internal set; }
+        public dynamic Operand { get; internal set; }
 
         public string Operator { get; internal set; }
     }
