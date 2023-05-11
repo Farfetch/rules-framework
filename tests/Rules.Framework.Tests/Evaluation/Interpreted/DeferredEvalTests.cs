@@ -1,6 +1,5 @@
 namespace Rules.Framework.Tests.Evaluation.Interpreted
 {
-    using System;
     using System.Collections.Generic;
     using FluentAssertions;
     using Moq;
@@ -230,28 +229,6 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
 
             mockConditionEvalDispatchProvider.Verify(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
             mockOperatorEvalStrategy.Verify(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()), Times.Once());
-        }
-
-        [Fact]
-        public void GetDeferredEvalFor_GivenUnknownConditionNodeType_ThrowsNotSupportedException()
-        {
-            // Arrange
-            var mockValueConditionNode = new Mock<IValueConditionNode<ConditionType>>();
-
-            var mockConditionEvalDispatchProvider = new Mock<IConditionEvalDispatchProvider>();
-
-            var matchMode = MatchModes.Exact;
-
-            var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
-
-            var sut = new DeferredEval(mockConditionEvalDispatchProvider.Object, rulesEngineOptions);
-
-            // Act
-            var notSupportedException = Assert.Throws<NotSupportedException>(() => sut.GetDeferredEvalFor(mockValueConditionNode.Object, matchMode));
-
-            // Assert
-            notSupportedException.Should().NotBeNull();
-            notSupportedException.Message.Should().Be($"Unsupported value condition node: '{mockValueConditionNode.Object.GetType().Name}'.");
         }
     }
 }

@@ -21,13 +21,27 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
 
             if (logicalOperator == LogicalOperators.Eval)
             {
+                var dataType = this.Parse<DataTypes>((string)conditionNode.DataType);
+                object operand = dataType switch
+                {
+                    DataTypes.Boolean => Convert.ToBoolean((string)conditionNode.Operand, CultureInfo.InvariantCulture),
+                    DataTypes.Integer => Convert.ToInt32((string)conditionNode.Operand, CultureInfo.InvariantCulture),
+                    DataTypes.Decimal => Convert.ToDecimal((string)conditionNode.Operand, CultureInfo.InvariantCulture),
+                    DataTypes.String => (string)conditionNode.Operand,
+                    DataTypes.ArrayInteger => ((IEnumerable<string>)conditionNode.Operand).Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture)),
+                    DataTypes.ArrayDecimal => ((IEnumerable<string>)conditionNode.Operand).Select(x => Convert.ToDecimal(x, CultureInfo.InvariantCulture)),
+                    DataTypes.ArrayBoolean => ((IEnumerable<string>)conditionNode.Operand).Select(x => Convert.ToBoolean(x, CultureInfo.InvariantCulture)),
+                    DataTypes.ArrayString => (IEnumerable<string>)conditionNode.Operand,
+                    _ => null,
+                };
                 return new ValueConditionNodeDataModel<TConditionType>
                 {
                     ConditionType = this.Parse<TConditionType>((string)conditionNode.ConditionType),
-                    DataType = this.Parse<DataTypes>((string)conditionNode.DataType),
+                    DataType = dataType,
                     LogicalOperator = logicalOperator,
                     Operator = this.Parse<Operators>((string)conditionNode.Operator),
-                    Operand = (string)conditionNode.Operand
+                    Operand = operand,
+                    Properties = new PropertiesDictionary(Constants.DefaultPropertiesDictionarySize),
                 };
             }
             else
@@ -44,7 +58,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
                 return new ComposedConditionNodeDataModel<TConditionType>
                 {
                     ChildConditionNodes = conditionNodeDataModels,
-                    LogicalOperator = logicalOperator
+                    LogicalOperator = logicalOperator,
+                    Properties = new PropertiesDictionary(Constants.DefaultPropertiesDictionarySize),
                 };
             }
         }
