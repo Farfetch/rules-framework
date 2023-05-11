@@ -14,6 +14,11 @@ namespace Rules.Framework.Core
 
         public DictionarySlim(int size)
         {
+            if (size <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(size));
+            }
+
             if (typeof(TKey) == typeof(string))
             {
                 this.keysComparer = (IEqualityComparer<TKey>)StringComparer.Ordinal;

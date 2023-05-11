@@ -50,7 +50,9 @@ namespace Rules.Framework.Core
             }
             else
             {
-                this.underlyingDictionary = new DictionarySlim<string, object>(source);
+                this.underlyingDictionary = source.Count > 0
+                    ? new DictionarySlim<string, object>(source)
+                    : new DictionarySlim<string, object>(Constants.DefaultPropertiesDictionarySize);
             }
         }
 
