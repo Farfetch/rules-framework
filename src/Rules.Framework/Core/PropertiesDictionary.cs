@@ -21,6 +21,11 @@ namespace Rules.Framework.Core
         /// <param name="size">The size.</param>
         public PropertiesDictionary(int size)
         {
+            if (size <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(size), size, $"The value specified for '{nameof(size)}' must be greater than zero.");
+            }
+
             if (size > DictionarySlimLimit)
             {
                 underlyingDictionary = new Dictionary<string, object>(size, StringComparer.Ordinal);
@@ -46,7 +51,7 @@ namespace Rules.Framework.Core
 
             if (source.Count > DictionarySlimLimit)
             {
-                underlyingDictionary = new Dictionary<string, object>(source.Count, StringComparer.Ordinal);
+                underlyingDictionary = new Dictionary<string, object>(source, StringComparer.Ordinal);
             }
             else
             {

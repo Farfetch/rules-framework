@@ -16,7 +16,7 @@ namespace Rules.Framework.Core
         {
             if (size <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(size));
+                throw new ArgumentOutOfRangeException(nameof(size), size, $"The value specified for '{nameof(size)}' must be greater than zero.");
             }
 
             if (typeof(TKey) == typeof(string))
@@ -33,7 +33,7 @@ namespace Rules.Framework.Core
         }
 
         public DictionarySlim(IDictionary<TKey, TValue> source)
-            : this(source.Count)
+            : this(source?.Count ?? throw new ArgumentNullException(nameof(source)))
         {
             this.AddRange(source);
         }
@@ -159,7 +159,22 @@ namespace Rules.Framework.Core
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
+            if (array == null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
+
+            if (arrayIndex < 0 || arrayIndex >= array.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Provided array index should be contained between zero and array length.");
+            }
+
             var count = this.Count;
+            if (array.Length - arrayIndex < count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(array), "Provided array should have sufficient length between provided array index and array length.");
+            }
+
             for (int i = 0; i < count; i++)
             {
                 array[arrayIndex++] = this.entries[i];
@@ -172,6 +187,11 @@ namespace Rules.Framework.Core
 
         public bool Remove(TKey key)
         {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             int initialCount = this.Count;
             int keyAtIndex = this.FindIndex(key);
 
@@ -191,6 +211,11 @@ namespace Rules.Framework.Core
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
+            if (item.Key == null)
+            {
+                throw new ArgumentException("The item key is null.", nameof(item));
+            }
+
             int initialCount = this.Count;
             int keyAtIndex = -1;
             for (int i = 0; i < initialCount; i++)
@@ -219,6 +244,11 @@ namespace Rules.Framework.Core
 
         public bool TryGetValue(TKey key, out TValue value)
         {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             var existentItemIndex = this.FindIndex(key);
             if (existentItemIndex >= 0)
             {
@@ -250,6 +280,7 @@ namespace Rules.Framework.Core
                     this.entries[i] = dictionarySlim.entries[i];
                 }
 
+                this.lastUsedIndex = dictionarySlim.Count - 1;
                 return;
             }
 
@@ -337,7 +368,7 @@ namespace Rules.Framework.Core
 
             public void Reset()
             {
-                this.currentIndex = 0;
+                this.currentIndex = -1;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
