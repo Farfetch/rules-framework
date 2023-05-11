@@ -7,6 +7,14 @@
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <LangVersion>10.0</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <LangVersion>10.0</LangVersion>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<None Remove="Scenarios\Scenario2\rules-framework-tests.car-insurance-advisor.json" />
 		<None Remove="Scenarios\Scenario3\rules-framework-tests.security-system-actionables.json" />

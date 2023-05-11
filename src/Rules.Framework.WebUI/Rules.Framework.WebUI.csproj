@@ -4,6 +4,7 @@
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>	
 	<SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
 	<TargetFrameworks>net6.0</TargetFrameworks>
+	<LangVersion>10.0</LangVersion>
 	<Authors></Authors>
 	<Version></Version>
 	<PackageVersion></PackageVersion>
