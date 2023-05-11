@@ -39,7 +39,7 @@ namespace Rules.Framework.WebUI.Handlers
                 var genericRules = await this.rulesEngine.SearchAsync(
                     new SearchArgs<GenericContentType, GenericConditionType>(
                         new GenericContentType { Identifier = contentTypeName },
-                        DateTime.MinValue, DateTime.MaxValue, active: null))
+                        DateTime.MinValue, DateTime.MaxValue))
                     .ConfigureAwait(false);
 
                 var rules = Enumerable.Empty<RuleDto>();

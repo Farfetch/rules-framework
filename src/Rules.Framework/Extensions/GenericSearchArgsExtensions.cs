@@ -16,7 +16,20 @@ namespace Rules.Framework.Extensions
 
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Identifier);
 
-            var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd, genericSearchArgs.Active)
+            if (genericSearchArgs.Active.HasValue)
+            {
+                return new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd, genericSearchArgs.Active.Value)
+                {
+                    Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
+                    {
+                        Value = condition.Value,
+                        Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Identifier)
+                    }).ToList(),
+                    ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
+                };
+            }
+
+            var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd)
             {
                 Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
                 {

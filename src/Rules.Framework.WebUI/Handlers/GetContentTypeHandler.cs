@@ -41,8 +41,7 @@ namespace Rules.Framework.WebUI.Handlers
                     var genericRules = await this.genericRulesEngineAdapter
                         .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericContentType,
                             DateTime.MinValue,
-                            DateTime.MaxValue,
-                            active: null))
+                            DateTime.MaxValue))
                         .ConfigureAwait(false);
 
                     contentTypes.Add(new ContentTypeDto
