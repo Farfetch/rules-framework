@@ -116,10 +116,6 @@ namespace Rules.Framework.Providers.MongoDb
             var contentTypeFilter = Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, contentType.ToString());
 
             var datesFilter = Builders<RuleDataModel>.Filter.And(
-                Builders<RuleDataModel>.Filter.Or(
-                    Builders<RuleDataModel>.Filter.Eq(rule => rule.Active, null),
-                    Builders<RuleDataModel>.Filter.Eq(rule => rule.Active, true)
-                ),
                 Builders<RuleDataModel>.Filter.Lte(rule => rule.DateBegin, dateEnd),
                 Builders<RuleDataModel>.Filter.Or(
                     Builders<RuleDataModel>.Filter.Gt(rule => rule.DateEnd, dateBegin),

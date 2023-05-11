@@ -390,7 +390,6 @@ namespace Rules.Framework
                 ContentType = contentType,
                 DateBegin = matchDateBegin,
                 DateEnd = matchDateEnd,
-                Active = active,
             };
 
             var rules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);

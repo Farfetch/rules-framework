@@ -4,7 +4,6 @@ namespace Rules.Framework.Source
 
     internal sealed class GetRulesArgs<TContentType>
     {
-        public bool? Active { get; set; }
         public TContentType ContentType { get; set; }
 
         public DateTime DateBegin { get; set; }

@@ -40,7 +40,7 @@ namespace Rules.Framework.Builder
             return RuleBuilderResult.Failure<TContentType, TConditionType>(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithActive(bool? active)
+        public IRuleBuilder<TContentType, TConditionType> WithActive(bool active)
         {
             this.active = active;
 

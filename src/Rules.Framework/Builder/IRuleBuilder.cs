@@ -21,7 +21,7 @@ namespace Rules.Framework.Builder
         /// </summary>
         /// <param name="active">The active status.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithActive(bool? active);
+        IRuleBuilder<TContentType, TConditionType> WithActive(bool active);
 
         /// <summary>
         /// Sets the new rule with a specified condition.
