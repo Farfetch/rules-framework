@@ -34,6 +34,11 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
                 throw new NotSupportedException($"The serialized content type is not supported for deserialization: {serializedContent.GetType().FullName}");
             }
 
+            if (type == typeof(object))
+            {
+                return serializedContent;
+            }
+
             var serializedContentDictionary = serializedContent as IDictionary<string, object>;
             var reflectionInformation = type
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
