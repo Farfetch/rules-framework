@@ -185,6 +185,7 @@
                                             <option value="active">Active</option>
                                             <option value="inactive">Inactive</option>
                                             <option value="pending">Pending</option>
+                                            <option value="deactivated">Deactivated</option>
                                         </select>
                                     </div>
                                 </form>
@@ -315,6 +316,11 @@
                         labelColor = 'badge text-bg-info';
                         style = 'color: #bc3803 !important;background-color: #ffefca !important;'
                         icon = 'glyphicon glyphicon-time';
+                        break;
+                    case 'deactivated':
+                        labelColor = 'badge text-bg-info';
+                        style = 'color: #494141 !important;background-color: #bdbbbb !important;'
+                        icon = 'glyphicon glyphicon-minus-sign';
                         break;
                     default:
                         labelColor = 'badge text-bg-danger';

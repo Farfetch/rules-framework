@@ -33,22 +33,32 @@ namespace Rules.Framework.WebUI.Sample.Rules
                         RuleAddPriorityOption.ByPriorityNumber(i),
                         rulesSpecifications);
                 }
+
+                var deactiveDateBegin = CreateRandomDateBegin(currentYear);
+
+                Add(CreateMultipleRule((ContentTypes)contentType, finalNumber, deactiveDateBegin, CreateRandomDateEnd(deactiveDateBegin), isActive: false),
+                        RuleAddPriorityOption.ByPriorityNumber(finalNumber),
+                        rulesSpecifications);
             }
 
             return rulesSpecifications;
         }
 
-        private static RuleBuilderResult<ContentTypes, ConditionTypes> CreateMultipleRule(ContentTypes contentTypes, int value, DateTime dateBegin,
-            DateTime? dateEnd) =>
-            RuleBuilder
+        private static RuleBuilderResult<ContentTypes, ConditionTypes> CreateMultipleRule(
+            ContentTypes contentTypes,
+            int value,
+            DateTime dateBegin,
+            DateTime? dateEnd,
+            bool isActive = true) => RuleBuilder
                 .NewRule<ContentTypes, ConditionTypes>()
                 .WithName($"Multi rule for test {contentTypes} {value}")
                 .WithContent(contentTypes, new { Value = value })
                 .WithDatesInterval(dateBegin, dateEnd)
+                .WithActive(isActive)
                 .WithCondition(rootCond => rootCond
                     .Or(x => x
                         .Value(ConditionTypes.RoyalNumber, Operators.Equal, 7)
-                        .Value(ConditionTypes.SumAll, Operators.Equal, 9)
+                        .Value(ConditionTypes.SumAll, Operators.In, new int[] { 9, 8, 6 })
                         .And(y => y
                             .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, false)
                             .Value(ConditionTypes.SumAll, Operators.StartsWith, "15")

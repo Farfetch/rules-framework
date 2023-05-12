@@ -92,11 +92,10 @@ namespace Rules.Framework.Tests.Extensions
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2020, 12, 31);
 
-            var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd);
+            var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd, active: true);
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Identifier = contentTypeCode }, dateBegin, dateEnd
-                );
+                new GenericContentType { Identifier = contentTypeCode }, dateBegin, dateEnd, active: true);
 
             // Act
             var convertedSearchArgs = genericSearchArgs.ToSearchArgs<ContentType, ConditionType>();

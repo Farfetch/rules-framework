@@ -7,8 +7,9 @@ namespace Rules.Framework.Builder
 
     internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
-        private static readonly RuleValidator<TContentType, TConditionType> ruleValidator = new();
+        private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
 
+        private bool? active;
         private ContentContainer<TContentType> contentContainer;
         private DateTime dateBegin;
         private DateTime? dateEnd;
@@ -26,9 +27,10 @@ namespace Rules.Framework.Builder
                 Name = this.name,
                 Priority = this.priority.GetValueOrDefault(0),
                 RootCondition = this.rootCondition,
+                Active = this.active ?? true,
             };
 
-            var validationResult = ruleValidator.Validate(rule);
+            var validationResult = this.ruleValidator.Validate(rule);
 
             if (validationResult.IsValid)
             {
@@ -36,6 +38,13 @@ namespace Rules.Framework.Builder
             }
 
             return RuleBuilderResult.Failure<TContentType, TConditionType>(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
+        }
+
+        public IRuleBuilder<TContentType, TConditionType> WithActive(bool active)
+        {
+            this.active = active;
+
+            return this;
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition)

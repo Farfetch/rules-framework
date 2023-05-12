@@ -102,6 +102,7 @@ namespace Rules.Framework.Providers.MongoDb
                 Builders<RuleDataModel>.Update.Set(r => r.DateEnd, ruleDataModel.DateEnd),
                 Builders<RuleDataModel>.Update.Set(r => r.Name, ruleDataModel.Name),
                 Builders<RuleDataModel>.Update.Set(r => r.Priority, ruleDataModel.Priority),
+                Builders<RuleDataModel>.Update.Set(r => r.Active, ruleDataModel.Active),
                 Builders<RuleDataModel>.Update.Set(r => r.RootCondition, ruleDataModel.RootCondition),
             };
 

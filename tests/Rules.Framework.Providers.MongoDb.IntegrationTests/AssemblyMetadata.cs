@@ -5,3 +5,4 @@ using Xunit;
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: ExcludeFromCodeCoverage]
 [assembly: AssemblyTrait("Category", "Integration")]
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
