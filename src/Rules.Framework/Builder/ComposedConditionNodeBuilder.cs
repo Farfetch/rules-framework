@@ -27,63 +27,15 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        public IComposedConditionNodeBuilder<TConditionType> And(
-            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> conditionFunc)
-        {
-            return this.AddComposedCondition(LogicalOperators.And, conditionFunc);
-        }
-
         public IConditionNode<TConditionType> Build()
         {
             return new ComposedConditionNode<TConditionType>(this.logicalOperator, this.conditions);
         }
 
-        public IComposedConditionNodeBuilder<TConditionType> Or(
-            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> conditionFunc)
-        {
-            return this.AddComposedCondition(LogicalOperators.Or, conditionFunc);
-        }
-
-        public IComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand)
-        {
-            return this.AddValueCondition(conditionType, condOperator, operand);
-        }
-
-        //[Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
+        [Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
         public IComposedConditionNodeBuilder<TConditionType> WithLogicalOperator(LogicalOperators logicalOperator)
         {
             this.logicalOperator = logicalOperator;
-
-            return this;
-        }
-
-        private IComposedConditionNodeBuilder<TConditionType> AddComposedCondition(
-            LogicalOperators logicOperator,
-            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> conditionFunc)
-        {
-            var composedConditionNodeBuilder = new ConditionNodeBuilder<TConditionType>()
-                .AsComposed()
-                .WithLogicalOperator(logicOperator);
-
-            var composedConditionNode = conditionFunc
-                .Invoke(composedConditionNodeBuilder)
-                .Build();
-
-            this.conditions.Add(composedConditionNode);
-
-            return this;
-        }
-
-        private IComposedConditionNodeBuilder<TConditionType> AddValueCondition<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand)
-        {
-            var valueCondition = new ConditionNodeBuilder<TConditionType>()
-                .AsValued(conditionType)
-                .OfDataType<TDataType>()
-                .WithComparisonOperator(condOperator)
-                .SetOperand(operand)
-                .Build();
-
-            this.conditions.Add(valueCondition);
 
             return this;
         }

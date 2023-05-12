@@ -45,24 +45,26 @@ namespace Rules.Framework.WebUI.Sample.Rules
                 .WithName($"Multi rule for test {contentTypes} {value}")
                 .WithContent(contentTypes, new { Value = value })
                 .WithDatesInterval(dateBegin, dateEnd)
-                .WithConditions(LogicalOperators.Or, rootCond => rootCond
-                    .Value(ConditionTypes.RoyalNumber, Operators.Equal, 7)
-                    .Value(ConditionTypes.SumAll, Operators.Equal, 9)
-                    .And(subCond => subCond
-                        .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, false)
-                        .Value(ConditionTypes.SumAll, Operators.StartsWith, "15")
-                    )
-                    .And(subCond => subCond
-                        .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
-                        .Value(ConditionTypes.SumAll, Operators.NotEqual, string.Empty)
-                    )
-                    .And(subCond => subCond
-                        .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, true)
-                        .Value(ConditionTypes.SumAll, Operators.StartsWith, "5")
-                        .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
+                .WithCondition(rootCond => rootCond
+                    .Or(x => x
+                        .Value(ConditionTypes.RoyalNumber, Operators.Equal, 7)
+                        .Value(ConditionTypes.SumAll, Operators.Equal, 9)
+                        .And(y => y
+                            .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, false)
+                            .Value(ConditionTypes.SumAll, Operators.StartsWith, "15")
+                        )
+                        .And(y => y
+                            .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
+                            .Value(ConditionTypes.SumAll, Operators.NotEqual, string.Empty)
+                        )
+                        .And(y => y
+                            .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, true)
+                            .Value(ConditionTypes.SumAll, Operators.StartsWith, "5")
+                            .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
+                        )
                     )
                 )
-            .Build();
+                .Build();
 
         private void Add(
             RuleBuilderResult<ContentTypes, ConditionTypes> rule,

@@ -23,13 +23,14 @@ namespace Rules.Framework.Builder
         /// The function with specific logic to create the condition for the rule.
         /// </param>
         /// <returns></returns>
+        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload.")]
         IRuleBuilder<TContentType, TConditionType> WithCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
 
-        /// <summary>
-        /// Sets the new rule with a specified condition.
-        /// </summary>
-        /// <param name="condition">The condition.</param>
-        /// <returns></returns>
+        ///// <summary>
+        ///// Sets the new rule with a specified condition.
+        ///// </summary>
+        ///// <param name="condition">The condition.</param>
+        ///// <returns></returns>
         IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition);
 
         /// <summary>

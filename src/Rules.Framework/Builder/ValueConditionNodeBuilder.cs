@@ -33,25 +33,25 @@ namespace Rules.Framework.Builder
         {
             switch (this.operand)
             {
-                case decimal _:                
+                case decimal _:
                     return new ValueConditionNode<TConditionType>(DataTypes.Decimal, this.conditionType, this.comparisonOperator, this.operand);
 
                 case IEnumerable<decimal> _:
                     return new ValueConditionNode<TConditionType>(DataTypes.ArrayDecimal, this.conditionType, this.comparisonOperator, this.operand);
 
-                case int _:                
+                case int _:
                     return new ValueConditionNode<TConditionType>(DataTypes.Integer, this.conditionType, this.comparisonOperator, this.operand);
 
                 case IEnumerable<int> _:
                     return new ValueConditionNode<TConditionType>(DataTypes.ArrayInteger, this.conditionType, this.comparisonOperator, this.operand);
 
-                case bool _:                
+                case bool _:
                     return new ValueConditionNode<TConditionType>(DataTypes.Boolean, this.conditionType, this.comparisonOperator, this.operand);
 
                 case IEnumerable<bool> _:
                     return new ValueConditionNode<TConditionType>(DataTypes.ArrayBoolean, this.conditionType, this.comparisonOperator, this.operand);
 
-                case string _:                
+                case string _:
                     return new ValueConditionNode<TConditionType>(DataTypes.String, this.conditionType, this.comparisonOperator, this.operand);
 
                 case IEnumerable<string> _:

@@ -25,39 +25,30 @@ namespace Rules.Framework.Builder
             Operators condOperator,
             TDataType operand)
         {
-            var valueCondition = new ConditionNodeBuilder<TConditionType>()
-                .AsValued(conditionType)
-                .OfDataType<TDataType>()
-                .WithComparisonOperator(condOperator)
-                .SetOperand(operand)
-                .Build();
+            var rootConditionNodeBuilder = new RootConditionNodeBuilder<TConditionType>();
+
+            var valueCondition = rootConditionNodeBuilder.Value(conditionType, condOperator, operand);
 
             return ruleBuilder.WithCondition(valueCondition);
         }
 
         /// <summary>
-        /// Sets the new rule with the specified composed condition.
+        /// Sets the new rule with the specified root condition.
         /// </summary>
         /// <typeparam name="TContentType">The type of the content type.</typeparam>
         /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
         /// <param name="ruleBuilder">The rule builder.</param>
-        /// <param name="logicOperator">The operator.</param>
         /// <param name="conditionFunc">The condition func.</param>
         /// <returns></returns>
-        public static IRuleBuilder<TContentType, TConditionType> WithConditions<TContentType, TConditionType>(
+        public static IRuleBuilder<TContentType, TConditionType> WithCondition<TContentType, TConditionType>(
             this IRuleBuilder<TContentType, TConditionType> ruleBuilder,
-            LogicalOperators logicOperator,
-            Func<IComposedConditionNodeBuilder<TConditionType>, IComposedConditionNodeBuilder<TConditionType>> conditionFunc)
+            Func<IRootConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
         {
-            var composedConditionNodeBuilder = new ConditionNodeBuilder<TConditionType>()
-                .AsComposed()
-                .WithLogicalOperator(logicOperator);
+            var rootConditionNodeBuilder = new RootConditionNodeBuilder<TConditionType>();
 
-            var composedConditionNode = conditionFunc
-                .Invoke(composedConditionNodeBuilder)
-                .Build();
+            var rootCondition = conditionFunc.Invoke(rootConditionNodeBuilder);
 
-            return ruleBuilder.WithCondition(composedConditionNode);
+            return ruleBuilder.WithCondition(rootCondition);
         }
 
         /// <summary>

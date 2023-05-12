@@ -16,60 +16,70 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     .WithName("Benchmark 3 - Straight flush of Clubs: 6, 5, 4, 3, 2")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight Flush" })
-                    .WithConditions(LogicalOperators.And, c => c
-                        .Value(ConditionTypes.DeuceOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.TreyOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.FourOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
+                    .WithCondition(c => c
+                        .And(x => x
+                            .Value(ConditionTypes.DeuceOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.TreyOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.FourOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
+                        )
                     )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight flush of Clubs: 7, 6, 5, 4, 3")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight Flush" })
-                    .WithConditions(LogicalOperators.And, c => c
-                        .Value(ConditionTypes.TreyOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.FourOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
+                    .WithCondition(c => c
+                        .And(x => x
+                            .Value(ConditionTypes.TreyOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.FourOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
+                        )
                     )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight flush of Clubs: 8, 7, 6, 5, 4")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight Flush" })
-                    .WithConditions(LogicalOperators.And, c => c
-                        .Value(ConditionTypes.FourOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.EightOfClubs, Operators.Equal, true)
+                    .WithCondition(c => c
+                        .And(x => x
+                            .Value(ConditionTypes.FourOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.EightOfClubs, Operators.Equal, true)
+                        )
                     )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight flush of Clubs: 9, 8, 7, 6, 5")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight Flush" })
-                    .WithConditions(LogicalOperators.And, c => c
-                        .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.EightOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.NineOfClubs, Operators.Equal, true)
+                    .WithCondition(c => c
+                        .And(x => x
+                            .Value(ConditionTypes.FiveOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.EightOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.NineOfClubs, Operators.Equal, true)
+                        )
                     )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight flush of Clubs: 10, 9, 8, 7, 6")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight Flush" })
-                    .WithConditions(LogicalOperators.And, c => c
-                        .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.EightOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.NineOfClubs, Operators.Equal, true)
-                        .Value(ConditionTypes.TenOfClubs, Operators.Equal, true)
+                    .WithCondition(c => c
+                        .And(x => x
+                            .Value(ConditionTypes.SixOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.SevenOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.EightOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.NineOfClubs, Operators.Equal, true)
+                            .Value(ConditionTypes.TenOfClubs, Operators.Equal, true)
+                        )
                     )
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()

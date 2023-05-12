@@ -33,7 +33,7 @@ namespace Rules.Framework.WebUI.Sample
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            AddRulesFrameworkUI(app, useReadmeExample: false);
+            AddRulesFrameworkUI(app, useReadmeExample: true);
 
             app.MapControllerRoute(
                 name: "default",

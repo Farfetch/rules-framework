@@ -45,7 +45,9 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
+        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload.")]
+        public IRuleBuilder<TContentType, TConditionType> WithCondition(
+            Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
         {
             var conditionNodeBuilder = new ConditionNodeBuilder<TConditionType>();
 

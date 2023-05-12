@@ -25,11 +25,13 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
                 .WithName("Benchmark 2 - Bohemian Rapsody")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.Songs, "Bohemian Rapsody")
-                .WithConditions(LogicalOperators.And, c => c
-                    .Value(ConditionTypes.Artist, Operators.Equal, "Queen")
-                    .Value(ConditionTypes.Lyrics, Operators.Contains, "real life")
-                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
-                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
+                .WithCondition(c => c
+                    .And(x => x
+                        .Value(ConditionTypes.Artist, Operators.Equal, "Queen")
+                        .Value(ConditionTypes.Lyrics, Operators.Contains, "real life")
+                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
+                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
+                    )
                 )
                 .Build();
 
@@ -37,14 +39,16 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
                 .WithName("Benchmark 2 - Stairway to Heaven")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.Songs, "Stairway to Heaven")
-                .WithConditions(LogicalOperators.And, c => c
-                    .Value(ConditionTypes.Artist, Operators.Equal, "Led Zeppelin")
-                    .Or(sub => sub
-                        .Value(ConditionTypes.Lyrics, Operators.Contains, "all that glitters is gold")
-                        .Value(ConditionTypes.Lyrics, Operators.Contains, "it makes me wonder")
+                .WithCondition(c => c
+                    .And(x => x
+                        .Value(ConditionTypes.Artist, Operators.Equal, "Led Zeppelin")
+                        .Or(sub => sub
+                            .Value(ConditionTypes.Lyrics, Operators.Contains, "all that glitters is gold")
+                            .Value(ConditionTypes.Lyrics, Operators.Contains, "it makes me wonder")
+                        )
+                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
+                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
                     )
-                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)    
-                    .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)    
                 )
                 .Build();
 
