@@ -8,13 +8,13 @@ namespace Rules.Framework.Builder
         public IConditionNode<TConditionType> And(
             Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            return ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.And, conditionFunc);
+            return ConditionNodeFactory<TConditionType>.CreateComposedNode(LogicalOperators.And, conditionFunc);
         }
 
         public IConditionNode<TConditionType> Or(
             Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            return ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.Or, conditionFunc);
+            return ConditionNodeFactory<TConditionType>.CreateComposedNode(LogicalOperators.Or, conditionFunc);
         }
 
         public IConditionNode<TConditionType> Value<TDataType>(

@@ -5,7 +5,7 @@ namespace Rules.Framework.Builder
 
     internal static class ConditionNodeFactory<TConditionType>
     {
-        public static IConditionNode<TConditionType> CreateChildNode(
+        public static IConditionNode<TConditionType> CreateComposedNode(
             LogicalOperators logicOperator,
             Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {

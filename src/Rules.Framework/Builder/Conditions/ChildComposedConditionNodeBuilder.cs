@@ -19,7 +19,7 @@ namespace Rules.Framework.Builder
         public IChildComposedConditionNodeBuilder<TConditionType> And(
             Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.And, conditionFunc);
+            var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateComposedNode(LogicalOperators.And, conditionFunc);
 
             this.conditions.Add(composedConditionNode);
 
@@ -34,7 +34,7 @@ namespace Rules.Framework.Builder
         public IChildComposedConditionNodeBuilder<TConditionType> Or(
             Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.Or, conditionFunc);
+            var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateComposedNode(LogicalOperators.Or, conditionFunc);
 
             this.conditions.Add(composedConditionNode);
 
