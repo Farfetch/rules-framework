@@ -4,18 +4,18 @@ namespace Rules.Framework.Builder
     using Rules.Framework.Core;
 
     /// <summary>
-    /// Builder for child condition nodes.
+    /// Builder for child composed condition nodes.
     /// </summary>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    public interface IChildConditionNodeBuilder<TConditionType>
+    public interface IChildComposedConditionNodeBuilder<TConditionType>
     {
         /// <summary>
-        /// Adds a child And condition to the child condition node builder.
+        /// Adds a composed And condition to the child condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
-        IChildConditionNodeBuilder<TConditionType> And(
-            Func<IChildConditionNodeBuilder<TConditionType>, IChildConditionNodeBuilder<TConditionType>> conditionFunc);
+        IChildComposedConditionNodeBuilder<TConditionType> And(
+            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
         /// Builds the child condition node.
@@ -24,12 +24,12 @@ namespace Rules.Framework.Builder
         IConditionNode<TConditionType> Build();
 
         /// <summary>
-        /// Adds a child Or condition to the child condition node builder.
+        /// Adds a composed Or condition to the child condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
-        IChildConditionNodeBuilder<TConditionType> Or(
-            Func<IChildConditionNodeBuilder<TConditionType>, IChildConditionNodeBuilder<TConditionType>> conditionFunc);
+        IChildComposedConditionNodeBuilder<TConditionType> Or(
+            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
         /// Adds a value condition to the child condition node builder.
@@ -38,6 +38,6 @@ namespace Rules.Framework.Builder
         /// <param name="condOperator">The condition operator.</param>
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
-        IChildConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
+        IChildComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
     }
 }

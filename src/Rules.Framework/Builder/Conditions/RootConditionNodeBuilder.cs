@@ -6,13 +6,13 @@ namespace Rules.Framework.Builder
     internal sealed class RootConditionNodeBuilder<TConditionType> : IRootConditionNodeBuilder<TConditionType>
     {
         public IConditionNode<TConditionType> And(
-            Func<IChildConditionNodeBuilder<TConditionType>, IChildConditionNodeBuilder<TConditionType>> conditionFunc)
+            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
             return ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.And, conditionFunc);
         }
 
         public IConditionNode<TConditionType> Or(
-            Func<IChildConditionNodeBuilder<TConditionType>, IChildConditionNodeBuilder<TConditionType>> conditionFunc)
+            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
             return ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.Or, conditionFunc);
         }

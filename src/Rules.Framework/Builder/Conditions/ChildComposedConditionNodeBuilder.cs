@@ -5,19 +5,19 @@ namespace Rules.Framework.Builder
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    internal sealed class ChildConditionNodeBuilder<TConditionType> : IChildConditionNodeBuilder<TConditionType>
+    internal sealed class ChildComposedConditionNodeBuilder<TConditionType> : IChildComposedConditionNodeBuilder<TConditionType>
     {
         private readonly List<IConditionNode<TConditionType>> conditions;
-        private LogicalOperators logicalOperator;
+        private readonly LogicalOperators logicalOperator;
 
-        public ChildConditionNodeBuilder(LogicalOperators logicOperator)
+        public ChildComposedConditionNodeBuilder(LogicalOperators logicOperator)
         {
             this.logicalOperator = logicOperator;
             this.conditions = new List<IConditionNode<TConditionType>>(2); // Most probable number of conditions, so that collection is initialized with right size most times.
         }
 
-        public IChildConditionNodeBuilder<TConditionType> And(
-            Func<IChildConditionNodeBuilder<TConditionType>, IChildConditionNodeBuilder<TConditionType>> conditionFunc)
+        public IChildComposedConditionNodeBuilder<TConditionType> And(
+            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
             var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.And, conditionFunc);
 
@@ -31,8 +31,8 @@ namespace Rules.Framework.Builder
             return new ComposedConditionNode<TConditionType>(this.logicalOperator, this.conditions);
         }
 
-        public IChildConditionNodeBuilder<TConditionType> Or(
-            Func<IChildConditionNodeBuilder<TConditionType>, IChildConditionNodeBuilder<TConditionType>> conditionFunc)
+        public IChildComposedConditionNodeBuilder<TConditionType> Or(
+            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
             var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateChildNode(LogicalOperators.Or, conditionFunc);
 
@@ -41,7 +41,7 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        public IChildConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand)
+        public IChildComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand)
         {
             var valueConditionNode = ConditionNodeFactory<TConditionType>.CreateValueNode(conditionType, condOperator, operand);
 

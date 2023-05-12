@@ -7,9 +7,9 @@ namespace Rules.Framework.Builder
     {
         public static IConditionNode<TConditionType> CreateChildNode(
             LogicalOperators logicOperator,
-            Func<IChildConditionNodeBuilder<TConditionType>, IChildConditionNodeBuilder<TConditionType>> conditionFunc)
+            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            var childConditionNodeBuilder = new ChildConditionNodeBuilder<TConditionType>(logicOperator);
+            var childConditionNodeBuilder = new ChildComposedConditionNodeBuilder<TConditionType>(logicOperator);
 
             var childConditionNode = conditionFunc
                 .Invoke(childConditionNodeBuilder)
