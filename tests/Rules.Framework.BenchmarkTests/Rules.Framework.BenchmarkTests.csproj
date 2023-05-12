@@ -10,10 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    <PackageReference Include="DotEnv.Core" Version="2.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Rules.Framework.Providers.MongoDb\Rules.Framework.Providers.MongoDb.csproj" />
     <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
   </ItemGroup>
 
