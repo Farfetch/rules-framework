@@ -33,6 +33,14 @@ namespace Rules.Framework.Providers.MongoDb
             this.mongoDbProviderSettings = mongoDbProviderSettings ?? throw new ArgumentNullException(nameof(mongoDbProviderSettings));
             this.ruleFactory = ruleFactory ?? throw new ArgumentNullException(nameof(ruleFactory));
             this.mongoDatabase = mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+            var getRulesIndexKeysDefinition = Builders<RuleDataModel>.IndexKeys
+                .Ascending("ContentType").Ascending("DateBegin").Ascending("DateEnd");
+            var getRulesIndex = new CreateIndexModel<RuleDataModel>(getRulesIndexKeysDefinition);
+            this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName).Indexes.CreateOne(getRulesIndex);
+            var getRulesByIndexKeysDefinition = Builders<RuleDataModel>.IndexKeys
+                .Ascending("ContentType").Ascending("Name").Ascending("Priority");
+            var getRulesByIndex = new CreateIndexModel<RuleDataModel>(getRulesByIndexKeysDefinition);
+            this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName).Indexes.CreateOne(getRulesByIndex);
         }
 
         /// <summary>
@@ -154,7 +162,16 @@ namespace Rules.Framework.Providers.MongoDb
 
             var fetchedRules = await fetchedRulesCursor.ToListAsync().ConfigureAwait(false);
 
-            return fetchedRules.Select(r => this.ruleFactory.CreateRule(r));
+            // We won't use LINQ from this point onwards to avoid projected queries to database at a
+            // later point. This approach assures the definitive realization of the query results
+            // and does not produce side effects later on.
+            var result = new Rule<TContentType, TConditionType>[fetchedRules.Count];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = this.ruleFactory.CreateRule(fetchedRules[i]);
+            }
+
+            return result;
         }
     }
 }

@@ -102,15 +102,20 @@ namespace Rules.Framework.Providers.MongoDb
             return composedConditionNode;
         }
 
-        private static ValueConditionNodeDataModel ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode) => new ValueConditionNodeDataModel
+        private static ValueConditionNodeDataModel ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode)
         {
-            ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
-            LogicalOperator = LogicalOperators.Eval,
-            DataType = valueConditionNode.DataType,
-            Operand = valueConditionNode.Operand,
-            Operator = valueConditionNode.Operator,
-            Properties = valueConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
-        };
+            var properties = FilterProperties(valueConditionNode.Properties);
+
+            return new ValueConditionNodeDataModel
+            {
+                ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
+                LogicalOperator = LogicalOperators.Eval,
+                DataType = valueConditionNode.DataType,
+                Operand = valueConditionNode.Operand,
+                Operator = valueConditionNode.Operator,
+                Properties = properties,
+            };
+        }
 
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ValueConditionNodeDataModel conditionNodeDataModel)
         {
@@ -169,6 +174,22 @@ namespace Rules.Framework.Providers.MongoDb
             return valueConditionNode;
         }
 
+        private static IDictionary<string, object> FilterProperties(IDictionary<string, object> source)
+        {
+            var properties = new Dictionary<string, object>(StringComparer.Ordinal);
+            foreach (var property in source)
+            {
+                if (property.Key.StartsWith("_compilation", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                properties[property.Key] = property.Value;
+            }
+
+            return properties;
+        }
+
         private static T Parse<T>(string value)
             => (T)Parse(value, typeof(T));
 
@@ -184,11 +205,13 @@ namespace Rules.Framework.Providers.MongoDb
                 conditionNodeDataModels.Add(this.ConvertConditionNode(child));
             }
 
+            var properties = FilterProperties(composedConditionNode.Properties);
+
             return new ComposedConditionNodeDataModel
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator,
-                Properties = composedConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
+                Properties = properties,
             };
         }
 

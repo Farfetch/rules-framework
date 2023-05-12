@@ -15,9 +15,11 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
             this.Properties = new Dictionary<string, object>(StringComparer.Ordinal);
         }
 
+        [BsonElement(Order = 1)]
         [BsonRepresentation(BsonType.String)]
         public LogicalOperators LogicalOperator { get; set; }
 
+        [BsonElement(Order = 2)]
         [BsonDictionaryOptions(Representation = DictionaryRepresentation.Document)]
         public IDictionary<string, object> Properties { get; set; }
     }

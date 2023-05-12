@@ -1,4 +1,3 @@
-
 namespace Rules.Framework.Providers.MongoDb.DataModel
 {
     using System.Collections.Generic;
@@ -7,6 +6,7 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
     [BsonDiscriminator("composed")]
     internal sealed class ComposedConditionNodeDataModel : ConditionNodeDataModel
     {
+        [BsonElement(Order = 1)]
         public IEnumerable<ConditionNodeDataModel> ChildConditionNodes { get; set; }
     }
 }
