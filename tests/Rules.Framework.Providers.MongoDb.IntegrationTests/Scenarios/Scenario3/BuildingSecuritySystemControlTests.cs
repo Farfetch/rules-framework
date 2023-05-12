@@ -57,8 +57,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             mongoCollection.InsertMany(rules);
         }
 
-        [Fact]
-        public async Task BuildingSecuritySystem_FireScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_FireScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
@@ -87,6 +89,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
+                .Configure(opt =>
+                {
+                    opt.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act
@@ -103,8 +109,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .And.HaveCount(3);
         }
 
-        [Fact]
-        public async Task BuildingSecuritySystem_PowerFailureScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_PowerFailureScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
@@ -133,6 +141,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
+                .Configure(opt =>
+                {
+                    opt.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act
@@ -148,8 +160,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .And.Contain(ssa => ssa.ActionName == "CallPowerGridPicket");
         }
 
-        [Fact]
-        public async Task BuildingSecuritySystem_PowerShutdownScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_PowerShutdownScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
@@ -178,6 +192,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
+                .Configure(opt =>
+                {
+                    opt.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act

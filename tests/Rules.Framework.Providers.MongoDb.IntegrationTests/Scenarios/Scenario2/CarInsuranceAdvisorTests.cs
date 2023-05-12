@@ -65,8 +65,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise(bool enableCompilation)
         {
             // Arrange
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
@@ -92,6 +94,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
+                    opt.EnableCompilation = enableCompilation;
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
@@ -105,8 +108,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             actualContent.Should().Be(expected);
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay(bool enableCompilation)
         {
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
@@ -131,6 +136,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
+                    opt.EnableCompilation = enableCompilation;
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
