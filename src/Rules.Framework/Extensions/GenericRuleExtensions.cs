@@ -45,11 +45,12 @@ namespace Rules.Framework.Extensions
             return new GenericRule
             {
                 RootCondition = rule.RootCondition?.ToGenericConditionNode(),
-                Content = rule.ContentContainer.GetContentAs<object>(),
+                Content = rule.ContentContainer.GetContentAs<dynamic>(),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
+                Active = rule.Active,
             };
         }
     }

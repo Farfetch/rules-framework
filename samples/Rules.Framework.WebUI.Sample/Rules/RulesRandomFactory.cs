@@ -33,18 +33,25 @@ namespace Rules.Framework.WebUI.Sample.Rules
                         RuleAddPriorityOption.ByPriorityNumber(i),
                         rulesSpecifications);
                 }
+
+                var deactiveDateBegin = CreateRandomDateBegin(currentYear);
+
+                Add(CreateMultipleRule((ContentTypes)contentType, finalNumber, deactiveDateBegin, CreateRandomDateEnd(deactiveDateBegin), isActive: false),
+                        RuleAddPriorityOption.ByPriorityNumber(finalNumber),
+                        rulesSpecifications);
             }
 
             return rulesSpecifications;
         }
 
         private static RuleBuilderResult<ContentTypes, ConditionTypes> CreateMultipleRule(ContentTypes contentTypes, int value, DateTime dateBegin,
-            DateTime? dateEnd) =>
+            DateTime? dateEnd, bool isActive = true) =>
                                      RuleBuilder
                              .NewRule<ContentTypes, ConditionTypes>()
                              .WithName($"Multi rule for test {contentTypes} {value}")
                              .WithContent(contentTypes, new { Value = value })
                              .WithDatesInterval(dateBegin, dateEnd)
+                             .WithActive(isActive)
                              .WithCondition(cnb => cnb.AsComposed()
                                     .WithLogicalOperator(LogicalOperators.Or)
                                         .AddCondition(condition => condition
@@ -53,9 +60,9 @@ namespace Rules.Framework.WebUI.Sample.Rules
                                             .SetOperand(7)
                                             .Build())
                                         .AddCondition(condition => condition
-                                            .AsValued(ConditionTypes.SumAll).OfDataType<int>()
-                                            .WithComparisonOperator(Operators.Equal)
-                                            .SetOperand(9)
+                                            .AsValued(ConditionTypes.SumAll).OfDataType<IEnumerable<int>>()
+                                            .WithComparisonOperator(Operators.In)
+                                            .SetOperand(new int[] { 9, 8, 6 })
                                             .Build())
                                         .AddCondition(condition => condition.AsComposed()
                                             .WithLogicalOperator(LogicalOperators.And)

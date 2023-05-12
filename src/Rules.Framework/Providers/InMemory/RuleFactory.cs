@@ -21,6 +21,7 @@ namespace Rules.Framework.Providers.InMemory
             var contentContainer = new ContentContainer<TContentType>(ruleDataModel.ContentType, (_) => ruleDataModel.Content);
             var ruleBuilderResult = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
+                .WithActive(ruleDataModel.Active)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
                 .WithCondition(cnb => ruleDataModel.RootCondition is { } ? ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
                 .WithContentContainer(contentContainer)
@@ -60,6 +61,7 @@ namespace Rules.Framework.Providers.InMemory
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
+                Active = rule.Active,
                 RootCondition = rule.RootCondition is { } ? ConvertConditionNode(rule.RootCondition) : null,
             };
 
