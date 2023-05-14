@@ -10,6 +10,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
     using FluentAssertions;
     using MongoDB.Driver;
     using Newtonsoft.Json;
+    using Rules.Framework.Builder;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
@@ -96,6 +97,24 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .Build();
 
             // Act
+            var newRuleResult = RuleBuilder.NewRule<SecuritySystemActionables, SecuritySystemConditions>()
+                .WithName("Activate ventilation system rule")
+                .WithDateBegin(new DateTime(2018, 01, 01))
+                .WithContent(SecuritySystemActionables.FireSystem, new SecuritySystemAction
+                {
+                    ActionId = new Guid("ef0d65ae-ec76-492a-84db-5cb9090c3eaa"),
+                    ActionName = "ActivateVentilationSystem"
+                })
+                .WithCondition(b => b.AsValued(SecuritySystemConditions.SmokeRate)
+                    .OfDataType<decimal>()
+                    .WithComparisonOperator(Core.Operators.GreaterThanOrEqual)
+                    .SetOperand(30.0m)
+                    .Build())
+                .Build();
+            var newRule = newRuleResult.Rule;
+
+            var addResult = await rulesEngine.AddRuleAsync(newRule, RuleAddPriorityOption.AtBottom);
+
             var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
@@ -106,7 +125,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             securitySystemActions.Should().Contain(ssa => ssa.ActionName == "CallFireBrigade")
                 .And.Contain(ssa => ssa.ActionName == "CallPolice")
                 .And.Contain(ssa => ssa.ActionName == "ActivateSprinklers")
-                .And.HaveCount(3);
+                .And.Contain(ssa => ssa.ActionName == "ActivateVentilationSystem")
+                .And.HaveCount(4);
         }
 
         [Theory]
