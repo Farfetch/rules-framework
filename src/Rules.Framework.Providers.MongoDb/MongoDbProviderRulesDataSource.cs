@@ -33,14 +33,6 @@ namespace Rules.Framework.Providers.MongoDb
             this.mongoDbProviderSettings = mongoDbProviderSettings ?? throw new ArgumentNullException(nameof(mongoDbProviderSettings));
             this.ruleFactory = ruleFactory ?? throw new ArgumentNullException(nameof(ruleFactory));
             this.mongoDatabase = mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            var getRulesIndexKeysDefinition = Builders<RuleDataModel>.IndexKeys
-                .Ascending("ContentType").Ascending("DateBegin").Ascending("DateEnd");
-            var getRulesIndex = new CreateIndexModel<RuleDataModel>(getRulesIndexKeysDefinition);
-            this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName).Indexes.CreateOne(getRulesIndex);
-            var getRulesByIndexKeysDefinition = Builders<RuleDataModel>.IndexKeys
-                .Ascending("ContentType").Ascending("Name").Ascending("Priority");
-            var getRulesByIndex = new CreateIndexModel<RuleDataModel>(getRulesByIndexKeysDefinition);
-            this.mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName).Indexes.CreateOne(getRulesByIndex);
         }
 
         /// <summary>

@@ -21,11 +21,7 @@ namespace Rules.Framework.Providers.MongoDb
         /// <param name="mongoDbProviderSettings">The mongo database provider settings.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">
-        /// rulesDataSourceSelector
-        /// or
-        /// mongoClient
-        /// or
-        /// mongoDbProviderSettings
+        /// rulesDataSourceSelector or mongoClient or mongoDbProviderSettings
         /// </exception>
         public static IConfiguredRulesEngineBuilder<TContentType, TConditionType> SetMongoDbDataSource<TContentType, TConditionType>(
             this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector,
@@ -47,6 +43,7 @@ namespace Rules.Framework.Providers.MongoDb
                 throw new ArgumentNullException(nameof(mongoDbProviderSettings));
             }
 
+            MongoDbRulesDataSourceInitializer.InitializeAsync(mongoClient, mongoDbProviderSettings).GetAwaiter().GetResult();
             IContentSerializationProvider<TContentType> contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<TContentType>();
             IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>(contentSerializationProvider);
             MongoDbProviderRulesDataSource<TContentType, TConditionType> mongoDbProviderRulesDataSource
