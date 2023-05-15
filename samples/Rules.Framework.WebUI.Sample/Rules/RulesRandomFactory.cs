@@ -56,24 +56,22 @@ namespace Rules.Framework.WebUI.Sample.Rules
                 .WithDatesInterval(dateBegin, dateEnd)
                 .WithActive(isActive)
                 .WithCondition(rootCond => rootCond
-                    .Or(x => x
+                    .Or(o => o
                         .Value(ConditionTypes.RoyalNumber, Operators.Equal, 7)
                         .Value(ConditionTypes.SumAll, Operators.In, new int[] { 9, 8, 6 })
-                        .And(y => y
+                        .And(a => a
                             .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, false)
                             .Value(ConditionTypes.SumAll, Operators.StartsWith, "15")
                         )
-                        .And(y => y
+                        .And(a => a
                             .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
                             .Value(ConditionTypes.SumAll, Operators.NotEqual, string.Empty)
                         )
-                        .And(y => y
+                        .And(a => a
                             .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, true)
                             .Value(ConditionTypes.SumAll, Operators.StartsWith, "5")
                             .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
-                        )
-                    )
-                )
+                        )))
                 .Build();
 
         private void Add(

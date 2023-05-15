@@ -7,7 +7,7 @@ namespace Rules.Framework.Builder
     /// condition nodes.
     /// </summary>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    [Obsolete("This way of building conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentConditionNodeBuilder interfaces.")]
+    [Obsolete("This way of building conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentComposedConditionNodeBuilder interfaces.")]
     public interface IConditionNodeBuilder<TConditionType>
     {
         /// <summary>

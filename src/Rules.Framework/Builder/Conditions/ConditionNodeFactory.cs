@@ -6,16 +6,16 @@ namespace Rules.Framework.Builder
     internal static class ConditionNodeFactory<TConditionType>
     {
         public static IConditionNode<TConditionType> CreateComposedNode(
-            LogicalOperators logicOperator,
-            Func<IFluentConditionNodeBuilder<TConditionType>, IFluentConditionNodeBuilder<TConditionType>> conditionFunc)
+            LogicalOperators logicalOperator,
+            Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            var childConditionNodeBuilder = new FluentConditionNodeBuilder<TConditionType>(logicOperator);
+            var composedConditionNodeBuilder = new FluentComposedConditionNodeBuilder<TConditionType>(logicalOperator);
 
-            var childConditionNode = conditionFunc
-                .Invoke(childConditionNodeBuilder)
+            var composedConditionNode = conditionFunc
+                .Invoke(composedConditionNodeBuilder)
                 .Build();
 
-            return childConditionNode;
+            return composedConditionNode;
         }
 
         public static IConditionNode<TConditionType> CreateValueNode<TDataType>(

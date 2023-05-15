@@ -9,7 +9,7 @@ namespace Rules.Framework.Builder
     /// Builder to specify the data type for a valued condition node.
     /// </summary>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    [Obsolete("This way of building and adding value conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentConditionNodeBuilder interfaces.")]
+    [Obsolete("This way of building and adding value conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentComposedConditionNodeBuilder interfaces.")]
     public interface IValueConditionNodeBuilder<TConditionType>
     {
         /// <summary>
@@ -25,7 +25,7 @@ namespace Rules.Framework.Builder
     /// </summary>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
     /// <typeparam name="TDataType">The type of the data type.</typeparam>
-    [Obsolete("This way of building and adding value conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentConditionNodeBuilder interfaces.")]
+    [Obsolete("This way of building and adding value conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentComposedConditionNodeBuilder interfaces.")]
     public interface IValueConditionNodeBuilder<TConditionType, TDataType>
     {
         /// <summary>
