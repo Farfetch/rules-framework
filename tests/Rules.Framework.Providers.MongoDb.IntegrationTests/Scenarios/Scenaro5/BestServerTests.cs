@@ -6,6 +6,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
     using System.Threading.Tasks;
     using FluentAssertions;
     using MongoDB.Driver;
+    using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario5;
     using Rules.Framework.Providers.MongoDb;
@@ -96,41 +97,14 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
                 .WithName("Best Server Top5")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContentContainer(new ContentContainer<BestServerConfigurations>(BestServerConfigurations.BestServerEvaluation, t => "Top5"))
-                .WithCondition(cnb =>
-                    cnb.AsComposed()
-                        .WithLogicalOperator(LogicalOperators.And)
-                        .AddCondition(x1 =>
-                            x1.AsValued(BestServerConditions.Price)
-                                .OfDataType<IEnumerable<decimal>>()
-                                .WithComparisonOperator(Operators.In)
-                                .SetOperand(new[] { 100m, 200m, 300m })
-                                .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.Memory)
-                            .OfDataType<IEnumerable<int>>()
-                            .WithComparisonOperator(Operators.In)
-                            .SetOperand(new[] { 12, 16, 24, 36 })
-                            .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.Memory)
-                            .OfDataType<IEnumerable<int>>()
-                            .WithComparisonOperator(Operators.NotIn)
-                            .SetOperand(new[] { 4, 8 })
-                            .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.StoragePartionable)
-                            .OfDataType<IEnumerable<bool>>()
-                            .WithComparisonOperator(Operators.In)
-                            .SetOperand(new[] { true })
-                            .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.Brand)
-                            .OfDataType<IEnumerable<string>>()
-                            .WithComparisonOperator(Operators.In)
-                            .SetOperand(new[] { "AMD", "Intel", "Cisco" })
-                            .Build())
-                        .Build())
-
+                .WithCondition(c => c
+                    .And(a => a
+                        .Value(BestServerConditions.Price, Operators.In, new[] { 100m, 200m, 300m })
+                        .Value(BestServerConditions.Memory, Operators.In, new[] { 12, 16, 24, 36 })
+                        .Value(BestServerConditions.Memory, Operators.NotIn, new[] { 4, 8 })
+                        .Value(BestServerConditions.StoragePartionable, Operators.In, new[] { true })
+                        .Value(BestServerConditions.Brand, Operators.In, new[] { "AMD", "Intel", "Cisco" }
+                    )))
                 .Build();
 
             // Act 2 - Create rule default

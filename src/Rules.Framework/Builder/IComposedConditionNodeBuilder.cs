@@ -7,6 +7,7 @@ namespace Rules.Framework.Builder
     /// Builder for composed condition nodes.
     /// </summary>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
+    [Obsolete("This way of building and adding composed conditions has been deprecated.")]
     public interface IComposedConditionNodeBuilder<TConditionType>
     {
         /// <summary>

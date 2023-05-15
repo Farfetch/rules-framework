@@ -15,7 +15,7 @@ namespace Rules.Framework.Builder
         /// <param name="conditionFunc">The function containing the logic for the root condition.</param>
         /// <returns></returns>
         IConditionNode<TConditionType> And(
-            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc);
+            Func<IFluentConditionNodeBuilder<TConditionType>, IFluentConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
         /// Sets a root Or condition for the condition node builder.
@@ -23,7 +23,7 @@ namespace Rules.Framework.Builder
         /// <param name="conditionFunc">The function containing the logic for the root condition.</param>
         /// <returns></returns>
         IConditionNode<TConditionType> Or(
-            Func<IChildComposedConditionNodeBuilder<TConditionType>, IChildComposedConditionNodeBuilder<TConditionType>> conditionFunc);
+            Func<IFluentConditionNodeBuilder<TConditionType>, IFluentConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
         /// Sets a value condition for the root condition node builder.
