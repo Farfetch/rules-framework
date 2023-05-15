@@ -11,7 +11,7 @@ namespace Rules.Framework
         /// <summary>
         /// Creates a Condition object.
         /// </summary>
-        /// <param name="Type">The type of condition.</param>
+        /// <param name="Type">The type of the condition.</param>
         /// <param name="Value">The value of the condition.</param>
         public Condition(TConditionType Type, object Value)
         {
