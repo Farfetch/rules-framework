@@ -242,26 +242,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new[]
             {
-                new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Price,
-                        Value = 100
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Memory,
-                        Value = 12
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.StoragePartionable,
-                        Value = true
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Brand,
-                        Value = "AMD"
-                    }
+                new Condition<BestServerConditions>(BestServerConditions.Price,100),
+                new Condition<BestServerConditions>(BestServerConditions.Memory,12),
+                new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
+                new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
             };
 
             var actual = await rulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions).ConfigureAwait(false);
