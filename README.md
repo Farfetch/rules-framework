@@ -71,7 +71,7 @@ var matchingRule = rulesEngine.MatchOneAsync(
         new DateTime(2021, 12, 25), 
         new[]
         {
-            new Condition<ConditionType>() { Type = ConditionType.ClientType, Value = "Premium" }
+            new Condition<ConditionType>(ConditionType.ClientType, "Premium")
         });
 ```
 
