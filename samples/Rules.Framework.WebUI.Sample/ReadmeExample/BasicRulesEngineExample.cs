@@ -50,15 +50,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .NewRule<BasicContentType, BasicConditionType>()
                 .WithName("Rule for April sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ShampooSample")
-                .WithCondition(c => c
-                    .And(x => x
-                        .Value(BasicConditionType.ClientType, Operators.Equal, "Queen")
-                        .Value(BasicConditionType.Country, Operators.In, new[] { "Portugal", "Spain" })
-                        .Or(y => y
-                            .Value(BasicConditionType.Country, Operators.Equal, "Brazil")
-                            .Value(BasicConditionType.Country, Operators.NotEqual, "United States")
-                        )
-                    ))
+                .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 04, 01), new DateTime(2023, 05, 01))
                 .Build();
 
