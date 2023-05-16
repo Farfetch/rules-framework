@@ -65,7 +65,7 @@ namespace Rules.Framework.Builder
             TContentType contentType,
             object content)
         {
-            var contentContainer = new ContentContainer<TContentType>(contentType, (t) => content);
+            var contentContainer = new ContentContainer<TContentType>(contentType, _ => content);
 
             return ruleBuilder.WithContentContainer(contentContainer);
         }
