@@ -42,7 +42,7 @@ namespace Rules.Framework
         IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition);
 
         /// <summary>
-        /// Sets the new rule with a root condition with the specified parameters.
+        /// Sets the new rule with a value condition with the specified parameters.
         /// </summary>
         /// <typeparam name="TDataType">The type of the data type.</typeparam>
         /// <param name="conditionType">The content type.</param>
