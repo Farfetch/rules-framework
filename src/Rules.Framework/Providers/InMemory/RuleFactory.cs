@@ -18,7 +18,7 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
-            var ruleBuilderResult = RuleBuilder
+            var ruleBuilderResult = Rules.Framework.RuleBuilder
                 .NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithActive(ruleDataModel.Active)
