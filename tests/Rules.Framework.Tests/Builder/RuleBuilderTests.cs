@@ -2,6 +2,7 @@ namespace Rules.Framework.Tests.Builder
 {
     using System;
     using FluentAssertions;
+    using Rules.Framework;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;

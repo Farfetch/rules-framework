@@ -1,6 +1,7 @@
-namespace Rules.Framework.Builder
+namespace Rules.Framework
 {
     using System;
+    using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
     /// <summary>
@@ -30,7 +31,7 @@ namespace Rules.Framework.Builder
         /// The function with specific logic to create the condition for the rule.
         /// </param>
         /// <returns></returns>
-        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload.")]
+        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload instead.")]
         IRuleBuilder<TContentType, TConditionType> WithCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
 
         /// <summary>

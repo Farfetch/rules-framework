@@ -7,14 +7,13 @@ namespace Rules.Framework.Builder
 
     internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
+        private readonly int? priority;
         private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
-
         private bool? active;
         private ContentContainer<TContentType> contentContainer;
         private DateTime dateBegin;
         private DateTime? dateEnd;
         private string name;
-        private int? priority;
         private IConditionNode<TConditionType> rootCondition;
 
         public RuleBuilderResult<TContentType, TConditionType> Build()
@@ -54,7 +53,7 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload.")]
+        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload instead.")]
         public IRuleBuilder<TContentType, TConditionType> WithCondition(
             Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
         {
@@ -70,9 +69,9 @@ namespace Rules.Framework.Builder
         {
             var rootConditionNodeBuilder = new RootConditionNodeBuilder<TConditionType>();
 
-            var rootCondition = conditionFunc.Invoke(rootConditionNodeBuilder);
+            var condition = conditionFunc.Invoke(rootConditionNodeBuilder);
 
-            return this.WithCondition(rootCondition);
+            return this.WithCondition(condition);
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithCondition<TDataType>(
@@ -87,9 +86,12 @@ namespace Rules.Framework.Builder
 
         public IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content)
         {
-            return this.WithContentContainer(new ContentContainer<TContentType>(contentType, _ => content));
+            this.contentContainer = new ContentContainer<TContentType>(contentType, _ => content);
+
+            return this;
         }
 
+        [Obsolete("This way of building the content is being deprecated. Please use WithContent().")]
         public IRuleBuilder<TContentType, TConditionType> WithContentContainer(ContentContainer<TContentType> contentContainer)
         {
             this.contentContainer = contentContainer;
