@@ -25,7 +25,7 @@ namespace Rules.Framework
         IRuleBuilder<TContentType, TConditionType> WithActive(bool active);
 
         /// <summary>
-        /// Sets the new rule with a specified condition.
+        /// Sets the new rule with the specified condition.
         /// </summary>
         /// <param name="conditionFunc">
         /// The function with specific logic to create the condition for the rule.
@@ -35,14 +35,14 @@ namespace Rules.Framework
         IRuleBuilder<TContentType, TConditionType> WithCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
 
         /// <summary>
-        /// Sets the new rule with a specified condition.
+        /// Sets the new rule with the specified root condition.
         /// </summary>
         /// <param name="condition">The condition.</param>
         /// <returns></returns>
         IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition);
 
         /// <summary>
-        /// Sets the new rule with the specified value condition.
+        /// Sets the new rule with a root condition with the specified parameters.
         /// </summary>
         /// <typeparam name="TDataType">The type of the data type.</typeparam>
         /// <param name="conditionType">The content type.</param>
