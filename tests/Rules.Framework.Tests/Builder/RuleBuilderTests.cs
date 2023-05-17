@@ -29,15 +29,8 @@ namespace Rules.Framework.Tests.Builder
             RuleBuilderResult<ContentType, ConditionType> ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
-                .WithContentContainer(new ContentContainer<ContentType>(contentType, t => content))
-                .WithCondition(b =>
-                {
-                    return b.AsValued(conditionType)
-                        .OfDataType<int>()
-                        .WithComparisonOperator(conditionOperator)
-                        .SetOperand(conditionValue)
-                        .Build();
-                })
+                .WithContent(contentType, content)
+                .WithCondition(conditionType, conditionOperator, conditionValue)
                 .Build();
 
             // Assert
@@ -69,15 +62,8 @@ namespace Rules.Framework.Tests.Builder
             RuleBuilderResult<ContentType, ConditionType> ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
-                .WithContentContainer(new ContentContainer<ContentType>(contentType, t => content))
-                .WithCondition(b =>
-                {
-                    return b.AsValued(conditionType)
-                        .OfDataType<string>()
-                        .WithComparisonOperator(conditionOperator)
-                        .SetOperand(conditionValue)
-                        .Build();
-                })
+                .WithContent(contentType, content)
+                .WithCondition(conditionType, conditionOperator, conditionValue)
                 .Build();
 
             // Assert
@@ -100,5 +86,7 @@ namespace Rules.Framework.Tests.Builder
             rootCondition.LogicalOperator.Should().Be(logicalOperator);
             rootCondition.Operator.Should().Be(conditionOperator);
         }
+
+        // TODO create test for WithCondition() with composed condition
     }
 }

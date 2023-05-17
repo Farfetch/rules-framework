@@ -65,6 +65,31 @@ namespace Rules.Framework.Builder
             return this.WithCondition(condition);
         }
 
+        public IRuleBuilder<TContentType, TConditionType> WithCondition(
+            Func<IRootConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
+        {
+            var rootConditionNodeBuilder = new RootConditionNodeBuilder<TConditionType>();
+
+            var rootCondition = conditionFunc.Invoke(rootConditionNodeBuilder);
+
+            return this.WithCondition(rootCondition);
+        }
+
+        public IRuleBuilder<TContentType, TConditionType> WithCondition<TDataType>(
+            TConditionType conditionType, Operators condOperator, TDataType operand)
+        {
+            var rootConditionNodeBuilder = new RootConditionNodeBuilder<TConditionType>();
+
+            var valueCondition = rootConditionNodeBuilder.Value(conditionType, condOperator, operand);
+
+            return this.WithCondition(valueCondition);
+        }
+
+        public IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content)
+        {
+            return this.WithContentContainer(new ContentContainer<TContentType>(contentType, _ => content));
+        }
+
         public IRuleBuilder<TContentType, TConditionType> WithContentContainer(ContentContainer<TContentType> contentContainer)
         {
             this.contentContainer = contentContainer;

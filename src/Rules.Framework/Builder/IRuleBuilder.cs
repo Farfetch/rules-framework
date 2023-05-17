@@ -41,10 +41,37 @@ namespace Rules.Framework.Builder
         IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition);
 
         /// <summary>
+        /// Sets the new rule with the specified value condition.
+        /// </summary>
+        /// <typeparam name="TDataType">The type of the data type.</typeparam>
+        /// <param name="conditionType">The content type.</param>
+        /// <param name="condOperator">The operator.</param>
+        /// <param name="operand">The operand.</param>
+        /// <returns></returns>
+        IRuleBuilder<TContentType, TConditionType> WithCondition<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
+
+        /// <summary>
+        /// Sets the new rule with the specified root condition.
+        /// </summary>
+        /// <param name="conditionFunc">The condition func.</param>
+        /// <returns></returns>
+        IRuleBuilder<TContentType, TConditionType> WithCondition(
+            Func<IRootConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
+
+        /// <summary>
+        /// Sets the new rule with the specified content.
+        /// </summary>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="content">The content.</param>
+        /// <returns></returns>
+        IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content);
+
+        /// <summary>
         /// Sets the new rule with the specified content container.
         /// </summary>
         /// <param name="contentContainer">The content container.</param>
         /// <returns></returns>
+        [Obsolete("This way of building the content is being deprecated. Please use WithContent().")]
         IRuleBuilder<TContentType, TConditionType> WithContentContainer(ContentContainer<TContentType> contentContainer);
 
         /// <summary>
