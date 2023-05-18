@@ -109,17 +109,13 @@ namespace Rules.Framework.Tests.Builder
         }
 
         [Fact]
-        public void NewRule_WithSerializerContent_SetsContentContainerAsSerializedContentContainer()
+        public void NewRule_WithSerializedContent_SetsContentAsSerializedContent()
         {
             // Arrange
             string ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
             var contentType = ContentType.Type1;
             string content = "TEST";
-
-            var ruleBuilder = RuleBuilder.NewRule<ContentType, ConditionType>()
-               .WithName(ruleName)
-               .WithDateBegin(dateBegin);
 
             var contentSerializer = Mock.Of<IContentSerializer>();
             Mock.Get(contentSerializer)
@@ -132,7 +128,9 @@ namespace Rules.Framework.Tests.Builder
                 .Returns(contentSerializer);
 
             // Act
-            var ruleBuilderResult = ruleBuilder
+            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
+                .WithName(ruleName)
+                .WithDateBegin(dateBegin)
                 .WithSerializedContent(contentType, content, contentSerializationProvider)
                 .Build();
 

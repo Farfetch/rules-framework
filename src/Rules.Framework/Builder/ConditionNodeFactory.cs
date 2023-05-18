@@ -39,7 +39,7 @@ namespace Rules.Framework.Builder
         public static IConditionNode<TConditionType> CreateValueNode<TConditionType, TDataType>(
             TConditionType conditionType, Operators condOperator, TDataType operand)
         {
-            return new ValueConditionNodeBuilder<TConditionType, TConditionType>(conditionType, condOperator, operand)
+            return new ValueConditionNodeBuilder<TConditionType, TDataType>(conditionType, condOperator, operand)
                 .Build();
         }
     }

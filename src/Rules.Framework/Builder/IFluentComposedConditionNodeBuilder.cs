@@ -10,7 +10,7 @@ namespace Rules.Framework.Builder
     public interface IFluentComposedConditionNodeBuilder<TConditionType>
     {
         /// <summary>
-        /// Adds a composed And condition to the child condition node builder.
+        /// Adds a composed And condition to the fluent condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
@@ -18,13 +18,13 @@ namespace Rules.Framework.Builder
             Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
-        /// Builds the child condition node.
+        /// Builds the composed condition node.
         /// </summary>
         /// <returns></returns>
         IConditionNode<TConditionType> Build();
 
         /// <summary>
-        /// Adds a composed Or condition to the child condition node builder.
+        /// Adds a composed Or condition to the fluent condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
@@ -32,7 +32,7 @@ namespace Rules.Framework.Builder
             Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
-        /// Adds a value condition to the child condition node builder.
+        /// Adds a value condition to the fluent condition node builder.
         /// </summary>
         /// <param name="conditionType">The condition type.</param>
         /// <param name="condOperator">The condition operator.</param>
