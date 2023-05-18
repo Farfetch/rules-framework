@@ -109,7 +109,7 @@ namespace Rules.Framework.Tests.Builder
         }
 
         [Fact]
-        public void WithSerializerContent_GivenRuleBuilderAndContentSerializationProvider_SetsContentContainerAsSerializedContentContainer()
+        public void NewRule_WithSerializerContent_SetsContentContainerAsSerializedContentContainer()
         {
             // Arrange
             string ruleName = "Rule 1";
