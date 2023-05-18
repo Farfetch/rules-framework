@@ -4,6 +4,7 @@ namespace Rules.Framework.Builder
     using System.Linq;
     using Rules.Framework.Builder.Validation;
     using Rules.Framework.Core;
+    using Rules.Framework.Serialization;
 
     internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
@@ -117,6 +118,21 @@ namespace Rules.Framework.Builder
         public IRuleBuilder<TContentType, TConditionType> WithName(string name)
         {
             this.name = name;
+
+            return this;
+        }
+
+        public IRuleBuilder<TContentType, TConditionType> WithSerializedContent(
+            TContentType contentType,
+            object serializedContent,
+            IContentSerializationProvider<TContentType> contentSerializationProvider)
+        {
+            if (contentSerializationProvider is null)
+            {
+                throw new System.ArgumentNullException(nameof(contentSerializationProvider));
+            }
+
+            this.contentContainer = new SerializedContentContainer<TContentType>(contentType, serializedContent, contentSerializationProvider);
 
             return this;
         }

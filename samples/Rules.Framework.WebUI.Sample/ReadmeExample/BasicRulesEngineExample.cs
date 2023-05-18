@@ -58,8 +58,6 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .WithName("Rule for September sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ConditionerSample")
                 .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
-                .WithCondition(c => c
-                    .And(a => a.)
                 .WithDatesInterval(new DateTime(2023, 09, 01), new DateTime(2023, 10, 01))
                 .Build();
 

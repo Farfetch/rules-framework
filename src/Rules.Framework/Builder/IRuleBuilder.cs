@@ -2,6 +2,7 @@ namespace Rules.Framework.Builder
 {
     using System;
     using Rules.Framework.Core;
+    using Rules.Framework.Serialization;
 
     /// <summary>
     /// Builder to create a new rule.
@@ -95,5 +96,18 @@ namespace Rules.Framework.Builder
         /// <param name="name">The name.</param>
         /// <returns></returns>
         IRuleBuilder<TContentType, TConditionType> WithName(string name);
+
+        /// <summary>
+        /// Sets the rule with serialized content.
+        /// </summary>
+        /// <param name="contentType">Type of the content.</param>
+        /// <param name="serializedContent">Content of the serialized.</param>
+        /// <param name="contentSerializationProvider">The content serialization provider.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">ruleBuilder or contentSerializationProvider</exception>
+        IRuleBuilder<TContentType, TConditionType> WithSerializedContent(
+            TContentType contentType,
+            object serializedContent,
+            IContentSerializationProvider<TContentType> contentSerializationProvider);
     }
 }

@@ -2,10 +2,12 @@ namespace Rules.Framework.Tests.Builder
 {
     using System;
     using FluentAssertions;
+    using Moq;
     using Rules.Framework;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Serialization;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
 
@@ -17,13 +19,13 @@ namespace Rules.Framework.Tests.Builder
         public void NewRule_GivenRuleWithIntegerConditionTypeAndContainsOperator_ReturnsInvalidRuleResult(Operators containsOperator)
         {
             // Arrange
-            string ruleName = "Rule 1";
-            DateTime dateBegin = DateTime.Parse("2021-01-01");
-            ContentType contentType = ContentType.Type1;
+            var ruleName = "Rule 1";
+            var dateBegin = DateTime.Parse("2021-01-01");
+            var contentType = ContentType.Type1;
             string content = "Content";
             const ConditionType conditionType = ConditionType.NumberOfSales;
             const int conditionValue = 40;
-            Operators conditionOperator = containsOperator;
+            var conditionOperator = containsOperator;
             const DataTypes dataType = DataTypes.Integer;
 
             // Act
@@ -50,17 +52,17 @@ namespace Rules.Framework.Tests.Builder
         {
             // Arrange
             string ruleName = "Rule 1";
-            DateTime dateBegin = DateTime.Parse("2021-01-01");
-            ContentType contentType = ContentType.Type1;
+            var dateBegin = DateTime.Parse("2021-01-01");
+            var contentType = ContentType.Type1;
             string content = "Content";
             const ConditionType conditionType = ConditionType.IsoCountryCode;
             const string conditionValue = "PT";
-            Operators conditionOperator = containsOperator;
+            var conditionOperator = containsOperator;
             const LogicalOperators logicalOperator = LogicalOperators.Eval;
             const DataTypes dataType = DataTypes.String;
 
             // Act
-            RuleBuilderResult<ContentType, ConditionType> ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
+            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
                 .WithContent(contentType, content)
@@ -89,5 +91,57 @@ namespace Rules.Framework.Tests.Builder
         }
 
         // TODO create test for WithCondition() with composed condition
+
+        [Fact]
+        public void NewRule_WithSerializedContent_GivenNullContentSerializationProvider_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var ruleBuilder = RuleBuilder.NewRule<ContentType, ConditionType>();
+            IContentSerializationProvider<ContentType> contentSerializationProvider = null;
+
+            // Act
+            ArgumentNullException argumentNullException = Assert
+                .Throws<ArgumentNullException>(() => ruleBuilder.WithSerializedContent(ContentType.Type1, "TEST", contentSerializationProvider));
+
+            // Assert
+            argumentNullException.Should().NotBeNull();
+            argumentNullException.ParamName.Should().Be(nameof(contentSerializationProvider));
+        }
+
+        [Fact]
+        public void WithSerializerContent_GivenRuleBuilderAndContentSerializationProvider_SetsContentContainerAsSerializedContentContainer()
+        {
+            // Arrange
+            string ruleName = "Rule 1";
+            var dateBegin = DateTime.Parse("2021-01-01");
+            var contentType = ContentType.Type1;
+            string content = "TEST";
+
+            var ruleBuilder = RuleBuilder.NewRule<ContentType, ConditionType>()
+               .WithName(ruleName)
+               .WithDateBegin(dateBegin);
+
+            IContentSerializer contentSerializer = Mock.Of<IContentSerializer>();
+            Mock.Get(contentSerializer)
+                .Setup(x => x.Deserialize(It.IsAny<object>(), It.IsAny<Type>()))
+                .Returns(content);
+
+            IContentSerializationProvider<ContentType> contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
+            Mock.Get(contentSerializationProvider)
+                .Setup(x => x.GetContentSerializer(contentType))
+                .Returns(contentSerializer);
+
+            // Act
+            var ruleBuilderResult = ruleBuilder
+                .WithSerializedContent(contentType, content, contentSerializationProvider)
+                .Build();
+
+            // Assert
+            var ruleContent = ruleBuilderResult.Rule.ContentContainer;
+            ruleContent.Should().NotBeNull();
+            ruleContent.Should().NotBeNull().And.BeOfType<SerializedContentContainer<ContentType>>();
+            ruleContent.ContentType.Should().Be(contentType);
+            ruleContent.GetContentAs<string>().Should().Be(content);
+        }
     }
 }
