@@ -98,13 +98,13 @@ namespace Rules.Framework.Builder
         IRuleBuilder<TContentType, TConditionType> WithName(string name);
 
         /// <summary>
-        /// Sets the rule with serialized content.
+        /// Sets the new rule with the specified serialized content.
         /// </summary>
-        /// <param name="contentType">Type of the content.</param>
-        /// <param name="serializedContent">Content of the serialized.</param>
+        /// <param name="contentType">The type of the content.</param>
+        /// <param name="serializedContent">The serialized content.</param>
         /// <param name="contentSerializationProvider">The content serialization provider.</param>
         /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">ruleBuilder or contentSerializationProvider</exception>
+        /// <exception cref="ArgumentNullException">ruleBuilder or contentSerializationProvider</exception>
         IRuleBuilder<TContentType, TConditionType> WithSerializedContent(
             TContentType contentType,
             object serializedContent,

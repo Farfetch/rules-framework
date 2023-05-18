@@ -83,7 +83,7 @@ namespace Rules.Framework.Tests.Builder
             rule.RootCondition.Should().NotBeNull();
             rule.RootCondition.Should().BeAssignableTo<IValueConditionNode<ConditionType>>();
 
-            IValueConditionNode<ConditionType> rootCondition = rule.RootCondition as IValueConditionNode<ConditionType>;
+            var rootCondition = rule.RootCondition as IValueConditionNode<ConditionType>;
             rootCondition.ConditionType.Should().Be(conditionType);
             rootCondition.DataType.Should().Be(dataType);
             rootCondition.LogicalOperator.Should().Be(logicalOperator);
@@ -100,7 +100,7 @@ namespace Rules.Framework.Tests.Builder
             IContentSerializationProvider<ContentType> contentSerializationProvider = null;
 
             // Act
-            ArgumentNullException argumentNullException = Assert
+            var argumentNullException = Assert
                 .Throws<ArgumentNullException>(() => ruleBuilder.WithSerializedContent(ContentType.Type1, "TEST", contentSerializationProvider));
 
             // Assert
@@ -121,12 +121,12 @@ namespace Rules.Framework.Tests.Builder
                .WithName(ruleName)
                .WithDateBegin(dateBegin);
 
-            IContentSerializer contentSerializer = Mock.Of<IContentSerializer>();
+            var contentSerializer = Mock.Of<IContentSerializer>();
             Mock.Get(contentSerializer)
                 .Setup(x => x.Deserialize(It.IsAny<object>(), It.IsAny<Type>()))
                 .Returns(content);
 
-            IContentSerializationProvider<ContentType> contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
+            var contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
             Mock.Get(contentSerializationProvider)
                 .Setup(x => x.GetContentSerializer(contentType))
                 .Returns(contentSerializer);

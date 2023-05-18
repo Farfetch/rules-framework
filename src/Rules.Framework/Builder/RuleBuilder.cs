@@ -129,7 +129,7 @@ namespace Rules.Framework.Builder
         {
             if (contentSerializationProvider is null)
             {
-                throw new System.ArgumentNullException(nameof(contentSerializationProvider));
+                throw new ArgumentNullException(nameof(contentSerializationProvider));
             }
 
             this.contentContainer = new SerializedContentContainer<TContentType>(contentType, serializedContent, contentSerializationProvider);
