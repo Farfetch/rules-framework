@@ -18,13 +18,13 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
-            var ruleBuilderResult = Rules.Framework.RuleBuilder
+            var ruleBuilderResult = RuleBuilder
                 .NewRule<TContentType, TConditionType>()
                 .WithName(ruleDataModel.Name)
                 .WithActive(ruleDataModel.Active)
                 .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
                 .WithCondition(cnb => ruleDataModel.RootCondition is { } ? ConvertConditionNode(cnb, ruleDataModel.RootCondition) : null)
-                .WithContent(ruleDataModel.ContentType, ruleDataModel.Content)
+                .WithContent(ruleDataModel.ContentType, (object)ruleDataModel.Content)
                 .Build();
 
             if (!ruleBuilderResult.IsSuccess)

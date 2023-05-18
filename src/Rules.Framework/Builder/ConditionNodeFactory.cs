@@ -3,9 +3,20 @@ namespace Rules.Framework.Builder
     using System;
     using Rules.Framework.Core;
 
-    internal static class ConditionNodeFactory<TConditionType>
+    /// <summary>
+    /// Factory for creating condition nodes.
+    /// </summary>
+    public class ConditionNodeFactory
     {
-        public static IConditionNode<TConditionType> CreateComposedNode(
+        /// <summary>
+        /// Creates a composed condition node.
+        /// </summary>
+        /// <param name="logicalOperator">The logical operator.</param>
+        /// <param name="conditionFunc">
+        /// The function containing the logic for the composed condition node.
+        /// </param>
+        /// <returns></returns>
+        public static IConditionNode<TConditionType> CreateComposedNode<TConditionType>(
             LogicalOperators logicalOperator,
             Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
@@ -18,15 +29,17 @@ namespace Rules.Framework.Builder
             return composedConditionNode;
         }
 
-        public static IConditionNode<TConditionType> CreateValueNode<TDataType>(
-            TConditionType conditionType,
-            Operators condOperator,
-            TDataType operand)
+        /// <summary>
+        /// Creates a value condition node.
+        /// </summary>
+        /// <param name="conditionType">The condition type.</param>
+        /// <param name="condOperator">The condition operator.</param>
+        /// <param name="operand">The condition operand.</param>
+        /// <returns></returns>
+        public static IConditionNode<TConditionType> CreateValueNode<TConditionType, TDataType>(
+            TConditionType conditionType, Operators condOperator, TDataType operand)
         {
-            return new ValueConditionNodeBuilder<TConditionType>(conditionType)
-                .OfDataType<TDataType>()
-                .WithComparisonOperator(condOperator)
-                .SetOperand(operand)
+            return new ValueConditionNodeBuilder<TConditionType, TConditionType>(conditionType, condOperator, operand)
                 .Build();
         }
     }

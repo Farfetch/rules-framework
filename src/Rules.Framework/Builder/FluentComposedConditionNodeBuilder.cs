@@ -19,7 +19,7 @@ namespace Rules.Framework.Builder
         public IFluentComposedConditionNodeBuilder<TConditionType> And(
             Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateComposedNode(LogicalOperators.And, conditionFunc);
+            var composedConditionNode = ConditionNodeFactory.CreateComposedNode(LogicalOperators.And, conditionFunc);
 
             this.conditions.Add(composedConditionNode);
 
@@ -34,7 +34,7 @@ namespace Rules.Framework.Builder
         public IFluentComposedConditionNodeBuilder<TConditionType> Or(
             Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
-            var composedConditionNode = ConditionNodeFactory<TConditionType>.CreateComposedNode(LogicalOperators.Or, conditionFunc);
+            var composedConditionNode = ConditionNodeFactory.CreateComposedNode(LogicalOperators.Or, conditionFunc);
 
             this.conditions.Add(composedConditionNode);
 
@@ -43,7 +43,7 @@ namespace Rules.Framework.Builder
 
         public IFluentComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand)
         {
-            var valueConditionNode = ConditionNodeFactory<TConditionType>.CreateValueNode(conditionType, condOperator, operand);
+            var valueConditionNode = ConditionNodeFactory.CreateValueNode(conditionType, condOperator, operand);
 
             this.conditions.Add(valueConditionNode);
 

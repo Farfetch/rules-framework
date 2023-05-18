@@ -29,6 +29,13 @@ namespace Rules.Framework.Builder
             this.conditionType = conditionType;
         }
 
+        public ValueConditionNodeBuilder(TConditionType conditionType, Operators comparisonOperator, object operand)
+        {
+            this.conditionType = conditionType;
+            this.comparisonOperator = comparisonOperator;
+            this.operand = operand;
+        }
+
         public IValueConditionNode<TConditionType> Build()
         {
             switch (this.operand)

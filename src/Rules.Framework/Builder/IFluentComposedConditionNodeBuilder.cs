@@ -1,4 +1,4 @@
-namespace Rules.Framework
+namespace Rules.Framework.Builder
 {
     using System;
     using Rules.Framework.Core;

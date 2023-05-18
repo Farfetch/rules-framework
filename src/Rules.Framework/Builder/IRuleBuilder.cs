@@ -1,7 +1,6 @@
-namespace Rules.Framework
+namespace Rules.Framework.Builder
 {
     using System;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
     /// <summary>

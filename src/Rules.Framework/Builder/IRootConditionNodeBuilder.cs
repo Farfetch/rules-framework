@@ -1,4 +1,4 @@
-namespace Rules.Framework
+namespace Rules.Framework.Builder
 {
     using System;
     using Rules.Framework.Core;
@@ -32,7 +32,6 @@ namespace Rules.Framework
         /// <param name="condOperator">The condition operator.</param>
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
-        IConditionNode<TConditionType> Value<TDataType>
-            (TConditionType conditionType, Operators condOperator, TDataType operand);
+        IConditionNode<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
     }
 }
