@@ -39,5 +39,11 @@ namespace Rules.Framework.Builder
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
         IFluentComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
+
+        /// <summary>
+        /// Adds a value condition to the fluent condition node builder.
+        /// </summary>
+        /// <param name="valueConditionNode">The value condition node.</param>
+        IFluentComposedConditionNodeBuilder<TConditionType> Value(IConditionNode<TConditionType> valueConditionNode);
     }
 }

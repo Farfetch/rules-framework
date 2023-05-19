@@ -134,7 +134,7 @@ namespace Rules.Framework.Tests.Builder
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
                 .WithContent(contentType, content)
-                .WithCondition(conditionType, conditionOperator, conditionValue)
+                .WithCondition(c => c.Value(conditionType, conditionOperator, conditionValue))
                 .Build();
 
             // Assert

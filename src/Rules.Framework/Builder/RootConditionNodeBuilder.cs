@@ -22,5 +22,10 @@ namespace Rules.Framework.Builder
         {
             return ConditionNodeFactory.CreateValueNode(conditionType, condOperator, operand);
         }
+
+        public IConditionNode<TConditionType> Value(IConditionNode<TConditionType> valueConditionNode)
+        {
+            return valueConditionNode;
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Rules.Framework.Builder
     /// Builder for composed condition nodes.
     /// </summary>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    [Obsolete("This way of building and adding composed conditions has been deprecated.")]
+    [Obsolete("This way of building and adding composed conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentComposedConditionNodeBuilder interfaces.")]
     public interface IComposedConditionNodeBuilder<TConditionType>
     {
         /// <summary>
@@ -15,7 +15,6 @@ namespace Rules.Framework.Builder
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
-        [Obsolete("This way of adding conditions has been deprecated. Please use Value(), Or() or And() methods.")]
         IComposedConditionNodeBuilder<TConditionType> AddCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
 
         /// <summary>
@@ -29,7 +28,6 @@ namespace Rules.Framework.Builder
         /// </summary>
         /// <param name="logicalOperator">The logical operator.</param>
         /// <returns></returns>
-        [Obsolete("This way of composing conditions has been deprecated. Please use Value(), Or() or And() methods.")]
         IComposedConditionNodeBuilder<TConditionType> WithLogicalOperator(LogicalOperators logicalOperator);
     }
 }

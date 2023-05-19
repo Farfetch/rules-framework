@@ -5,7 +5,6 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario4;
     using Xunit;
@@ -39,10 +38,11 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .Build();
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = RuleBuilder.NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = RuleBuilder
+                .NewRule<DiscountConfigurations, DiscountConditions>()
                 .WithName("Discounts Weekend MAY2021")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => 15m))
+                .WithContent(DiscountConfigurations.DiscountCampaigns, 15m)
                 .WithCondition(c => c
                     .And(a => a
                         .Value(DiscountConditions.ProductRecommendedRetailPrice, Operators.GreaterThanOrEqual, 1000)
@@ -110,7 +110,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             var ruleBuilderResult = RuleBuilder.NewRule<DiscountConfigurations, DiscountConditions>()
                 .WithName("Discounts Weekend MAY2021 - Tiered discount")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => 15m))
+                .WithContent(DiscountConfigurations.DiscountCampaigns, 15m)
                 .WithCondition(c => c
                     .And(a => a
                         .Value(DiscountConditions.ProductRecommendedRetailPrice, Operators.GreaterThanOrEqual, 1000)
@@ -184,7 +184,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Not a staff discount")
-                    .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => 5m))
+                    .WithContent(DiscountConfigurations.DiscountCampaigns, 5m)
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
                     .WithCondition(DiscountConditions.CustomerEmail, Operators.NotContains, "@staff.com")
                     .Build();
@@ -246,7 +246,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
-                    .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => ProductColor.Blue.ToString()))
+                    .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
                     .WithCondition(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
                     .Build();
@@ -308,7 +308,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
-                    .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => ProductColor.Blue.ToString()))
+                    .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
                     .WithCondition(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
                     .Build();
@@ -362,7 +362,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 RuleBuilder
                     .NewRule<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
-                    .WithContentContainer(new ContentContainer<DiscountConfigurations>(DiscountConfigurations.DiscountCampaigns, t => ProductColor.Blue.ToString()))
+                    .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
                     .WithCondition(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
                     .Build();

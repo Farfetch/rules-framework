@@ -49,5 +49,12 @@ namespace Rules.Framework.Builder
 
             return this;
         }
+
+        public IFluentComposedConditionNodeBuilder<TConditionType> Value(IConditionNode<TConditionType> valueConditionNode)
+        {
+            this.conditions.Add(valueConditionNode);
+
+            return this;
+        }
     }
 }

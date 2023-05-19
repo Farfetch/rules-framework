@@ -33,5 +33,11 @@ namespace Rules.Framework.Builder
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
         IConditionNode<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
+
+        /// <summary>
+        /// Sets a value condition to the fluent condition node builder.
+        /// </summary>
+        /// <param name="valueConditionNode">The value condition node.</param>
+        IConditionNode<TConditionType> Value(IConditionNode<TConditionType> valueConditionNode);
     }
 }

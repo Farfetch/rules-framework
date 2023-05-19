@@ -10,7 +10,6 @@ namespace Rules.Framework.IntegrationTests
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.DataSource;
-    using Rules.Framework.Serialization;
 
     internal class RulesFromJsonFile
     {

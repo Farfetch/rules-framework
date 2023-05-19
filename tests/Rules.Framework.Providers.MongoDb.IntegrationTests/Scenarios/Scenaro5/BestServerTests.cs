@@ -6,7 +6,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
     using System.Threading.Tasks;
     using FluentAssertions;
     using MongoDB.Driver;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario5;
     using Rules.Framework.Providers.MongoDb;
@@ -96,7 +95,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
             var ruleBuilderResult = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Top5")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContentContainer(new ContentContainer<BestServerConfigurations>(BestServerConfigurations.BestServerEvaluation, t => "Top5"))
+                .WithContent(BestServerConfigurations.BestServerEvaluation, "Top5")
                 .WithCondition(c => c
                     .And(a => a
                         .Value(BestServerConditions.Price, Operators.In, new[] { 100m, 200m, 300m })
@@ -111,7 +110,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
             var ruleBuilderResultDefault = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Default")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                 .WithContentContainer(new ContentContainer<BestServerConfigurations>(BestServerConfigurations.BestServerEvaluation, t => "Default"))
+                .WithContent(BestServerConfigurations.BestServerEvaluation, "Default")
                 .Build();
 
             // Assert 1
