@@ -1,6 +1,6 @@
-namespace Rules.Framework.Providers.InMemory
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Microsoft.Extensions.DependencyInjection;
+    using Rules.Framework.Providers.InMemory;
 
     /// <summary>
     /// Service collection extensions from in-memory provider.

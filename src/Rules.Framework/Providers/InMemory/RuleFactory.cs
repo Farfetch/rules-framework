@@ -20,6 +20,7 @@ namespace Rules.Framework.Providers.InMemory
 
             var rule = new Rule<TContentType, TConditionType>()
             {
+                Active = ruleDataModel.Active,
                 ContentContainer = contentContainer,
                 DateBegin = ruleDataModel.DateBegin,
                 DateEnd = ruleDataModel.DateEnd,
@@ -48,6 +49,7 @@ namespace Rules.Framework.Providers.InMemory
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
+                Active = rule.Active,
                 RootCondition = rule.RootCondition is { } ? ConvertConditionNode(rule.RootCondition) : null!,
             };
 

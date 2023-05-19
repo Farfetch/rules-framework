@@ -64,7 +64,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             }
         }
 
-        internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(InMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
+        internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
         {
             var ruleFactory = new RuleFactory<TContentType, TConditionType>();
             return new InMemoryProviderRulesDataSource<TContentType, TConditionType>(inMemoryRulesStorage, ruleFactory);
@@ -97,6 +97,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
                         DateEnd = t.DateEnd,
                         Name = t.Name,
                         Priority = t.Priority,
+                        Active = t.Active ?? true,
                         RootCondition = this.CreateConditionNodeDataModel<TConditionType>(t.RootCondition)
                     };
                 }).ToList();

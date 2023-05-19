@@ -20,8 +20,8 @@ namespace Rules.Framework.WebUI.Extensions
                 {
                     ConditionTypeName = condition.ConditionTypeName,
                     DataType = condition.DataType.ToString(),
-                    Operand = condition.Operand.ToString(),
-                    Operator = condition.Operator.ToString()
+                    Operand = condition.Operand,
+                    Operator = condition.Operator.ToString(),
                 };
             }
 
@@ -51,7 +51,7 @@ namespace Rules.Framework.WebUI.Extensions
                 Value = rule.Content,
                 DateEnd = !rule.DateEnd.HasValue ? null : rule.DateEnd.Value.ToString(dateFormat),
                 DateBegin = rule.DateBegin.ToString(dateFormat),
-                Status = ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
+                Status = !rule.Active ? RuleStatusDto.Deactivated.ToString() : ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
             };
         }
     }

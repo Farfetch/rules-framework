@@ -4,6 +4,7 @@ namespace Rules.Framework.WebUI.Dto
     {
         Inactive,
         Active,
-        Pending
+        Pending,
+        Deactivated
     }
 }

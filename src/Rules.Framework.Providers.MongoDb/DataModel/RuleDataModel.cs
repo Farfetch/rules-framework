@@ -5,6 +5,9 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
 
     internal sealed class RuleDataModel
     {
+        [BsonElement(Order = 8)]
+        public bool? Active { get; set; }
+
         [BsonElement(Order = 7)]
         public dynamic Content { get; set; }
 
