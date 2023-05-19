@@ -5,6 +5,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario5;
     using Xunit;
@@ -15,13 +16,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
         public async Task BestServer_DeactivatingBestServerTop5_ReturnsBestServerDefault()
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<BestServerConfigurations, BestServerConditions>(Enumerable.Empty<Rule<BestServerConfigurations, BestServerConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<BestServerConfigurations, BestServerConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                  .WithContentType<BestServerConfigurations>()
                  .WithConditionType<BestServerConditions>()
-                 .SetDataSource(rulesDataSource)
+                 .SetInMemoryDataSource(serviceProvider)
                  .Build();
 
             // Act 1 - Create rule with "in" operator
@@ -152,13 +154,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
         public async Task BestServer_UpdatingBestServerTop5_ReturnsBestServerDefault()
         {
             // Arrange
-            var rulesDataSource
-                = new InMemoryRulesDataSource<BestServerConfigurations, BestServerConditions>(Enumerable.Empty<Rule<BestServerConfigurations, BestServerConditions>>());
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<BestServerConfigurations, BestServerConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                  .WithContentType<BestServerConfigurations>()
                  .WithConditionType<BestServerConditions>()
-                 .SetDataSource(rulesDataSource)
+                 .SetInMemoryDataSource(serviceProvider)
                  .Build();
 
             // Act 1 - Create rule with "in" operator
