@@ -1,6 +1,7 @@
 namespace Rules.Framework.Tests.Builder
 {
     using System;
+    using System.Linq;
     using FluentAssertions;
     using Moq;
     using Rules.Framework;
@@ -13,6 +14,73 @@ namespace Rules.Framework.Tests.Builder
 
     public class RuleBuilderTests
     {
+        [Fact]
+        public void NewRule_GivenRuleWithComposedCondition_BuildsAndReturnsRule()
+        {
+            // Arrange
+            string ruleName = "Rule 1";
+            var dateBegin = DateTime.Parse("2021-01-01");
+            var contentType = ContentType.Type1;
+            string content = "Content";
+
+            // Act
+            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
+                .WithName(ruleName)
+                .WithDateBegin(dateBegin)
+                .WithContent(contentType, content)
+                .WithCondition(c => c
+                    .Or(o => o
+                        .Value(ConditionType.IsoCountryCode, Operators.Equal, "PT")
+                        .And(a => a
+                            .Value(ConditionType.NumberOfSales, Operators.GreaterThan, 1000)
+                            .Value(ConditionType.IsoCurrency, Operators.In, new[] { "EUR", "USD" })
+                     )))
+                .Build();
+
+            // Assert
+            ruleBuilderResult.Should().NotBeNull();
+            ruleBuilderResult.IsSuccess.Should().BeTrue();
+
+            var rule = ruleBuilderResult.Rule;
+            rule.Name.Should().Be(ruleName);
+            rule.DateBegin.Should().Be(dateBegin);
+            rule.DateEnd.Should().BeNull();
+            rule.ContentContainer.Should().NotBeNull();
+
+            // root node
+            rule.RootCondition.Should().BeOfType<ComposedConditionNode<ConditionType>>();
+            var rootCondition = rule.RootCondition as ComposedConditionNode<ConditionType>;
+            rootCondition.LogicalOperator.Should().Be(LogicalOperators.Or);
+            rootCondition.ChildConditionNodes.Should().HaveCount(2);
+            var childNodes = rootCondition.ChildConditionNodes.ToList();
+
+            // first child node
+            childNodes[0].Should().BeOfType<ValueConditionNode<ConditionType>>();
+            var isoCountryChildNode = childNodes[0] as ValueConditionNode<ConditionType>;
+            isoCountryChildNode.ConditionType.Should().Be(ConditionType.IsoCountryCode);
+            isoCountryChildNode.Operator.Should().Be(Operators.Equal);
+            isoCountryChildNode.Operand.Should().Be("PT");
+
+            // second child nodes
+            childNodes[1].Should().BeOfType<ComposedConditionNode<ConditionType>>();
+            var composedChildNode = childNodes[1] as ComposedConditionNode<ConditionType>;
+            composedChildNode.LogicalOperator.Should().Be(LogicalOperators.And);
+            composedChildNode.ChildConditionNodes.Should().HaveCount(2);
+            var composedChildNodes = composedChildNode.ChildConditionNodes.ToList();
+
+            composedChildNodes[0].Should().BeOfType<ValueConditionNode<ConditionType>>();
+            var numberOfSalesChildNode = composedChildNodes[0] as ValueConditionNode<ConditionType>;
+            numberOfSalesChildNode.ConditionType.Should().Be(ConditionType.NumberOfSales);
+            numberOfSalesChildNode.Operator.Should().Be(Operators.GreaterThan);
+            numberOfSalesChildNode.Operand.Should().Be(1000);
+
+            composedChildNodes[1].Should().BeOfType<ValueConditionNode<ConditionType>>();
+            var isoCurrencyChildNode = composedChildNodes[1] as ValueConditionNode<ConditionType>;
+            isoCurrencyChildNode.ConditionType.Should().Be(ConditionType.IsoCurrency);
+            isoCurrencyChildNode.Operator.Should().Be(Operators.In);
+            isoCurrencyChildNode.Operand.Should().BeEquivalentTo(new[] { "EUR", "USD" });
+        }
+
         [Theory]
         [InlineData(Operators.Contains)]
         [InlineData(Operators.NotContains)]
