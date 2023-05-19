@@ -6,7 +6,7 @@ namespace Rules.Framework.Builder
     /// <summary>
     /// Factory for creating condition nodes.
     /// </summary>
-    public class ConditionNodeFactory
+    public static class ConditionNodeFactory
     {
         /// <summary>
         /// Creates a composed condition node.

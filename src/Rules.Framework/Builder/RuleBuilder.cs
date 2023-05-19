@@ -8,7 +8,6 @@ namespace Rules.Framework.Builder
 
     internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
-        private readonly int? priority;
         private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
         private bool? active;
         private ContentContainer<TContentType> contentContainer;
@@ -25,7 +24,6 @@ namespace Rules.Framework.Builder
                 DateBegin = this.dateBegin,
                 DateEnd = this.dateEnd,
                 Name = this.name,
-                Priority = this.priority.GetValueOrDefault(0),
                 RootCondition = this.rootCondition,
                 Active = this.active ?? true,
             };
