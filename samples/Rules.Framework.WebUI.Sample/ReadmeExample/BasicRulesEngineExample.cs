@@ -1,7 +1,6 @@
 namespace Rules.Framework.WebUI.Sample.ReadmeExample
 {
     using System;
-    using global::Rules.Framework.Builder;
     using global::Rules.Framework.Core;
     using global::Rules.Framework.Providers.InMemory;
     using global::Rules.Framework.WebUI.Sample.Engine;
@@ -42,12 +41,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .NewRule<BasicContentType, BasicConditionType>()
                 .WithName("Rule for January sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "SmallPerfumeSample")
-                .WithCondition(c => c
-                    .AsValued(BasicConditionType.ClientType)
-                    .OfDataType<string>()
-                    .WithComparisonOperator(Operators.Equal)
-                    .SetOperand("Premium")
-                    .Build())
+                .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 01, 01), new DateTime(2023, 02, 01))
                 .Build();
 
@@ -55,12 +49,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .NewRule<BasicContentType, BasicConditionType>()
                 .WithName("Rule for April sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ShampooSample")
-                .WithCondition(c => c
-                    .AsValued(BasicConditionType.ClientType)
-                    .OfDataType<string>()
-                    .WithComparisonOperator(Operators.Equal)
-                    .SetOperand("Premium")
-                    .Build())
+                .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 04, 01), new DateTime(2023, 05, 01))
                 .Build();
 
@@ -68,12 +57,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .NewRule<BasicContentType, BasicConditionType>()
                 .WithName("Rule for September sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ConditionerSample")
-                .WithCondition(c => c
-                    .AsValued(BasicConditionType.ClientType)
-                    .OfDataType<string>()
-                    .WithComparisonOperator(Operators.Equal)
-                    .SetOperand("Premium")
-                    .Build())
+                .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 09, 01), new DateTime(2023, 10, 01))
                 .Build();
 

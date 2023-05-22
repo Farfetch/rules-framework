@@ -6,7 +6,6 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework;
-    using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
     using Rules.Framework.Providers.InMemory;
     using Xunit;
@@ -153,7 +152,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
+                .WithContent(ContentTypes.CarInsuranceAdvice, CarInsuranceAdvices.Pay)
                 .Build();
 
             var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>

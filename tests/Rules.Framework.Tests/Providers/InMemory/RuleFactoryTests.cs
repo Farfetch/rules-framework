@@ -4,6 +4,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
     using System.Dynamic;
     using System.Linq;
     using FluentAssertions;
+    using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Providers.InMemory;
@@ -236,38 +237,26 @@ namespace Rules.Framework.Tests.Providers.InMemory
             content.Prop2 = "Sample string";
             content.Prop3 = 500.34m;
 
-            ValueConditionNode<ConditionType> booleanConditionNode = null;
-            ValueConditionNode<ConditionType> decimalConditionNode = null;
-            ValueConditionNode<ConditionType> integerConditionNode = null;
-            ValueConditionNode<ConditionType> stringConditionNode = null;
+            var booleanConditionNode = ConditionNodeFactory
+                .CreateValueNode(ConditionType.SampleBooleanCondition, Operators.NotEqual, true) as ValueConditionNode<ConditionType>;
+            var decimalConditionNode = ConditionNodeFactory
+                .CreateValueNode(ConditionType.SampleDecimalCondition, Operators.LesserThanOrEqual, 50.3m) as ValueConditionNode<ConditionType>;
+            var integerConditionNode = ConditionNodeFactory
+                .CreateValueNode(ConditionType.SampleIntegerCondition, Operators.GreaterThan, 20) as ValueConditionNode<ConditionType>;
+            var stringConditionNode = ConditionNodeFactory
+                .CreateValueNode(ConditionType.SampleStringCondition, Operators.Equal, "TEST") as ValueConditionNode<ConditionType>;
 
             var rule1 = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("My rule used for testing purposes")
                 .WithDateBegin(new DateTime(2020, 1, 1))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.ContentTypeSample, (_) => (object)content))
-                .WithCondition(cnb => cnb.AsComposed()
-                    .WithLogicalOperator(LogicalOperators.And)
-                    .AddCondition(cnb1 => booleanConditionNode = cnb1.AsValued(ConditionType.SampleBooleanCondition)
-                        .OfDataType<bool>()
-                        .WithComparisonOperator(Operators.NotEqual)
-                        .SetOperand(true)
-                        .Build() as ValueConditionNode<ConditionType>)
-                    .AddCondition(cnb1 => decimalConditionNode = cnb1.AsValued(ConditionType.SampleDecimalCondition)
-                        .OfDataType<decimal>()
-                        .WithComparisonOperator(Operators.LesserThanOrEqual)
-                        .SetOperand(50.3m)
-                        .Build() as ValueConditionNode<ConditionType>)
-                    .AddCondition(cnb1 => integerConditionNode = cnb1.AsValued(ConditionType.SampleIntegerCondition)
-                        .OfDataType<int>()
-                        .WithComparisonOperator(Operators.GreaterThan)
-                        .SetOperand(20)
-                        .Build() as ValueConditionNode<ConditionType>)
-                    .AddCondition(cnb1 => stringConditionNode = cnb1.AsValued(ConditionType.SampleStringCondition)
-                        .OfDataType<string>()
-                        .WithComparisonOperator(Operators.Equal)
-                        .SetOperand("TEST")
-                        .Build() as ValueConditionNode<ConditionType>)
-                    .Build())
+                .WithContent(ContentType.ContentTypeSample, (object)content)
+                .WithCondition(c => c
+                    .And(a => a
+                        .Value(booleanConditionNode)
+                        .Value(decimalConditionNode)
+                        .Value(integerConditionNode)
+                        .Value(stringConditionNode)
+                    ))
                 .Build().Rule;
 
             var ruleFactory = new RuleFactory<ContentType, ConditionType>();
