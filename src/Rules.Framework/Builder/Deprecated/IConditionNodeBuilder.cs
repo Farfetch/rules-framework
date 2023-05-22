@@ -14,7 +14,6 @@ namespace Rules.Framework.Builder
         /// Begins building a condition node as composed.
         /// </summary>
         /// <returns></returns>
-        //[Obsolete("This way of building conditions has been deprecated. Please use the other options available.")]
         IComposedConditionNodeBuilder<TConditionType> AsComposed();
 
         /// <summary>
@@ -22,7 +21,6 @@ namespace Rules.Framework.Builder
         /// </summary>
         /// <param name="conditionType">Type of the condition.</param>
         /// <returns></returns>
-        //[Obsolete("This way of building conditions has been deprecated. Please use the other options available.")]
         IValueConditionNodeBuilder<TConditionType> AsValued(TConditionType conditionType);
     }
 }

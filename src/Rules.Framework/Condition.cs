@@ -9,7 +9,7 @@ namespace Rules.Framework
     public class Condition<TConditionType>
     {
         /// <summary>
-        /// Creates a Condition object.
+        /// Creates a Condition.
         /// </summary>
         /// <param name="Type">The type of the condition.</param>
         /// <param name="Value">The value of the condition.</param>
@@ -20,7 +20,7 @@ namespace Rules.Framework
         }
 
         /// <summary>
-        /// Creates a Condition object.
+        /// Creates a Condition.
         /// </summary>
         public Condition()
         {
