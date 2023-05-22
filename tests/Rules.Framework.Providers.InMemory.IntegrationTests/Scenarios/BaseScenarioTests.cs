@@ -48,7 +48,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             }
         }
 
-        internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(InMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
+        internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
         {
             IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>();
             return new InMemoryProviderRulesDataSource<TContentType, TConditionType>(inMemoryRulesStorage, ruleFactory);

@@ -12,7 +12,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
     public class CarInsuranceAdvisorTests : BaseScenarioTests
     {
-        private readonly InMemoryRulesStorage<ContentTypes, ConditionTypes> inMemoryRulesStorage;
+        private readonly IInMemoryRulesStorage<ContentTypes, ConditionTypes> inMemoryRulesStorage;
 
         public CarInsuranceAdvisorTests()
         {

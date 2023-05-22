@@ -1,11 +1,12 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
 {
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario1;
+    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     [System.Runtime.InteropServices.Guid("309D98C5-4007-4116-92B1-9FEAD18B9DC3")]
@@ -18,14 +19,15 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
         [InlineData(true)]
         public async Task AddRule_AddingNewRuleFromScratchWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter(bool enableCompilation)
         {
-            IRulesDataSource<ContentTypes, ConditionTypes> rulesDataSource =
-                new InMemoryRulesDataSource<ContentTypes, ConditionTypes>(Enumerable.Empty<Rule<ContentTypes, ConditionTypes>>());
-
             // Arrange
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
+
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
@@ -70,6 +72,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             ruleOperationResult2.Should().NotBeNull();
             ruleOperationResult2.IsSuccess.Should().BeTrue();
 
+            var inMemoryRulesStorage = serviceProvider.GetService<IInMemoryRulesStorage<ContentTypes, ConditionTypes>>();
+            var rulesDataSource = CreateRulesDataSource(inMemoryRulesStorage);
             var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(2);
             rules.Should().ContainEquivalentOf(newRule1);
@@ -83,18 +87,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
         public async Task AddRule_AddingNewRuleWithAgeConditionAtPriority1AndNewRuleAtPriority3_NewRuleIsInsertedAndExistentRulePriorityUpdatedAndNewRuleInsertedAfter(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(Formula));
 
             var newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
@@ -134,6 +142,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             ruleOperationResult2.Should().NotBeNull();
             ruleOperationResult2.IsSuccess.Should().BeTrue();
 
+            var inMemoryRulesStorage = serviceProvider.GetService<IInMemoryRulesStorage<ContentTypes, ConditionTypes>>();
+            var rulesDataSource = CreateRulesDataSource(inMemoryRulesStorage);
             var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(3);
             rules.Should().ContainEquivalentOf(newRule1);
@@ -147,18 +157,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
         public async Task AddRule_AddingNewRuleWithAgeConditionOnTop_NewRuleIsInsertedAndExistentRulePriorityUpdated(bool enableCompilation)
         {
             // Arrange
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(Formula));
 
             var newRuleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
@@ -184,6 +198,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             ruleOperationResult.Should().NotBeNull();
             ruleOperationResult.IsSuccess.Should().BeTrue();
 
+            var inMemoryRulesStorage = serviceProvider.GetService<IInMemoryRulesStorage<ContentTypes, ConditionTypes>>();
+            var rulesDataSource = CreateRulesDataSource(inMemoryRulesStorage);
             var rules = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
             rules.Should().NotBeNull().And.HaveCount(2);
             rules.Should().ContainEquivalentOf(newRule, o => o.Excluding(x => x.RootCondition.Properties));
@@ -202,18 +218,22 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new Condition<ConditionTypes>[0];
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<ContentTypes, ConditionTypes>(DataSourceFilePath);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<ContentTypes, ConditionTypes>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(Formula));
 
             // Act
             var actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
@@ -223,6 +243,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var actualFormula = actual.ContentContainer.GetContentAs<Formula>();
             actualFormula.Description.Should().Be(expectedFormulaDescription);
             actualFormula.Value.Should().Be(expectedFormulaValue);
+        }
+
+        private static IRulesDataSource<ContentTypes, ConditionTypes> CreateRulesDataSource(IInMemoryRulesStorage<ContentTypes, ConditionTypes> inMemoryRulesStorage)
+        {
+            var ruleFactory = new RuleFactory<ContentTypes, ConditionTypes>();
+            return new InMemoryProviderRulesDataSource<ContentTypes, ConditionTypes>(inMemoryRulesStorage, ruleFactory);
         }
     }
 }

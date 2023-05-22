@@ -4,7 +4,6 @@ namespace Rules.Framework.IntegrationTests
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Rules.Framework.Builder;
@@ -17,18 +16,15 @@ namespace Rules.Framework.IntegrationTests
 
         public static RulesFromJsonFile Load => instance;
 
-        public async Task<IRulesDataSource<TContentType, TConditionType>> FromJsonFileAsync<TContentType, TConditionType>(string filePath, bool serializedContent = true)
+        public async Task FromJsonFileAsync<TContentType, TConditionType>(RulesEngine<TContentType, TConditionType> rulesEngine, string filePath, Type contentRuntimeType, bool serializedContent = true)
             where TContentType : new()
         {
-            var serializationProvider = new JsonContentSerializationProvider<TContentType>();
-
             using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (var streamReader = new StreamReader(fileStream))
             {
                 var contents = await streamReader.ReadToEndAsync();
                 var ruleDataModels = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents));
 
-                var rules = new List<Rule<TContentType, TConditionType>>(ruleDataModels.Count());
                 foreach (var ruleDataModel in ruleDataModels)
                 {
                     var contentType = GetContentType<TContentType>(ruleDataModel.ContentTypeCode);
@@ -42,30 +38,29 @@ namespace Rules.Framework.IntegrationTests
                         ruleBuilder.WithCondition(b => this.ConvertConditionNode(b, ruleDataModel.RootCondition));
                     }
 
+                    object content;
                     if (serializedContent)
                     {
-                        ruleBuilder.WithSerializedContent(contentType, ruleDataModel.Content, serializationProvider);
+                        content = JsonConvert.DeserializeObject(ruleDataModel.Content, contentRuntimeType);
                     }
                     else
                     {
-                        ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (t) => RulesFromJsonFile.Parse(ruleDataModel.Content, t)));
+                        content = RulesFromJsonFile.Parse(ruleDataModel.Content, contentRuntimeType);
                     }
 
+                    ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (_) => content));
                     var ruleBuilderResult = ruleBuilder.Build();
 
                     if (ruleBuilderResult.IsSuccess)
                     {
                         var rule = ruleBuilderResult.Rule;
-                        rule.Priority = ruleDataModel.Priority;
-                        rules.Add(rule);
+                        await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.ByPriorityNumber(ruleDataModel.Priority));
                     }
                     else
                     {
                         throw new InvalidRuleException($"Loaded invalid rule from file. Rule name: {ruleDataModel.Name}");
                     }
                 }
-
-                return new InMemoryRulesDataSource<TContentType, TConditionType>(rules);
             }
         }
 
