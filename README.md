@@ -52,12 +52,7 @@ var ruleForPremiumFreeSample = RuleBuilder
     .NewRule<ContentType, ConditionType>()
     .WithName("Rule for perfume sample for premium clients.")
     .WithContent(ContentType.FreeSample, "SmallPerfumeSample")
-    .WithCondition(c => c
-        .AsValued(ConditionType.ClientType)
-        .OfDataType<string>()
-        .WithComparisonOperator(Operators.Equal)
-        .SetOperand("Premium")
-        .Build())
+    .WithCondition(ConditionType.ClientType, Operators.Equal, "Premium")
     .WithDateBegin(new DateTime(2020, 01, 01))
     .Build();
 ```
@@ -76,7 +71,7 @@ var matchingRule = rulesEngine.MatchOneAsync(
         new DateTime(2021, 12, 25), 
         new[]
         {
-            new Condition<ConditionType>() { Type = ConditionType.ClientType, Value = "Premium" }
+            new Condition<ConditionType>(ConditionType.ClientType, "Premium")
         });
 ```
 

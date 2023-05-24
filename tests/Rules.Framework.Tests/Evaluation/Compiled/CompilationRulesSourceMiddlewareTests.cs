@@ -599,16 +599,11 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var ruleBuilder = RuleBuilder.NewRule<ContentType, ConditionType>()
                         .WithName("Test rule")
                         .WithDateBegin(DateTime.UtcNow)
-                        .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type1, t => "Test content"));
+                        .WithContent(ContentType.Type1, "Test content");
 
             if (withCondition)
             {
-                ruleBuilder.WithCondition(x =>
-                    x.AsValued(ConditionType.IsoCountryCode)
-                        .OfDataType<string>()
-                        .WithComparisonOperator(Operators.Equal)
-                        .SetOperand("PT")
-                        .Build());
+                ruleBuilder.WithCondition(ConditionType.IsoCountryCode, Operators.Equal, "PT");
             }
 
             return ruleBuilder.Build();

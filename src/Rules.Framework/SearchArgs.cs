@@ -24,7 +24,31 @@ namespace Rules.Framework
             this.DateBegin = dateBegin;
             this.DateEnd = dateEnd;
             this.ExcludeRulesWithoutSearchConditions = false;
+            this.Active = null;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SearchArgs{TContentType, TConditionType}"/> class.
+        /// </summary>
+        /// <param name="contentType">Type of the content.</param>
+        /// <param name="dateBegin">The date begin.</param>
+        /// <param name="dateEnd">The date end.</param>
+        /// <param name="active">The active status.</param>
+        public SearchArgs(TContentType contentType, DateTime dateBegin, DateTime dateEnd, bool active)
+        {
+            this.Conditions = Enumerable.Empty<Condition<TConditionType>>();
+            this.ContentType = contentType;
+            this.DateBegin = dateBegin;
+            this.DateEnd = dateEnd;
+            this.ExcludeRulesWithoutSearchConditions = false;
+            this.Active = active;
+        }
+
+        /// <summary>
+        /// Gets or sets the active status.
+        /// </summary>
+        /// <value>The active status.</value>
+        public bool? Active { get; }
 
         /// <summary>
         /// Gets or sets the search conditions.

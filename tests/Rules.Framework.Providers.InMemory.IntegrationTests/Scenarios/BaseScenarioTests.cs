@@ -48,7 +48,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             }
         }
 
-        internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(InMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
+        internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
         {
             IRuleFactory<TContentType, TConditionType> ruleFactory = new RuleFactory<TContentType, TConditionType>();
             return new InMemoryProviderRulesDataSource<TContentType, TConditionType>(inMemoryRulesStorage, ruleFactory);
@@ -59,12 +59,12 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage,
             Func<dynamic, TContent> contentConvertFunc)
         {
-            Stream rulesFile = File.OpenRead(dataSourceFilePath);
+            var rulesFile = File.OpenRead(dataSourceFilePath);
 
             IEnumerable<RuleDataModel<TContentType, TConditionType>> rules;
-            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
+            using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
-                string json = streamReader.ReadToEnd();
+                var json = streamReader.ReadToEnd();
 
                 IEnumerable<dynamic> array = JsonConvert.DeserializeObject(json, new JsonSerializerSettings
                 {
@@ -81,6 +81,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
                         DateEnd = t.DateEnd,
                         Name = t.Name,
                         Priority = t.Priority,
+                        Active = t.Active ?? true,
                         RootCondition = this.CreateConditionNodeDataModel<TConditionType>(t.RootCondition)
                     };
                 }).ToList();

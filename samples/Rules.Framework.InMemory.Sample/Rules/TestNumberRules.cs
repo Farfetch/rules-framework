@@ -36,65 +36,37 @@ namespace Rules.Framework.InMemory.Sample.Rules
 
         private RuleBuilderResult<ContentTypes, ConditionTypes> CreateDefaultRule() =>
                                      RuleBuilder
-                             .NewRule<ContentTypes, ConditionTypes>()
-                             .WithName("Default rule for test number")
-                             .WithContent(ContentTypes.TestNumber, ":| default nothing special about this number")
-                             .WithDateBegin(new DateTime(2019, 01, 01))
-                             .Build();
+            .NewRule<ContentTypes, ConditionTypes>()
+            .WithName("Default rule for test number")
+            .WithContent(ContentTypes.TestNumber, ":| default nothing special about this number")
+            .WithDateBegin(new DateTime(2019, 01, 01))
+            .Build();
 
         private RuleBuilderResult<ContentTypes, ConditionTypes> CreateRuleForCoolNumbers() =>
                                      RuleBuilder
-                             .NewRule<ContentTypes, ConditionTypes>()
-                             .WithName("Rule for cool numbers")
-                             .WithContent(ContentTypes.TestNumber, ":D this number is so COOL!")
-                             .WithDateBegin(new DateTime(2019, 01, 01))
-                             .WithCondition(cnb => cnb.AsComposed()
-                                    .WithLogicalOperator(LogicalOperators.Or)
-                                        .AddCondition(condition => condition
-                                            .AsValued(ConditionTypes.RoyalNumber).OfDataType<int>()
-                                            .WithComparisonOperator(Operators.Equal)
-                                            .SetOperand(7)
-                                            .Build())
-                                        .AddCondition(condition => condition.AsComposed()
-                                            .WithLogicalOperator(LogicalOperators.And)
-                                            .AddCondition(sub => sub
-                                                .AsValued(ConditionTypes.IsPrimeNumber).OfDataType<bool>()
-                                                .WithComparisonOperator(Operators.Equal)
-                                                .SetOperand(true)
-                                                .Build())
-                                            .AddCondition(sub => sub
-                                                .AsValued(ConditionTypes.SumAll).OfDataType<string>()
-                                                .WithComparisonOperator(Operators.StartsWith)
-                                                .SetOperand("5")
-                                                .Build())
-                                            .Build())
-                                        .Build())
-                              .Build();
+            .NewRule<ContentTypes, ConditionTypes>()
+            .WithName("Rule for cool numbers")
+            .WithContent(ContentTypes.TestNumber, ":D this number is so COOL!")
+            .WithDateBegin(new DateTime(2019, 01, 01))
+            .WithCondition(c => c
+            .Or(o => o
+                .Value(ConditionTypes.RoyalNumber, Operators.Equal, 7)
+                .And(a => a
+                    .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, 7)
+                    .Value(ConditionTypes.SumAll, Operators.StartsWith, "5"))))
+            .Build();
 
         private RuleBuilderResult<ContentTypes, ConditionTypes> CreateRuleForSosoNumbers() =>
                                      RuleBuilder
-                             .NewRule<ContentTypes, ConditionTypes>()
-                             .WithName("Rule for so so numbers")
-                             .WithContent(ContentTypes.TestNumber, ":) this number is so so")
-                             .WithDateBegin(new DateTime(2019, 01, 01))
-                             .WithCondition(cnb => cnb.AsComposed()
-                                    .WithLogicalOperator(LogicalOperators.Or)
-                                        .AddCondition(condition => condition
-                                            .AsValued(ConditionTypes.CanNumberBeDividedBy3).OfDataType<bool>()
-                                            .WithComparisonOperator(Operators.Equal)
-                                            .SetOperand(true)
-                                            .Build())
-                                        .AddCondition(condition => condition
-                                            .AsValued(ConditionTypes.IsPrimeNumber).OfDataType<bool>()
-                                            .WithComparisonOperator(Operators.Equal)
-                                            .SetOperand(false)
-                                            .Build())
-                                        .AddCondition(sub => sub
-                                            .AsValued(ConditionTypes.SumAll).OfDataType<string>()
-                                            .WithComparisonOperator(Operators.EndsWith)
-                                            .SetOperand("9")
-                                            .Build())
-                                        .Build())
-                              .Build();
+            .NewRule<ContentTypes, ConditionTypes>()
+            .WithName("Rule for so so numbers")
+            .WithContent(ContentTypes.TestNumber, ":) this number is so so")
+            .WithDateBegin(new DateTime(2019, 01, 01))
+            .WithCondition(c => c
+                .Or(o => o
+                    .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, true)
+                    .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, false)
+                    .Value(ConditionTypes.SumAll, Operators.StartsWith, "9")))
+            .Build();
     }
 }

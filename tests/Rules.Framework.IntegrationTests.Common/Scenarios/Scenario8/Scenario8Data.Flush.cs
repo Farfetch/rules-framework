@@ -15,49 +15,25 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     .WithName("Benchmark 3 - Flush of Clubs")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(x =>
-                        x.AsValued(ConditionTypes.NumberOfClubs)
-                            .OfDataType<int>()
-                            .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                            .SetOperand(5)
-                            .Build()
-                        )
+                    .WithCondition(ConditionTypes.NumberOfClubs, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Flush of Diamonds")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(x =>
-                        x.AsValued(ConditionTypes.NumberOfDiamonds)
-                            .OfDataType<int>()
-                            .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                            .SetOperand(5)
-                            .Build()
-                        )
+                    .WithCondition(ConditionTypes.NumberOfDiamonds, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Flush of Hearts")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(x =>
-                        x.AsValued(ConditionTypes.NumberOfHearts)
-                            .OfDataType<int>()
-                            .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                            .SetOperand(5)
-                            .Build()
-                        )
+                    .WithCondition(ConditionTypes.NumberOfHearts, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Flush of Spades")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(x =>
-                        x.AsValued(ConditionTypes.NumberOfSpades)
-                            .OfDataType<int>()
-                            .WithComparisonOperator(Operators.GreaterThanOrEqual)
-                            .SetOperand(5)
-                            .Build()
-                        )
+                    .WithCondition(ConditionTypes.NumberOfSpades, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
             };
         }

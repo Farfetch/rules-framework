@@ -14,7 +14,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
     public class BuildingSecuritySystemControlTests : BaseScenarioTests
     {
-        private readonly InMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions> inMemoryRulesStorage;
+        private readonly IInMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions> inMemoryRulesStorage;
 
         public BuildingSecuritySystemControlTests()
         {

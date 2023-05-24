@@ -133,13 +133,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule() => RuleBuilder.NewRule<ContentType, ConditionType>()
             .WithName("Test rule")
             .WithDateBegin(DateTime.UtcNow)
-            .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type1, t => "Test content"))
-            .WithCondition(x =>
-                x.AsValued(ConditionType.IsoCurrency)
-                    .OfDataType<string>()
-                    .WithComparisonOperator(Operators.Equal)
-                    .SetOperand("EUR")
-                    .Build())
+            .WithContent(ContentType.Type1, "Test content")
+            .WithCondition(ConditionType.IsoCurrency, Operators.Equal, "EUR")
             .Build();
     }
 }

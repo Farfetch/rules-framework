@@ -32,7 +32,9 @@ namespace Rules.Framework.Evaluation.Compiled
             GetRulesArgs<TContentType> args,
             GetRulesDelegate<TContentType, TConditionType> next)
         {
-            var rules = await next.Invoke(args).ConfigureAwait(false);
+            var result = await next.Invoke(args).ConfigureAwait(false);
+
+            var rules = result.ToList();
 
             var compiledRulesTasks = rules.Select(async (rule) =>
             {
@@ -53,7 +55,9 @@ namespace Rules.Framework.Evaluation.Compiled
             GetRulesFilteredArgs<TContentType> args,
             GetRulesFilteredDelegate<TContentType, TConditionType> next)
         {
-            var rules = await next.Invoke(args).ConfigureAwait(false);
+            var result = await next.Invoke(args).ConfigureAwait(false);
+
+            var rules = result.ToList();
 
             var compiledRulesTasks = rules.Select(async (rule) =>
             {

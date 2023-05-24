@@ -20,14 +20,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
                 .WithName("Benchmark 1 - Test rule")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.ContentType1, "Dummy Content")
-                .WithCondition(x =>
-                {
-                    return x.AsValued(ConditionTypes.StringCondition)
-                        .OfDataType<string>()
-                        .WithComparisonOperator(Operators.Equal)
-                        .SetOperand("Let's benchmark this!")
-                        .Build();
-                })
+                .WithCondition(ConditionTypes.StringCondition, Operators.Equal, "Let's benchmark this!")
                 .Build();
 
             return new[] { ruleResult.Rule };

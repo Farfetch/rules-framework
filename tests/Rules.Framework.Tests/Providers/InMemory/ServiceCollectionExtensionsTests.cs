@@ -1,9 +1,9 @@
-namespace Rules.Framework.Providers.InMemory.Tests
+namespace Rules.Framework.Tests.Providers.InMemory
 {
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
     using Moq;
-    using Rules.Framework.Providers.InMemory.Tests.TestStubs;
+    using Rules.Framework.Tests.Providers.InMemory.TestStubs;
     using Xunit;
 
     public class ServiceCollectionExtensionsTests
@@ -12,8 +12,8 @@ namespace Rules.Framework.Providers.InMemory.Tests
         public void AddInMemoryRulesDataSource_GivenSingletonLifetimeOption_AddsServiceDescriptorAsSingleton()
         {
             // Arrange
-            ServiceLifetime serviceLifetime = ServiceLifetime.Singleton;
-            IServiceCollection services = Mock.Of<IServiceCollection>();
+            var serviceLifetime = ServiceLifetime.Singleton;
+            var services = Mock.Of<IServiceCollection>();
 
             ServiceDescriptor serviceDescriptor = null;
             Mock.Get(services)
@@ -24,7 +24,7 @@ namespace Rules.Framework.Providers.InMemory.Tests
                 });
 
             // Act
-            IServiceCollection actual = services.AddInMemoryRulesDataSource<ContentType, ConditionType>(serviceLifetime);
+            var actual = services.AddInMemoryRulesDataSource<ContentType, ConditionType>(serviceLifetime);
 
             // Assert
             actual.Should().NotBeNull();

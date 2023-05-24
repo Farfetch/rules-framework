@@ -6,7 +6,7 @@ namespace Rules.Framework
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using FluentValidation;
+    using Rules.Framework.Builder.Validation;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Extensions;
@@ -27,6 +27,7 @@ namespace Rules.Framework
         private readonly IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor;
         private readonly RulesEngineOptions rulesEngineOptions;
         private readonly IRulesSource<TContentType, TConditionType> rulesSource;
+        private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
         private readonly IValidatorProvider validatorProvider;
 
         internal RulesEngine(
@@ -41,6 +42,24 @@ namespace Rules.Framework
             this.validatorProvider = validatorProvider;
             this.rulesEngineOptions = rulesEngineOptions;
             this.conditionTypeExtractor = conditionTypeExtractor;
+        }
+
+        /// <summary>
+        /// Activates the specified existing rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
+        public Task<RuleOperationResult> ActivateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            rule.Active = true;
+
+            return this.UpdateRuleInternalAsync(rule);
         }
 
         /// <summary>
@@ -66,6 +85,24 @@ namespace Rules.Framework
             }
 
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
+        }
+
+        /// <summary>
+        /// Deactivates the specified existing rule.
+        /// </summary>
+        /// <param name="rule">The rule.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">rule</exception>
+        public Task<RuleOperationResult> DeactivateRuleAsync(Rule<TContentType, TConditionType> rule)
+        {
+            if (rule is null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            rule.Active = false;
+
+            return this.UpdateRuleInternalAsync(rule);
         }
 
         /// <summary>
@@ -131,7 +168,7 @@ namespace Rules.Framework
             var dateBegin = matchDateTime;
             var dateEnd = matchDateTime;
 
-            return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions);
+            return this.MatchAsync(contentType, dateBegin, dateEnd, conditions, evaluationOptions, active: true);
         }
 
         /// <summary>
@@ -203,7 +240,7 @@ namespace Rules.Framework
                 MatchMode = MatchModes.Search,
             };
 
-            return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions).ConfigureAwait(false);
+            return await this.MatchAsync(searchArgs.ContentType, dateBegin, dateEnd, searchArgs.Conditions, evaluationOptions, searchArgs.Active).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -345,7 +382,8 @@ namespace Rules.Framework
             DateTime matchDateBegin,
             DateTime matchDateEnd,
             IEnumerable<Condition<TConditionType>> conditions,
-            EvaluationOptions evaluationOptions)
+            EvaluationOptions evaluationOptions,
+            bool? active)
         {
             var getRulesArgs = new GetRulesArgs<TContentType>
             {
@@ -359,7 +397,7 @@ namespace Rules.Framework
             var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
 
             var matchedRules = rules
-                .Where(r => r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions))
+                .Where(r => (active is null || r.Active == active) && (r.RootCondition == null || this.conditionsEvalEngine.Eval(r.RootCondition, conditionsAsDictionary, evaluationOptions)))
                 .ToList();
 
             return matchedRules;
@@ -385,6 +423,13 @@ namespace Rules.Framework
             if (existentRule is null)
             {
                 return RuleOperationResult.Error(new[] { $"Rule with name '{rule.Name}' does not exist." });
+            }
+
+            var validationResult = this.ruleValidator.Validate(rule);
+
+            if (!validationResult.IsValid)
+            {
+                return RuleOperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage));
             }
 
             var topPriorityThreshold = Math.Min(rule.Priority, existentRule.Priority);
