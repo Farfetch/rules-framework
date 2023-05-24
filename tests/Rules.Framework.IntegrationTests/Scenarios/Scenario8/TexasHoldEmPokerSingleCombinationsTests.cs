@@ -5,7 +5,6 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
     using FluentAssertions;
     using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
     using Rules.Framework.IntegrationTests.Common.Scenarios;
-    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class TexasHoldEmPokerSingleCombinationsTests
@@ -19,16 +18,16 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
             var matchDate = new DateTime(2023, 1, 1);
             var conditions = new[]
             {
-                new Condition<ConditionTypes> { Type = ConditionTypes.NumberOfKings, Value = 1 },
-                new Condition<ConditionTypes> { Type = ConditionTypes.NumberOfQueens, Value = 1 },
-                new Condition<ConditionTypes> { Type = ConditionTypes.NumberOfJacks, Value = 1 },
-                new Condition<ConditionTypes> { Type = ConditionTypes.NumberOfTens, Value = 1 },
-                new Condition<ConditionTypes> { Type = ConditionTypes.NumberOfNines, Value = 1 },
-                new Condition<ConditionTypes> { Type = ConditionTypes.KingOfClubs, Value = true },
-                new Condition<ConditionTypes> { Type = ConditionTypes.QueenOfDiamonds, Value = true },
-                new Condition<ConditionTypes> { Type = ConditionTypes.JackOfClubs, Value = true },
-                new Condition<ConditionTypes> { Type = ConditionTypes.TenOfHearts, Value = true },
-                new Condition<ConditionTypes> { Type = ConditionTypes.NineOfSpades, Value = true },
+                new Condition<ConditionTypes>(ConditionTypes.NumberOfKings, 1),
+                new Condition<ConditionTypes>(ConditionTypes.NumberOfQueens, 1),
+                new Condition<ConditionTypes>(ConditionTypes.NumberOfJacks, 1 ),
+                new Condition<ConditionTypes>(ConditionTypes.NumberOfTens, 1 ),
+                new Condition<ConditionTypes>(ConditionTypes.NumberOfNines, 1),
+                new Condition<ConditionTypes>(ConditionTypes.KingOfClubs, true),
+                new Condition<ConditionTypes>(ConditionTypes.QueenOfDiamonds, true),
+                new Condition<ConditionTypes>(ConditionTypes.JackOfClubs, true),
+                new Condition<ConditionTypes>(ConditionTypes.TenOfHearts, true),
+                new Condition<ConditionTypes>(ConditionTypes.NineOfSpades, true),
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
