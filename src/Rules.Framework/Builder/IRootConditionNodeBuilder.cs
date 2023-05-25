@@ -10,7 +10,7 @@ namespace Rules.Framework.Builder
     public interface IRootConditionNodeBuilder<TConditionType>
     {
         /// <summary>
-        /// Sets a root And condition to the condition node builder.
+        /// Sets a And composed condition to the root condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the root condition.</param>
         /// <returns></returns>
@@ -18,13 +18,13 @@ namespace Rules.Framework.Builder
             Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
-        /// Sets a condition to the root condition node builder.
+        /// Sets a Condition to the root condition node builder.
         /// </summary>
         /// <param name="conditionNode">The condition node.</param>
         IConditionNode<TConditionType> Condition(IConditionNode<TConditionType> conditionNode);
 
         /// <summary>
-        /// Sets a root Or condition to the condition node builder.
+        /// Sets a Or composed condition to the root condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the root condition.</param>
         /// <returns></returns>
@@ -32,7 +32,7 @@ namespace Rules.Framework.Builder
             Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc);
 
         /// <summary>
-        /// Sets a value condition to the root condition node builder.
+        /// Sets a Value condition to the root condition node builder.
         /// </summary>
         /// <param name="conditionType">The condition type.</param>
         /// <param name="condOperator">The condition operator.</param>
