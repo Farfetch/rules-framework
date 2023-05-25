@@ -7,7 +7,7 @@ namespace Rules.Framework.Tests
     public class ConditionTests
     {
         [Fact]
-        public void Type_HavingSettedType_ReturnsSettedValue()
+        public void Condition_Ctor_Success()
         {
             // Arrange
             var expectedType = ConditionType.IsoCountryCode;
