@@ -24,6 +24,12 @@ namespace Rules.Framework.Builder
         IConditionNode<TConditionType> Build();
 
         /// <summary>
+        /// Adds a condition to the fluent condition node builder.
+        /// </summary>
+        /// <param name="conditionNode">The condition node.</param>
+        IFluentComposedConditionNodeBuilder<TConditionType> Condition(IConditionNode<TConditionType> conditionNode);
+
+        /// <summary>
         /// Adds a composed Or condition to the fluent condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
@@ -39,11 +45,5 @@ namespace Rules.Framework.Builder
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
         IFluentComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
-
-        /// <summary>
-        /// Adds a value condition to the fluent condition node builder.
-        /// </summary>
-        /// <param name="valueConditionNode">The value condition node.</param>
-        IFluentComposedConditionNodeBuilder<TConditionType> Value(IConditionNode<TConditionType> valueConditionNode);
     }
 }

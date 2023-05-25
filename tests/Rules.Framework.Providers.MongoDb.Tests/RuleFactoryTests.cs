@@ -208,10 +208,10 @@ namespace Rules.Framework.Providers.MongoDb.Tests
                 .WithContent(ContentType.ContentTypeSample, (object)content)
                 .WithCondition(c => c
                     .And(a => a
-                        .Value(booleanConditionNode)
-                        .Value(decimalConditionNode)
-                        .Value(integerConditionNode)
-                        .Value(stringConditionNode)
+                        .Condition(booleanConditionNode)
+                        .Condition(decimalConditionNode)
+                        .Condition(integerConditionNode)
+                        .Condition(stringConditionNode)
                     ))
                 .Build().Rule;
 
