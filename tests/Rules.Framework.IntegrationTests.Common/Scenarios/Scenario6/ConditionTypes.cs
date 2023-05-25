@@ -1,6 +1,6 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 {
-    internal enum ConditionTypes
+    public enum ConditionTypes
     {
         IntegerCondition = 1,
         DecimalCondition = 2,

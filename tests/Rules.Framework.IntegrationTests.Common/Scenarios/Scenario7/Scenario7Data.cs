@@ -6,7 +6,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
-    internal class Benchmark2Data : IBenchmarkData<ContentTypes, ConditionTypes>
+    public class Scenario7Data : IScenarioData<ContentTypes, ConditionTypes>
     {
         public IEnumerable<Condition<ConditionTypes>> Conditions => new[]
         {
