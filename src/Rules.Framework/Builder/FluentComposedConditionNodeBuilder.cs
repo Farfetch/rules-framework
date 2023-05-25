@@ -31,9 +31,9 @@ namespace Rules.Framework.Builder
             return new ComposedConditionNode<TConditionType>(this.logicalOperator, this.conditions);
         }
 
-        public IFluentComposedConditionNodeBuilder<TConditionType> Condition(IConditionNode<TConditionType> valueConditionNode)
+        public IFluentComposedConditionNodeBuilder<TConditionType> Condition(IConditionNode<TConditionType> conditionNode)
         {
-            this.conditions.Add(valueConditionNode);
+            this.conditions.Add(conditionNode);
 
             return this;
         }
