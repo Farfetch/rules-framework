@@ -1,5 +1,7 @@
 namespace Rules.Framework
 {
+    using System;
+
     /// <summary>
     /// Defines a condition to filter rules.
     /// </summary>
@@ -22,6 +24,7 @@ namespace Rules.Framework
         /// <summary>
         /// Creates a Condition.
         /// </summary>
+        [Obsolete("Please use the constructor with parameters instead.")]
         public Condition()
         {
         }

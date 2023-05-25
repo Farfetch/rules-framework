@@ -25,21 +25,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2020, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.ClaimDescription,
-                    Value = "Driver A claims that Driver B appeared to be under the effect of alcohol."
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts,800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate,23.45602m),
+                new Condition<ConditionTypes>(ConditionTypes.ClaimDescription,"Driver A claims that Driver B appeared to be under the effect of alcohol.")
             };
 
             var serviceProvider = new ServiceCollection()
@@ -93,16 +81,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts,800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate,23.45602m)
             };
 
             var serviceProvider = new ServiceCollection()
@@ -144,16 +124,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionTypes>
-                    {
-                        Type = ConditionTypes.RepairCosts,
-                        Value = 800.00000m
-                    },
-                    new Condition<ConditionTypes>
-                    {
-                        Type = ConditionTypes.RepairCostsCommercialValueRate,
-                        Value = 86.33m
-                    }
+                    new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                    new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 86.33m)
                 },
                 ExcludeRulesWithoutSearchConditions = true
             };
@@ -196,11 +168,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionTypes>
-                    {
-                        Type = ConditionTypes.RepairCosts,
-                        Value = 1200.00000m
-                    }
+                    new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 1200.00000m)
                 },
                 ExcludeRulesWithoutSearchConditions = false
             };
@@ -243,16 +211,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts,800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate,23.45602m)
             };
 
             var serviceProvider = new ServiceCollection()
