@@ -82,7 +82,7 @@ namespace Rules.Framework.Tests.Extensions
             var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Dummy Rule")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type1, (_) => expectedRuleContent))
+                .WithContent(ContentType.Type1, expectedRuleContent)
                 .WithCondition(composedCondition)
                 .Build();
 
@@ -111,7 +111,7 @@ namespace Rules.Framework.Tests.Extensions
             var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Dummy Rule")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type2, (_) => expectedRuleContent))
+                .WithContent(ContentType.Type2, expectedRuleContent)
                 .Build();
 
             var rule = ruleBuilderResult.Rule;
@@ -135,7 +135,7 @@ namespace Rules.Framework.Tests.Extensions
             var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Dummy Rule")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type1, (_) => expectedRuleContent))
+                .WithContent(ContentType.Type1, expectedRuleContent)
                 .WithCondition(expectedRootCondition)
                 .Build();
 

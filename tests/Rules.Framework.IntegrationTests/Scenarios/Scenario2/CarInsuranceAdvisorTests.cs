@@ -63,29 +63,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on on accident under the effect of drugs or alcohol")
                 .WithDateBegin(DateTime.Parse("2020-01-01"))
-                .WithCondition(b =>
-                {
-                    return b.AsComposed()
-                        .WithLogicalOperator(LogicalOperators.Or)
-                        .AddCondition(cb =>
-                        {
-                            return cb.AsValued(ConditionTypes.ClaimDescription)
-                                .OfDataType<string>()
-                                .WithComparisonOperator(Operators.Contains)
-                                .SetOperand("alcohol")
-                                .Build();
-                        })
-                        .AddCondition(cb =>
-                        {
-                            return cb.AsValued(ConditionTypes.ClaimDescription)
-                                .OfDataType<string>()
-                                .WithComparisonOperator(Operators.Contains)
-                                .SetOperand("drugs")
-                                .Build();
-                        })
-                        .Build();
-                })
-                .WithContentContainer(new ContentContainer<ContentTypes>(expectedContent, t => CarInsuranceAdvices.PerformInvestigation))
+                .WithCondition(c => c
+                    .Or(o => o
+                        .Value(ConditionTypes.ClaimDescription, Operators.Contains, "alcohol")
+                        .Value(ConditionTypes.ClaimDescription, Operators.Contains, "drugs")
+                    ))
+                .WithContent(expectedContent, CarInsuranceAdvices.PerformInvestigation)
                 .Build();
 
             // Act
@@ -290,10 +273,11 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
             await RulesFromJsonFile.Load
                 .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
 
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var ruleBuilderResult = RuleBuilder
+                .NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
+                .WithContent(ContentTypes.CarInsuranceAdvice, CarInsuranceAdvices.Pay)
                 .Build();
 
             var inMemoryRulesStorage = serviceProvider.GetService<IInMemoryRulesStorage<ContentTypes, ConditionTypes>>();

@@ -37,17 +37,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
+                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
                     Value = "weight / ((height + 1) ^ 2)" // Not real, for the sake of the test.
-                }))
-                .WithCondition(cnb => cnb
-                    .AsValued(ConditionTypes.Age)
-                    .OfDataType<int>()
-                    .WithComparisonOperator(Operators.LesserThanOrEqual)
-                    .SetOperand(18)
-                    .Build())
+                })
+                .WithCondition(ConditionTypes.Age, Operators.LesserThanOrEqual, 18)
                 .Build();
 
             var newRule1 = newRuleResult1.Rule;
@@ -56,11 +51,11 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Sample rule")
                 .WithDateBegin(DateTime.Parse("2021-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
+                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
                 {
                     Description = "Sample formula",
                     Value = "0"
-                }))
+                })
                 .Build();
 
             var newRule2 = ruleBuilderResult2.Rule;
@@ -112,17 +107,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var newRuleResult1 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
+                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
                     Value = "weight / ((height + 1) ^ 2)" // Not real, for the sake of the test.
-                }))
-                .WithCondition(cnb => cnb
-                    .AsValued(ConditionTypes.Age)
-                    .OfDataType<int>()
-                    .WithComparisonOperator(Operators.LesserThanOrEqual)
-                    .SetOperand(18)
-                    .Build())
+                })
+                .WithCondition(ConditionTypes.Age, Operators.LesserThanOrEqual, 18)
                 .Build();
 
             var newRule1 = newRuleResult1.Rule;
@@ -131,11 +121,11 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var ruleBuilderResult2 = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Sample rule")
                 .WithDateBegin(DateTime.Parse("2021-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
+                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
                 {
                     Description = "Sample formula",
                     Value = "0"
-                }))
+                })
                 .Build();
 
             var newRule2 = ruleBuilderResult2.Rule;
@@ -187,17 +177,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var newRuleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.BodyMassIndexFormula, (t) => new Formula
+                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
                     Value = "weight / ((height + 1) ^ 2)" // Not real, for the sake of the test.
-                }))
-                .WithCondition(cnb => cnb
-                    .AsValued(ConditionTypes.Age)
-                    .OfDataType<int>()
-                    .WithComparisonOperator(Operators.LesserThanOrEqual)
-                    .SetOperand(18)
-                    .Build())
+                })
+                .WithCondition(ConditionTypes.Age, Operators.LesserThanOrEqual, 18)
                 .Build();
 
             var newRule = newRuleResult.Rule;

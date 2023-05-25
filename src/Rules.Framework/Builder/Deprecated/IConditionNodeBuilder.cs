@@ -1,9 +1,13 @@
 namespace Rules.Framework.Builder
 {
+    using System;
+
     /// <summary>
-    /// Builder to specify a new condition node. Allows for choosing between composed and valued condition nodes.
+    /// Builder to specify a new condition node. Allows for choosing between composed and valued
+    /// condition nodes.
     /// </summary>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
+    [Obsolete("This way of building conditions has been deprecated. Please use the IRootConditionNodeBuilder and IFluentComposedConditionNodeBuilder interfaces.")]
     public interface IConditionNodeBuilder<TConditionType>
     {
         /// <summary>

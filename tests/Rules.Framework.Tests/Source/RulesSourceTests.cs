@@ -417,7 +417,8 @@ namespace Rules.Framework.Tests.Source
             RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Test rule")
                 .WithDateBegin(DateTime.Parse("2022-11-27Z"))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type1, (_) => "test"))
-                .Build().Rule;
+                .WithContent(ContentType.Type1, "test")
+                .Build()
+            .Rule;
     }
 }

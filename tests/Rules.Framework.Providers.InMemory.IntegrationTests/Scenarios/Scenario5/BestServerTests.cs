@@ -18,26 +18,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             {
                 new[]
                 {
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Price,
-                        Value = 100
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Memory,
-                        Value = 12
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.StoragePartionable,
-                        Value = true
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Brand,
-                        Value = "AMD"
-                    }
+                    new Condition<BestServerConditions>(BestServerConditions.Price,100),
+                    new Condition<BestServerConditions>(BestServerConditions.Memory,12),
+                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
+                    new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
                 },
                 "Best Server Top5"
             },
@@ -45,26 +29,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             {
                 new[]
                 {
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Price,
-                        Value = 110
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Memory,
-                        Value = 12
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.StoragePartionable,
-                        Value = true
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Brand,
-                        Value = "AMD"
-                    }
+                    new Condition<BestServerConditions>(BestServerConditions.Price,110),
+                    new Condition<BestServerConditions>(BestServerConditions.Memory,12),
+                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
+                    new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
                 },
                 "Best Server Default"
             }
@@ -85,49 +53,22 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var ruleBuilderResult = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Top5")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContentContainer(new ContentContainer<BestServerConfigurations>(BestServerConfigurations.BestServerEvaluation, t => "Top5"))
-                .WithCondition(cnb =>
-                    cnb.AsComposed()
-                        .WithLogicalOperator(LogicalOperators.And)
-                        .AddCondition(x1 =>
-                            x1.AsValued(BestServerConditions.Price)
-                                .OfDataType<IEnumerable<decimal>>()
-                                .WithComparisonOperator(Operators.In)
-                                .SetOperand(new[] { 100m, 200m, 300m })
-                                .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.Memory)
-                            .OfDataType<IEnumerable<int>>()
-                            .WithComparisonOperator(Operators.In)
-                            .SetOperand(new[] { 12, 16, 24, 36 })
-                            .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.Memory)
-                            .OfDataType<IEnumerable<int>>()
-                            .WithComparisonOperator(Operators.NotIn)
-                            .SetOperand(new[] { 4, 8 })
-                            .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.StoragePartionable)
-                            .OfDataType<IEnumerable<bool>>()
-                            .WithComparisonOperator(Operators.In)
-                            .SetOperand(new[] { true })
-                            .Build())
-                        .AddCondition(x2 =>
-                            x2.AsValued(BestServerConditions.Brand)
-                            .OfDataType<IEnumerable<string>>()
-                            .WithComparisonOperator(Operators.In)
-                            .SetOperand(new[] { "AMD", "Intel", "Cisco" })
-                            .Build())
-                        .Build())
-
+                .WithContent(BestServerConfigurations.BestServerEvaluation, "Top5")
+                .WithCondition(c => c
+                    .And(a => a
+                        .Value(BestServerConditions.Price, Operators.In, new[] { 100m, 200m, 300m })
+                        .Value(BestServerConditions.Memory, Operators.In, new[] { 12, 16, 24, 36 })
+                        .Value(BestServerConditions.Memory, Operators.NotIn, new[] { 4, 8 })
+                        .Value(BestServerConditions.StoragePartionable, Operators.In, new[] { true })
+                        .Value(BestServerConditions.Brand, Operators.In, new[] { "AMD", "Intel", "Cisco" })
+                        ))
                 .Build();
 
             // Act 2 - Create rule default
             var ruleBuilderResultDefault = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Default")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                 .WithContentContainer(new ContentContainer<BestServerConfigurations>(BestServerConfigurations.BestServerEvaluation, t => "Default"))
+                .WithContent(BestServerConfigurations.BestServerEvaluation, "Default")
                 .Build();
 
             // Assert 1
