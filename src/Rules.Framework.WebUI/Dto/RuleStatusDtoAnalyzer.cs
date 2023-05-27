@@ -18,7 +18,7 @@ namespace Rules.Framework.WebUI.Dto
 
             if (dateEnd.Value <= DateTime.UtcNow)
             {
-                return RuleStatusDto.Inactive;
+                return RuleStatusDto.Expired;
             }
 
             return RuleStatusDto.Active;

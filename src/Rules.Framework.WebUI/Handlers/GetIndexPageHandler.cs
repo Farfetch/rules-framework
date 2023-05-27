@@ -23,7 +23,7 @@ namespace Rules.Framework.WebUI.Handlers
             var path = httpRequest.Path.Value;
             var httpContext = httpRequest.HttpContext;
 
-            if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.webUIOptions.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.WebUIOptions.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -33,7 +33,7 @@ namespace Rules.Framework.WebUI.Handlers
                 RespondWithRedirect(httpContext.Response, relativeIndexUrl);
             }
 
-            if (Regex.IsMatch(path, $"^/{Regex.Escape(this.webUIOptions.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(path, $"^/{Regex.Escape(this.WebUIOptions.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
                 await this.RespondWithIndexHtmlAsync(httpContext.Response, next).ConfigureAwait(false);
             }
@@ -52,8 +52,8 @@ namespace Rules.Framework.WebUI.Handlers
         {
             return new Dictionary<string, string>
             {
-                { "%(DocumentTitle)", this.webUIOptions.DocumentTitle },
-                { "%(HeadContent)", this.webUIOptions.HeadContent }
+                { "%(DocumentTitle)", this.WebUIOptions.DocumentTitle },
+                { "%(HeadContent)", this.WebUIOptions.HeadContent }
             };
         }
 
@@ -66,7 +66,7 @@ namespace Rules.Framework.WebUI.Handlers
 
                 var originalBody = httpResponse.Body;
 
-                using (var stream = this.webUIOptions.IndexStream())
+                using (var stream = this.WebUIOptions.IndexStream())
                 {
                     httpResponse.Body = stream;
                     await next(httpResponse.HttpContext).ConfigureAwait(false);

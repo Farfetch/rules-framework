@@ -2,7 +2,7 @@ namespace Rules.Framework.WebUI.Dto
 {
     internal enum RuleStatusDto : short
     {
-        Inactive,
+        Expired,
         Active,
         Pending,
         Deactivated

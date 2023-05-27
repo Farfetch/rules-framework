@@ -162,31 +162,53 @@
                             </legend>
                             <div class="collapse show" id="filterRules">
                                 <form class="row g-3" novalidate>
-                                    <div class="col-md-3">
-                                        <label for="contentTypesSelect" class="col-form-label-sm">Content Type</label>
-                                        <select class="form-select form-select-sm" id="contentTypesSelect" required>
-                                            <option value="">Loading...</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="ruleNameSearch" class="col-form-label-sm">Name</label>
-                                        <input class="form-control form-control-sm" id="ruleNameSearch" />
-                                    </div>
+                                    <div class="row" style="display: flex;
+                                            flex-direction: row;
+                                            justify-content: space-between;">
 
-                                    <div class="col-md-3">
-                                        <label for="ruleValueSearch" class="col-form-label-sm">Content</label>
-                                        <input class="form-control form-control-sm" id="ruleValueSearch" />
+                                        <div class="col-md-4">
+                                            <label for="contentTypesSelect" class="col-form-label-sm">Content Type</label>
+                                            <select class="form-select form-select-sm" id="contentTypesSelect" required>
+                                                <option value="">Loading...</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="ruleStatusesSelect" class="col-form-label-sm">Status</label>
+                                            <select class="form-select form-select-sm" id="ruleStatusesSelect">
+                                                <option value="">Choose Status...</option>
+                                                <option value="active">Active</option>
+                                                <option value="expired">Expired</option>
+                                                <option value="pending">Pending</option>
+                                                <option value="deactivated">Deactivated</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-2">
+                                            <label for="dateBeginSearch" class="col-form-label-sm">Before</label>
+                                            <input class="form-control form-control-sm" type="date" id="dateBeginSearch" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="dateEndSearch" class="col-form-label-sm">After</label>
+                                            <input class="form-control form-control-sm" type="date" id="dateEndSearch" />
+                                        </div>
                                     </div>
-
-                                    <div class="col-md-2">
-                                        <label for="ruleStatusesSelect" class="col-form-label-sm">Status</label>
-                                        <select class="form-select form-select-sm" id="ruleStatusesSelect">
-                                            <option value="">Choose Status...</option>
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                            <option value="pending">Pending</option>
-                                            <option value="deactivated">Deactivated</option>
-                                        </select>
+                                    <div class="row" style="display: flex;
+                                            flex-direction: row;
+                                            justify-content: space-between;">
+                                        <div class="col-md-5">
+                                            <label for="ruleNameSearch" class="col-form-label-sm">Name</label>
+                                            <input class="form-control form-control-sm" id="ruleNameSearch" />
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="ruleValueSearch" class="col-form-label-sm">Content</label>
+                                            <input class="form-control form-control-sm" id="ruleValueSearch" />
+                                        </div>
+                                        <div class="col-md-2" style="
+                                                display: flex;                                                                                                
+                                                justify-content: flex-end;
+                                                align-items: flex-end;">
+                                            <button id="ruleSearch" type="button" class="btn btn-dark"><i class="glyphicon glyphicon-search"></i> Search</button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -279,9 +301,7 @@
             })
         }
 
-        function setRulesPagination(dataSource) {
-            dataSource = applyRulesFilter(dataSource);
-
+        function setRulesPagination(dataSource) {            
             $('#rules_pagination').pagination({
                 dataSource: dataSource,
                 pageSize: pageSize,
@@ -357,7 +377,7 @@
                 trHTML += '<td style="text-align: center;"><span class="badge bg-primary" style="font-size:1em!important; color: #373b3e !important;background-color: #cdced7 !important;">' + item.rulesCount + '<span></td>';
                 trHTML += '<td style="text-align: center;"><button style="font-size:.875rem" type="button" class="btn btn-dark rules"  ';
                 trHTML += 'title="Rules" id="b' + item.name + '">';
-                trHTML += '<span class="glyphicon glyphicon-search" id="' + item.name + '"></span>';
+                trHTML += '<span class="glyphicon glyphicon-log-in" id="' + item.name + '"></span>';
                 trHTML += '</button></td>';
                 trHTML += '</tr>';
             });
@@ -425,6 +445,7 @@
 
             return html;
         }
+
         function recursiveStringView(node, logicalOperator, isFirst, tabsLeft) {
             let html = '';                        
             if (!node) {
@@ -530,52 +551,40 @@
             return html;
         }
 
-        function applyRulesFilter(dataSource) {
-            if (ruleFilter.name) {
-                dataSource = dataSource.filter(function (r) {
-                    return r.name.toLowerCase().includes(ruleFilter.name.toLowerCase());
-                });
-            }
-
-            if (ruleFilter.status) {
-                dataSource = dataSource.filter(function (r) {
-                    return r.status.toLowerCase() == ruleFilter.status.toLowerCase();
-                });
-            }
-
-            if (ruleFilter.value) {
-                dataSource = dataSource.filter(function (r) {
-                    return JSON.stringify(r.value).toLowerCase().includes(ruleFilter.value.toLowerCase());
-                });
-            }
-
-            return dataSource;
-        }
-
-        function setContentTypesSelectEvent(){
-            $("#contentTypesSelect").on('change', function (){
+        function setRuleSearchClickEvent(){
+            $("#ruleSearch").on('click', function (){
                 $('#rules_table').html('');
-                let contentTypeSelected = $(this).children("option:selected").val();
-                contentType = '';
-
-                if (contentTypeSelected)
-                {
-                    $("#loading").show();
-                    $.ajax({
-                        url: "api/v1/rules?contentType=" + contentTypeSelected,
-                        success: function (response) {
-                            rules = response;
-
-                            
-                            setRulesPagination(response);
-                        },
-                        error: function (error) {
-                            $('#loading').hide();
-                            $('#errorModal').modal('show');
-                            $('#errorBody').html('<pre>' + JSON.stringify(error, null, '\t') + '</pre>');
-                        }
-                    });
-                }
+                const contentType = $('#contentTypesSelect').children("option:selected").val();
+                const status = $('#ruleStatusesSelect').children("option:selected").val();
+                const name = $('#ruleNameSearch').val();
+                const dateBegin = $('#dateBeginSearch').val();
+                const dateEnd = $('#dateEndSearch').val();
+                const content = $('#ruleValueSearch').val();                
+                                
+                                
+                $("#loading").show();
+                $.ajax({
+                    url: "api/v1/rules",
+                    data: jQuery.param(
+                        {
+                            contentType: contentType ?? null,
+                            content: content ?? null,
+                            dateBegin: dateBegin ?? null,
+                            dateEnd: dateEnd ?? null,
+                            status: status ?? null,
+                            name: name ?? null
+                        }),
+                    success: function (response) {
+                        rules = response;                            
+                        setRulesPagination(response);
+                    },
+                    error: function (error) {
+                        $('#loading').hide();
+                        $('#errorModal').modal('show');
+                        $('#errorBody').html('<pre>' + JSON.stringify(error, null, '\t') + '</pre>');
+                    }
+                });
+                
             });
 
 
@@ -618,21 +627,7 @@
                 setContentTypesPagination(contentTypes);
             });
 
-            $('#ruleStatusesSelect').on('change', function (e) {
-                ruleFilter.status = $(this).children("option:selected").val();
-                setRulesPagination(rules);
-            });
-
-            $('#ruleNameSearch').on('input', function (e) {
-                ruleFilter.name = $(this).val();
-                setRulesPagination(rules);
-            });
-
-            $('#ruleValueSearch').on('input', function (e) {
-                ruleFilter.value = $(this).val();
-                setRulesPagination(rules);
-            });
-
+            
             $('#contentTypeSearch').on('input', function (e) {
                 const contentTypeValue = $(this).val();
 
@@ -647,6 +642,7 @@
 
                 let filename = 'rules_as_json';
                 const contentTypeSelected = $('#contentTypesSelect').children("option:selected").val();
+
                 if (contentTypeSelected) {
                     filename += '_' + contentTypeSelected;
                 }
@@ -711,7 +707,7 @@
                 if (d.currentTarget.id == "rules") {
                     $('#rules_table').html('');
                     setRulesPagination([]);
-                    setContentTypesSelectEvent();
+                    setRuleSearchClickEvent();
 
 
                     let $dropdown = $("#contentTypesSelect");
@@ -720,7 +716,7 @@
                         url: "api/v1/contentTypes",
                         success: function (response) {
                             contentTypes = response;
-                            $dropdown.html('<option value="">Choose ContentType...</option>');
+                            $dropdown.html('<option value="">Choose ContentType...</option>');                            
                             $.each(response, function (i, item) {
                                 if (contentType == item.name || contentType == 'b' + item.name) {
                                     $dropdown.append($("<option>", {
