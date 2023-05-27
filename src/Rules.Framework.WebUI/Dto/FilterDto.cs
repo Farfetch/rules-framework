@@ -2,7 +2,7 @@ namespace Rules.Framework.WebUI.Dto
 {
     using System;
 
-    internal class RulesFilterDto
+    internal sealed class RulesFilterDto
     {
         public string Content { get; set; }
         public string ContentType { get; set; }
