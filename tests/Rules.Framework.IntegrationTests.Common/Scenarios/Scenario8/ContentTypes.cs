@@ -1,6 +1,6 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    internal enum ContentTypes
+    public enum ContentTypes
     {
         TexasHoldemPokerSingleCombinations = 1,
     }

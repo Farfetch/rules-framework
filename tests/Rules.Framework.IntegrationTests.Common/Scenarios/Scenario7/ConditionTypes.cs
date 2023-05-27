@@ -1,6 +1,6 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
 {
-    internal enum ConditionTypes
+    public enum ConditionTypes
     {
         Lyrics = 1,
         Artist = 2,

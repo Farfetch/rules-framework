@@ -8,8 +8,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark1 : IBenchmark
     {
-        private readonly Benchmark1Data benchmarkData = new Benchmark1Data();
-        private RulesEngine<ContentTypes, ConditionTypes> rulesEngine;
+        private readonly Scenario6Data benchmarkData = new Scenario6Data();
+        private RulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
@@ -17,7 +17,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
         [Benchmark]
         public async Task RunAsync()
         {
-            await this.rulesEngine.MatchOneAsync(ContentTypes.ContentType1, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
+            await this.rulesEngine!.MatchOneAsync(ContentTypes.ContentType1, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
         }
 
         [GlobalSetup]

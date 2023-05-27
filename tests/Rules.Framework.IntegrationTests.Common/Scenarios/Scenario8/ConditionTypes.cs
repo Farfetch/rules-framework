@@ -1,6 +1,6 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    internal enum ConditionTypes
+    public enum ConditionTypes
     {
         DeuceOfClubs = 1,
         TreyOfClubs = 2,

@@ -6,7 +6,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     using Rules.Framework;
     using Rules.Framework.Core;
 
-    internal partial class Benchmark3Data : IBenchmarkData<ContentTypes, ConditionTypes>
+    public partial class Scenario8Data : IScenarioData<ContentTypes, ConditionTypes>
     {
         public IEnumerable<Condition<ConditionTypes>> Conditions => new[]
         {
