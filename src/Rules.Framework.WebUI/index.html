@@ -240,6 +240,7 @@
                                 <thead style="border-bottom: 2px solid currentcolor;">
                                     <tr>
                                         <th scope="col" width="2%">Priority</th>
+                                        <th scope="col" width="15%">Content Type</th>
                                         <th scope="col" width="20%">Name</th>
                                         <th scope="col" width="10%" nowrap style="text-align: center;">Date Begin</th>
                                         <th scope="col" width="10%" nowrap style="text-align: center;">Date End</th>
@@ -348,7 +349,7 @@
                         icon = 'glyphicon glyphicon-exclamation-sign';
                 }
 
-                trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.name + '</td>';
+                trHTML += '<tr><th scope="row">' + item.priority + ' </th><td>' + item.contentType + '</td><td>' + item.name + '</td>';
                 trHTML += '<td style="text-align: center;" nowrap>' + item.dateBegin + '</td><td style="text-align: center;" nowrap> ' + dateEnd + '</td>';
                 trHTML += '<td>' + JSON.stringify(item.value) + '</td>';
                 trHTML += '<td style="text-align: center;"><span class="' + labelColor + '" style="' + style + '"> ';

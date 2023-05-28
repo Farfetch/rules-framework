@@ -60,6 +60,34 @@ namespace Rules.Framework.WebUI.Handlers
             }
         }
 
+        private IEnumerable<RuleDto> ApplyFilters(RulesFilterDto rulesFilter, IEnumerable<RuleDto> genericRulesDto)
+        {
+            if (!string.IsNullOrWhiteSpace(rulesFilter.Content))
+            {
+                genericRulesDto = genericRulesDto.Where(g =>
+                {
+                    return JsonSerializer.Serialize(g.Value).Contains(rulesFilter.Content, StringComparison.OrdinalIgnoreCase);
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(rulesFilter.Name))
+            {
+                genericRulesDto = genericRulesDto.Where(g =>
+                {
+                    return g.Name.Contains(rulesFilter.Name, StringComparison.OrdinalIgnoreCase);
+                });
+            }
+            if (rulesFilter.Status != null)
+            {
+                genericRulesDto = genericRulesDto.Where(g =>
+                {
+                    return g.Status.Equals(rulesFilter.Status.ToString());
+                });
+            }
+
+            return genericRulesDto;
+        }
+
         private RulesFilterDto GetRulesFilterFromRequest(HttpRequest httpRequest)
         {
             var parseQueryString = HttpUtility.ParseQueryString(httpRequest.QueryString.Value);
@@ -97,36 +125,11 @@ namespace Rules.Framework.WebUI.Handlers
                     genericRules = genericRules.OrderBy(r => r.Priority);
                 }
 
-                return genericRules
-                    .Select(g => g.ToRuleDto(this.ruleStatusDtoAnalyzer))
-                    .Where(d =>
-                    {
-                        if (string.IsNullOrWhiteSpace(rulesFilter.Content))
-                        {
-                            return true;
-                        }
+                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(identifier, this.ruleStatusDtoAnalyzer)));
 
-                        return JsonSerializer.Serialize(d.Value).Contains(rulesFilter.Content, StringComparison.OrdinalIgnoreCase);
-                    })
-                    .Where(d =>
-                    {
-                        if (string.IsNullOrWhiteSpace(rulesFilter.Name))
-                        {
-                            return true;
-                        }
-
-                        return d.Name.Contains(rulesFilter.Name, StringComparison.OrdinalIgnoreCase);
-                    })
-                    .Where(d =>
-                    {
-                        if (rulesFilter.Status is null)
-                        {
-                            return true;
-                        }
-
-                        return d.Status.Equals(rulesFilter.Status.ToString());
-                    });
+                return genericRulesDto;
             }
+
             return Enumerable.Empty<RuleDto>();
         }
     }
