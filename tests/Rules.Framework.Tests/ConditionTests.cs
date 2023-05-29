@@ -7,39 +7,18 @@ namespace Rules.Framework.Tests
     public class ConditionTests
     {
         [Fact]
-        public void Type_HavingSettedType_ReturnsSettedValue()
+        public void Condition_Ctor_Success()
         {
             // Arrange
-            ConditionType expected = ConditionType.IsoCountryCode;
-
-            Condition<ConditionType> sut = new Condition<ConditionType>
-            {
-                Type = expected
-            };
+            var expectedType = ConditionType.IsoCountryCode;
+            var expectedValue = "abc";
 
             // Act
-            ConditionType actual = sut.Type;
+            var sut = new Condition<ConditionType>(expectedType, expectedValue);
 
             // Assert
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void Value_HavingSettedValue_ReturnsSettedValue()
-        {
-            // Arrange
-            object expected = "abc";
-
-            Condition<ConditionType> sut = new Condition<ConditionType>
-            {
-                Value = expected
-            };
-
-            // Act
-            object actual = sut.Value;
-
-            // Assert
-            actual.Should().Be(expected);
+            sut.Type.Should().Be(expectedType);
+            sut.Value.Should().Be(expectedValue);
         }
     }
 }

@@ -57,33 +57,20 @@ namespace Rules.Framework.Tests.Extensions
                 LogicalOperator = LogicalOperators.And
             };
 
-            var composedCondition = new ConditionNodeBuilder<ConditionType>()
-                .AsComposed()
-                      .WithLogicalOperator(LogicalOperators.And)
-                           .AddCondition(z => z
-                               .AsValued(ConditionType.IsVip).OfDataType<bool>()
-                               .WithComparisonOperator(Operators.Equal)
-                               .SetOperand(true)
-                               .Build()
-                           )
-                           .AddCondition(sub => sub.AsComposed()
-                                .WithLogicalOperator(LogicalOperators.Or)
-                                    .AddCondition(tri => tri
-                                        .AsValued(ConditionType.IsoCurrency).OfDataType<string>()
-                                        .WithComparisonOperator(Operators.Equal)
-                                        .SetOperand("EUR").Build())
-                                    .AddCondition(tri => tri
-                                        .AsValued(ConditionType.IsoCurrency).OfDataType<string>()
-                                        .WithComparisonOperator(Operators.Equal)
-                                        .SetOperand("USD").Build())
-                                .Build())
-                      .Build();
+            var rootComposedCondition = new RootConditionNodeBuilder<ConditionType>()
+                .And(a => a
+                    .Value(ConditionType.IsVip, Operators.Equal, true)
+                    .Or(o => o
+                        .Value(ConditionType.IsoCurrency, Operators.Equal, "EUR")
+                        .Value(ConditionType.IsoCurrency, Operators.Equal, "USD")
+                    )
+                );
 
             var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Dummy Rule")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
                 .WithContent(ContentType.Type1, expectedRuleContent)
-                .WithCondition(composedCondition)
+                .WithCondition(rootComposedCondition)
                 .Build();
 
             var rule = ruleBuilderResult.Rule;

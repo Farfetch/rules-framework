@@ -11,8 +11,13 @@ namespace Rules.Framework.Builder
             return ConditionNodeFactory.CreateComposedNode(LogicalOperators.And, conditionFunc);
         }
 
+        public IConditionNode<TConditionType> Condition(IConditionNode<TConditionType> conditionNode)
+        {
+            return conditionNode;
+        }
+
         public IConditionNode<TConditionType> Or(
-            Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
+                    Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
         {
             return ConditionNodeFactory.CreateComposedNode(LogicalOperators.Or, conditionFunc);
         }
@@ -21,11 +26,6 @@ namespace Rules.Framework.Builder
             TConditionType conditionType, Operators condOperator, TDataType operand)
         {
             return ConditionNodeFactory.CreateValueNode(conditionType, condOperator, operand);
-        }
-
-        public IConditionNode<TConditionType> Value(IConditionNode<TConditionType> valueConditionNode)
-        {
-            return valueConditionNode;
         }
     }
 }

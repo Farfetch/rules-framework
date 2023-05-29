@@ -73,16 +73,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -112,16 +104,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
