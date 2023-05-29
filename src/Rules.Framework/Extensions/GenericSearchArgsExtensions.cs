@@ -21,10 +21,10 @@ namespace Rules.Framework.Extensions
                 return new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd, genericSearchArgs.Active.Value)
                 {
                     Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
-                    {
-                        Value = condition.Value,
-                        Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Identifier)
-                    }).ToList(),
+                    (
+                        (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Identifier),
+                        condition.Value
+                    )).ToList(),
                     ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
                 };
             }
@@ -32,10 +32,10 @@ namespace Rules.Framework.Extensions
             var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, genericSearchArgs.DateBegin, genericSearchArgs.DateEnd)
             {
                 Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
-                {
-                    Value = condition.Value,
-                    Type = (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Identifier)
-                }).ToList(),
+                    (
+                        (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Identifier),
+                        condition.Value
+                    )).ToList(),
                 ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
             };
 

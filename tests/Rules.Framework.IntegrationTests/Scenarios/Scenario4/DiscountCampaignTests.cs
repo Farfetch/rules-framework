@@ -8,7 +8,6 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
     using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario4;
-    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class DiscountCampaignTests
@@ -71,16 +70,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new[]
             {
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.ProductBrand,
-                    Value = "ASUS"
-                },
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.ProductRecommendedRetailPrice,
-                    Value = 1249.90m
-                }
+                new Condition<DiscountConditions>(DiscountConditions.ProductBrand,"ASUS"),
+                new Condition<DiscountConditions>(DiscountConditions.ProductRecommendedRetailPrice,1249.90m)
             };
 
             var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
@@ -140,21 +131,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new[]
             {
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.ProductBrand,
-                    Value = "ASUS"
-                },
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.ProductTier,
-                    Value = 1
-                },
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.ProductRecommendedRetailPrice,
-                    Value = 1249.90m
-                }
+                new Condition<DiscountConditions>(DiscountConditions.ProductBrand, "ASUS"),
+                new Condition<DiscountConditions>(DiscountConditions.ProductTier, 1),
+                new Condition<DiscountConditions>(DiscountConditions.ProductRecommendedRetailPrice, 1249.90m)
             };
 
             var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
@@ -213,11 +192,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new[]
             {
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.CustomerEmail,
-                    Value = "user12345@somewhere.com"
-                }
+                new Condition<DiscountConditions>(DiscountConditions.CustomerEmail, "user12345@somewhere.com")
             };
 
             var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
@@ -276,11 +251,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new[]
             {
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.ProductColor,
-                    Value = ProductColor.Blue.ToString()
-                }
+                new Condition<DiscountConditions>(DiscountConditions.ProductColor, ProductColor.Blue.ToString())
             };
 
             var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
@@ -394,11 +365,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new[]
             {
-                new Condition<DiscountConditions>
-                {
-                    Type = DiscountConditions.ProductColor,
-                    Value = ProductColor.White.ToString()
-                }
+                new Condition<DiscountConditions>(DiscountConditions.ProductColor, ProductColor.White.ToString())
             };
 
             var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);

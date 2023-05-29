@@ -6,7 +6,6 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
-    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class BuildingSecuritySystemControlTests
@@ -22,21 +21,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Online"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius,100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate,55),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus,"Online")
             };
 
             var serviceProvider = new ServiceCollection()
@@ -74,21 +61,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Offline"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius,100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate,55),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus,"Offline")
             };
 
             var serviceProvider = new ServiceCollection()
@@ -125,21 +100,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Shutdown"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius,100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate,55),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus,"Shutdown")
             };
 
             var serviceProvider = new ServiceCollection()

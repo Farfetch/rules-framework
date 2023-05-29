@@ -34,16 +34,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 0.0m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 0.0m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 0.0m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 0.0m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -78,16 +70,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -121,16 +105,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var serviceDescriptors = new ServiceCollection();
