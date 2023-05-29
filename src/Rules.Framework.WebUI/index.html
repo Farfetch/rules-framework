@@ -109,7 +109,7 @@
                                 </button>
                             </legend>
                             <div class="collapse show" id="filterContentTypes">
-                                <form novalidate>
+                                <form novalidate onSubmit="return false;">
                                     <div class="col-md-12" style="display: flex; align-items: flex-end;">
                                         <div class="col-md-5" style="margin-right: 12px;">
                                             <label for="contentTypeSearch" class="col-form-label-sm">Name</label>
@@ -161,7 +161,7 @@
                                 </button>
                             </legend>
                             <div class="collapse show" id="filterRules">
-                                <form class="row g-3" novalidate>
+                                <form class="row g-3" novalidate onSubmit="return false;">
                                     <div class="row" style="display: flex;
                                             flex-direction: row;
                                             justify-content: space-between;">
@@ -207,7 +207,7 @@
                                                 display: flex;                                                                                                
                                                 justify-content: flex-end;
                                                 align-items: flex-end;">
-                                            <button id="ruleSearch" type="button" class="btn btn-dark"><i class="glyphicon glyphicon-search"></i> Search</button>
+                                            <button id="rulesSearch" type="button" class="btn btn-dark"><i class="glyphicon glyphicon-search"></i> Search</button>
                                         </div>
                                     </div>
                                 </form>
@@ -404,6 +404,7 @@
                 {
                     contentType = contentTypeClicked;
                     $('#rules').click();
+                    $('#rulesSearch').click();
                 }
             });
         }
@@ -552,8 +553,8 @@
             return html;
         }
 
-        function setRuleSearchClickEvent(){
-            $("#ruleSearch").on('click', function (){
+        function setRulesSearchClickEvent(){
+            $("#rulesSearch").on('click', function (){
                 $('#rules_table').html('');
                 const contentType = $('#contentTypesSelect').children("option:selected").val();
                 const status = $('#ruleStatusesSelect').children("option:selected").val();
@@ -606,6 +607,14 @@
         }
 
         $(document).ready(() => {
+            $(document).keypress(function (event) {     
+                if (event.keyCode == 13 && $('#rules') && $('#rules').hasClass('active')) {
+                    event.preventDefault();
+                    $('#rulesSearch').click();
+                    return false;
+                }
+            });
+
             $('#conditionsAsColumn').on('change', function (e) {
                 const checked = $(this).prop('checked');
 
@@ -708,7 +717,7 @@
                 if (d.currentTarget.id == "rules") {
                     $('#rules_table').html('');
                     setRulesPagination([]);
-                    setRuleSearchClickEvent();
+                    setRulesSearchClickEvent();
 
 
                     let $dropdown = $("#contentTypesSelect");
@@ -750,6 +759,8 @@
 
 
         });
+
+       
     </script>
 
     <div class="modal fade" id="errorModal">
