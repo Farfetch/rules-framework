@@ -193,21 +193,14 @@
                                         </div>
                                     </div>
                                     <div class="row" style="display: flex;
-                                            flex-direction: row;
-                                            justify-content: space-between;">
-                                        <div class="col-md-5">
+                                            flex-direction: row;">
+                                        <div class="col-md-4">
                                             <label for="ruleNameSearch" class="col-form-label-sm">Name</label>
                                             <input class="form-control form-control-sm" id="ruleNameSearch" />
                                         </div>
-                                        <div class="col-md-5">
+                                        <div class="col-md-4">
                                             <label for="ruleValueSearch" class="col-form-label-sm">Content</label>
                                             <input class="form-control form-control-sm" id="ruleValueSearch" />
-                                        </div>
-                                        <div class="col-md-2" style="
-                                                display: flex;                                                                                                
-                                                justify-content: flex-end;
-                                                align-items: flex-end;">
-                                            <button id="rulesSearch" type="button" class="btn btn-dark"><i class="glyphicon glyphicon-search"></i> Search</button>
                                         </div>
                                     </div>
                                 </form>
@@ -271,22 +264,18 @@
     <script src="bootstrap/dist/bootstrap.bundle.min.js"></script>
 
     <script>
-        rules = [];
-        contentTypes = [];
-        contentType = '';
-        priority = '';
-        conditions = [];
-        pageSize = 10;
-        contentTypesFilter = {
+        let rules = [];
+        let contentTypes = [];
+        let contentType = '';
+        let priority = '';
+        let conditions = [];
+        let pageSize = 10;
+        let contentTypesFilter = {
             name: '',
             onlyWithRules: false
         };
-        ruleFilter = {
-            status: '',
-            name: '',
-            value: ''
-        };
-
+        let timeoutToSearch = 2000;
+                
         function setContentTypesPagination(dataSource) {
 
             dataSource = applyContentTypesFilter(dataSource);
@@ -403,8 +392,7 @@
                 if (contentTypeClicked)
                 {
                     contentType = contentTypeClicked;
-                    $('#rules').click();
-                    $('#rulesSearch').click();
+                    $('#rules').click();                    
                 }
             });
         }
@@ -553,8 +541,37 @@
             return html;
         }
 
-        function setRulesSearchClickEvent(){
-            $("#rulesSearch").on('click', function (){
+        function setSearchEvents(){
+            $('#contentTypesSelect').on('change', search);
+            $('#ruleStatusesSelect').on('change', search);
+            
+            let ruleNameSearchTimeout = null;
+
+            $('#ruleNameSearch').keyup(function (event) {
+                if (event.keyCode == 13 && $('#rules') && $('#rules').hasClass('active')) {                    
+                    return false;
+                }
+
+                clearTimeout(ruleNameSearchTimeout);
+                ruleNameSearchTimeout = setTimeout(search, timeoutToSearch);
+            });
+
+            let ruleValueSearchTimeout = null;
+
+            $('#ruleValueSearch').keyup(function () {
+                if (event.keyCode == 13 && $('#rules') && $('#rules').hasClass('active')) {
+                    return false;
+                }
+                clearTimeout(ruleValueSearchTimeout);
+                ruleValueSearchTimeout = setTimeout(search, timeoutToSearch);
+            });
+                                              
+            
+            $('#dateBeginSearch').on('change', search);
+            $('#dateEndSearch').on('change', search);
+        }
+
+        function search() {                
                 $('#rules_table').html('');
                 const contentType = $('#contentTypesSelect').children("option:selected").val();
                 const status = $('#ruleStatusesSelect').children("option:selected").val();
@@ -586,10 +603,6 @@
                         $('#errorBody').html('<pre>' + JSON.stringify(error, null, '\t') + '</pre>');
                     }
                 });
-                
-            });
-
-
         }
 
         function applyContentTypesFilter(dataSource) {
@@ -607,10 +620,10 @@
         }
 
         $(document).ready(() => {
-            $(document).keypress(function (event) {     
+            $(document).keypress(function (event) {
                 if (event.keyCode == 13 && $('#rules') && $('#rules').hasClass('active')) {
                     event.preventDefault();
-                    $('#rulesSearch').click();
+                    search();
                     return false;
                 }
             });
@@ -717,8 +730,8 @@
                 if (d.currentTarget.id == "rules") {
                     $('#rules_table').html('');
                     setRulesPagination([]);
-                    setRulesSearchClickEvent();
-
+                    setSearchEvents();
+                    
 
                     let $dropdown = $("#contentTypesSelect");
                     $dropdown.html('<option value="">Loading...</option>');
@@ -743,11 +756,7 @@
                                     }));
                                 }
                             });
-
-                            if (contentType)
-                            {
-                                $dropdown.change();
-                            }
+                            $dropdown.change();                            
                         },
                         error: function (error) {
                             openError(error);
