@@ -39,21 +39,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
             Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Online"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Online")
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
@@ -95,21 +83,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
             Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Offline"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Offline")
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
@@ -150,21 +126,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
             Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Shutdown"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Shutdown")
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();

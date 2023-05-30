@@ -3,12 +3,14 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
     using System;
     using System.Collections.Generic;
     using Rules.Framework.BenchmarkTests.Tests;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
-    internal class Benchmark1Data : IBenchmarkData<ContentTypes, ConditionTypes>
+    public class Scenario6Data : IScenarioData<ContentTypes, ConditionTypes>
     {
-        public IEnumerable<Condition<ConditionTypes>> Conditions => new[] { new Condition<ConditionTypes> { Type = ConditionTypes.StringCondition, Value = "Let's benchmark this!" } };
+        public IEnumerable<Condition<ConditionTypes>> Conditions => new[]
+        {
+            new Condition<ConditionTypes>(ConditionTypes.StringCondition, "Let's benchmark this!")
+        };
 
         public DateTime MatchDate => DateTime.Parse("2022-10-01");
 

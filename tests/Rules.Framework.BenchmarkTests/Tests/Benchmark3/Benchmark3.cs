@@ -6,7 +6,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark3 : IBenchmark
     {
-        private readonly Benchmark3Data benchmarkData = new Benchmark3Data();
+        private readonly Scenario8Data benchmarkData = new Scenario8Data();
         private RulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
 
         [ParamsAllValues]

@@ -24,7 +24,7 @@ namespace Rules.Framework
         /// <summary>
         /// Creates a Condition.
         /// </summary>
-        [Obsolete("Constructor has been deprecated, please use constructor accepting type and value. This will be removed in a future major release.")]
+        [Obsolete("Please use the constructor with parameters instead.")]
         public Condition()
         {
         }

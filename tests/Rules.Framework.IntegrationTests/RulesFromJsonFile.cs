@@ -23,7 +23,7 @@ namespace Rules.Framework.IntegrationTests
             using (var streamReader = new StreamReader(fileStream))
             {
                 var contents = await streamReader.ReadToEndAsync();
-                var ruleDataModels = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents));
+                var ruleDataModels = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents);
 
                 foreach (var ruleDataModel in ruleDataModels)
                 {
@@ -48,7 +48,7 @@ namespace Rules.Framework.IntegrationTests
                         content = RulesFromJsonFile.Parse(ruleDataModel.Content, contentRuntimeType);
                     }
 
-                    ruleBuilder.WithContentContainer(new ContentContainer<TContentType>(contentType, (_) => content));
+                    ruleBuilder.WithContent(contentType, content);
                     var ruleBuilderResult = ruleBuilder.Build();
 
                     if (ruleBuilderResult.IsSuccess)
@@ -64,37 +64,7 @@ namespace Rules.Framework.IntegrationTests
             }
         }
 
-        private static TContentType GetContentType<TContentType>(short contentTypeCode) where TContentType : new()
-            => RulesFromJsonFile.Parse<TContentType>(contentTypeCode.ToString());
-
-        private static T Parse<T>(string value)
-            => (T)Parse(value, typeof(T));
-
-        private static object Parse(string value, Type type)
-            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
-
-        private IConditionNode<TConditionType> ConvertConditionNode<TConditionType>(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
-        {
-            var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
-            if (logicalOperator == LogicalOperators.Eval)
-            {
-                return this.CreateValueConditionNode<TConditionType>(conditionNodeBuilder, conditionNodeDataModel);
-            }
-            else
-            {
-                var composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
-                    .WithLogicalOperator(logicalOperator);
-
-                foreach (var child in conditionNodeDataModel.ChildConditionNodes)
-                {
-                    composedConditionNodeBuilder.AddCondition(cnb => this.ConvertConditionNode(cnb, child));
-                }
-
-                return composedConditionNodeBuilder.Build();
-            }
-        }
-
-        private IConditionNode<TConditionType> CreateValueConditionNode<TConditionType>(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private static IFluentComposedConditionNodeBuilder<TConditionType> CreateValueConditionNode<TConditionType>(IFluentComposedConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
             var integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
@@ -103,36 +73,128 @@ namespace Rules.Framework.IntegrationTests
             switch (dataType)
             {
                 case DataTypes.Integer:
-                    return conditionNodeBuilder.AsValued(integrationTestsConditionType)
-                        .OfDataType<int>()
-                        .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                        .Build();
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 case DataTypes.Decimal:
-                    return conditionNodeBuilder.AsValued(integrationTestsConditionType)
-                        .OfDataType<decimal>()
-                        .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                        .Build();
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 case DataTypes.String:
-                    return conditionNodeBuilder.AsValued(integrationTestsConditionType)
-                        .OfDataType<string>()
-                        .WithComparisonOperator(@operator)
-                        .SetOperand(conditionNodeDataModel.Operand)
-                        .Build();
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        conditionNodeDataModel.Operand);
 
                 case DataTypes.Boolean:
-                    return conditionNodeBuilder.AsValued(integrationTestsConditionType)
-                        .OfDataType<bool>()
-                        .WithComparisonOperator(@operator)
-                        .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                        .Build();
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 default:
                     throw new NotSupportedException($"Unsupported data type: {dataType.ToString()}.");
             }
+        }
+
+        private static IConditionNode<TConditionType> CreateValueConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        {
+            var dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
+            var integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
+            var @operator = RulesFromJsonFile.Parse<Operators>(conditionNodeDataModel.Operator);
+
+            switch (dataType)
+            {
+                case DataTypes.Integer:
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
+
+                case DataTypes.Decimal:
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
+
+                case DataTypes.String:
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        conditionNodeDataModel.Operand);
+
+                case DataTypes.Boolean:
+                    return conditionNodeBuilder.Value(
+                        integrationTestsConditionType,
+                        @operator,
+                        Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
+
+                default:
+                    throw new NotSupportedException($"Unsupported data type: {dataType.ToString()}.");
+            }
+        }
+
+        private static TContentType GetContentType<TContentType>(short contentTypeCode) where TContentType : new()
+                    => RulesFromJsonFile.Parse<TContentType>(contentTypeCode.ToString());
+
+        private static T Parse<T>(string value)
+            => (T)Parse(value, typeof(T));
+
+        private static object Parse(string value, Type type)
+            => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+
+        private IConditionNode<TConditionType> ConvertConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        {
+            var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
+
+            switch (logicalOperator)
+            {
+                case LogicalOperators.And:
+                    return conditionNodeBuilder.And(b => HandleChildConditionNodes(b, conditionNodeDataModel));
+
+                case LogicalOperators.Or:
+                    return conditionNodeBuilder.Or(b => HandleChildConditionNodes(b, conditionNodeDataModel));
+
+                case LogicalOperators.Eval:
+                    return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel);
+
+                default:
+                    throw new NotSupportedException($"The logical operator '{logicalOperator}' is not supported.");
+            }
+        }
+
+        private IFluentComposedConditionNodeBuilder<TConditionType> ConvertConditionNode<TConditionType>(IFluentComposedConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        {
+            var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
+
+            switch (logicalOperator)
+            {
+                case LogicalOperators.And:
+                    return conditionNodeBuilder.And(b => HandleChildConditionNodes(b, conditionNodeDataModel));
+
+                case LogicalOperators.Or:
+                    return conditionNodeBuilder.Or(b => HandleChildConditionNodes(b, conditionNodeDataModel));
+
+                case LogicalOperators.Eval:
+                    return CreateValueConditionNode(conditionNodeBuilder, conditionNodeDataModel);
+
+                default:
+                    throw new NotSupportedException($"The logical operator '{logicalOperator}' is not supported.");
+            }
+        }
+
+        private IFluentComposedConditionNodeBuilder<TConditionType> HandleChildConditionNodes<TConditionType>(IFluentComposedConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        {
+            foreach (var child in conditionNodeDataModel.ChildConditionNodes)
+            {
+                this.ConvertConditionNode(conditionNodeBuilder, child);
+            }
+
+            return conditionNodeBuilder;
         }
     }
 }

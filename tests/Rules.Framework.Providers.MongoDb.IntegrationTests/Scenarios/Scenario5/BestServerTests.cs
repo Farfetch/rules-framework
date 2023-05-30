@@ -19,26 +19,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
             {
                 new[]
                 {
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Price,
-                        Value = 100
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Memory,
-                        Value = 12
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.StoragePartionable,
-                        Value = true
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Brand,
-                        Value = "AMD"
-                    }
+                    new Condition<BestServerConditions>(BestServerConditions.Price, 100),
+                    new Condition<BestServerConditions>(BestServerConditions.Memory, 12),
+                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable, true),
+                    new Condition<BestServerConditions>(BestServerConditions.Brand, "AMD")
                 },
                 "Best Server Top5"
             },
@@ -46,26 +30,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
             {
                 new[]
                 {
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Price,
-                        Value = 110
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Memory,
-                        Value = 12
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.StoragePartionable,
-                        Value = true
-                    },
-                    new Condition<BestServerConditions>
-                    {
-                        Type = BestServerConditions.Brand,
-                        Value = "AMD"
-                    }
+                    new Condition<BestServerConditions>(BestServerConditions.Price, 110),
+                    new Condition<BestServerConditions>(BestServerConditions.Memory, 12),
+                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable, true),
+                    new Condition<BestServerConditions>(BestServerConditions.Brand, "AMD")
                 },
                 "Best Server Default"
             }

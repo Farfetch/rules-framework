@@ -233,16 +233,8 @@ namespace Rules.Framework.Tests
             var contentType = ContentType.Type1;
             var conditions = new[]
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCountryCode,
-                    Value = "USA"
-                },
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCurrency,
-                    Value = "USD"
-                }
+                new Condition<ConditionType>(ConditionType.IsoCountryCode, "USA"),
+                new Condition<ConditionType>(ConditionType.IsoCurrency, "USD")
             };
 
             var expected1 = new Rule<ContentType, ConditionType>
@@ -321,16 +313,8 @@ namespace Rules.Framework.Tests
             var contentType = ContentType.Type1;
             var conditions = new[]
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCountryCode,
-                    Value = "USA"
-                },
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCurrency,
-                    Value = "USD"
-                }
+                new Condition<ConditionType>(ConditionType.IsoCountryCode, "USA"),
+                new Condition<ConditionType>(ConditionType.IsoCurrency, "USD")
             };
 
             var other = new Rule<ContentType, ConditionType>
@@ -395,16 +379,8 @@ namespace Rules.Framework.Tests
             var contentType = ContentType.Type1;
             var conditions = new[]
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCountryCode,
-                    Value = "USA"
-                },
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCurrency,
-                    Value = "USD"
-                }
+                new Condition<ConditionType>(ConditionType.IsoCountryCode, "USA"),
+                new Condition<ConditionType>(ConditionType.IsoCurrency, "USD")
             };
 
             var expected = new Rule<ContentType, ConditionType>
@@ -467,16 +443,8 @@ namespace Rules.Framework.Tests
             var contentType = ContentType.Type1;
             var conditions = new[]
             {
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCountryCode,
-                    Value = "BRZ"
-                },
-                new Condition<ConditionType>
-                {
-                    Type = ConditionType.IsoCurrency,
-                    Value = "USD"
-                }
+                new Condition<ConditionType>(ConditionType.IsoCountryCode, "USA"),
+                new Condition<ConditionType>(ConditionType.IsoCurrency, "USD")
             };
 
             var rules = new[]

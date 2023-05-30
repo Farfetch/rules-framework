@@ -126,8 +126,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             // Assert
             rule.Should().NotBeNull();
-            rule.ContentContainer.Should().NotBeNull()
-                .And.BeOfType<SerializedContentContainer<ContentType>>();
+            rule.ContentContainer.Should().NotBeNull().And.BeOfType<SerializedContentContainer<ContentType>>();
             rule.DateBegin.Should().Be(ruleDataModel.DateBegin);
             rule.DateEnd.Should().BeNull();
             rule.Name.Should().Be(ruleDataModel.Name);
@@ -140,6 +139,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var valueConditionNodes = composedConditionNode.ChildConditionNodes.OfType<ValueConditionNode<ConditionType>>();
             valueConditionNodes.Should().HaveCount(4);
+
             var integerConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Integer);
             integerConditionNode.Should().NotBeNull();
             integerConditionNode.ConditionType.Should().Match(x => x == Enum.Parse<ConditionType>(integerConditionNodeDataModel.ConditionType));
@@ -204,41 +204,41 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             var stringConditionNode = ConditionNodeFactory
                 .CreateValueNode(ConditionType.SampleStringCondition, Operators.Equal, "TEST") as ValueConditionNode<ConditionType>;
 
-            var rule1 = RuleBuilder.NewRule<ContentType, ConditionType>()
+            var rule = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("My rule used for testing purposes")
                 .WithDateBegin(new DateTime(2020, 1, 1))
                 .WithContent(ContentType.ContentTypeSample, (object)content)
                 .WithCondition(c => c
                     .And(a => a
-                        .Value(booleanConditionNode)
-                        .Value(decimalConditionNode)
-                        .Value(integerConditionNode)
-                        .Value(stringConditionNode)
+                        .Condition(booleanConditionNode)
+                        .Condition(decimalConditionNode)
+                        .Condition(integerConditionNode)
+                        .Condition(stringConditionNode)
                     ))
                 .Build().Rule;
 
             var ruleFactory = new RuleFactory<ContentType, ConditionType>(contentSerializationProvider);
 
             // Act
-            var rule = ruleFactory.CreateRule(rule1);
+            var ruleDataModel = ruleFactory.CreateRule(rule);
 
             // Assert
-            rule.Should().NotBeNull();
-            object content1 = rule.Content;
-            content1.Should().NotBeNull()
-                .And.BeSameAs(content);
-            rule.DateBegin.Should().Be(rule.DateBegin);
-            rule.DateEnd.Should().BeNull();
-            rule.Name.Should().Be(rule.Name);
-            rule.Priority.Should().Be(rule.Priority);
-            rule.RootCondition.Should().BeOfType<ComposedConditionNodeDataModel>();
+            ruleDataModel.Should().NotBeNull();
+            object ruleDataModelContent = ruleDataModel.Content;
+            ruleDataModelContent.Should().NotBeNull().And.BeSameAs(content);
+            ruleDataModel.DateBegin.Should().Be(ruleDataModel.DateBegin);
+            ruleDataModel.DateEnd.Should().BeNull();
+            ruleDataModel.Name.Should().Be(ruleDataModel.Name);
+            ruleDataModel.Priority.Should().Be(ruleDataModel.Priority);
+            ruleDataModel.RootCondition.Should().BeOfType<ComposedConditionNodeDataModel>();
 
-            var composedConditionNodeDataModel = rule.RootCondition.As<ComposedConditionNodeDataModel>();
+            var composedConditionNodeDataModel = ruleDataModel.RootCondition.As<ComposedConditionNodeDataModel>();
             composedConditionNodeDataModel.LogicalOperator.Should().Be(LogicalOperators.And);
             composedConditionNodeDataModel.ChildConditionNodes.Should().HaveCount(4);
 
             var valueConditionNodeDataModels = composedConditionNodeDataModel.ChildConditionNodes.OfType<ValueConditionNodeDataModel>();
             valueConditionNodeDataModels.Should().HaveCount(4);
+
             var integerConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Integer);
             integerConditionNodeDataModel.Should().NotBeNull();
             integerConditionNodeDataModel.ConditionType.Should().Match<string>(x => integerConditionNode.ConditionType == Enum.Parse<ConditionType>(x));

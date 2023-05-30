@@ -3,16 +3,15 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
     using System;
     using System.Collections.Generic;
     using Rules.Framework;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
-    internal class Benchmark2Data : IBenchmarkData<ContentTypes, ConditionTypes>
+    public class Scenario7Data : IScenarioData<ContentTypes, ConditionTypes>
     {
         public IEnumerable<Condition<ConditionTypes>> Conditions => new[]
         {
-            new Condition<ConditionTypes> { Type = ConditionTypes.Artist, Value = "Queen" },
-            new Condition<ConditionTypes> { Type = ConditionTypes.Lyrics, Value = "Is this the real life?\nIs this just fantasy?\nCaught in a landside,\nNo escape from reality" },
-            new Condition<ConditionTypes> { Type = ConditionTypes.ReleaseYear, Value = 1975 }
+            new Condition<ConditionTypes>(ConditionTypes.Artist, "Queen"),
+            new Condition<ConditionTypes>(ConditionTypes.Lyrics, "Is this the real life?\nIs this just fantasy?\nCaught in a landside,\nNo escape from reality" ),
+            new Condition<ConditionTypes>(ConditionTypes.ReleaseYear, 1975 )
         };
 
         public DateTime MatchDate => DateTime.Parse("2022-11-01");

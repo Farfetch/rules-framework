@@ -5,7 +5,7 @@ namespace Rules.Framework.BenchmarkTests.Tests
     using Rules.Framework;
     using Rules.Framework.Core;
 
-    internal interface IBenchmarkData<TContentType, TConditionType>
+    public interface IScenarioData<TContentType, TConditionType>
     {
         IEnumerable<Condition<TConditionType>> Conditions { get; }
 
