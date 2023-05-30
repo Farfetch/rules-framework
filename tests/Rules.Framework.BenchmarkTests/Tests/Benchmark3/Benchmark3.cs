@@ -27,7 +27,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
             this.rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSourceForBenchmark(this.Provider!, nameof(Benchmark1))
+                .SetDataSourceForBenchmark(this.Provider!, nameof(Benchmark3))
                 .Configure(options =>
                 {
                     options.EnableCompilation = this.EnableCompilation;
@@ -43,7 +43,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         [GlobalCleanup]
         public async Task TearDownAsync()
         {
-            await Extensions.TearDownProviderAsync(this.Provider!, nameof(Benchmark1)).ConfigureAwait(false);
+            await Extensions.TearDownProviderAsync(this.Provider!, nameof(Benchmark3)).ConfigureAwait(false);
             this.rulesEngine = null;
         }
     }
