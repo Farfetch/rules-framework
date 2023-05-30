@@ -9,7 +9,7 @@ namespace Rules.Framework.Core
     /// A dictionary to hold the properties of a <see cref="IConditionNode{TConditionType}"/>.
     /// </summary>
     /// <seealso cref="IDictionary{TKey, TValue}"/>
-    public class PropertiesDictionary : IDictionary<string, object>
+    public class PropertiesDictionary : IDictionary<string, object>, IEnumerable, IEnumerable<KeyValuePair<string, object>>
     {
         private const uint DictionarySlimLimit = 5;
         private static readonly Type dictionarySlimType = typeof(DictionarySlim<string, object>);

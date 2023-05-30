@@ -169,7 +169,7 @@ namespace Rules.Framework.Tests.Core
             propertiesDictionary.CopyTo(array, arrayIndex);
 
             // Assert
-            var equivalentArray = new KeyValuePair<string, object>[]
+            var equivalentArray = new[]
             {
                 new KeyValuePair<string, object>("another-key1", "another-value1"),
                 new KeyValuePair<string, object>("another-key2", "another-value2"),

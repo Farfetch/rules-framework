@@ -8,7 +8,7 @@ namespace Rules.Framework.Providers.MongoDb
 
     internal static class MongoDbRulesDataSourceInitializer
     {
-        private static bool isInitialized = false;
+        private static bool isInitialized;
 
         public static async Task InitializeAsync(IMongoClient mongoClient, MongoDbProviderSettings mongoDbProviderSettings)
         {

@@ -265,7 +265,7 @@ namespace Rules.Framework.Tests.Core
             dictionarySlim.CopyTo(array, arrayIndex);
 
             // Assert
-            var equivalentArray = new KeyValuePair<string, string>[]
+            var equivalentArray = new[]
             {
                 new KeyValuePair<string, string>("another-key1", "another-value1"),
                 new KeyValuePair<string, string>("another-key2", "another-value2"),

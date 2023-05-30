@@ -5,7 +5,7 @@ namespace Rules.Framework.Core
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    internal sealed class DictionarySlim<TKey, TValue> : IDictionary<TKey, TValue>
+    internal sealed class DictionarySlim<TKey, TValue> : IDictionary<TKey, TValue>, IEnumerable, IEnumerable<KeyValuePair<TKey, TValue>>
     {
         private readonly IEqualityComparer<TKey> keysComparer;
         private readonly IEqualityComparer<TValue> valuesComparer;
@@ -353,6 +353,7 @@ namespace Rules.Framework.Core
 
             public void Dispose()
             {
+                // No expensive managed/unmanaged resources to taken care of.
             }
 
             public bool MoveNext()

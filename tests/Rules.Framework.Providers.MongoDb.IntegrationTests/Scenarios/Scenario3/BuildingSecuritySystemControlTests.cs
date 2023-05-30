@@ -10,7 +10,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
     using FluentAssertions;
     using MongoDB.Driver;
     using Newtonsoft.Json;
-    using Rules.Framework.Builder;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
@@ -101,7 +100,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 .Build();
             var newRule = newRuleResult.Rule;
 
-            var addResult = await rulesEngine.AddRuleAsync(newRule, RuleAddPriorityOption.AtBottom);
+            _ = await rulesEngine.AddRuleAsync(newRule, RuleAddPriorityOption.AtBottom);
 
             var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 

@@ -18,7 +18,7 @@ namespace Rules.Framework.Providers.InMemory
 
             var contentContainer = new ContentContainer<TContentType>(ruleDataModel.ContentType, (_) => ruleDataModel.Content);
 
-            var rule = new Rule<TContentType, TConditionType>()
+            var rule = new Rule<TContentType, TConditionType>
             {
                 Active = ruleDataModel.Active,
                 ContentContainer = contentContainer,

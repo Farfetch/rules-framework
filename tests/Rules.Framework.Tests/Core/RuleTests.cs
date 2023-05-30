@@ -58,7 +58,7 @@ namespace Rules.Framework.Tests.Core
         public void ContentContainer_HavingSettedInstance_ReturnsProvidedInstance()
         {
             // Arrange
-            var expected = new ContentContainer<ContentType>(ContentType.Type1, (t) => null);
+            var expected = new ContentContainer<ContentType>(ContentType.Type1, (_) => null);
 
             var sut = new Rule<ContentType, ConditionType>
             {
