@@ -305,10 +305,10 @@ namespace Rules.Framework.Tests.Core
                 { "key2", "value2" },
             };
             var propertiesDictionary = new PropertiesDictionary(dictionarySlim);
-            var enumerable = (IEnumerable)propertiesDictionary;
+            var enumerable = propertiesDictionary as IEnumerable;
 
             // Act
-            var enumerator = enumerable.GetEnumerator();
+            var enumerator = enumerable!.GetEnumerator();
 
             // Assert
             enumerator.Should().NotBeNull();

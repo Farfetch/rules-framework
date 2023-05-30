@@ -427,10 +427,10 @@ namespace Rules.Framework.Tests.Core
                 { "key1", "value1" },
                 { "key2", "value2" },
             };
-            var enumerable = (IEnumerable)dictionarySlim;
+            var enumerable = dictionarySlim as IEnumerable;
 
             // Act
-            var enumerator = enumerable.GetEnumerator();
+            var enumerator = enumerable!.GetEnumerator();
             var moveNext1 = enumerator.MoveNext();
             var element1 = enumerator.Current;
             var moveNext2 = enumerator.MoveNext();
