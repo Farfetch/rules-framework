@@ -548,7 +548,11 @@
             let ruleNameSearchTimeout = null;
 
             $('#ruleNameSearch').keyup(function (event) {
-                if (event.keyCode == 13 && $('#rules') && $('#rules').hasClass('active')) {                    
+                let keyCode = event.keyCode || event.which
+                
+                if (keyCode == 13) {
+                    event.preventDefault();
+                    clearTimeout(ruleValueSearchTimeout);
                     return false;
                 }
 
@@ -558,8 +562,12 @@
 
             let ruleValueSearchTimeout = null;
 
-            $('#ruleValueSearch').keyup(function () {
-                if (event.keyCode == 13 && $('#rules') && $('#rules').hasClass('active')) {
+            $('#ruleValueSearch').keyup(function (event) {
+                let keyCode = event.keyCode || event.which
+
+                if (event.keyCode == 13) {                    
+                    event.preventDefault();
+                    clearTimeout(ruleValueSearchTimeout);
                     return false;
                 }
                 clearTimeout(ruleValueSearchTimeout);
