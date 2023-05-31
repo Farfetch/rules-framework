@@ -2,7 +2,6 @@ namespace Rules.Framework
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Rules.Framework.Core;
 
     /// <summary>
@@ -21,7 +20,7 @@ namespace Rules.Framework
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }
 
         /// <summary>
-        /// Gets or sets wether rules' conditions is enabled or not.
+        /// Gets or sets whether rules' conditions is enabled or not.
         /// </summary>
         public bool EnableCompilation { get; set; }
 
@@ -57,7 +56,7 @@ namespace Rules.Framework
         /// </summary>
         /// <remarks>
         /// <para>MissingConditionBehavior = UseDataTypeDefault</para>
-        /// <para>PriotityCriteria = TopmostRuleWins</para>
+        /// <para>PriorityCriteria = TopmostRuleWins</para>
         /// <para>DataTypes.Boolean default = default(bool)</para>
         /// <para>DataTypes.Decimal default = default(decimal)</para>
         /// <para>DataTypes.Integer default = default(int)</para>
@@ -66,21 +65,23 @@ namespace Rules.Framework
         /// <returns></returns>
         public static RulesEngineOptions NewWithDefaults()
         {
-            RulesEngineOptions rulesEngineOptions = new RulesEngineOptions
+            RulesEngineOptions rulesEngineOptions = new()
             {
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
-                PriorityCriteria = PriorityCriterias.TopmostRuleWins
+                PriorityCriteria = PriorityCriterias.TopmostRuleWins,
+                DataTypeDefaults =
+                    {
+                        [DataTypes.Boolean] = default(bool),
+                        [DataTypes.Decimal] = default(decimal),
+                        [DataTypes.Integer] = default(int),
+                        [DataTypes.String] = string.Empty,
+                        [DataTypes.ArrayBoolean] = default(bool),
+                        [DataTypes.ArrayDecimal] = default(decimal),
+                        [DataTypes.ArrayInteger] = default(int),
+                        [DataTypes.ArrayString] = string.Empty,
+                    },
             };
 
-            rulesEngineOptions.DataTypeDefaults[DataTypes.Boolean] = default(bool);
-            rulesEngineOptions.DataTypeDefaults[DataTypes.Decimal] = default(decimal);
-            rulesEngineOptions.DataTypeDefaults[DataTypes.Integer] = default(int);
-            rulesEngineOptions.DataTypeDefaults[DataTypes.String] = string.Empty;
-
-            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayBoolean] = Enumerable.Empty<bool>();
-            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayDecimal] = Enumerable.Empty<decimal>();
-            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayInteger] = Enumerable.Empty<int>();
-            rulesEngineOptions.DataTypeDefaults[DataTypes.ArrayString] = Enumerable.Empty<string>();
 
             return rulesEngineOptions;
         }
