@@ -542,30 +542,42 @@
         }
 
         function setSearchEvents(){
-            $('#contentTypesSelect').on('change', search);
-            $('#ruleStatusesSelect').on('change', search);
-            
             let ruleNameSearchTimeout = null;
+            let ruleValueSearchTimeout = null;
+                        
+            $('#contentTypesSelect').on('change', search);
+
+            $('#ruleStatusesSelect').on('change', search);
+
+            $('#ruleNameSearch').on('change', function (){
+                clearTimeout(ruleNameSearchTimeout);
+                search();
+            });
+            $('#ruleValueSearch').on('change', function () {
+                clearTimeout(ruleValueSearchTimeout);
+                search();
+            });
+            
+            
+            const unbouncedKeyCodes = [13, 9]; //13 = enter, 9 = tab
 
             $('#ruleNameSearch').keyup(function (event) {
-                let keyCode = event.keyCode || event.which
+                let keyCode = event.keyCode || event.which;
                 
-                if (keyCode == 13) {
+                if (unbouncedKeyCodes.includes(keyCode)) {
                     event.preventDefault();
-                    clearTimeout(ruleValueSearchTimeout);
+                    clearTimeout(ruleNameSearchTimeout);
                     return false;
                 }
 
                 clearTimeout(ruleNameSearchTimeout);
                 ruleNameSearchTimeout = setTimeout(search, timeoutToSearch);
             });
-
-            let ruleValueSearchTimeout = null;
-
+                        
             $('#ruleValueSearch').keyup(function (event) {
-                let keyCode = event.keyCode || event.which
+                let keyCode = event.keyCode || event.which;
 
-                if (keyCode == 13) {                    
+                if (unbouncedKeyCodes.includes(keyCode)) {                    
                     event.preventDefault();
                     clearTimeout(ruleValueSearchTimeout);
                     return false;
@@ -575,42 +587,76 @@
             });
                                               
             
-            $('#dateBeginSearch').on('change', search);
-            $('#dateEndSearch').on('change', search);
+            $('#dateBeginSearch').on('change', function (event) {                
+                if (areDatesValid()) {
+                    search();
+                    return;
+                }
+                $('#dateBeginSearch').val('');
+            });
+            $('#dateEndSearch').on('change', function () {
+                if (areDatesValid()) {
+                    search();
+                    return;
+                }
+                $('#dateEndSearch').val('');
+            });
         }
 
-        function search() {                
-                $('#rules_table').html('');
-                const contentType = $('#contentTypesSelect').children("option:selected").val();
-                const status = $('#ruleStatusesSelect').children("option:selected").val();
-                const name = $('#ruleNameSearch').val();
-                const dateBegin = $('#dateBeginSearch').val();
-                const dateEnd = $('#dateEndSearch').val();
-                const content = $('#ruleValueSearch').val();                
+        let executingSearch = false;
+
+        function areDatesValid() {
+            let from = $("#dateBeginSearch").val();
+            let to = $("#dateEndSearch").val();
+
+            if (Date.parse(from) > Date.parse(to)) {
+                $('#errorModal').modal('show');
+                $('#errorBody').html('<pre> Invalid date range </pre>');                
+                return false;
+            }
+
+            return true;
+        }
+        
+
+        function search() {
+            if (executingSearch) {
+                return;
+            }
+            executingSearch = true;
+            $('#rules_table').html('');
+            const contentType = $('#contentTypesSelect').children("option:selected").val();
+            const status = $('#ruleStatusesSelect').children("option:selected").val();
+            const name = $('#ruleNameSearch').val();
+            const dateBegin = $('#dateBeginSearch').val();
+            const dateEnd = $('#dateEndSearch').val();
+            const content = $('#ruleValueSearch').val();                
                                 
                                 
-                $("#loading").show();
-                $.ajax({
-                    url: "api/v1/rules",
-                    data: jQuery.param(
-                        {
-                            contentType: contentType ?? null,
-                            content: content ?? null,
-                            dateBegin: dateBegin ?? null,
-                            dateEnd: dateEnd ?? null,
-                            status: status ?? null,
-                            name: name ?? null
-                        }),
-                    success: function (response) {
-                        rules = response;                            
-                        setRulesPagination(response);
-                    },
-                    error: function (error) {
-                        $('#loading').hide();
-                        $('#errorModal').modal('show');
-                        $('#errorBody').html('<pre>' + JSON.stringify(error, null, '\t') + '</pre>');
-                    }
-                });
+            $("#loading").show();
+            $.ajax({
+                url: "api/v1/rules",
+                data: jQuery.param(
+                    {
+                        contentType: contentType ?? null,
+                        content: content ?? null,
+                        dateBegin: dateBegin ?? null,
+                        dateEnd: dateEnd ?? null,
+                        status: status ?? null,
+                        name: name ?? null
+                    }),
+                success: function (response) {
+                    executingSearch = false;
+                    rules = response;                            
+                    setRulesPagination(response);
+                },
+                error: function (error) {
+                    executingSearch = false;
+                    $('#loading').hide();
+                    $('#errorModal').modal('show');
+                    $('#errorBody').html('<pre>' + JSON.stringify(error, null, '\t') + '</pre>');
+                }
+            });
         }
 
         function applyContentTypesFilter(dataSource) {
@@ -627,7 +673,7 @@
             return dataSource;
         }
 
-        $(document).ready(() => {
+        $(document).ready(() => {            
             $(document).keypress(function (event) {
                 if (event.keyCode == 13 && $('#rules') && $('#rules').hasClass('active')) {
                     event.preventDefault();

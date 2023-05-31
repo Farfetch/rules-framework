@@ -32,6 +32,14 @@ namespace Rules.Framework.WebUI.Handlers
         {
             var rulesFilter = this.GetRulesFilterFromRequest(httpRequest);
 
+            if (!IsValidFilterDates(rulesFilter))
+            {
+                await this.WriteResponseAsync(httpResponse, new { Message = "Date begin cannot be greater than after" }, (int)HttpStatusCode.BadRequest)
+                   .ConfigureAwait(false);
+
+                return;
+            }
+
             try
             {
                 var rules = new List<RuleDto>();
@@ -58,6 +66,13 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 await this.WriteExceptionResponseAsync(httpResponse, ex).ConfigureAwait(false);
             }
+        }
+
+        private static bool IsValidFilterDates(RulesFilterDto rulesFilter)
+        {
+            return (rulesFilter.DateBegin is null
+                || rulesFilter.DateEnd is null) ||
+                (rulesFilter.DateBegin <= rulesFilter.DateEnd);
         }
 
         private IEnumerable<RuleDto> ApplyFilters(RulesFilterDto rulesFilter, IEnumerable<RuleDto> genericRulesDto)
