@@ -4,6 +4,7 @@ namespace Rules.Framework
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using Rules.Framework.Builder.Validation;
@@ -421,7 +422,7 @@ namespace Rules.Framework
             var matchedRules = new List<Rule<TContentType, TConditionType>>(orderedRules.Count);
             foreach (var rule in orderedRules)
             {
-                if (rule.Active == active.GetValueOrDefault(defaultValue: true) && (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions)))
+                if (this.EvalRule(rule, evaluationOptions, conditionsAsDictionary, active))
                 {
                     matchedRules.Add(rule);
                 }
@@ -441,7 +442,7 @@ namespace Rules.Framework
             for (int i = rules.Count - 1; i >= 0; i--)
             {
                 var rule = rules[i];
-                if (rule.Active == active.GetValueOrDefault(defaultValue: true) && (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions)))
+                if (this.EvalRule(rule, evaluationOptions, conditionsAsDictionary, active))
                 {
                     return rule;
                 }
@@ -461,7 +462,7 @@ namespace Rules.Framework
             for (int i = 0; i < rules.Count; i++)
             {
                 var rule = rules[i];
-                if (rule.Active == active.GetValueOrDefault(defaultValue: true) && (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions)))
+                if (this.EvalRule(rule, evaluationOptions, conditionsAsDictionary, active))
                 {
                     return rule;
                 }
@@ -469,6 +470,14 @@ namespace Rules.Framework
 
             return null!;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool EvalRule(
+            Rule<TContentType, TConditionType> rule,
+            EvaluationOptions evaluationOptions,
+            Dictionary<TConditionType, object> conditionsAsDictionary,
+            bool? active)
+            => rule.Active == active.GetValueOrDefault(defaultValue: true) && (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions));
 
         private async Task<List<Rule<TContentType, TConditionType>>> GetRulesOrderedAscendingAsync(GetRulesArgs<TContentType> getRulesArgs)
         {

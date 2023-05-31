@@ -34,17 +34,19 @@ namespace Rules.Framework.Providers.MongoDb
                 WriteConcern = WriteConcern.Acknowledged,
             });
 
-            // Creates rules collection if it does not exist.
-            var collectionsCursor = await mongoDatabase.ListCollectionNamesAsync().ConfigureAwait(false);
-            var collections = await collectionsCursor.ToListAsync().ConfigureAwait(false);
-            if (!collections.Contains(mongoDbProviderSettings.RulesCollectionName))
-            {
-                await mongoDatabase.CreateCollectionAsync(mongoDbProviderSettings.RulesCollectionName).ConfigureAwait(false);
-            }
+            await CreateRulesCollectionIfNotExists(mongoDatabase, mongoDbProviderSettings).ConfigureAwait(false);
 
             var rulesCollection = mongoDatabase.GetCollection<RuleDataModel>(mongoDbProviderSettings.RulesCollectionName);
 
-            // Create indexes if they do not exist.
+            await CreateIndexesIfNotExists(rulesCollection, mongoDbProviderSettings).ConfigureAwait(false);
+
+            // Mark as initialized as this initialization code is never run anymore throughout the
+            // app lifecycle.
+            isInitialized = true;
+        }
+
+        private static async Task CreateIndexesIfNotExists(IMongoCollection<RuleDataModel> rulesCollection, MongoDbProviderSettings mongoDbProviderSettings)
+        {
             var getRulesIndex = $"ix_{mongoDbProviderSettings.RulesCollectionName.ToLower(CultureInfo.InvariantCulture)}_get_rules";
             var getRulesIndexKeysDefinition = Builders<RuleDataModel>.IndexKeys
                 .Ascending("ContentType").Ascending("DateBegin").Ascending("DateEnd");
@@ -53,10 +55,6 @@ namespace Rules.Framework.Providers.MongoDb
             var getRulesByIndexKeysDefinition = Builders<RuleDataModel>.IndexKeys
                 .Ascending("ContentType").Ascending("Name").Ascending("Priority");
             await CreateIndexOnBackgroundAsync(rulesCollection, getRulesByIndex, getRulesByIndexKeysDefinition).ConfigureAwait(false);
-
-            // Mark as initialized as this initialization code is never run anymore throughout the
-            // app lifecycle.
-            isInitialized = true;
         }
 
         private static async Task CreateIndexOnBackgroundAsync<T>(IMongoCollection<T> mongoCollection, string indexName, IndexKeysDefinition<T> indexKeysDefinition)
@@ -68,6 +66,16 @@ namespace Rules.Framework.Providers.MongoDb
             };
             var createIndexModel = new CreateIndexModel<T>(indexKeysDefinition, createIndexOptions);
             _ = await mongoCollection.Indexes.CreateOneAsync(createIndexModel).ConfigureAwait(false);
+        }
+
+        private static async Task CreateRulesCollectionIfNotExists(IMongoDatabase mongoDatabase, MongoDbProviderSettings mongoDbProviderSettings)
+        {
+            var collectionsCursor = await mongoDatabase.ListCollectionNamesAsync().ConfigureAwait(false);
+            var collections = await collectionsCursor.ToListAsync().ConfigureAwait(false);
+            if (!collections.Contains(mongoDbProviderSettings.RulesCollectionName))
+            {
+                await mongoDatabase.CreateCollectionAsync(mongoDbProviderSettings.RulesCollectionName).ConfigureAwait(false);
+            }
         }
     }
 }

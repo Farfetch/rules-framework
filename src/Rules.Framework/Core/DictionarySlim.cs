@@ -50,7 +50,7 @@ namespace Rules.Framework.Core
         {
             get
             {
-                if (key == null)
+                if (key is null)
                 {
                     throw new ArgumentNullException(nameof(key));
                 }
@@ -65,7 +65,7 @@ namespace Rules.Framework.Core
             }
             set
             {
-                if (key == null)
+                if (key is null)
                 {
                     throw new ArgumentNullException(nameof(key));
                 }
@@ -88,7 +88,7 @@ namespace Rules.Framework.Core
 
         public void Add(TKey key, TValue value)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
@@ -110,7 +110,7 @@ namespace Rules.Framework.Core
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
-            if (item.Key == null)
+            if (item.Key is null)
             {
                 throw new ArgumentException("The item key is null.", nameof(item));
             }
@@ -159,7 +159,7 @@ namespace Rules.Framework.Core
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            if (array == null)
+            if (array is null)
             {
                 throw new ArgumentNullException(nameof(array));
             }
@@ -187,7 +187,7 @@ namespace Rules.Framework.Core
 
         public bool Remove(TKey key)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
@@ -211,7 +211,7 @@ namespace Rules.Framework.Core
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            if (item.Key == null)
+            if (item.Key is null)
             {
                 throw new ArgumentException("The item key is null.", nameof(item));
             }
@@ -244,7 +244,7 @@ namespace Rules.Framework.Core
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentNullException(nameof(key));
             }
