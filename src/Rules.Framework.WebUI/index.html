@@ -565,7 +565,7 @@
             $('#ruleValueSearch').keyup(function (event) {
                 let keyCode = event.keyCode || event.which
 
-                if (event.keyCode == 13) {                    
+                if (keyCode == 13) {                    
                     event.preventDefault();
                     clearTimeout(ruleValueSearchTimeout);
                     return false;
