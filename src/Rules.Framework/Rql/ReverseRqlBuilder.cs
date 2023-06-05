@@ -98,10 +98,59 @@ namespace Rules.Framework.Rql
             return matchRqlBuilder.ToString();
         }
 
-        public string VisitMatchStatement(MatchStatement matchStatement) => $"{matchStatement.Expression.Accept(this)};";
+        public string VisitQueryStatement(QueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
 
         public string VisitNoneExpression(NoneExpression noneExpression) => string.Empty;
 
         public string VisitNoneStatement(NoneStatement noneStatement) => string.Empty;
+
+        public string VisitSearchExpression(SearchExpression searchExpression)
+        {
+            var contentType = searchExpression.ContentType.Accept(this);
+            var dateBegin = searchExpression.DateBegin.Accept(this);
+            var dateEnd = searchExpression.DateEnd.Accept(this);
+
+            var searchRqlBuilder = new StringBuilder("SEARCH RULES")
+                .Append(SPACE)
+                .Append("FOR")
+                .Append(SPACE)
+                .Append(contentType)
+                .Append(SPACE)
+                .Append("ON RANGE")
+                .Append(SPACE)
+                .Append(dateBegin)
+                .Append(SPACE)
+                .Append("TO")
+                .Append(SPACE)
+                .Append(dateEnd);
+
+            if (searchExpression.InputConditions.Any())
+            {
+                searchRqlBuilder.Append(SPACE)
+                    .Append("WITH {");
+
+                var notFirst = false;
+                foreach (var inputConditionExpression in searchExpression.InputConditions)
+                {
+                    if (notFirst)
+                    {
+                        searchRqlBuilder.Append(',');
+                    }
+                    else
+                    {
+                        notFirst = true;
+                    }
+
+                    var inputCondition = inputConditionExpression.Accept(this);
+                    searchRqlBuilder.Append(SPACE)
+                        .Append(inputCondition);
+                }
+
+                searchRqlBuilder.Append(SPACE)
+                    .Append('}');
+            }
+
+            return searchRqlBuilder.ToString();
+        }
     }
 }

@@ -13,5 +13,7 @@ namespace Rules.Framework.Rql.Expressions
         T VisitMatchExpression(MatchExpression matchExpression);
 
         T VisitNoneExpression(NoneExpression noneExpression);
+
+        T VisitSearchExpression(SearchExpression searchExpression);
     }
 }

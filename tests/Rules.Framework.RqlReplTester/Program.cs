@@ -42,11 +42,13 @@ namespace Rules.Framework.RqlReplTester
                         if (resultSet.Lines.Any())
                         {
                             Console.WriteLine($"\t{resultSet.RqlStatement}");
+                            Console.WriteLine("\t | # | Priority | Rule");
                             Console.WriteLine("\t----------");
+
                             foreach (var line in resultSet.Lines)
                             {
                                 var content = line.Rule.ContentContainer.GetContentAs<object>();
-                                Console.WriteLine($"\t | {line.LineNumber} | {line.Rule.Name}: {JsonConvert.SerializeObject(content)}");
+                                Console.WriteLine($"\t | {line.LineNumber} | {line.Rule.Priority,-8} | {line.Rule.Name}: {JsonConvert.SerializeObject(content)}");
                             }
                         }
                         else if (resultSet.AffectedRules > 0)

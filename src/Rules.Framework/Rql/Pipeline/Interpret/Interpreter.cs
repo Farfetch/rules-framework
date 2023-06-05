@@ -93,9 +93,13 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return await this.rulesEngine.MatchManyAsync(contentType, matchDate, conditions).ConfigureAwait(false);
         }
 
-        public async Task<IResult> VisitMatchStatement(MatchStatement matchStatement)
+        public Task<object> VisitNoneExpression(NoneExpression noneExpression) => Task.FromResult<object>(result: null);
+
+        public Task<IResult> VisitNoneStatement(NoneStatement statement) => Task.FromResult<IResult>(result: null);
+
+        public async Task<IResult> VisitQueryStatement(QueryStatement matchStatement)
         {
-            var rules = (IEnumerable<Rule<TContentType, TConditionType>>)await matchStatement.Expression.Accept(this).ConfigureAwait(false);
+            var rules = (IEnumerable<Rule<TContentType, TConditionType>>)await matchStatement.Query.Accept(this).ConfigureAwait(false);
             var resultSetLines = new List<ResultSetLine<TContentType, TConditionType>>();
             var line = 1;
 
@@ -109,8 +113,27 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
         }
 
-        public Task<object> VisitNoneExpression(NoneExpression noneExpression) => Task.FromResult<object>(result: null);
+        public async Task<object> VisitSearchExpression(SearchExpression searchExpression)
+        {
+            var contentTypeName = (string)await searchExpression.ContentType.Accept(this).ConfigureAwait(false);
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName, ignoreCase: true);
+            var dateBegin = (DateTime)await searchExpression.DateBegin.Accept(this).ConfigureAwait(false);
+            var dateEnd = (DateTime)await searchExpression.DateEnd.Accept(this).ConfigureAwait(false);
 
-        public Task<IResult> VisitNoneStatement(NoneStatement statement) => Task.FromResult<IResult>(result: null);
+            var conditions = new List<Condition<TConditionType>>();
+            foreach (var inputConditionExpression in searchExpression.InputConditions)
+            {
+                var condition = (Condition<TConditionType>)await inputConditionExpression.Accept(this).ConfigureAwait(false);
+                conditions.Add(condition);
+            }
+
+            var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, dateBegin, dateEnd)
+            {
+                Conditions = conditions,
+                ExcludeRulesWithoutSearchConditions = true,
+            };
+
+            return await this.rulesEngine.SearchAsync(searchArgs).ConfigureAwait(false);
+        }
     }
 }

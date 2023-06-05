@@ -123,7 +123,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse
                 return Expression.None;
             }
 
-            var inputConditionExpressions = HandleMatchInputConditions(parseContext);
+            var inputConditionExpressions = HandlQueryInputConditions(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
@@ -192,7 +192,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             return Expression.None;
         }
 
-        private static Expression HandleMatchInputCondition(ParseContext parseContext)
+        private static Expression HandleQueryInputCondition(ParseContext parseContext)
         {
             if (parseContext.IsMatch(TokenType.IDENTIFIER) || parseContext.IsMatch(TokenType.STRING))
             {
@@ -235,7 +235,106 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             return Expression.None;
         }
 
-        private static IEnumerable<Expression> HandleMatchInputConditions(ParseContext parseContext)
+        private static Expression HandleSearch(ParseContext parseContext)
+        {
+            if (parseContext.MoveNext() && parseContext.IsMatch(TokenType.RULES))
+            {
+                var contentType = HandleContentType(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
+                (var dateBegin, var dateEnd) = HandleSearchDateRange(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
+                var inputConditionExpressions = HandlQueryInputConditions(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
+                return new SearchExpression(contentType, dateBegin, dateEnd, inputConditionExpressions);
+            }
+
+            parseContext.EnterPanicMode("Expect token 'RULES'.", parseContext.GetCurrentToken());
+            return Expression.None;
+        }
+
+        private static (Expression, Expression) HandleSearchDateRange(ParseContext parseContext)
+        {
+            if (parseContext.MoveNext() && parseContext.MoveNextConditionally(TokenType.ON))
+            {
+                if (parseContext.IsMatch(TokenType.STRING))
+                {
+                    var dateBegin = HandleLiteral(parseContext, LiteralType.DateTime);
+                    if (parseContext.PanicMode)
+                    {
+                        return (Expression.None, Expression.None);
+                    }
+
+                    if (parseContext.MoveNext() && parseContext.MoveNextConditionally(TokenType.TO))
+                    {
+                        if (parseContext.IsMatch(TokenType.STRING))
+                        {
+                            var dateEnd = HandleLiteral(parseContext, LiteralType.DateTime);
+                            if (parseContext.PanicMode)
+                            {
+                                return (Expression.None, Expression.None);
+                            }
+
+                            return (dateBegin, dateEnd);
+                        }
+
+                        parseContext.EnterPanicMode("Expect end date and time.", parseContext.GetCurrentToken());
+                        return (Expression.None, Expression.None);
+                    }
+
+                    parseContext.EnterPanicMode("Expect token 'TO'.", parseContext.GetCurrentToken());
+                    return (Expression.None, Expression.None);
+                }
+
+                parseContext.EnterPanicMode("Expect begin date and time.", parseContext.GetCurrentToken());
+                return (Expression.None, Expression.None);
+            }
+
+            parseContext.EnterPanicMode("Expect token 'ON'.", parseContext.GetCurrentToken());
+            return (Expression.None, Expression.None);
+        }
+
+        private static Statement HandleStatement(ParseContext parseContext)
+        {
+            if (parseContext.IsMatch(TokenType.MATCH))
+            {
+                var matchExpression = HandleMatch(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Statement.None;
+                }
+
+                return new QueryStatement(matchExpression);
+            }
+
+            if (parseContext.IsMatch(TokenType.SEARCH))
+            {
+                var searchExpression = HandleSearch(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Statement.None;
+                }
+
+                return new QueryStatement(searchExpression);
+            }
+
+            _ = parseContext.MoveNext();
+            parseContext.EnterPanicMode("Expected statement begin (MATCH, SEARCH).", parseContext.GetCurrentToken());
+            return Statement.None;
+        }
+
+        private static IEnumerable<Expression> HandlQueryInputConditions(ParseContext parseContext)
         {
             if (parseContext.MoveNext() && parseContext.MoveNextConditionally(TokenType.WITH))
             {
@@ -248,7 +347,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse
                 var inputConditionExpressions = new List<Expression>();
                 while (true)
                 {
-                    var inputConditionExpression = HandleMatchInputCondition(parseContext);
+                    var inputConditionExpression = HandleQueryInputCondition(parseContext);
                     if (parseContext.PanicMode)
                     {
                         return Enumerable.Empty<Expression>();
@@ -279,24 +378,6 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             }
 
             return Enumerable.Empty<Expression>();
-        }
-
-        private static Statement HandleStatement(ParseContext parseContext)
-        {
-            if (parseContext.IsMatch(TokenType.MATCH))
-            {
-                var matchExpression = HandleMatch(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
-
-                return new MatchStatement(matchExpression);
-            }
-
-            _ = parseContext.MoveNext();
-            parseContext.EnterPanicMode("Expect token 'MATCH'.", parseContext.GetCurrentToken());
-            return Statement.None;
         }
 
         private static void Synchronize(ParseContext parseContext)
