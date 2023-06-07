@@ -1,16 +1,13 @@
 namespace Rules.Framework.Rql.Expressions
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     internal class MatchExpression : Expression
     {
         public MatchExpression(
             Expression cardinality,
             Expression contentType,
             Expression matchDate,
-            IEnumerable<Expression> inputConditions)
-            : base(cardinality.BeginPosition, inputConditions.LastOrDefault()?.EndPosition ?? matchDate.EndPosition)
+            Expression inputConditions)
+            : base(cardinality.BeginPosition, inputConditions?.EndPosition ?? matchDate.EndPosition)
         {
             this.Cardinality = cardinality;
             this.ContentType = contentType;
@@ -22,7 +19,7 @@ namespace Rules.Framework.Rql.Expressions
 
         public Expression ContentType { get; }
 
-        public IEnumerable<Expression> InputConditions { get; set; }
+        public Expression InputConditions { get; }
 
         public Expression MatchDate { get; }
 

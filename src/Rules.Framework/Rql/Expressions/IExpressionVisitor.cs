@@ -4,7 +4,13 @@ namespace Rules.Framework.Rql.Expressions
     {
         T VisitCardinalityExpression(CardinalityExpression expression);
 
+        T VisitComposedConditionExpression(ComposedConditionExpression expression);
+
+        T VisitConditionGroupingExpression(ConditionGroupingExpression expression);
+
         T VisitInputConditionExpression(InputConditionExpression inputConditionExpression);
+
+        T VisitInputConditionsExpression(InputConditionsExpression inputConditionsExpression);
 
         T VisitKeywordExpression(KeywordExpression keywordExpression);
 
@@ -14,6 +20,14 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitNoneExpression(NoneExpression noneExpression);
 
+        T VisitOperatorExpression(OperatorExpression operatorExpression);
+
+        T VisitPlaceholderExpression(PlaceholderExpression placeholderExpression);
+
+        T VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression);
+
         T VisitSearchExpression(SearchExpression searchExpression);
+
+        T VisitValueConditionExpression(ValueConditionExpression valueConditionExpression);
     }
 }

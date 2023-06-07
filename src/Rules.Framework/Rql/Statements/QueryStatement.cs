@@ -5,6 +5,7 @@ namespace Rules.Framework.Rql.Statements
     internal class QueryStatement : Statement
     {
         public QueryStatement(Expression query)
+            : base(query.BeginPosition, query.EndPosition)
         {
             this.Query = query;
         }

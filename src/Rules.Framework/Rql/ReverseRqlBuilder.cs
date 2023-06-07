@@ -33,12 +33,115 @@ namespace Rules.Framework.Rql
         public string VisitCardinalityExpression(CardinalityExpression expression)
             => $"{expression.CardinalityKeyword.Accept(this)} {expression.RuleKeyword.Accept(this)}";
 
+        public string VisitComposedConditionExpression(ComposedConditionExpression expression)
+        {
+            var logicalOperator = expression.LogicalOperator.Accept(this);
+            var stringBuilder = new StringBuilder();
+            var first = true;
+            foreach (var childCondition in expression.ChildConditions)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    stringBuilder.Append(SPACE)
+                        .Append(logicalOperator)
+                        .Append(SPACE);
+                }
+
+                stringBuilder.Append(childCondition.Accept(this));
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        public string VisitConditionGroupingExpression(ConditionGroupingExpression expression)
+            => $"({expression.RootCondition.Accept(this)})";
+
+        public string VisitCreateStatement(CreateStatement createStatement)
+        {
+            var stringBuilder = new StringBuilder("CREATE RULE")
+                .Append(SPACE)
+                .Append(createStatement.RuleName.Accept(this))
+                .Append(SPACE)
+                .Append("AS")
+                .Append(SPACE)
+                .Append(createStatement.ContentType.Accept(this))
+                .Append(SPACE)
+                .Append("WITH CONTENT")
+                .Append(SPACE)
+                .Append(createStatement.Content.Accept(this))
+                .Append(SPACE)
+                .Append("BEGINS ON")
+                .Append(SPACE)
+                .Append(createStatement.DateBegin.Accept(this));
+
+            if (createStatement.DateEnd != null)
+            {
+                stringBuilder.Append(SPACE)
+                    .Append("ENDS ON")
+                    .Append(SPACE)
+                    .Append(createStatement.DateEnd.Accept(this));
+            }
+
+            if (createStatement.Condition != null)
+            {
+                stringBuilder.Append(SPACE)
+                    .Append("APPLY WHEN")
+                    .Append(SPACE)
+                    .Append(createStatement.Condition.Accept(this));
+            }
+
+            if (createStatement.PriorityOption != null)
+            {
+                stringBuilder.Append(SPACE)
+                    .Append(createStatement.PriorityOption.Accept(this));
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        public string VisitDefinitionStatement(DefinitionStatement definitionStatement) => $"{definitionStatement.Definition.Accept(this)};";
+
         public string VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
         {
             var left = inputConditionExpression.Left.Accept(this);
             var @operator = inputConditionExpression.Operator.Lexeme;
             var right = inputConditionExpression.Right.Accept(this);
             return $"{left} {@operator} {right}";
+        }
+
+        public string VisitInputConditionsExpression(InputConditionsExpression inputConditionsExpression)
+        {
+            var inputConditionsRqlBuilder = new StringBuilder();
+            if (inputConditionsExpression.InputConditions.Any())
+            {
+                inputConditionsRqlBuilder.Append("WITH {");
+
+                var notFirst = false;
+                foreach (var inputConditionExpression in inputConditionsExpression.InputConditions)
+                {
+                    if (notFirst)
+                    {
+                        inputConditionsRqlBuilder.Append(',');
+                    }
+                    else
+                    {
+                        notFirst = true;
+                    }
+
+                    var inputCondition = inputConditionExpression.Accept(this);
+                    inputConditionsRqlBuilder.Append(SPACE)
+                        .Append(inputCondition);
+                }
+
+                inputConditionsRqlBuilder.Append(SPACE)
+                    .Append('}');
+            }
+
+            return inputConditionsRqlBuilder.ToString();
         }
 
         public string VisitKeywordExpression(KeywordExpression keywordExpression) => keywordExpression.Keyword.Lexeme;
@@ -56,6 +159,7 @@ namespace Rules.Framework.Rql
             var cardinality = matchExpression.Cardinality.Accept(this);
             var contentType = matchExpression.ContentType.Accept(this);
             var matchDate = matchExpression.MatchDate.Accept(this);
+            var inputConditions = matchExpression.InputConditions.Accept(this);
 
             var matchRqlBuilder = new StringBuilder("MATCH")
                 .Append(SPACE)
@@ -69,46 +173,66 @@ namespace Rules.Framework.Rql
                 .Append(SPACE)
                 .Append(matchDate);
 
-            if (matchExpression.InputConditions.Any())
+            if (!string.IsNullOrWhiteSpace(inputConditions))
             {
                 matchRqlBuilder.Append(SPACE)
-                    .Append("WITH {");
-
-                var notFirst = false;
-                foreach (var inputConditionExpression in matchExpression.InputConditions)
-                {
-                    if (notFirst)
-                    {
-                        matchRqlBuilder.Append(',');
-                    }
-                    else
-                    {
-                        notFirst = true;
-                    }
-
-                    var inputCondition = inputConditionExpression.Accept(this);
-                    matchRqlBuilder.Append(SPACE)
-                        .Append(inputCondition);
-                }
-
-                matchRqlBuilder.Append(SPACE)
-                    .Append('}');
+                    .Append(inputConditions);
             }
 
             return matchRqlBuilder.ToString();
         }
 
-        public string VisitQueryStatement(QueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
-
         public string VisitNoneExpression(NoneExpression noneExpression) => string.Empty;
 
         public string VisitNoneStatement(NoneStatement noneStatement) => string.Empty;
+
+        public string VisitOperatorExpression(OperatorExpression operatorExpression) => operatorExpression.Token.Lexeme;
+
+        public string VisitPlaceholderExpression(PlaceholderExpression placeholderExpression) => placeholderExpression.Token.Lexeme;
+
+        public string VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression)
+        {
+            var stringBuilder = new StringBuilder("SET PRIORITY ");
+            var priorityOption = priorityOptionExpression.PriorityOption.Accept(this);
+
+            switch (priorityOption)
+            {
+                case "TOP":
+                case "BOTTOM":
+                    stringBuilder.Append(priorityOption);
+                    break;
+
+                case "NAME":
+                    var ruleName = (string)priorityOptionExpression.Argument.Accept(this);
+                    stringBuilder.Append(SPACE)
+                        .Append("RULE NAME")
+                        .Append(SPACE)
+                        .Append(ruleName);
+                    break;
+
+                case "NUMBER":
+                    var priorityValue = priorityOptionExpression.Argument.Accept(this);
+                    stringBuilder.Append(SPACE)
+                        .Append("NUMBER")
+                        .Append(SPACE)
+                        .Append(priorityValue);
+                    break;
+
+                default:
+                    throw new NotSupportedException($"The priority option '{priorityOption}' is not supported.");
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        public string VisitQueryStatement(QueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
 
         public string VisitSearchExpression(SearchExpression searchExpression)
         {
             var contentType = searchExpression.ContentType.Accept(this);
             var dateBegin = searchExpression.DateBegin.Accept(this);
             var dateEnd = searchExpression.DateEnd.Accept(this);
+            var inputConditions = searchExpression.InputConditions.Accept(this);
 
             var searchRqlBuilder = new StringBuilder("SEARCH RULES")
                 .Append(SPACE)
@@ -122,35 +246,19 @@ namespace Rules.Framework.Rql
                 .Append(SPACE)
                 .Append("TO")
                 .Append(SPACE)
-                .Append(dateEnd);
+                .Append(dateEnd)
+                .Append(inputConditions);
 
-            if (searchExpression.InputConditions.Any())
+            if (!string.IsNullOrWhiteSpace(inputConditions))
             {
                 searchRqlBuilder.Append(SPACE)
-                    .Append("WITH {");
-
-                var notFirst = false;
-                foreach (var inputConditionExpression in searchExpression.InputConditions)
-                {
-                    if (notFirst)
-                    {
-                        searchRqlBuilder.Append(',');
-                    }
-                    else
-                    {
-                        notFirst = true;
-                    }
-
-                    var inputCondition = inputConditionExpression.Accept(this);
-                    searchRqlBuilder.Append(SPACE)
-                        .Append(inputCondition);
-                }
-
-                searchRqlBuilder.Append(SPACE)
-                    .Append('}');
+                    .Append(inputConditions);
             }
 
             return searchRqlBuilder.ToString();
         }
+
+        public string VisitValueConditionExpression(ValueConditionExpression valueConditionExpression)
+            => $"{valueConditionExpression.Left.Accept(this)} {valueConditionExpression.Operator.Accept(this)} {valueConditionExpression.Right.Accept(this)}";
     }
 }

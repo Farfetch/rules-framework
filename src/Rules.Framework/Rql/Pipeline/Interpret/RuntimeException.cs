@@ -18,8 +18,12 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             this.EndPosition = endPosition;
         }
 
-        protected RuntimeException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected RuntimeException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
+            this.Rql = info.GetString(nameof(this.Rql));
+            this.BeginPosition = (RqlSourcePosition)info.GetValue(nameof(this.BeginPosition), typeof(RqlSourcePosition));
+            this.EndPosition = (RqlSourcePosition)info.GetValue(nameof(this.EndPosition), typeof(RqlSourcePosition));
         }
 
         public RqlSourcePosition BeginPosition { get; }

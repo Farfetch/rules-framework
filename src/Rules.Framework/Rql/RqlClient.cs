@@ -31,7 +31,8 @@ namespace Rules.Framework.Rql
             }
 
             var tokens = scanResult.Tokens;
-            var parser = new Parser();
+            var parseStrategyProvider = new ParseStrategyPool();
+            var parser = new Parser(parseStrategyProvider);
             var parserResult = parser.Parse(tokens);
 
             if (!parserResult.Success)

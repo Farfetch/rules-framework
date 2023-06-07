@@ -74,11 +74,10 @@ namespace Rules.Framework.RqlReplTester
                     {
                         var errorMessageBuilder = new StringBuilder(" - ")
                             .Append(rqlError.Text)
-                            .Append(" @{")
+                            .Append(" @")
                             .Append(rqlError.BeginPosition)
                             .Append(':')
-                            .Append(rqlError.EndPosition)
-                            .Append('}');
+                            .Append(rqlError.EndPosition);
                         Console.WriteLine(errorMessageBuilder.ToString());
                     }
 

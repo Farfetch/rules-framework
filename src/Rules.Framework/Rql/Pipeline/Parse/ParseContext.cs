@@ -54,24 +54,38 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             return this.Tokens[this.Offset];
         }
 
-        public Token GetPreviousToken()
-        {
-            if (this.Offset < 0)
-            {
-                throw new InvalidOperationException("Must invoke MoveNext() first.");
-            }
-
-            if (this.Offset == 0)
-            {
-                throw new InvalidOperationException("Current offset does not have a previous token.");
-            }
-
-            return this.Tokens[this.Offset - 1];
-        }
-
         public bool IsEof() => this.Tokens[this.Offset].Type == TokenType.EOF;
 
-        public bool IsMatch(params TokenType[] tokenTypes)
+        public bool IsMatchCurrentToken(params TokenType[] tokenTypes)
+            => this.IsMatch(this.Offset, tokenTypes);
+
+        public bool IsMatchNextToken(params TokenType[] tokenTypes)
+            => this.IsMatch(this.Offset + 1, tokenTypes);
+
+        public bool MoveNext()
+            => this.Move(this.Offset + 1);
+
+        public bool MoveNextIfCurrentToken(params TokenType[] tokenTypes)
+        {
+            if (this.IsMatchCurrentToken(tokenTypes))
+            {
+                return this.MoveNext();
+            }
+
+            return false;
+        }
+
+        public bool MoveNextIfNextToken(params TokenType[] tokenTypes)
+        {
+            if (this.IsMatchNextToken(tokenTypes))
+            {
+                return this.MoveNext();
+            }
+
+            return false;
+        }
+
+        private bool IsMatch(int offset, params TokenType[] tokenTypes)
         {
             if (this.IsEof())
             {
@@ -80,23 +94,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse
 
             foreach (var tokenType in tokenTypes)
             {
-                if (this.Tokens[this.Offset].Type == tokenType)
+                if (this.Tokens[offset].Type == tokenType)
                 {
                     return true;
                 }
-            }
-
-            return false;
-        }
-
-        public bool MoveNext()
-            => this.Move(this.Offset + 1);
-
-        public bool MoveNextConditionally(params TokenType[] tokenTypes)
-        {
-            if (this.IsMatch(tokenTypes))
-            {
-                return this.MoveNext();
             }
 
             return false;

@@ -3,6 +3,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Text.RegularExpressions;
     using Rules.Framework.Rql.Messages;
     using Rules.Framework.Rql.Tokens;
 
@@ -11,8 +12,10 @@ namespace Rules.Framework.Rql.Pipeline.Scan
         private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>(StringComparer.Ordinal)
         {
             { "ALL", TokenType.ALL },
+            { "AND", TokenType.AND },
             { "APPLY", TokenType.APPLY },
             { "AS", TokenType.AS },
+            { "BOTTOM", TokenType.BOTTOM },
             { "CONTENT", TokenType.CONTENT },
             { "CREATE", TokenType.CREATE },
             { "ENDS", TokenType.ENDS },
@@ -20,8 +23,11 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "FOR", TokenType.FOR },
             { "IS", TokenType.IS },
             { "MATCH", TokenType.MATCH },
+            { "NAME", TokenType.NAME },
+            { "NUMBER", TokenType.NUMBER },
             { "ON", TokenType.ON },
             { "ONE", TokenType.ONE },
+            { "OR", TokenType.OR },
             { "PRIORITY", TokenType.PRIORITY },
             { "RANGE", TokenType.RANGE },
             { "RULE", TokenType.RULE },
@@ -30,6 +36,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "SET", TokenType.SET },
             { "STARTS", TokenType.STARTS },
             { "TO", TokenType.TO },
+            { "TOP", TokenType.TOP },
             { "TRUE", TokenType.BOOL },
             { "UPDATE", TokenType.UPDATE },
             { "WHEN", TokenType.WHEN },
@@ -87,6 +94,11 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             return ScanResult.CreateSuccess(tokens, messages);
         }
 
+        private static void ConsumeAlphaNumeric(ScanContext scanContext)
+        {
+            while (IsAlphaNumeric(scanContext.GetNextChar()) && scanContext.MoveNext()) { }
+        }
+
         private static Token CreateToken(ScanContext scanContext, TokenType tokenType)
         {
             string lexeme = scanContext.ExtractLexeme().ToUpperInvariant();
@@ -118,11 +130,6 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             }
 
             return CreateToken(scanContext, type);
-
-            static void ConsumeAlphaNumeric(ScanContext scanContext)
-            {
-                while (IsAlphaNumeric(scanContext.GetNextChar()) && scanContext.MoveNext()) { }
-            }
         }
 
         private static Token HandleNumber(ScanContext scanContext)
@@ -146,9 +153,24 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             }
         }
 
+        private static Token HandlePlaceholder(ScanContext scanContext)
+        {
+            ConsumeAlphaNumeric(scanContext);
+            var lexeme = scanContext.ExtractLexeme();
+            var literal = lexeme[1..];
+            return CreateToken(scanContext, lexeme, TokenType.PLACEHOLDER, literal);
+        }
+
         private static Token HandleString(ScanContext scanContext)
         {
-            while (scanContext.GetNextChar() != '"' && scanContext.MoveNext()) { }
+            while (scanContext.GetNextChar() != '"' && scanContext.MoveNext())
+            {
+                // Support escaping double quotes.
+                if (scanContext.GetCurrentChar() == '\\' && scanContext.GetNextChar() == '"')
+                {
+                    _ = scanContext.MoveNext();
+                }
+            }
 
             if (scanContext.IsEof())
             {
@@ -161,7 +183,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
             // Trim the surrounding quotes.
             var lexeme = scanContext.ExtractLexeme();
-            var value = lexeme[1..^1];
+            var value = Regex.Unescape(lexeme[1..^1]);
             return CreateToken(scanContext, lexeme, TokenType.STRING, value);
         }
 
@@ -239,6 +261,9 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                 case '\n':
                     // Ignore whitespace.
                     return Token.None;
+
+                case '@':
+                    return HandlePlaceholder(scanContext);
 
                 case '"':
                     return HandleString(scanContext);

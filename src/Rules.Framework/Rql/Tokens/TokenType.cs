@@ -7,16 +7,21 @@ namespace Rules.Framework.Rql.Tokens
         #region Keywords
 
         ALL,
+        AND,
         APPLY,
         AS,
+        BOTTOM,
         CONTENT,
         CREATE,
         ENDS,
         FOR,
         IS,
         MATCH,
+        NAME,
+        NUMBER,
         ON,
         ONE,
+        OR,
         PRIORITY,
         RANGE,
         RULE,
@@ -25,6 +30,7 @@ namespace Rules.Framework.Rql.Tokens
         SET,
         STARTS,
         TO,
+        TOP,
         UPDATE,
         WHEN,
         WITH,
@@ -38,6 +44,7 @@ namespace Rules.Framework.Rql.Tokens
         DECIMAL,
         BOOL,
         IDENTIFIER,
+        PLACEHOLDER,
 
         #endregion Literals
 
