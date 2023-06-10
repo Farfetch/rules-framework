@@ -76,7 +76,7 @@ namespace Rules.Framework.RqlReplTester
                             .Append(rqlError.Text)
                             .Append(" @")
                             .Append(rqlError.BeginPosition)
-                            .Append(':')
+                            .Append('-')
                             .Append(rqlError.EndPosition);
                         Console.WriteLine(errorMessageBuilder.ToString());
                     }

@@ -2,6 +2,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
@@ -9,15 +10,24 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Statements;
     using Rules.Framework.Rql.Tokens;
+    using Rules.Framework.Source;
 
     internal class Interpreter<TContentType, TConditionType> : IExpressionVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
     {
         private readonly IReverseRqlBuilder reverseRqlBuilder;
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
+        private readonly IRulesSource<TContentType, TConditionType> rulesSource;
+        private IRuntimeEnvironment runtimeEnvironment;
 
-        public Interpreter(IRulesEngine<TContentType, TConditionType> rulesEngine, IReverseRqlBuilder reverseRqlBuilder)
+        public Interpreter(
+            IRulesEngine<TContentType, TConditionType> rulesEngine,
+            IRulesSource<TContentType, TConditionType> rulesSource,
+            IRuntimeEnvironment environment,
+            IReverseRqlBuilder reverseRqlBuilder)
         {
             this.rulesEngine = rulesEngine;
+            this.rulesSource = rulesSource;
+            this.runtimeEnvironment = environment;
             this.reverseRqlBuilder = reverseRqlBuilder;
         }
 
@@ -208,6 +218,115 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return await this.rulesEngine.SearchAsync(searchArgs).ConfigureAwait(false);
         }
 
+        public async Task<object> VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableAttributeExpression)
+        {
+            var updatableAttributeExpressionValue = await updatableAttributeExpression.UpdatableAttribute.Accept(this).ConfigureAwait(false);
+            var rule = (Rule<TContentType, TConditionType>)this.runtimeEnvironment.GetVariableValue(".rule");
+            var rql = (string)this.runtimeEnvironment.GetVariableValue(".rql");
+            switch (updatableAttributeExpression.Kind)
+            {
+                case UpdatableAttributeKind.DateEnd:
+                    rule.DateEnd = (DateTime?)updatableAttributeExpressionValue;
+                    break;
+
+                case UpdatableAttributeKind.PriorityOption:
+                    var priorityOption = (RuleAddPriorityOption)updatableAttributeExpressionValue;
+                    var contentType = rule.ContentContainer.ContentType;
+                    var allContentTypeRulesLazy = new Lazy<Task<IEnumerable<Rule<TContentType, TConditionType>>>>(async () =>
+                        await this.rulesSource.GetRulesAsync(new GetRulesArgs<TContentType>
+                        {
+                            ContentType = contentType,
+                            DateBegin = DateTime.MinValue,
+                            DateEnd = DateTime.MaxValue,
+                        }).ConfigureAwait(false));
+                    switch (priorityOption.PriorityOption)
+                    {
+                        case PriorityOptions.AtTop:
+                            rule.Priority = 1;
+                            break;
+
+                        case PriorityOptions.AtBottom:
+                            var allRules1 = await allContentTypeRulesLazy.Value.ConfigureAwait(false);
+                            rule.Priority = allRules1.Max(r => r.Priority);
+                            break;
+
+                        case PriorityOptions.AtPriorityNumber:
+                            rule.Priority = priorityOption.AtPriorityNumberOptionValue;
+                            break;
+
+                        case PriorityOptions.AtRuleName:
+                            var allRules2 = await allContentTypeRulesLazy.Value.ConfigureAwait(false);
+                            var targetPriorityRule = allRules2.FirstOrDefault(r => string.Equals(r.Name, priorityOption.AtRuleNameOptionValue, StringComparison.Ordinal));
+                            if (targetPriorityRule is null)
+                            {
+                                ThrowRuntimeException(
+                                    rql,
+                                    new[] { $"No such rule with name '{priorityOption.AtRuleNameOptionValue}' and content type '{contentType}' was found for target priority." },
+                                    updatableAttributeExpression.BeginPosition,
+                                    updatableAttributeExpression.EndPosition);
+                            }
+
+                            rule.Priority = targetPriorityRule.Priority;
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"The priority option '{priorityOption.PriorityOption}' is not supported.");
+                    }
+                    break;
+
+                default:
+                    throw new NotSupportedException($"The updatable attribute kind '{updatableAttributeExpression.Kind}' is not supported.");
+            }
+
+            return null;
+        }
+
+        public async Task<IResult> VisitUpdateStatement(UpdateStatement updateStatement)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(updateStatement);
+            var ruleName = (string)await updateStatement.RuleName.Accept(this).ConfigureAwait(false);
+            var contentTypeName = (string)await updateStatement.ContentType.Accept(this).ConfigureAwait(false);
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName, ignoreCase: true);
+            var rules = await this.rulesSource
+                .GetRulesFilteredAsync(new GetRulesFilteredArgs<TContentType>
+                {
+                    Name = ruleName,
+                    ContentType = contentType,
+                }).ConfigureAwait(false);
+
+            if (!rules.Any())
+            {
+                ThrowRuntimeException(
+                    rql,
+                    new[] { $"No such rule with name '{ruleName}' and content type '{contentTypeName}' was found." },
+                    updateStatement.BeginPosition,
+                    updateStatement.EndPosition);
+            }
+
+            var rule = rules.First();
+            using (this.ScopeRuntimeEnvironment())
+            {
+                this.runtimeEnvironment.CreateAndAssignVariable(".rule", rule);
+                this.runtimeEnvironment.CreateAndAssignVariable(".rql", rql);
+
+                var updatableAttributes = updateStatement.UpdatableAttributes;
+                var updatableAttributesLength = updatableAttributes.Length;
+                for (var i = 0; i < updatableAttributesLength; i++)
+                {
+                    _ = await updatableAttributes[i].Accept(this).ConfigureAwait(false);
+                }
+            }
+
+            var ruleUpdateResult = await this.rulesEngine.UpdateRuleAsync(rule).ConfigureAwait(false);
+            if (!ruleUpdateResult.IsSuccess)
+            {
+                ThrowRuntimeException(rql, ruleUpdateResult.Errors, updateStatement.BeginPosition, updateStatement.EndPosition);
+            }
+
+            var resultSet = new ResultSet<TContentType, TConditionType>(rql, 1, new List<ResultSetLine<TContentType, TConditionType>>());
+            return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
+        }
+
         public async Task<object> VisitValueConditionExpression(ValueConditionExpression valueConditionExpression)
         {
             var conditionTypeName = (string)await valueConditionExpression.Left.Accept(this).ConfigureAwait(false);
@@ -230,7 +349,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             string separator = $"{Environment.NewLine}\t - ";
             var errorsText = string.Join(separator, errors);
             throw new RuntimeException(
-                $"Errors have occurred while creating new rule:{separator}{errorsText}",
+                $"Errors have occurred while executing sentence:{separator}{errorsText}",
                 rql,
                 beginPosition,
                 endPosition);
@@ -290,6 +409,14 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
 
             return ruleBuilder.Build();
+        }
+
+        private IDisposable ScopeRuntimeEnvironment()
+        {
+            var parentRuntimeEnvironment = this.runtimeEnvironment;
+            var childRuntimeEnvironment = this.runtimeEnvironment.CreateScopedChildRuntimeEnvironment();
+            this.runtimeEnvironment = parentRuntimeEnvironment;
+            return childRuntimeEnvironment;
         }
     }
 }

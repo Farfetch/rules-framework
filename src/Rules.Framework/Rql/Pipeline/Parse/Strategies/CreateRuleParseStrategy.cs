@@ -99,7 +99,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
 
             Expression priorityOption = null;
-            if (parseContext.IsMatchNextToken(TokenType.SET))
+            if (parseContext.MoveNextIfNextToken(TokenType.SET))
             {
                 priorityOption = this.ParseExpressionWith<PriorityOptionParseStrategy>(parseContext);
                 if (parseContext.PanicMode)

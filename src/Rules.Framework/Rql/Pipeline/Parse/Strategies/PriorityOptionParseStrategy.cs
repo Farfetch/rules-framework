@@ -12,12 +12,6 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.MoveNextIfNextToken(TokenType.SET))
-            {
-                parseContext.EnterPanicMode("Expected token 'SET'.", parseContext.GetCurrentToken());
-                return Expression.None;
-            }
-
             if (!parseContext.MoveNextIfNextToken(TokenType.PRIORITY))
             {
                 parseContext.EnterPanicMode("Expected token 'PRIORITY'.", parseContext.GetCurrentToken());
@@ -42,12 +36,6 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (parseContext.MoveNextIfNextToken(TokenType.NUMBER))
             {
-                if (!parseContext.MoveNextIfNextToken(TokenType.INT))
-                {
-                    parseContext.EnterPanicMode("Expected token 'NUMBER'.", parseContext.GetCurrentToken());
-                    return Expression.None;
-                }
-
                 return ParsePriorityNumber(parseContext);
             }
 
@@ -58,6 +46,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         private Expression ParsePriorityNumber(ParseContext parseContext)
         {
             var keyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+            if (!parseContext.MoveNextIfNextToken(TokenType.INT))
+            {
+                parseContext.EnterPanicMode("Expected priority value.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
             var priorityValue = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
@@ -70,6 +64,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         private Expression ParseRuleName(ParseContext parseContext)
         {
             var keyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+            if (!parseContext.MoveNextIfNextToken(TokenType.STRING))
+            {
+                parseContext.EnterPanicMode("Expected rule name.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
             var ruleName = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {

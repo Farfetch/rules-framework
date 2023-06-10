@@ -7,14 +7,19 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
+    using Rules.Framework.Source;
 
     internal class RqlClient<TContentType, TConditionType> : IRqlClient<TContentType, TConditionType>
     {
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
+        private readonly IRulesSource<TContentType, TConditionType> rulesSource;
 
-        public RqlClient(IRulesEngine<TContentType, TConditionType> rulesEngine)
+        public RqlClient(
+            IRulesEngine<TContentType, TConditionType> rulesEngine,
+            IRulesSource<TContentType, TConditionType> rulesSource)
         {
             this.rulesEngine = rulesEngine;
+            this.rulesSource = rulesSource;
         }
 
         public async Task<IEnumerable<ResultSet<TContentType, TConditionType>>> ExecuteQueryAsync(string rql)
@@ -44,8 +49,9 @@ namespace Rules.Framework.Rql
             }
 
             var statements = parserResult.Statements;
+            using var runtimeEnvironment = new RuntimeEnvironment();
             var reverseRqlBuilder = new ReverseRqlBuilder();
-            var interpreter = new Interpreter<TContentType, TConditionType>(this.rulesEngine, reverseRqlBuilder);
+            var interpreter = new Interpreter<TContentType, TConditionType>(this.rulesEngine, this.rulesSource, runtimeEnvironment, reverseRqlBuilder);
             var interpretResult = await interpreter.InterpretAsync(statements).ConfigureAwait(false);
 
             if (interpretResult.Success)

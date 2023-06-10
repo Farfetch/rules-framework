@@ -97,6 +97,8 @@ namespace Rules.Framework.Rql
             if (createStatement.PriorityOption != null)
             {
                 stringBuilder.Append(SPACE)
+                    .Append("SET")
+                    .Append(SPACE)
                     .Append(createStatement.PriorityOption.Accept(this));
             }
 
@@ -192,7 +194,7 @@ namespace Rules.Framework.Rql
 
         public string VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression)
         {
-            var stringBuilder = new StringBuilder("SET PRIORITY ");
+            var stringBuilder = new StringBuilder("PRIORITY ");
             var priorityOption = priorityOptionExpression.PriorityOption.Accept(this);
 
             switch (priorityOption)
@@ -256,6 +258,38 @@ namespace Rules.Framework.Rql
             }
 
             return searchRqlBuilder.ToString();
+        }
+
+        public string VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression) => updatableExpression.UpdatableAttribute.Accept(this);
+
+        public string VisitUpdateStatement(UpdateStatement updateStatement)
+        {
+            var ruleName = updateStatement.RuleName.Accept(this);
+            var contentType = updateStatement.ContentType.Accept(this);
+            var stringBuilder = new StringBuilder("UPDATE RULE ")
+                .Append(ruleName)
+                .Append(SPACE)
+                .Append("FOR")
+                .Append(SPACE)
+                .Append(contentType)
+                .Append(SPACE);
+
+            for (int i = 0; i < updateStatement.UpdatableAttributes.Length; i++)
+            {
+                var updatableAttribute = updateStatement.UpdatableAttributes[i].Accept(this);
+                stringBuilder.Append("SET")
+                    .Append(SPACE)
+                    .Append(updatableAttribute);
+
+                if (i < updateStatement.UpdatableAttributes.Length - 1)
+                {
+                    stringBuilder.Append(',')
+                        .Append(SPACE);
+                }
+            }
+
+            return stringBuilder.Append(';')
+                .ToString();
         }
 
         public string VisitValueConditionExpression(ValueConditionExpression valueConditionExpression)

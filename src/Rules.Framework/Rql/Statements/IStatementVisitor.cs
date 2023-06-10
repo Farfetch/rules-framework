@@ -8,6 +8,8 @@ namespace Rules.Framework.Rql.Statements
 
         T VisitNoneStatement(NoneStatement noneStatement);
 
-        T VisitQueryStatement(QueryStatement matchStatementt);
+        T VisitQueryStatement(QueryStatement queryStatement);
+
+        T VisitUpdateStatement(UpdateStatement updateStatement);
     }
 }

@@ -45,8 +45,19 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return new DefinitionStatement(createStatement);
             }
 
+            if (parseContext.IsMatchCurrentToken(TokenType.UPDATE))
+            {
+                var updateStatement = this.ParseStatementWith<UpdateRuleParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Statement.None;
+                }
+
+                return new DefinitionStatement(updateStatement);
+            }
+
             _ = parseContext.MoveNext();
-            parseContext.EnterPanicMode("Expected statement begin (MATCH, SEARCH).", parseContext.GetCurrentToken());
+            parseContext.EnterPanicMode("Expected statement begin (MATCH, SEARCH, CREATE, UPDATE).", parseContext.GetCurrentToken());
             return Statement.None;
         }
     }

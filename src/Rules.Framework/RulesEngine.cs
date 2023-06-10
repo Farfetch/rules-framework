@@ -128,7 +128,7 @@ namespace Rules.Framework
                 throw new NotSupportedException($"Rule Query Language is not supported for non-enum types of {nameof(TConditionType)}.");
             }
 
-            return new RqlClient<TContentType, TConditionType>(this);
+            return new RqlClient<TContentType, TConditionType>(this, this.rulesSource);
         }
 
         /// <summary>

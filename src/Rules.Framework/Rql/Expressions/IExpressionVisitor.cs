@@ -28,6 +28,8 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitSearchExpression(SearchExpression searchExpression);
 
+        T VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression);
+
         T VisitValueConditionExpression(ValueConditionExpression valueConditionExpression);
     }
 }
