@@ -8,6 +8,8 @@ namespace Rules.Framework.RqlReplTester
 
     internal class Program
     {
+        private static readonly string tab = new string(' ', 4);
+
         private static async Task Main()
         {
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -41,27 +43,45 @@ namespace Rules.Framework.RqlReplTester
                     {
                         if (resultSet.Lines.Any())
                         {
-                            Console.WriteLine($"\t{resultSet.RqlStatement}");
-                            Console.WriteLine("\t | # | Priority | Rule");
-                            Console.WriteLine("\t----------");
+                            Console.WriteLine($"{tab}{resultSet.RqlStatement}");
+                            Console.WriteLine($"{tab}{new string('-', Math.Min(resultSet.RqlStatement.Length, Console.WindowWidth - 4))}");
+                            if (resultSet.AffectedRules > 0)
+                            {
+                                Console.WriteLine($"{tab} {resultSet.AffectedRules} rules were affected.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{tab} {resultSet.Lines.Count} rules were returned.");
+                            }
+
+                            Console.WriteLine();
+                            Console.WriteLine($"{tab} | # | Priority | Status   | Range                     | Rule");
+                            Console.WriteLine($"{tab} ------------------------------------------------------------");
 
                             foreach (var line in resultSet.Lines)
                             {
-                                var content = line.Rule.ContentContainer.GetContentAs<object>();
-                                Console.WriteLine($"\t | {line.LineNumber} | {line.Rule.Priority,-8} | {line.Rule.Name}: {JsonConvert.SerializeObject(content)}");
+                                var lineNumber = line.LineNumber.ToString();
+                                var priority = line.Rule.Priority.ToString();
+                                var active = line.Rule.Active ? "Active" : "Inactive";
+                                var dateBegin = line.Rule.DateBegin.Date.ToString("yyyy-MM-ddZ");
+                                var dateEnd = line.Rule.DateEnd?.Date.ToString("yyyy-MM-ddZ") ?? "(no end)";
+                                var ruleName = line.Rule.Name;
+                                var content = JsonConvert.SerializeObject(line.Rule.ContentContainer.GetContentAs<object>());
+
+                                Console.WriteLine($"{tab} | {lineNumber} | {priority,-8} | {active,-8} | {dateBegin,-11} - {dateEnd,-11} | {ruleName}: {content}");
                             }
                         }
                         else if (resultSet.AffectedRules > 0)
                         {
-                            Console.WriteLine($"\t{resultSet.RqlStatement}");
-                            Console.WriteLine("\t----------");
-                            Console.WriteLine($"\t {resultSet.AffectedRules} rules were affected.");
+                            Console.WriteLine($"{tab}{resultSet.RqlStatement}");
+                            Console.WriteLine($"{tab}{new string('-', resultSet.RqlStatement.Length)}");
+                            Console.WriteLine($"{tab} {resultSet.AffectedRules} rules were affected.");
                         }
                         else
                         {
-                            Console.WriteLine($"\t{resultSet.RqlStatement}");
-                            Console.WriteLine("\t----------");
-                            Console.WriteLine("\t (empty)");
+                            Console.WriteLine($"{tab}{resultSet.RqlStatement}");
+                            Console.WriteLine($"{tab}{new string('-', resultSet.RqlStatement.Length)}");
+                            Console.WriteLine($"{tab} (empty)");
                         }
                     }
                 }

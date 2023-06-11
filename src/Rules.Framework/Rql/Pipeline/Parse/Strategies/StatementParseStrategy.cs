@@ -56,8 +56,31 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return new DefinitionStatement(updateStatement);
             }
 
+            if (parseContext.IsMatchCurrentToken(TokenType.ACTIVATE))
+            {
+                var activationStatement = this.ParseStatementWith<ActivationParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Statement.None;
+                }
+
+                return new DefinitionStatement(activationStatement);
+            }
+
+            if (parseContext.IsMatchCurrentToken(TokenType.DEACTIVATE))
+            {
+                var deactivationStatement = this.ParseStatementWith<DeactivationParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Statement.None;
+                }
+
+                return new DefinitionStatement(deactivationStatement);
+            }
+
+            var currentToken = parseContext.GetCurrentToken();
+            parseContext.EnterPanicMode($"Unrecognized token '{currentToken.Lexeme}'.", currentToken);
             _ = parseContext.MoveNext();
-            parseContext.EnterPanicMode("Expected statement begin (MATCH, SEARCH, CREATE, UPDATE).", parseContext.GetCurrentToken());
             return Statement.None;
         }
     }

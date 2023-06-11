@@ -2,7 +2,11 @@ namespace Rules.Framework.Rql.Statements
 {
     internal interface IStatementVisitor<T>
     {
+        T VisitActivationStatement(ActivationStatement activationStatement);
+
         T VisitCreateStatement(CreateStatement createStatement);
+
+        T VisitDeactivationStatement(DeactivationStatement deactivationStatement);
 
         T VisitDefinitionStatement(DefinitionStatement definitionStatement);
 

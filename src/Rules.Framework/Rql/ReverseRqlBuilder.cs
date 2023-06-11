@@ -30,6 +30,13 @@ namespace Rules.Framework.Rql
             return statement.Accept(this);
         }
 
+        public string VisitActivationStatement(ActivationStatement activationStatement)
+        {
+            var ruleName = activationStatement.RuleName.Accept(this);
+            var contentType = activationStatement.ContentType.Accept(this);
+            return $"ACTIVATE {ruleName} {contentType}";
+        }
+
         public string VisitCardinalityExpression(CardinalityExpression expression)
             => $"{expression.CardinalityKeyword.Accept(this)} {expression.RuleKeyword.Accept(this)}";
 
@@ -103,6 +110,13 @@ namespace Rules.Framework.Rql
             }
 
             return stringBuilder.ToString();
+        }
+
+        public string VisitDeactivationStatement(DeactivationStatement deactivationStatement)
+        {
+            var ruleName = deactivationStatement.RuleName.Accept(this);
+            var contentType = deactivationStatement.ContentType.Accept(this);
+            return $"DEACTIVATE {ruleName} {contentType}";
         }
 
         public string VisitDefinitionStatement(DefinitionStatement definitionStatement) => $"{definitionStatement.Definition.Accept(this)};";

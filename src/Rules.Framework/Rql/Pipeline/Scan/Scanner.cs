@@ -11,6 +11,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
     {
         private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>(StringComparer.Ordinal)
         {
+            { "ACTIVATE", TokenType.ACTIVATE },
             { "ALL", TokenType.ALL },
             { "AND", TokenType.AND },
             { "APPLY", TokenType.APPLY },
@@ -18,6 +19,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "BOTTOM", TokenType.BOTTOM },
             { "CONTENT", TokenType.CONTENT },
             { "CREATE", TokenType.CREATE },
+            { "DEACTIVATE", TokenType.DEACTIVATE },
             { "ENDS", TokenType.ENDS },
             { "FALSE", TokenType.BOOL },
             { "FOR", TokenType.FOR },

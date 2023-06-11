@@ -7,7 +7,11 @@ namespace Rules.Framework
 
     internal interface IRulesEngine<TContentType, TConditionType>
     {
+        Task<RuleOperationResult> ActivateRuleAsync(Rule<TContentType, TConditionType> rule);
+
         Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption);
+
+        Task<RuleOperationResult> DeactivateRuleAsync(Rule<TContentType, TConditionType> rule);
 
         PriorityCriterias GetPriorityCriteria();
 

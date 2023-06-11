@@ -6,6 +6,7 @@ namespace Rules.Framework.Rql.Tokens
 
         #region Keywords
 
+        ACTIVATE,
         ALL,
         AND,
         APPLY,
@@ -13,6 +14,7 @@ namespace Rules.Framework.Rql.Tokens
         BOTTOM,
         CONTENT,
         CREATE,
+        DEACTIVATE,
         ENDS,
         FOR,
         IS,
