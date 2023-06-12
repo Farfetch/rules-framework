@@ -35,6 +35,16 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                     new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
                 },
                 "Best Server Default"
+            },
+            new object[]
+            {
+                new[]
+                {
+                    new Condition<BestServerConditions>(BestServerConditions.Price,100),
+                    new Condition<BestServerConditions>(BestServerConditions.Memory,12),
+                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
+                },
+                "Best Server Default"
             }
         };
 
