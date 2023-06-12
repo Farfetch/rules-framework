@@ -12,7 +12,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using Rules.Framework.Rql.Tokens;
     using Rules.Framework.Source;
 
-    internal class Interpreter<TContentType, TConditionType> : IExpressionVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
+    internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
     {
         private readonly IReverseRqlBuilder reverseRqlBuilder;
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
@@ -31,7 +31,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             this.reverseRqlBuilder = reverseRqlBuilder;
         }
 
-        public async Task<InterpretResult> InterpretAsync(IReadOnlyList<Statement> statements)
+        public async Task<object> InterpretAsync(IReadOnlyList<Statement> statements)
         {
             var interpretResult = new InterpretResult();
             foreach (var statement in statements)
@@ -98,6 +98,40 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var lines = new List<ResultSetLine<TContentType, TConditionType>>(1) { new ResultSetLine<TContentType, TConditionType>(1, rule) };
             var resultSet = new ResultSet<TContentType, TConditionType>(rql, 1, lines);
             return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
+        }
+
+        public async Task<object> VisitCallExpression(CallExpression callExpression)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(callExpression);
+            string callableName = callExpression.Identifier.Lexeme.ToUpperInvariant();
+            var callee = this.runtimeEnvironment.Get(callableName);
+            if (callee is not IRqlCallable)
+            {
+                ThrowRuntimeException(
+                    rql,
+                    new[] { $"'{callableName}' is not a callable identifier." },
+                    callExpression.BeginPosition,
+                    callExpression.EndPosition);
+            }
+
+            var callable = (IRqlCallable)callee;
+            int argumentsLength = callExpression.Arguments.Length;
+            if (argumentsLength != callable.Arity)
+            {
+                ThrowRuntimeException(
+                    rql,
+                    new[] { FormattableString.Invariant($"'{callableName}' expects {callable.Arity} argument(s) but {argumentsLength} were provided.") },
+                    callExpression.BeginPosition,
+                    callExpression.EndPosition);
+            }
+
+            object[] arguments = new object[argumentsLength];
+            for (int i = 0; i < argumentsLength; i++)
+            {
+                arguments[i] = await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
+            }
+
+            return callable.Call(this, arguments);
         }
 
         public Task<object> VisitCardinalityExpression(CardinalityExpression expression) => expression.CardinalityKeyword.Accept(this);
@@ -315,8 +349,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableAttributeExpression)
         {
             var updatableAttributeExpressionValue = await updatableAttributeExpression.UpdatableAttribute.Accept(this).ConfigureAwait(false);
-            var rule = (Rule<TContentType, TConditionType>)this.runtimeEnvironment.GetVariableValue(".rule");
-            var rql = (string)this.runtimeEnvironment.GetVariableValue(".rql");
+            var rule = (Rule<TContentType, TConditionType>)this.runtimeEnvironment.Get(".rule");
+            var rql = (string)this.runtimeEnvironment.Get(".rql");
             switch (updatableAttributeExpression.Kind)
             {
                 case UpdatableAttributeKind.DateEnd:
@@ -400,8 +434,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var rule = rules.First();
             using (this.ScopeRuntimeEnvironment())
             {
-                this.runtimeEnvironment.CreateAndAssignVariable(".rule", rule);
-                this.runtimeEnvironment.CreateAndAssignVariable(".rql", rql);
+                this.runtimeEnvironment.Define(".rule", rule);
+                this.runtimeEnvironment.Define(".rql", rql);
 
                 var updatableAttributes = updateStatement.UpdatableAttributes;
                 var updatableAttributesLength = updatableAttributes.Length;
@@ -482,7 +516,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var ruleName = (string)await createStatement.RuleName.Accept(this).ConfigureAwait(false);
             var contentTypeName = (string)await createStatement.ContentType.Accept(this).ConfigureAwait(false);
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName, ignoreCase: true);
-            var content = (string)await createStatement.Content.Accept(this).ConfigureAwait(false);
+            var content = await createStatement.Content.Accept(this).ConfigureAwait(false);
             var dateBegin = (DateTime)await createStatement.DateBegin.Accept(this).ConfigureAwait(false);
             DateTime? dateEnd = null;
             if (createStatement.DateEnd != null)

@@ -20,21 +20,26 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             this.runtimeData = new Dictionary<string, object>(StringComparer.Ordinal);
         }
 
-        public void AssignVariable(string name, object value)
+        public void Assign(string name, object value)
         {
-            if (!this.runtimeData.ContainsKey(name))
+            if (this.runtimeData.ContainsKey(name))
             {
-                throw new IllegalRuntimeEnvironmentAccessException($"Cannot assign undefined variable '{name}'.", name);
+                this.runtimeData[name] = value;
             }
 
-            this.runtimeData[name] = value;
-        }
+            if (this.parentRuntimeEnvironment is not null)
+            {
+                this.parentRuntimeEnvironment.Assign(name, value);
+            }
 
-        public void CreateAndAssignVariable(string name, object value)
-            => this.runtimeData[name] = value;
+            throw new IllegalRuntimeEnvironmentAccessException($"Cannot assign undefined variable '{name}'.", name);
+        }
 
         public IRuntimeEnvironment CreateScopedChildRuntimeEnvironment()
             => new RuntimeEnvironment(this);
+
+        public void Define(string name, object value)
+                    => this.runtimeData[name] = value;
 
         public void Dispose()
         {
@@ -42,14 +47,19 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             GC.SuppressFinalize(this);
         }
 
-        public object GetVariableValue(string name)
+        public object Get(string name)
         {
-            if (!this.runtimeData.TryGetValue(name, out var value))
+            if (this.runtimeData.TryGetValue(name, out var value))
             {
-                throw new IllegalRuntimeEnvironmentAccessException($"Cannot get value for undefined variable '{name}'.", name);
+                return value;
             }
 
-            return value;
+            if (this.parentRuntimeEnvironment is not null)
+            {
+                return this.parentRuntimeEnvironment.Get(name);
+            }
+
+            throw new IllegalRuntimeEnvironmentAccessException($"Cannot get value for undefined variable '{name}'.", name);
         }
 
         protected virtual void Dispose(bool disposing)

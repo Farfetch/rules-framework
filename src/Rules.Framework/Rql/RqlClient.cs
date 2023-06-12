@@ -49,10 +49,10 @@ namespace Rules.Framework.Rql
             }
 
             var statements = parserResult.Statements;
-            using var runtimeEnvironment = new RuntimeEnvironment();
+            using var runtimeEnvironment = new RuntimeEnvironment().Initialize();
             var reverseRqlBuilder = new ReverseRqlBuilder();
             var interpreter = new Interpreter<TContentType, TConditionType>(this.rulesEngine, this.rulesSource, runtimeEnvironment, reverseRqlBuilder);
-            var interpretResult = await interpreter.InterpretAsync(statements).ConfigureAwait(false);
+            var interpretResult = (InterpretResult)await interpreter.InterpretAsync(statements).ConfigureAwait(false);
 
             if (interpretResult.Success)
             {

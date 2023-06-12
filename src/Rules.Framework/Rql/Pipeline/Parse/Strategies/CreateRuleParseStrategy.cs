@@ -67,13 +67,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.STRING))
-            {
-                parseContext.EnterPanicMode("Expect rule content under string format.", parseContext.GetCurrentToken());
-                return Expression.None;
-            }
-
-            return this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+            return this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
         }
 
         private (Expression, Expression, Expression) ParseOptionals(ParseContext parseContext)

@@ -15,7 +15,7 @@
 		<PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.5" />
 		<PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.2" />
 		<PackageReference Include="DotEnv.Core" Version="2.3.2" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

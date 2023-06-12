@@ -2,6 +2,8 @@ namespace Rules.Framework.Rql.Expressions
 {
     internal interface IExpressionVisitor<T>
     {
+        T VisitCallExpression(CallExpression callExpression);
+
         T VisitCardinalityExpression(CardinalityExpression expression);
 
         T VisitComposedConditionExpression(ComposedConditionExpression expression);

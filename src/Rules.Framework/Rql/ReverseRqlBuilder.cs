@@ -37,6 +37,27 @@ namespace Rules.Framework.Rql
             return $"ACTIVATE {ruleName} {contentType}";
         }
 
+        public string VisitCallExpression(CallExpression callExpression)
+        {
+            var stringBuilder = new StringBuilder(callExpression.Identifier.Lexeme.ToUpperInvariant())
+                .Append('(');
+
+            int argumentsLength = callExpression.Arguments.Length;
+            for (int i = 0; i < argumentsLength; i++)
+            {
+                var argument = callExpression.Arguments[i].Accept(this);
+                stringBuilder.Append(argument);
+
+                if (i < argumentsLength - 1)
+                {
+                    stringBuilder.Append(',');
+                }
+            }
+
+            return stringBuilder.Append(')')
+                .ToString();
+        }
+
         public string VisitCardinalityExpression(CardinalityExpression expression)
             => $"{expression.CardinalityKeyword.Accept(this)} {expression.RuleKeyword.Accept(this)}";
 
@@ -164,7 +185,7 @@ namespace Rules.Framework.Rql
 
         public string VisitLiteralExpression(LiteralExpression literalExpression) => literalExpression.Type switch
         {
-            LiteralType.String => $"\"{literalExpression.Value}\"",
+            LiteralType.String => literalExpression.Token.Lexeme,
             LiteralType.Decimal or LiteralType.Integer or LiteralType.Bool => literalExpression.Value.ToString(),
             LiteralType.DateTime => $"\"{literalExpression.Value:yyyy-MM-ddTHH:mm:ssZ}\"",
             _ => throw new NotSupportedException($"The literal type '{literalExpression.Type}' is not supported."),
@@ -262,8 +283,7 @@ namespace Rules.Framework.Rql
                 .Append(SPACE)
                 .Append("TO")
                 .Append(SPACE)
-                .Append(dateEnd)
-                .Append(inputConditions);
+                .Append(dateEnd);
 
             if (!string.IsNullOrWhiteSpace(inputConditions))
             {

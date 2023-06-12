@@ -19,7 +19,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     var oneCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
                     if (parseContext.MoveNext() && !parseContext.IsMatchCurrentToken(TokenType.RULE))
                     {
-                        parseContext.EnterPanicMode("Expect token 'RULE'.", parseContext.GetCurrentToken());
+                        parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
                         return Expression.None;
                     }
 
@@ -33,7 +33,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     var allCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
                     if (parseContext.MoveNext() && !parseContext.IsMatchCurrentToken(TokenType.RULES))
                     {
-                        parseContext.EnterPanicMode("Expect token 'RULES'.", parseContext.GetCurrentToken());
+                        parseContext.EnterPanicMode("Expected token 'RULES'.", parseContext.GetCurrentToken());
                         return Expression.None;
                     }
 
@@ -43,7 +43,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 }
             }
 
-            parseContext.EnterPanicMode("Expect tokens 'ONE' or 'ALL'.", parseContext.GetCurrentToken());
+            parseContext.EnterPanicMode("Expected tokens 'ONE' or 'ALL'.", parseContext.GetCurrentToken());
             return Expression.None;
         }
     }

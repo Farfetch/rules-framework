@@ -4,12 +4,12 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
     internal interface IRuntimeEnvironment : IDisposable
     {
-        void AssignVariable(string name, object value);
-
-        void CreateAndAssignVariable(string name, object value);
+        void Assign(string name, object value);
 
         IRuntimeEnvironment CreateScopedChildRuntimeEnvironment();
 
-        object GetVariableValue(string name);
+        void Define(string name, object value);
+
+        object Get(string name);
     }
 }

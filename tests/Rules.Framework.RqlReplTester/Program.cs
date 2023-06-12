@@ -44,7 +44,7 @@ namespace Rules.Framework.RqlReplTester
                         if (resultSet.Lines.Any())
                         {
                             Console.WriteLine($"{tab}{resultSet.RqlStatement}");
-                            Console.WriteLine($"{tab}{new string('-', Math.Min(resultSet.RqlStatement.Length, Console.WindowWidth - 4))}");
+                            Console.WriteLine($"{tab}{new string('-', Math.Min(resultSet.RqlStatement.Length, Console.WindowWidth - 5))}");
                             if (resultSet.AffectedRules > 0)
                             {
                                 Console.WriteLine($"{tab} {resultSet.AffectedRules} rules were affected.");
@@ -56,7 +56,7 @@ namespace Rules.Framework.RqlReplTester
 
                             Console.WriteLine();
                             Console.WriteLine($"{tab} | # | Priority | Status   | Range                     | Rule");
-                            Console.WriteLine($"{tab} ------------------------------------------------------------");
+                            Console.WriteLine($"{tab}{new string('-', Console.WindowWidth - 5)}");
 
                             foreach (var line in resultSet.Lines)
                             {
