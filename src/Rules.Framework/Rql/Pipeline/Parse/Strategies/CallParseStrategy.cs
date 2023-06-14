@@ -21,8 +21,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             var identifier = parseContext.GetCurrentToken();
             _ = parseContext.MoveNext();
+            _ = parseContext.MoveNext();
 
-            if (parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_RIGHT))
+            if (parseContext.MoveNextIfCurrentToken(TokenType.PARENTHESIS_RIGHT))
             {
                 return new CallExpression(identifier, Array.Empty<Expression>());
             }

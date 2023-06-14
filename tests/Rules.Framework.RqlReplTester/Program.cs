@@ -10,6 +10,63 @@ namespace Rules.Framework.RqlReplTester
     {
         private static readonly string tab = new string(' ', 4);
 
+        private static void HandleObjectResult(ObjectResult result)
+        {
+            if (result.Value is not null)
+            {
+                Console.WriteLine();
+                var value = result.Value.ToString()!.Replace("\n", $"\n{tab}");
+                Console.WriteLine($"{tab}{value}");
+            }
+        }
+
+        private static void HandleRulesSetResult(RulesSetResult<ContentTypes, ConditionTypes> result)
+        {
+            Console.WriteLine();
+            if (result.Lines.Any())
+            {
+                Console.WriteLine($"{tab}{result.Rql}");
+                Console.WriteLine($"{tab}{new string('-', Math.Min(result.Rql.Length, Console.WindowWidth - 5))}");
+                if (result.AffectedRules > 0)
+                {
+                    Console.WriteLine($"{tab} {result.AffectedRules} rules were affected.");
+                }
+                else
+                {
+                    Console.WriteLine($"{tab} {result.Lines.Count} rules were returned.");
+                }
+
+                Console.WriteLine();
+                Console.WriteLine($"{tab} | # | Priority | Status   | Range                     | Rule");
+                Console.WriteLine($"{tab}{new string('-', Console.WindowWidth - 5)}");
+
+                foreach (var line in result.Lines)
+                {
+                    var lineNumber = line.LineNumber.ToString();
+                    var priority = line.Rule.Priority.ToString();
+                    var active = line.Rule.Active ? "Active" : "Inactive";
+                    var dateBegin = line.Rule.DateBegin.Date.ToString("yyyy-MM-ddZ");
+                    var dateEnd = line.Rule.DateEnd?.Date.ToString("yyyy-MM-ddZ") ?? "(no end)";
+                    var ruleName = line.Rule.Name;
+                    var content = JsonConvert.SerializeObject(line.Rule.ContentContainer.GetContentAs<object>());
+
+                    Console.WriteLine($"{tab} | {lineNumber} | {priority,-8} | {active,-8} | {dateBegin,-11} - {dateEnd,-11} | {ruleName}: {content}");
+                }
+            }
+            else if (result.AffectedRules > 0)
+            {
+                Console.WriteLine($"{tab}{result.Rql}");
+                Console.WriteLine($"{tab}{new string('-', result.Rql.Length)}");
+                Console.WriteLine($"{tab} {result.AffectedRules} rules were affected.");
+            }
+            else
+            {
+                Console.WriteLine($"{tab}{result.Rql}");
+                Console.WriteLine($"{tab}{new string('-', result.Rql.Length)}");
+                Console.WriteLine($"{tab} (empty)");
+            }
+        }
+
         private static async Task Main()
         {
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -37,51 +94,25 @@ namespace Rules.Framework.RqlReplTester
 
                 try
                 {
-                    var results = await rqlClient.ExecuteQueryAsync(input);
-                    Console.WriteLine("RESULT:");
-                    foreach (var resultSet in results)
+                    var results = await rqlClient.ExecuteAsync(input);
+                    foreach (var result in results)
                     {
-                        if (resultSet.Lines.Any())
+                        switch (result)
                         {
-                            Console.WriteLine($"{tab}{resultSet.RqlStatement}");
-                            Console.WriteLine($"{tab}{new string('-', Math.Min(resultSet.RqlStatement.Length, Console.WindowWidth - 5))}");
-                            if (resultSet.AffectedRules > 0)
-                            {
-                                Console.WriteLine($"{tab} {resultSet.AffectedRules} rules were affected.");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{tab} {resultSet.Lines.Count} rules were returned.");
-                            }
+                            case RulesSetResult<ContentTypes, ConditionTypes> rulesResultSet:
+                                HandleRulesSetResult(rulesResultSet);
+                                break;
 
-                            Console.WriteLine();
-                            Console.WriteLine($"{tab} | # | Priority | Status   | Range                     | Rule");
-                            Console.WriteLine($"{tab}{new string('-', Console.WindowWidth - 5)}");
+                            case VoidResult:
+                                // Nothing to be done.
+                                break;
 
-                            foreach (var line in resultSet.Lines)
-                            {
-                                var lineNumber = line.LineNumber.ToString();
-                                var priority = line.Rule.Priority.ToString();
-                                var active = line.Rule.Active ? "Active" : "Inactive";
-                                var dateBegin = line.Rule.DateBegin.Date.ToString("yyyy-MM-ddZ");
-                                var dateEnd = line.Rule.DateEnd?.Date.ToString("yyyy-MM-ddZ") ?? "(no end)";
-                                var ruleName = line.Rule.Name;
-                                var content = JsonConvert.SerializeObject(line.Rule.ContentContainer.GetContentAs<object>());
+                            case ObjectResult textResult:
+                                HandleObjectResult(textResult);
+                                break;
 
-                                Console.WriteLine($"{tab} | {lineNumber} | {priority,-8} | {active,-8} | {dateBegin,-11} - {dateEnd,-11} | {ruleName}: {content}");
-                            }
-                        }
-                        else if (resultSet.AffectedRules > 0)
-                        {
-                            Console.WriteLine($"{tab}{resultSet.RqlStatement}");
-                            Console.WriteLine($"{tab}{new string('-', resultSet.RqlStatement.Length)}");
-                            Console.WriteLine($"{tab} {resultSet.AffectedRules} rules were affected.");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"{tab}{resultSet.RqlStatement}");
-                            Console.WriteLine($"{tab}{new string('-', resultSet.RqlStatement.Length)}");
-                            Console.WriteLine($"{tab} (empty)");
+                            default:
+                                throw new NotSupportedException($"Result type is not supported: '{result.GetType().FullName}'");
                         }
                     }
                 }

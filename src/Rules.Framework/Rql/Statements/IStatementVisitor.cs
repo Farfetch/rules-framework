@@ -8,12 +8,16 @@ namespace Rules.Framework.Rql.Statements
 
         T VisitDeactivationStatement(DeactivationStatement deactivationStatement);
 
-        T VisitDefinitionStatement(DefinitionStatement definitionStatement);
+        T VisitDefinitionStatement(RuleDefinitionStatement definitionStatement);
 
         T VisitNoneStatement(NoneStatement noneStatement);
 
-        T VisitQueryStatement(QueryStatement queryStatement);
+        T VisitProgrammableSubLanguageStatement(ProgrammableSubLanguageStatement programmableStatement);
+
+        T VisitQueryStatement(RuleQueryStatement queryStatement);
 
         T VisitUpdateStatement(UpdateStatement updateStatement);
+
+        T VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement);
     }
 }

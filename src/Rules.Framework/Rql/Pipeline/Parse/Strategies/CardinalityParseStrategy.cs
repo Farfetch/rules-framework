@@ -12,35 +12,32 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.MoveNext())
+            if (parseContext.IsMatchCurrentToken(TokenType.ONE))
             {
-                if (parseContext.IsMatchCurrentToken(TokenType.ONE))
+                var oneCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+                if (!parseContext.MoveNextIfNextToken(TokenType.RULE))
                 {
-                    var oneCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
-                    if (parseContext.MoveNext() && !parseContext.IsMatchCurrentToken(TokenType.RULE))
-                    {
-                        parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
-                        return Expression.None;
-                    }
-
-                    var ruleKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
-
-                    return new CardinalityExpression(oneCardinalityKeyword, ruleKeyword);
+                    parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
+                    return Expression.None;
                 }
 
-                if (parseContext.IsMatchCurrentToken(TokenType.ALL))
+                var ruleKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+
+                return new CardinalityExpression(oneCardinalityKeyword, ruleKeyword);
+            }
+
+            if (parseContext.IsMatchCurrentToken(TokenType.ALL))
+            {
+                var allCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+                if (!parseContext.MoveNextIfNextToken(TokenType.RULES))
                 {
-                    var allCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
-                    if (parseContext.MoveNext() && !parseContext.IsMatchCurrentToken(TokenType.RULES))
-                    {
-                        parseContext.EnterPanicMode("Expected token 'RULES'.", parseContext.GetCurrentToken());
-                        return Expression.None;
-                    }
-
-                    var ruleKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
-
-                    return new CardinalityExpression(allCardinalityKeyword, ruleKeyword);
+                    parseContext.EnterPanicMode("Expected token 'RULES'.", parseContext.GetCurrentToken());
+                    return Expression.None;
                 }
+
+                var ruleKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+
+                return new CardinalityExpression(allCardinalityKeyword, ruleKeyword);
             }
 
             parseContext.EnterPanicMode("Expected tokens 'ONE' or 'ALL'.", parseContext.GetCurrentToken());

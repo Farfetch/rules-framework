@@ -2,9 +2,9 @@ namespace Rules.Framework.Rql
 {
     using Rules.Framework.Core;
 
-    public class ResultSetLine<TContentType, TConditionType>
+    public class RulesSetResultLine<TContentType, TConditionType>
     {
-        internal ResultSetLine(int lineNumber, Rule<TContentType, TConditionType> rule)
+        internal RulesSetResultLine(int lineNumber, Rule<TContentType, TConditionType> rule)
         {
             this.LineNumber = lineNumber;
             this.Rule = rule;

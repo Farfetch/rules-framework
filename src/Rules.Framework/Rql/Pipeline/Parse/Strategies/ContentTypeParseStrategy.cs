@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -11,29 +12,28 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.MoveNextIfNextToken(TokenType.FOR))
+            if (!parseContext.IsMatchCurrentToken(TokenType.FOR))
             {
-                if (parseContext.MoveNextIfNextToken(TokenType.STRING))
-                {
-                    var contentType = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
-                    if (parseContext.PanicMode)
-                    {
-                        return Expression.None;
-                    }
-
-                    return contentType;
-                }
-
-                if (parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
-                {
-                    // TODO: future support.
-                }
-
-                parseContext.EnterPanicMode("Expected content type name.", parseContext.GetCurrentToken());
-                return Expression.None;
+                throw new InvalidOperationException("Unable to handle content type expression.");
             }
 
-            parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
+            if (parseContext.MoveNextIfNextToken(TokenType.STRING))
+            {
+                var contentType = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
+                return contentType;
+            }
+
+            if (parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
+            {
+                // TODO: future support.
+            }
+
+            parseContext.EnterPanicMode("Expected content type name.", parseContext.GetCurrentToken());
             return Expression.None;
         }
     }

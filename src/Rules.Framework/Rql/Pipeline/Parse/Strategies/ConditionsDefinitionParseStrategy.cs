@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -12,13 +13,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.MoveNextIfNextToken(TokenType.APPLY))
+            if (!parseContext.MoveNextIfCurrentToken(TokenType.APPLY))
             {
-                parseContext.EnterPanicMode("Expected token 'APPLY'.", parseContext.GetCurrentToken());
-                return Expression.None;
+                throw new InvalidOperationException("Unable to handle conditions definition expression.");
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.WHEN))
+            if (!parseContext.MoveNextIfCurrentToken(TokenType.WHEN))
             {
                 parseContext.EnterPanicMode("Expect token 'WHEN'.", parseContext.GetCurrentToken());
                 return Expression.None;

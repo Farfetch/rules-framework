@@ -19,9 +19,21 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle create rule statement.");
             }
 
+            if (!parseContext.IsMatchCurrentToken(TokenType.RULE))
+            {
+                parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
+                return Statement.None;
+            }
+
             var ruleName = this.ParseExpressionWith<RuleNameParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
+                return Statement.None;
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
+            {
+                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
                 return Statement.None;
             }
 
@@ -37,6 +49,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Statement.None;
             }
 
+            if (!parseContext.MoveNextIfNextToken(TokenType.STARTS))
+            {
+                parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetCurrentToken());
+                return Statement.None;
+            }
+
             var dateBegin = this.ParseExpressionWith<DateBeginParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
@@ -45,11 +63,6 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             (var dateEnd, var condition, var priorityOption) = this.ParseOptionals(parseContext);
 
-            if (parseContext.IsMatchNextToken(TokenType.SEMICOLON))
-            {
-                _ = parseContext.MoveNext();
-            }
-
             return new CreateStatement(ruleName, contentType, ruleContent, dateBegin, dateEnd, condition, priorityOption);
         }
 
@@ -57,13 +70,19 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (!parseContext.MoveNextIfNextToken(TokenType.WITH))
             {
-                parseContext.EnterPanicMode("Expect token 'WITH'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'WITH'.", parseContext.GetCurrentToken());
                 return Expression.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.CONTENT))
             {
-                parseContext.EnterPanicMode("Expect token 'CONTENT'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'CONTENT'.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.INT, TokenType.DECIMAL, TokenType.STRING, TokenType.BOOL, TokenType.IDENTIFIER))
+            {
+                parseContext.EnterPanicMode("Expected expression.", parseContext.GetCurrentToken());
                 return Expression.None;
             }
 
@@ -73,7 +92,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         private (Expression, Expression, Expression) ParseOptionals(ParseContext parseContext)
         {
             Expression dateEnd = null;
-            if (parseContext.IsMatchNextToken(TokenType.ENDS))
+            if (parseContext.MoveNextIfNextToken(TokenType.ENDS))
             {
                 dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
@@ -83,7 +102,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
 
             Expression condition = null;
-            if (parseContext.IsMatchNextToken(TokenType.APPLY))
+            if (parseContext.MoveNextIfNextToken(TokenType.APPLY))
             {
                 condition = this.ParseExpressionWith<ConditionsDefinitionParseStrategy>(parseContext);
                 if (parseContext.PanicMode)

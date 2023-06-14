@@ -12,9 +12,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_LEFT))
+            if (parseContext.MoveNextIfCurrentToken(TokenType.PARENTHESIS_LEFT))
             {
-                var composedCondition = this.ParseExpressionWith<ComposedConditionParseStrategy>(parseContext);
+                var condition = this.ParseExpressionWith<ConditionGroupingParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
                     return Expression.None;
@@ -22,11 +22,16 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
                 if (!parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_RIGHT))
                 {
-                    parseContext.EnterPanicMode("Expect token ')'.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetCurrentToken());
                     return Expression.None;
                 }
 
-                return new ConditionGroupingExpression(composedCondition);
+                return new ConditionGroupingExpression(condition);
+            }
+
+            if (parseContext.IsMatchCurrentToken(TokenType.PLACEHOLDER))
+            {
+                return this.ParseExpressionWith<ValueConditionParseStrategy>(parseContext);
             }
 
             return this.ParseExpressionWith<ComposedConditionParseStrategy>(parseContext);

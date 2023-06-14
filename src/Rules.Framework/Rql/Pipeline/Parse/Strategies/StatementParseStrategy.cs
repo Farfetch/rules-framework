@@ -12,76 +12,34 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Statement Parse(ParseContext parseContext)
         {
-            if (parseContext.IsMatchCurrentToken(TokenType.MATCH))
+            var statement = this.ParseStatement(parseContext);
+            if (parseContext.PanicMode)
             {
-                var matchExpression = this.ParseExpressionWith<MatchRulesParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
-
-                return new QueryStatement(matchExpression);
+                return Statement.None;
             }
 
-            if (parseContext.IsMatchCurrentToken(TokenType.SEARCH))
+            if (!parseContext.MoveNextIfNextToken(TokenType.SEMICOLON))
             {
-                var searchExpression = this.ParseExpressionWith<SearchRulesParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
-
-                return new QueryStatement(searchExpression);
+                parseContext.EnterPanicMode("Expected token ';'.", parseContext.GetCurrentToken());
+                return Statement.None;
             }
 
-            if (parseContext.IsMatchCurrentToken(TokenType.CREATE))
-            {
-                var createStatement = this.ParseStatementWith<CreateRuleParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
+            return statement;
+        }
 
-                return new DefinitionStatement(createStatement);
+        private Statement ParseStatement(ParseContext parseContext)
+        {
+            if (parseContext.IsMatchCurrentToken(TokenType.MATCH, TokenType.SEARCH))
+            {
+                return this.ParseStatementWith<RuleQueryParseStrategy>(parseContext);
             }
 
-            if (parseContext.IsMatchCurrentToken(TokenType.UPDATE))
+            if (parseContext.IsMatchCurrentToken(TokenType.CREATE, TokenType.UPDATE, TokenType.ACTIVATE, TokenType.DEACTIVATE))
             {
-                var updateStatement = this.ParseStatementWith<UpdateRuleParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
-
-                return new DefinitionStatement(updateStatement);
+                return this.ParseStatementWith<RuleDefinitionParseStrategy>(parseContext);
             }
 
-            if (parseContext.IsMatchCurrentToken(TokenType.ACTIVATE))
-            {
-                var activationStatement = this.ParseStatementWith<ActivationParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
-
-                return new DefinitionStatement(activationStatement);
-            }
-
-            if (parseContext.IsMatchCurrentToken(TokenType.DEACTIVATE))
-            {
-                var deactivationStatement = this.ParseStatementWith<DeactivationParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
-
-                return new DefinitionStatement(deactivationStatement);
-            }
-
-            var currentToken = parseContext.GetCurrentToken();
-            parseContext.EnterPanicMode($"Unrecognized token '{currentToken.Lexeme}'.", currentToken);
-            _ = parseContext.MoveNext();
-            return Statement.None;
+            return this.ParseStatementWith<ProgrammableSubLanguageParseStrategy>(parseContext);
         }
     }
 }

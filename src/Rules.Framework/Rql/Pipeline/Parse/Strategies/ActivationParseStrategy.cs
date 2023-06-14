@@ -18,9 +18,21 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle activation rule statement.");
             }
 
+            if (!parseContext.IsMatchCurrentToken(TokenType.RULE))
+            {
+                parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
+                return Statement.None;
+            }
+
             var ruleName = this.ParseExpressionWith<RuleNameParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
+                return Statement.None;
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
+            {
+                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
                 return Statement.None;
             }
 

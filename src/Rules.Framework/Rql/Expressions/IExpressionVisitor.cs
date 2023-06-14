@@ -33,5 +33,7 @@ namespace Rules.Framework.Rql.Expressions
         T VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression);
 
         T VisitValueConditionExpression(ValueConditionExpression valueConditionExpression);
+
+        T VisitVariableExpression(VariableExpression variableExpression);
     }
 }

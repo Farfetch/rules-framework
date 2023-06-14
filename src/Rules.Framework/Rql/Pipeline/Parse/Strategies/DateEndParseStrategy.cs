@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -12,10 +13,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.MoveNextIfNextToken(TokenType.ENDS))
+            if (!parseContext.IsMatchCurrentToken(TokenType.ENDS))
             {
-                parseContext.EnterPanicMode("Expected token 'ENDS'.", parseContext.GetCurrentToken());
-                return Expression.None;
+                throw new InvalidOperationException("Unable to handle date begin expression.");
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.ON))

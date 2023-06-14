@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -12,9 +13,20 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
+            if (!parseContext.MoveNextIfCurrentToken(TokenType.MATCH))
+            {
+                throw new InvalidOperationException("Unable to handle match rules expression.");
+            }
+
             var cardinality = this.ParseExpressionWith<CardinalityParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
+                return Expression.None;
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
+            {
+                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
                 return Expression.None;
             }
 
@@ -30,36 +42,44 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            var inputConditionExpressions = this.ParseExpressionWith<InputConditionsParseStrategy>(parseContext);
+            Expression inputConditionsExpression;
+            if (parseContext.MoveNextIfNextToken(TokenType.WITH))
+            {
+                inputConditionsExpression = this.ParseExpressionWith<InputConditionsParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+            }
+            else
+            {
+                inputConditionsExpression = Expression.None;
+            }
+
+            return new MatchExpression(cardinality, contentType, matchDate, inputConditionsExpression);
+        }
+
+        private Expression ParseDate(ParseContext parseContext)
+        {
+            if (!parseContext.MoveNextIfNextToken(TokenType.ON))
+            {
+                parseContext.EnterPanicMode("Expect token 'ON'.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.STRING))
+            {
+                parseContext.EnterPanicMode("Expect match date and time.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
+            var matchDate = this.ParseExpressionWith<DateTimeLiteralParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
             }
 
-            return new MatchExpression(cardinality, contentType, matchDate, inputConditionExpressions);
-        }
-
-        private Expression ParseDate(ParseContext parseContext)
-        {
-            if (parseContext.MoveNext() && parseContext.MoveNextIfCurrentToken(TokenType.ON))
-            {
-                if (parseContext.IsMatchCurrentToken(TokenType.STRING))
-                {
-                    var matchDate = this.ParseExpressionWith<DateTimeLiteralParseStrategy>(parseContext);
-                    if (parseContext.PanicMode)
-                    {
-                        return Expression.None;
-                    }
-
-                    return matchDate;
-                }
-
-                parseContext.EnterPanicMode("Expect match date and time.", parseContext.GetCurrentToken());
-                return Expression.None;
-            }
-
-            parseContext.EnterPanicMode("Expect token 'ON'.", parseContext.GetCurrentToken());
-            return Expression.None;
+            return matchDate;
         }
     }
 }

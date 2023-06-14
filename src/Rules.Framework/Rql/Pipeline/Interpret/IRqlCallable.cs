@@ -6,6 +6,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         string Name { get; }
 
+        string[] Parameters { get; }
+
         object Call(IInterpreter interpreter, object[] arguments);
     }
 }

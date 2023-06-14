@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -12,6 +13,11 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
+            if (!parseContext.IsMatchCurrentToken(TokenType.SET))
+            {
+                throw new InvalidOperationException("Unable to handle priority option expression.");
+            }
+
             if (!parseContext.MoveNextIfNextToken(TokenType.PRIORITY))
             {
                 parseContext.EnterPanicMode("Expected token 'PRIORITY'.", parseContext.GetCurrentToken());

@@ -4,6 +4,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     {
         bool HasOutput { get; }
 
+        string Rql { get; }
+
         bool Success { get; }
     }
 }

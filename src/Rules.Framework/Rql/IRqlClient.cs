@@ -1,10 +1,11 @@
 namespace Rules.Framework.Rql
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public interface IRqlClient<TContentType, TConditionType>
+    public interface IRqlClient<TContentType, TConditionType> : IDisposable
     {
-        Task<IEnumerable<ResultSet<TContentType, TConditionType>>> ExecuteQueryAsync(string rql);
+        Task<IEnumerable<IResult>> ExecuteAsync(string rql);
     }
 }

@@ -32,7 +32,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 this.parentRuntimeEnvironment.Assign(name, value);
             }
 
-            throw new IllegalRuntimeEnvironmentAccessException($"Cannot assign undefined variable '{name}'.", name);
+            throw new IllegalRuntimeEnvironmentAccessException($"Cannot assign undefined '{name}'.", name);
         }
 
         public IRuntimeEnvironment CreateScopedChildRuntimeEnvironment()
@@ -59,7 +59,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 return this.parentRuntimeEnvironment.Get(name);
             }
 
-            throw new IllegalRuntimeEnvironmentAccessException($"Cannot get value for undefined variable '{name}'.", name);
+            throw new IllegalRuntimeEnvironmentAccessException($"Cannot get value for undefined '{name}'.", name);
         }
 
         protected virtual void Dispose(bool disposing)

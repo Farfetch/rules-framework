@@ -2,9 +2,9 @@ namespace Rules.Framework.Rql.Statements
 {
     using Rules.Framework.Rql.Expressions;
 
-    internal class QueryStatement : Statement
+    internal class RuleQueryStatement : Statement
     {
-        public QueryStatement(Expression query)
+        public RuleQueryStatement(Expression query)
             : base(query.BeginPosition, query.EndPosition)
         {
             this.Query = query;

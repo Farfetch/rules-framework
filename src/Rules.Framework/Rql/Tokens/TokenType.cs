@@ -11,6 +11,7 @@ namespace Rules.Framework.Rql.Tokens
         AND,
         APPLY,
         AS,
+        ASSIGN,
         BOTTOM,
         CONTENT,
         CREATE,
@@ -21,6 +22,7 @@ namespace Rules.Framework.Rql.Tokens
         MATCH,
         NAME,
         NUMBER,
+        OBJECT,
         ON,
         ONE,
         OR,
@@ -34,6 +36,7 @@ namespace Rules.Framework.Rql.Tokens
         TO,
         TOP,
         UPDATE,
+        VAR,
         WHEN,
         WITH,
 
@@ -67,6 +70,7 @@ namespace Rules.Framework.Rql.Tokens
 
         BRACE_LEFT,
         BRACE_RIGHT,
+        DOT,
         PARENTHESIS_LEFT,
         PARENTHESIS_RIGHT,
         SEMICOLON,

@@ -17,6 +17,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         private readonly IReverseRqlBuilder reverseRqlBuilder;
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
         private readonly IRulesSource<TContentType, TConditionType> rulesSource;
+        private bool disposedValue;
         private IRuntimeEnvironment runtimeEnvironment;
 
         public Interpreter(
@@ -29,6 +30,13 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             this.rulesSource = rulesSource;
             this.runtimeEnvironment = environment;
             this.reverseRqlBuilder = reverseRqlBuilder;
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         public async Task<object> InterpretAsync(IReadOnlyList<Statement> statements)
@@ -70,7 +78,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             if (!rules.Any())
             {
-                ThrowRuntimeException(
+                throw CreateRuntimeException(
                     rql,
                     new[] { $"No such rule with name '{ruleName}' and content type '{contentTypeName}' was found." },
                     activationStatement.BeginPosition,
@@ -80,24 +88,24 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var rule = rules.First();
             if (rule.Active)
             {
-                List<ResultSetLine<TContentType, TConditionType>> emptyLines = new List<ResultSetLine<TContentType, TConditionType>>(0);
-                var emptyResultSet = new ResultSet<TContentType, TConditionType>(rql, 0, emptyLines);
-                return new ResultSetStatementResult<TContentType, TConditionType>(emptyResultSet);
+                List<RulesSetResultLine<TContentType, TConditionType>> emptyLines = new List<RulesSetResultLine<TContentType, TConditionType>>(0);
+                var emptyResultSet = new RulesSetResult<TContentType, TConditionType>(rql, 0, emptyLines);
+                return new RulesSetStatementResult<TContentType, TConditionType>(emptyResultSet);
             }
 
             var ruleActivationResult = await this.rulesEngine.ActivateRuleAsync(rule).ConfigureAwait(false);
             if (!ruleActivationResult.IsSuccess)
             {
-                ThrowRuntimeException(
+                throw CreateRuntimeException(
                     rql,
                     ruleActivationResult.Errors,
                     activationStatement.BeginPosition,
                     activationStatement.EndPosition);
             }
 
-            var lines = new List<ResultSetLine<TContentType, TConditionType>>(1) { new ResultSetLine<TContentType, TConditionType>(1, rule) };
-            var resultSet = new ResultSet<TContentType, TConditionType>(rql, 1, lines);
-            return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
+            var lines = new List<RulesSetResultLine<TContentType, TConditionType>>(1) { new RulesSetResultLine<TContentType, TConditionType>(1, rule) };
+            var resultSet = new RulesSetResult<TContentType, TConditionType>(rql, 1, lines);
+            return new RulesSetStatementResult<TContentType, TConditionType>(resultSet);
         }
 
         public async Task<object> VisitCallExpression(CallExpression callExpression)
@@ -107,7 +115,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var callee = this.runtimeEnvironment.Get(callableName);
             if (callee is not IRqlCallable)
             {
-                ThrowRuntimeException(
+                throw CreateRuntimeException(
                     rql,
                     new[] { $"'{callableName}' is not a callable identifier." },
                     callExpression.BeginPosition,
@@ -118,11 +126,10 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             int argumentsLength = callExpression.Arguments.Length;
             if (argumentsLength != callable.Arity)
             {
-                ThrowRuntimeException(
+                throw CreateRuntimeException(
                     rql,
                     new[] { FormattableString.Invariant($"'{callableName}' expects {callable.Arity} argument(s) but {argumentsLength} were provided.") },
-                    callExpression.BeginPosition,
-                    callExpression.EndPosition);
+                    callExpression.BeginPosition, callExpression.EndPosition);
             }
 
             object[] arguments = new object[argumentsLength];
@@ -161,21 +168,28 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var ruleResult = await this.CreateRuleAsync(createStatement).ConfigureAwait(false);
             if (!ruleResult.IsSuccess)
             {
-                ThrowRuntimeException(rql, ruleResult.Errors, createStatement.BeginPosition, createStatement.EndPosition);
+                throw CreateRuntimeException(rql,
+                    ruleResult.Errors,
+                    createStatement.BeginPosition,
+                    createStatement.EndPosition);
             }
 
             var ruleAddResult = await this.AddRuleAsync(createStatement, ruleResult.Rule).ConfigureAwait(false);
             if (!ruleAddResult.IsSuccess)
             {
-                ThrowRuntimeException(rql, ruleAddResult.Errors, createStatement.BeginPosition, createStatement.EndPosition);
+                throw CreateRuntimeException(
+                    rql,
+                    ruleAddResult.Errors,
+                    createStatement.BeginPosition,
+                    createStatement.EndPosition);
             }
 
-            var lines = new List<ResultSetLine<TContentType, TConditionType>>(1)
+            var lines = new List<RulesSetResultLine<TContentType, TConditionType>>(1)
             {
-                new ResultSetLine<TContentType, TConditionType>(1, ruleResult.Rule),
+                new RulesSetResultLine<TContentType, TConditionType>(1, ruleResult.Rule),
             };
-            var resultSet = new ResultSet<TContentType, TConditionType>(rql, affectedRules: 1, lines);
-            return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
+            var resultSet = new RulesSetResult<TContentType, TConditionType>(rql, affectedRules: 1, lines);
+            return new RulesSetStatementResult<TContentType, TConditionType>(resultSet);
         }
 
         public async Task<IResult> VisitDeactivationStatement(DeactivationStatement deactivationStatement)
@@ -193,7 +207,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             if (!rules.Any())
             {
-                ThrowRuntimeException(
+                throw CreateRuntimeException(
                     rql,
                     new[] { $"No such rule with name '{ruleName}' and content type '{contentTypeName}' was found." },
                     deactivationStatement.BeginPosition,
@@ -203,27 +217,27 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var rule = rules.First();
             if (!rule.Active)
             {
-                List<ResultSetLine<TContentType, TConditionType>> emptyLines = new List<ResultSetLine<TContentType, TConditionType>>(0);
-                var emptyResultSet = new ResultSet<TContentType, TConditionType>(rql, 0, emptyLines);
-                return new ResultSetStatementResult<TContentType, TConditionType>(emptyResultSet);
+                List<RulesSetResultLine<TContentType, TConditionType>> emptyLines = new List<RulesSetResultLine<TContentType, TConditionType>>(0);
+                var emptyResultSet = new RulesSetResult<TContentType, TConditionType>(rql, 0, emptyLines);
+                return new RulesSetStatementResult<TContentType, TConditionType>(emptyResultSet);
             }
 
             var ruleDeactivationResult = await this.rulesEngine.DeactivateRuleAsync(rule).ConfigureAwait(false);
             if (!ruleDeactivationResult.IsSuccess)
             {
-                ThrowRuntimeException(
+                throw CreateRuntimeException(
                     rql,
                     ruleDeactivationResult.Errors,
                     deactivationStatement.BeginPosition,
                     deactivationStatement.EndPosition);
             }
 
-            var lines = new List<ResultSetLine<TContentType, TConditionType>>(1) { new ResultSetLine<TContentType, TConditionType>(1, rule) };
-            var resultSet = new ResultSet<TContentType, TConditionType>(rql, 1, lines);
-            return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
+            var lines = new List<RulesSetResultLine<TContentType, TConditionType>>(1) { new RulesSetResultLine<TContentType, TConditionType>(1, rule) };
+            var resultSet = new RulesSetResult<TContentType, TConditionType>(rql, 1, lines);
+            return new RulesSetStatementResult<TContentType, TConditionType>(resultSet);
         }
 
-        public async Task<IResult> VisitDefinitionStatement(DefinitionStatement definitionStatement)
+        public async Task<IResult> VisitDefinitionStatement(RuleDefinitionStatement definitionStatement)
             => await definitionStatement.Definition.Accept(this).ConfigureAwait(false);
 
         public async Task<object> VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
@@ -231,9 +245,10 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var conditionTypeName = (string)await inputConditionExpression.Left.Accept(this).ConfigureAwait(false);
             if (!Enum.TryParse(typeof(TConditionType), conditionTypeName, out var conditionType))
             {
-                throw new RuntimeException(
-                    $"Condition type of name '{conditionTypeName}' was not found.",
-                    this.reverseRqlBuilder.BuildRql(inputConditionExpression),
+                string rql = this.reverseRqlBuilder.BuildRql(inputConditionExpression);
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") },
                     inputConditionExpression.BeginPosition,
                     inputConditionExpression.EndPosition);
             }
@@ -265,7 +280,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var contentTypeName = (string)await matchExpression.ContentType.Accept(this).ConfigureAwait(false);
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName, ignoreCase: true);
             var matchDate = (DateTime)await matchExpression.MatchDate.Accept(this).ConfigureAwait(false);
-            var conditions = (IEnumerable<Condition<TConditionType>>)await matchExpression.InputConditions.Accept(this).ConfigureAwait(false);
+            var inputConditions = await matchExpression.InputConditions.Accept(this).ConfigureAwait(false);
+            var conditions = inputConditions is null ? Array.Empty<Condition<TConditionType>>() : (IEnumerable<Condition<TConditionType>>)inputConditions;
 
             if (string.Equals(cardinality, "ONE", StringComparison.OrdinalIgnoreCase))
             {
@@ -314,20 +330,27 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             };
         }
 
-        public async Task<IResult> VisitQueryStatement(QueryStatement matchStatement)
+        public async Task<IResult> VisitProgrammableSubLanguageStatement(ProgrammableSubLanguageStatement programmableStatement)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(programmableStatement);
+            var expressionResult = await programmableStatement.Expression.Accept(this).ConfigureAwait(false);
+            return new ExpressionResult(rql, expressionResult);
+        }
+
+        public async Task<IResult> VisitQueryStatement(RuleQueryStatement matchStatement)
         {
             var rules = (IEnumerable<Rule<TContentType, TConditionType>>)await matchStatement.Query.Accept(this).ConfigureAwait(false);
-            var resultSetLines = new List<ResultSetLine<TContentType, TConditionType>>();
+            var resultSetLines = new List<RulesSetResultLine<TContentType, TConditionType>>();
             var line = 1;
 
             foreach (var rule in rules)
             {
-                resultSetLines.Add(new ResultSetLine<TContentType, TConditionType>(line++, rule));
+                resultSetLines.Add(new RulesSetResultLine<TContentType, TConditionType>(line++, rule));
             }
 
             var statementRql = this.reverseRqlBuilder.BuildRql(matchStatement);
-            var resultSet = new ResultSet<TContentType, TConditionType>(statementRql, 0, resultSetLines);
-            return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
+            var resultSet = new RulesSetResult<TContentType, TConditionType>(statementRql, 0, resultSetLines);
+            return new RulesSetStatementResult<TContentType, TConditionType>(resultSet);
         }
 
         public async Task<object> VisitSearchExpression(SearchExpression searchExpression)
@@ -387,7 +410,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                             var targetPriorityRule = allRules2.FirstOrDefault(r => string.Equals(r.Name, priorityOption.AtRuleNameOptionValue, StringComparison.Ordinal));
                             if (targetPriorityRule is null)
                             {
-                                ThrowRuntimeException(
+                                throw CreateRuntimeException(
                                     rql,
                                     new[] { $"No such rule with name '{priorityOption.AtRuleNameOptionValue}' and content type '{contentType}' was found for target priority." },
                                     updatableAttributeExpression.BeginPosition,
@@ -424,7 +447,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             if (!rules.Any())
             {
-                ThrowRuntimeException(
+                throw CreateRuntimeException(
                     rql,
                     new[] { $"No such rule with name '{ruleName}' and content type '{contentTypeName}' was found." },
                     updateStatement.BeginPosition,
@@ -448,15 +471,15 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var ruleUpdateResult = await this.rulesEngine.UpdateRuleAsync(rule).ConfigureAwait(false);
             if (!ruleUpdateResult.IsSuccess)
             {
-                ThrowRuntimeException(rql, ruleUpdateResult.Errors, updateStatement.BeginPosition, updateStatement.EndPosition);
+                throw CreateRuntimeException(rql, ruleUpdateResult.Errors, updateStatement.BeginPosition, updateStatement.EndPosition);
             }
 
-            var lines = new List<ResultSetLine<TContentType, TConditionType>>(1)
+            var lines = new List<RulesSetResultLine<TContentType, TConditionType>>(1)
             {
-                new ResultSetLine<TContentType, TConditionType>(1, rule),
+                new RulesSetResultLine<TContentType, TConditionType>(1, rule),
             };
-            var resultSet = new ResultSet<TContentType, TConditionType>(rql, 1, lines);
-            return new ResultSetStatementResult<TContentType, TConditionType>(resultSet);
+            var resultSet = new RulesSetResult<TContentType, TConditionType>(rql, 1, lines);
+            return new RulesSetStatementResult<TContentType, TConditionType>(resultSet);
         }
 
         public async Task<object> VisitValueConditionExpression(ValueConditionExpression valueConditionExpression)
@@ -476,11 +499,55 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new ValueConditionNode<TConditionType>(dataType, conditionType, @operator, rightOperand);
         }
 
-        private static void ThrowRuntimeException(string rql, IEnumerable<string> errors, RqlSourcePosition beginPosition, RqlSourcePosition endPosition)
+        public async Task<IResult> VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(variableDeclarationStatement);
+            object assignable = null;
+            if (variableDeclarationStatement.Assignable is not null)
+            {
+                assignable = await variableDeclarationStatement.Assignable.Accept(this).ConfigureAwait(false);
+            }
+
+            this.runtimeEnvironment.Define(variableDeclarationStatement.Name.Lexeme.ToUpperInvariant(), assignable);
+            return new VoidStatementResult(rql);
+        }
+
+        public Task<object> VisitVariableExpression(VariableExpression variableExpression)
+        {
+            try
+            {
+                return Task.FromResult(this.runtimeEnvironment.Get(variableExpression.Token.Lexeme.ToUpperInvariant()));
+            }
+            catch (IllegalRuntimeEnvironmentAccessException ex)
+            {
+                var rql = this.reverseRqlBuilder.BuildRql(variableExpression);
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { ex.Message },
+                    variableExpression.BeginPosition,
+                    variableExpression.EndPosition);
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.runtimeEnvironment.Dispose();
+                    this.runtimeEnvironment = null;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        private static Exception CreateRuntimeException(string rql, IEnumerable<string> errors, RqlSourcePosition beginPosition, RqlSourcePosition endPosition)
         {
             string separator = $"{Environment.NewLine}\t - ";
             var errorsText = string.Join(separator, errors);
-            throw new RuntimeException(
+            return new RuntimeException(
                 $"Errors have occurred while executing sentence:{separator}{errorsText}",
                 rql,
                 beginPosition,

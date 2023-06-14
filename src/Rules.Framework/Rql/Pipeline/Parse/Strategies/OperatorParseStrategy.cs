@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -12,12 +13,6 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.MoveNext())
-            {
-                parseContext.EnterPanicMode("Expected binary operator.", parseContext.GetCurrentToken());
-                return Expression.None;
-            }
-
             var currentToken = parseContext.GetCurrentToken();
             switch (currentToken.Type)
             {
@@ -32,8 +27,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return new OperatorExpression(currentToken);
 
                 default:
-                    parseContext.EnterPanicMode("Expected binary operator.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    throw new InvalidOperationException("Unable to handle operator expression.");
             }
         }
     }

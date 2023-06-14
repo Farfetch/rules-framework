@@ -140,7 +140,7 @@ namespace Rules.Framework.Rql
             return $"DEACTIVATE {ruleName} {contentType}";
         }
 
-        public string VisitDefinitionStatement(DefinitionStatement definitionStatement) => $"{definitionStatement.Definition.Accept(this)};";
+        public string VisitDefinitionStatement(RuleDefinitionStatement definitionStatement) => $"{definitionStatement.Definition.Accept(this)};";
 
         public string VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
         {
@@ -262,7 +262,10 @@ namespace Rules.Framework.Rql
             return stringBuilder.ToString();
         }
 
-        public string VisitQueryStatement(QueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
+        public string VisitProgrammableSubLanguageStatement(ProgrammableSubLanguageStatement programmableStatement)
+            => $"{programmableStatement.Expression.Accept(this)};";
+
+        public string VisitQueryStatement(RuleQueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
 
         public string VisitSearchExpression(SearchExpression searchExpression)
         {
@@ -328,5 +331,25 @@ namespace Rules.Framework.Rql
 
         public string VisitValueConditionExpression(ValueConditionExpression valueConditionExpression)
             => $"{valueConditionExpression.Left.Accept(this)} {valueConditionExpression.Operator.Accept(this)} {valueConditionExpression.Right.Accept(this)}";
+
+        public string VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
+        {
+            var stringBuilder = new StringBuilder(variableDeclarationStatement.Keyword.Lexeme)
+                .Append(SPACE)
+                .Append(variableDeclarationStatement.Name.Lexeme);
+
+            if (variableDeclarationStatement.Assignable != Expression.None)
+            {
+                stringBuilder.Append(SPACE)
+                    .Append('=')
+                    .Append(SPACE)
+                    .Append(variableDeclarationStatement.Assignable.Accept(this));
+            }
+
+            return stringBuilder.Append(';')
+                .ToString();
+        }
+
+        public string VisitVariableExpression(VariableExpression variableExpression) => variableExpression.Token.Lexeme;
     }
 }

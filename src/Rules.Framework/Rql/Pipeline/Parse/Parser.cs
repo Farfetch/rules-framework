@@ -23,7 +23,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             using var messageContainer = new MessageContainer();
             while (parseContext.MoveNext())
             {
-                var statement = this.parseStrategyProvider.GetStatementParseStrategy<StatementParseStrategy>().Parse(parseContext);
+                var statement = this.parseStrategyProvider.GetStatementParseStrategy<DeclarationParseStrategy>().Parse(parseContext);
                 if (parseContext.PanicMode)
                 {
                     var panicModeInfo = parseContext.PanicModeInfo;

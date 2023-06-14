@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -12,6 +13,11 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
+            if (!parseContext.MoveNextIfNextToken(TokenType.SET))
+            {
+                throw new InvalidOperationException("Unable to handle updatable attribute expression.");
+            }
+
             if (parseContext.IsMatchNextToken(TokenType.ENDS))
             {
                 var dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);

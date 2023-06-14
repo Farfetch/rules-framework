@@ -13,6 +13,7 @@ namespace Rules.Framework
     using Rules.Framework.Extensions;
     using Rules.Framework.Management;
     using Rules.Framework.Rql;
+    using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Source;
     using Rules.Framework.Validation;
 
@@ -128,7 +129,10 @@ namespace Rules.Framework
                 throw new NotSupportedException($"Rule Query Language is not supported for non-enum types of {nameof(TConditionType)}.");
             }
 
-            return new RqlClient<TContentType, TConditionType>(this, this.rulesSource);
+            var runtimeEnvironment = new RuntimeEnvironment().Initialize();
+            var reverseRqlBuilder = new ReverseRqlBuilder();
+            var interpreter = new Interpreter<TContentType, TConditionType>(this, this.rulesSource, runtimeEnvironment, reverseRqlBuilder);
+            return new RqlClient<TContentType, TConditionType>(interpreter);
         }
 
         /// <summary>

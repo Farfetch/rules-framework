@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -7,22 +8,24 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
-    using Rules.Framework.Source;
 
     internal class RqlClient<TContentType, TConditionType> : IRqlClient<TContentType, TConditionType>
     {
-        private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
-        private readonly IRulesSource<TContentType, TConditionType> rulesSource;
+        private readonly IInterpreter interpreter;
+        private bool disposedValue;
 
-        public RqlClient(
-            IRulesEngine<TContentType, TConditionType> rulesEngine,
-            IRulesSource<TContentType, TConditionType> rulesSource)
+        public RqlClient(IInterpreter interpreter)
         {
-            this.rulesEngine = rulesEngine;
-            this.rulesSource = rulesSource;
+            this.interpreter = interpreter;
         }
 
-        public async Task<IEnumerable<ResultSet<TContentType, TConditionType>>> ExecuteQueryAsync(string rql)
+        public void Dispose()
+        {
+            this.Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        public async Task<IEnumerable<IResult>> ExecuteAsync(string rql)
         {
             var scanner = new Scanner();
             var scanResult = scanner.ScanTokens(rql);
@@ -49,16 +52,11 @@ namespace Rules.Framework.Rql
             }
 
             var statements = parserResult.Statements;
-            using var runtimeEnvironment = new RuntimeEnvironment().Initialize();
-            var reverseRqlBuilder = new ReverseRqlBuilder();
-            var interpreter = new Interpreter<TContentType, TConditionType>(this.rulesEngine, this.rulesSource, runtimeEnvironment, reverseRqlBuilder);
-            var interpretResult = (InterpretResult)await interpreter.InterpretAsync(statements).ConfigureAwait(false);
+            var interpretResult = (InterpretResult)await this.interpreter.InterpretAsync(statements).ConfigureAwait(false);
 
             if (interpretResult.Success)
             {
-                return interpretResult.Results
-                    .Cast<ResultSetStatementResult<TContentType, TConditionType>>()
-                    .Select(s => s.ResultSet);
+                return interpretResult.Results.Select(s => ConvertResult(s));
             }
 
             var errorResults = interpretResult.Results.Where(s => s is ErrorResult)
@@ -66,5 +64,26 @@ namespace Rules.Framework.Rql
                 .Select(s => new RqlError(s.Message, s.Rql, s.BeginPosition, s.EndPosition));
             throw new RqlException("Errors have occurred processing provided RQL source.", errorResults);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.interpreter.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        private static IResult ConvertResult(Pipeline.Interpret.IResult result) => result switch
+        {
+            RulesSetStatementResult<TContentType, TConditionType> rulesSetStatementResult => rulesSetStatementResult.ResultSet,
+            VoidStatementResult voidStatementResult => new VoidResult(voidStatementResult.Rql),
+            ExpressionResult expressionResult => new ObjectResult(expressionResult.Rql, expressionResult.Result),
+            _ => throw new NotSupportedException($"Result of type '{result.GetType().FullName}' is not supported."),
+        };
     }
 }

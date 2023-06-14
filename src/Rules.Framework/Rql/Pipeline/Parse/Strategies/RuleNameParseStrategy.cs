@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -14,8 +15,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (!parseContext.MoveNextIfCurrentToken(TokenType.RULE))
             {
-                parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
-                return Expression.None;
+                throw new InvalidOperationException("Unable to handle rule name expression.");
             }
 
             if (!parseContext.IsMatchCurrentToken(TokenType.STRING))

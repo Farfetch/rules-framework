@@ -54,7 +54,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             return this.Tokens[this.Offset];
         }
 
-        public bool IsEof() => this.Tokens[this.Offset].Type == TokenType.EOF;
+        public bool IsEof() => this.IsEof(this.Offset);
 
         public bool IsMatchCurrentToken(params TokenType[] tokenTypes)
             => this.IsMatch(this.Offset, tokenTypes);
@@ -85,9 +85,11 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             return false;
         }
 
+        private bool IsEof(int offset) => offset >= this.Tokens.Count || this.Tokens[offset].Type == TokenType.EOF;
+
         private bool IsMatch(int offset, params TokenType[] tokenTypes)
         {
-            if (this.IsEof())
+            if (this.IsEof(offset))
             {
                 return false;
             }

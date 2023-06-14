@@ -12,7 +12,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
+            if (parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER))
             {
                 if (parseContext.IsMatchNextToken(TokenType.PARENTHESIS_LEFT))
                 {
@@ -25,10 +25,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return call;
                 }
 
-                // TODO: add future support.
+                return new VariableExpression(parseContext.GetCurrentToken());
             }
 
-            if (parseContext.MoveNextIfNextToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL))
+            if (parseContext.IsMatchCurrentToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL))
             {
                 var literal = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
                 if (parseContext.PanicMode)

@@ -25,9 +25,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
                 var operatorToken = parseContext.GetCurrentToken();
 
-                if (parseContext.MoveNextIfNextToken(TokenType.STRING, TokenType.INT, TokenType.DECIMAL, TokenType.BOOL))
+                if (parseContext.MoveNextIfNextToken(TokenType.STRING, TokenType.INT, TokenType.DECIMAL, TokenType.BOOL, TokenType.IDENTIFIER))
                 {
-                    var rightExpression = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+                    var rightExpression = this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
                     if (parseContext.PanicMode)
                     {
                         return Expression.None;

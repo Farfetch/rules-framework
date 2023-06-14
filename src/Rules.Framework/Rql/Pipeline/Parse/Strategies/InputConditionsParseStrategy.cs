@@ -14,48 +14,53 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.MoveNext() && parseContext.MoveNextIfCurrentToken(TokenType.WITH))
+            if (!parseContext.MoveNextIfCurrentToken(TokenType.WITH))
             {
-                if (!parseContext.MoveNextIfCurrentToken(TokenType.BRACE_LEFT))
-                {
-                    parseContext.EnterPanicMode("Expect '{' after WITH.", parseContext.GetCurrentToken());
-                    return Expression.None;
-                }
-
-                var inputConditionExpressions = new List<Expression>();
-                while (true)
-                {
-                    var inputConditionExpression = this.ParseExpressionWith<InputConditionParseStrategy>(parseContext);
-                    if (parseContext.PanicMode)
-                    {
-                        return Expression.None;
-                    }
-
-                    inputConditionExpressions.Add(inputConditionExpression);
-
-                    if (parseContext.MoveNext())
-                    {
-                        if (parseContext.IsMatchCurrentToken(TokenType.COMMA))
-                        {
-                            _ = parseContext.MoveNext();
-                            continue;
-                        }
-
-                        if (parseContext.IsMatchCurrentToken(TokenType.BRACE_RIGHT))
-                        {
-                            _ = parseContext.MoveNext();
-                            break;
-                        }
-                    }
-
-                    parseContext.EnterPanicMode("Expect ',' or '}' after input condition.", parseContext.GetCurrentToken());
-                    return Expression.None;
-                }
-
-                return new InputConditionsExpression(inputConditionExpressions.ToArray());
+                throw new InvalidOperationException("Unable to handle input conditions expression.");
             }
 
-            return new InputConditionsExpression(Array.Empty<Expression>());
+            if (!parseContext.IsMatchCurrentToken(TokenType.BRACE_LEFT))
+            {
+                parseContext.EnterPanicMode("Expected '{' after WITH.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
+            var inputConditionExpression = this.ParseInputCondition(parseContext);
+            if (parseContext.PanicMode)
+            {
+                return Expression.None;
+            }
+
+            var inputConditionExpressions = new List<Expression> { inputConditionExpression };
+            while (parseContext.MoveNextIfNextToken(TokenType.COMMA))
+            {
+                inputConditionExpression = this.ParseInputCondition(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
+                inputConditionExpressions.Add(inputConditionExpression);
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.BRACE_RIGHT))
+            {
+                parseContext.EnterPanicMode("Expected ',' or '}' after input condition.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
+            return new InputConditionsExpression(inputConditionExpressions.ToArray());
+        }
+
+        private Expression ParseInputCondition(ParseContext parseContext)
+        {
+            if (parseContext.MoveNextIfNextToken(TokenType.PLACEHOLDER))
+            {
+                return this.ParseExpressionWith<InputConditionParseStrategy>(parseContext);
+            }
+
+            parseContext.EnterPanicMode("Expected placeholder (@<placeholder name>) for condition.", parseContext.GetCurrentToken());
+            return Expression.None;
         }
     }
 }

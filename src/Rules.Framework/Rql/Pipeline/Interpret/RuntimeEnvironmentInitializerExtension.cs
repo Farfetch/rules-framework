@@ -8,6 +8,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             var jsonToObjectFunction = new JsonToObjectFunction();
             runtimeEnvironment.Define(jsonToObjectFunction.Name, jsonToObjectFunction);
+            var showFunction = new ShowFunction();
+            runtimeEnvironment.Define(showFunction.Name, showFunction);
             return runtimeEnvironment;
         }
     }

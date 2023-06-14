@@ -1,8 +1,8 @@
 namespace Rules.Framework.Rql.Statements
 {
-    internal class DefinitionStatement : Statement
+    internal class RuleDefinitionStatement : Statement
     {
-        public DefinitionStatement(Statement definition)
+        public RuleDefinitionStatement(Statement definition)
             : base(definition.BeginPosition, definition.EndPosition)
         {
             this.Definition = definition;

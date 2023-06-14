@@ -27,6 +27,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "MATCH", TokenType.MATCH },
             { "NAME", TokenType.NAME },
             { "NUMBER", TokenType.NUMBER },
+            { "OBJECT", TokenType.OBJECT },
             { "ON", TokenType.ON },
             { "ONE", TokenType.ONE },
             { "OR", TokenType.OR },
@@ -41,6 +42,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "TOP", TokenType.TOP },
             { "TRUE", TokenType.BOOL },
             { "UPDATE", TokenType.UPDATE },
+            { "VAR", TokenType.VAR },
             { "WHEN", TokenType.WHEN },
             { "WITH", TokenType.WITH },
         };
@@ -218,6 +220,9 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                 case ',':
                     return CreateToken(scanContext, TokenType.COMMA);
 
+                case '.':
+                    return CreateToken(scanContext, TokenType.DOT);
+
                 case '!':
                     if (scanContext.MoveNextConditionally('='))
                     {
@@ -233,8 +238,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                         return CreateToken(scanContext, TokenType.EQUAL);
                     }
 
-                    scanContext.TokenCandidate.MarkAsError("Expected '=' after '='");
-                    return Token.None;
+                    return CreateToken(scanContext, TokenType.ASSIGN);
 
                 case '>':
                     if (scanContext.MoveNextConditionally('='))
