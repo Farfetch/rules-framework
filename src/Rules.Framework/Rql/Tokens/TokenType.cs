@@ -21,6 +21,7 @@ namespace Rules.Framework.Rql.Tokens
         IS,
         MATCH,
         NAME,
+        NOTHING,
         NUMBER,
         OBJECT,
         ON,

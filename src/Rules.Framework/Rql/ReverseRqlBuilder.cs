@@ -185,7 +185,7 @@ namespace Rules.Framework.Rql
 
         public string VisitLiteralExpression(LiteralExpression literalExpression) => literalExpression.Type switch
         {
-            LiteralType.String => literalExpression.Token.Lexeme,
+            LiteralType.String or LiteralType.Undefined => literalExpression.Token.Lexeme,
             LiteralType.Decimal or LiteralType.Integer or LiteralType.Bool => literalExpression.Value.ToString(),
             LiteralType.DateTime => $"\"{literalExpression.Value:yyyy-MM-ddTHH:mm:ssZ}\"",
             _ => throw new NotSupportedException($"The literal type '{literalExpression.Type}' is not supported."),

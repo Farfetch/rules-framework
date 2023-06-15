@@ -20,6 +20,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 TokenType.BOOL => LiteralType.Bool,
                 TokenType.DECIMAL => LiteralType.Decimal,
                 TokenType.STRING => LiteralType.String,
+                TokenType.NOTHING => LiteralType.Undefined,
                 _ => throw new NotSupportedException($"The token type '{literalToken.Type}' is not supported as a valid literal type."),
             };
             return new LiteralExpression(inferredLiteralType, literalToken, literalToken.Literal);

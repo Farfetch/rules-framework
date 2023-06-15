@@ -26,6 +26,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "IS", TokenType.IS },
             { "MATCH", TokenType.MATCH },
             { "NAME", TokenType.NAME },
+            { "NOTHING", TokenType.NOTHING },
             { "NUMBER", TokenType.NUMBER },
             { "OBJECT", TokenType.OBJECT },
             { "ON", TokenType.ON },

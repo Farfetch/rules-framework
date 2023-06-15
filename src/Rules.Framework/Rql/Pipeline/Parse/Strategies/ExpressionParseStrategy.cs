@@ -28,7 +28,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return new VariableExpression(parseContext.GetCurrentToken());
             }
 
-            if (parseContext.IsMatchCurrentToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL))
+            if (parseContext.IsMatchCurrentToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL, TokenType.NOTHING))
             {
                 var literal = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
