@@ -1,4 +1,4 @@
-namespace Rules.Framework.Rql.Pipeline.Interpret
+namespace Rules.Framework.Rql.Runtime
 {
     using System;
 

@@ -1,6 +1,6 @@
-namespace Rules.Framework.Rql.Pipeline.Interpret
+namespace Rules.Framework.Rql.Runtime
 {
-    using Rules.Framework.Rql.Pipeline.Interpret.BuiltInFunctions;
+    using Rules.Framework.Rql.Runtime.BuiltInFunctions;
 
     internal static class RuntimeEnvironmentInitializerExtension
     {

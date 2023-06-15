@@ -14,6 +14,7 @@ namespace Rules.Framework
     using Rules.Framework.Management;
     using Rules.Framework.Rql;
     using Rules.Framework.Rql.Pipeline.Interpret;
+    using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Source;
     using Rules.Framework.Validation;
 

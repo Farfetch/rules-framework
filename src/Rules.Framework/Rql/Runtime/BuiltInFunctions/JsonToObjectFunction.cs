@@ -1,16 +1,20 @@
-namespace Rules.Framework.Rql.Pipeline.Interpret.BuiltInFunctions
+namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 {
     using Newtonsoft.Json;
+    using Rules.Framework.Rql.Pipeline.Interpret;
+    using Rules.Framework.Rql.Types;
 
     internal class JsonToObjectFunction : BuiltInFunctionBase
     {
         public override string Name => "JSON_TO_OBJECT";
 
-        public override string[] Parameters => new[] { "jsonString" };
+        public override Parameter[] Parameters => new[] { new Parameter(RqlTypes.String, "jsonString") };
+
+        public override RqlType ReturnType => RqlTypes.Object;
 
         public override object Call(IInterpreter interpreter, object[] arguments)
         {
-            if (arguments[0] is not string)
+            if (arguments[0] is not RqlString)
             {
                 throw new RuntimeException(
                     $"Error on {this.Name}: expected string argument.",
@@ -19,8 +23,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret.BuiltInFunctions
                     RqlSourcePosition.Empty);
             }
 
-            var jsonString = (string)arguments[0];
-            return JsonConvert.DeserializeObject<dynamic>(jsonString);
+            var jsonString = (RqlString)arguments[0];
+            return new RqlObject((object)JsonConvert.DeserializeObject<dynamic>(jsonString.Value));
         }
     }
 }

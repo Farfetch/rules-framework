@@ -1,8 +1,8 @@
 namespace Rules.Framework.Rql
 {
-    public class VoidResult : IResult
+    public class NothingResult : IResult
     {
-        public VoidResult(string rql)
+        public NothingResult(string rql)
         {
             this.Rql = rql;
         }

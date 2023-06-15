@@ -8,6 +8,7 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
+    using Rules.Framework.Rql.Types;
 
     internal class RqlClient<TContentType, TConditionType> : IRqlClient<TContentType, TConditionType>
     {
@@ -81,8 +82,9 @@ namespace Rules.Framework.Rql
         private static IResult ConvertResult(Pipeline.Interpret.IResult result) => result switch
         {
             RulesSetStatementResult<TContentType, TConditionType> rulesSetStatementResult => rulesSetStatementResult.ResultSet,
-            VoidStatementResult voidStatementResult => new VoidResult(voidStatementResult.Rql),
-            ExpressionResult expressionResult => new ObjectResult(expressionResult.Rql, expressionResult.Result),
+            NothingStatementResult nothingStatementResult => new NothingResult(nothingStatementResult.Rql),
+            ExpressionResult expressionResult when expressionResult.Result is RqlNothing => new NothingResult(expressionResult.Rql),
+            ExpressionResult expressionResult => new ValueResult(expressionResult.Rql, expressionResult.Result),
             _ => throw new NotSupportedException($"Result of type '{result.GetType().FullName}' is not supported."),
         };
     }

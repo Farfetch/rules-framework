@@ -1,4 +1,6 @@
-namespace Rules.Framework.Rql.Pipeline.Interpret
+using Rules.Framework.Rql.Pipeline.Interpret;
+
+namespace Rules.Framework.Rql.Runtime
 {
     using System;
     using System.Collections.Generic;

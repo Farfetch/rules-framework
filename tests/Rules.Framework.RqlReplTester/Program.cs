@@ -5,19 +5,23 @@ namespace Rules.Framework.RqlReplTester
     using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
     using Rules.Framework.IntegrationTests.Common.Scenarios;
     using Rules.Framework.Rql;
+    using Rules.Framework.Rql.Types;
 
     internal class Program
     {
         private static readonly string tab = new string(' ', 4);
 
-        private static void HandleObjectResult(ObjectResult result)
+        private static void HandleObjectResult(ValueResult result)
         {
-            if (result.Value is not null)
+            Console.WriteLine();
+            var rawValue = result.Value switch
             {
-                Console.WriteLine();
-                var value = result.Value.ToString()!.Replace("\n", $"\n{tab}");
-                Console.WriteLine($"{tab}{value}");
-            }
+                RqlAny rqlAny when rqlAny.UnderlyingType == RqlTypes.Object => rqlAny.Value?.ToString() ?? string.Empty,
+                RqlAny rqlAny => rqlAny.Value?.ToString() ?? string.Empty,
+                _ => result.Value.ToString(),
+            };
+            var value = rawValue!.Replace("\n", $"\n{tab}");
+            Console.WriteLine($"{tab}{value}");
         }
 
         private static void HandleRulesSetResult(RulesSetResult<ContentTypes, ConditionTypes> result)
@@ -103,12 +107,12 @@ namespace Rules.Framework.RqlReplTester
                                 HandleRulesSetResult(rulesResultSet);
                                 break;
 
-                            case VoidResult:
+                            case NothingResult:
                                 // Nothing to be done.
                                 break;
 
-                            case ObjectResult textResult:
-                                HandleObjectResult(textResult);
+                            case ValueResult valueResult:
+                                HandleObjectResult(valueResult);
                                 break;
 
                             default:

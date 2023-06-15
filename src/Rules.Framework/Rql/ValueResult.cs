@@ -1,8 +1,8 @@
 namespace Rules.Framework.Rql
 {
-    public class ObjectResult : IResult
+    public class ValueResult : IResult
     {
-        public ObjectResult(string rql, object value)
+        public ValueResult(string rql, object value)
         {
             this.Rql = rql;
             this.Value = value;

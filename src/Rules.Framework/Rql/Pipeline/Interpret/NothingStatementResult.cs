@@ -1,8 +1,8 @@
 namespace Rules.Framework.Rql.Pipeline.Interpret
 {
-    internal class VoidStatementResult : IResult
+    internal class NothingStatementResult : IResult
     {
-        public VoidStatementResult(string rql)
+        public NothingStatementResult(string rql)
         {
             if (string.IsNullOrWhiteSpace(rql))
             {
