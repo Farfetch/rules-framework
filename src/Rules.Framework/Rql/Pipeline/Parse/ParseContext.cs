@@ -56,8 +56,11 @@ namespace Rules.Framework.Rql.Pipeline.Parse
 
         public bool IsEof() => this.IsEof(this.Offset);
 
+        public bool IsMatchAtOffsetFromCurrent(int offsetFromCurrent, params TokenType[] tokenTypes)
+            => this.IsMatch(this.Offset + offsetFromCurrent, tokenTypes);
+
         public bool IsMatchCurrentToken(params TokenType[] tokenTypes)
-            => this.IsMatch(this.Offset, tokenTypes);
+                    => this.IsMatch(this.Offset, tokenTypes);
 
         public bool IsMatchNextToken(params TokenType[] tokenTypes)
             => this.IsMatch(this.Offset + 1, tokenTypes);

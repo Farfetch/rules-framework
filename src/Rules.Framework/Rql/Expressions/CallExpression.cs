@@ -5,16 +5,19 @@ namespace Rules.Framework.Rql.Expressions
 
     internal class CallExpression : Expression
     {
-        public CallExpression(Token identifier, Expression[] arguments)
-            : base(identifier.BeginPosition, arguments.LastOrDefault()?.EndPosition ?? identifier.EndPosition)
+        public CallExpression(Expression instance, Token name, Expression[] arguments)
+            : base(name.BeginPosition, arguments.LastOrDefault()?.EndPosition ?? name.EndPosition)
         {
-            this.Identifier = identifier;
+            this.Instance = instance;
+            this.Name = name;
             this.Arguments = arguments;
         }
 
         public Expression[] Arguments { get; }
 
-        public Token Identifier { get; }
+        public Expression Instance { get; }
+
+        public Token Name { get; }
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitCallExpression(this);
     }

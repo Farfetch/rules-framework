@@ -2,6 +2,8 @@ namespace Rules.Framework.Rql.Expressions
 {
     internal interface IExpressionVisitor<T>
     {
+        T VisitAssignExpression(AssignmentExpression expression);
+
         T VisitCallExpression(CallExpression callExpression);
 
         T VisitCardinalityExpression(CardinalityExpression expression);
@@ -27,6 +29,8 @@ namespace Rules.Framework.Rql.Expressions
         T VisitPlaceholderExpression(PlaceholderExpression placeholderExpression);
 
         T VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression);
+
+        T VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression);
 
         T VisitSearchExpression(SearchExpression searchExpression);
 

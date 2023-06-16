@@ -15,7 +15,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
         public abstract RqlType ReturnType { get; }
 
-        public abstract object Call(IInterpreter interpreter, object[] arguments);
+        public abstract object Call(IInterpreter interpreter, object instanceS, object[] arguments);
 
         public override string ToString()
             => $"[built-in function] {this.ToRql()}";

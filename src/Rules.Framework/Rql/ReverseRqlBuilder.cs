@@ -37,9 +37,12 @@ namespace Rules.Framework.Rql
             return $"ACTIVATE {ruleName} {contentType}";
         }
 
+        public string VisitAssignExpression(AssignmentExpression expression)
+            => FormattableString.Invariant($"{expression.Left.Lexeme} {expression.Assign.Lexeme} {expression.Right.Accept(this)}");
+
         public string VisitCallExpression(CallExpression callExpression)
         {
-            var stringBuilder = new StringBuilder(callExpression.Identifier.Lexeme.ToUpperInvariant())
+            var stringBuilder = new StringBuilder(callExpression.Name.Lexeme.ToUpperInvariant())
                 .Append('(');
 
             int argumentsLength = callExpression.Arguments.Length;
@@ -264,6 +267,9 @@ namespace Rules.Framework.Rql
 
         public string VisitProgrammableSubLanguageStatement(ProgrammableSubLanguageStatement programmableStatement)
             => $"{programmableStatement.Expression.Accept(this)};";
+
+        public string VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
+            => FormattableString.Invariant($"{propertyGetExpression.Instance.Accept(this)}.{propertyGetExpression.Name.Lexeme}");
 
         public string VisitQueryStatement(RuleQueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
 

@@ -110,10 +110,29 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new RulesSetStatementResult<TContentType, TConditionType>(resultSet);
         }
 
+        public async Task<object> VisitAssignExpression(AssignmentExpression assignmentExpression)
+        {
+            try
+            {
+                var value = await assignmentExpression.Right.Accept(this).ConfigureAwait(false);
+                this.runtimeEnvironment.Assign(assignmentExpression.Left.Lexeme.ToUpperInvariant(), value);
+                return new RqlNothing();
+            }
+            catch (IllegalRuntimeEnvironmentAccessException ex)
+            {
+                var rql = this.reverseRqlBuilder.BuildRql(assignmentExpression);
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { ex.Message },
+                    assignmentExpression.BeginPosition,
+                    assignmentExpression.EndPosition);
+            }
+        }
+
         public async Task<object> VisitCallExpression(CallExpression callExpression)
         {
             var rql = this.reverseRqlBuilder.BuildRql(callExpression);
-            string callableName = callExpression.Identifier.Lexeme.ToUpperInvariant();
+            string callableName = callExpression.Name.Lexeme.ToUpperInvariant();
             var callee = this.runtimeEnvironment.Get(callableName);
             if (callee is not ICallable)
             {
@@ -125,6 +144,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
 
             var callable = (ICallable)callee;
+            var caller = await callExpression.Instance.Accept(this).ConfigureAwait(false);
             int argumentsLength = callExpression.Arguments.Length;
             if (argumentsLength != callable.Arity)
             {
@@ -140,7 +160,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 arguments[i] = await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
             }
 
-            return callable.Call(this, arguments);
+            return callable.Call(this, caller, arguments);
         }
 
         public Task<object> VisitCardinalityExpression(CardinalityExpression expression) => expression.CardinalityKeyword.Accept(this);
@@ -368,6 +388,11 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var rql = this.reverseRqlBuilder.BuildRql(programmableStatement);
             var expressionResult = await programmableStatement.Expression.Accept(this).ConfigureAwait(false);
             return new ExpressionResult(rql, expressionResult);
+        }
+
+        public Task<object> VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IResult> VisitQueryStatement(RuleQueryStatement matchStatement)

@@ -12,7 +12,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
         public override RqlType ReturnType => RqlTypes.Nothing;
 
-        public override object Call(IInterpreter interpreter, object[] arguments)
+        public override object Call(IInterpreter interpreter, object instance, object[] arguments)
         {
             Console.WriteLine(arguments[0].ToString());
             return new RqlNothing();

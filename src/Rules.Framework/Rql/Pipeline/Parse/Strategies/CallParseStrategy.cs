@@ -14,20 +14,51 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER) || !parseContext.IsMatchNextToken(TokenType.PARENTHESIS_LEFT))
+            if (!parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER))
             {
                 throw new InvalidOperationException("Unable to handle call expression.");
             }
 
-            var identifier = parseContext.GetCurrentToken();
-            _ = parseContext.MoveNext();
-            _ = parseContext.MoveNext();
-
-            if (parseContext.MoveNextIfCurrentToken(TokenType.PARENTHESIS_RIGHT))
+            var call = this.ParseCall(parseContext);
+            while (parseContext.MoveNextIfNextToken(TokenType.DOT))
             {
-                return new CallExpression(identifier, Array.Empty<Expression>());
+                if (!parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
+                {
+                    parseContext.EnterPanicMode("Expected identifier after '.'.", parseContext.GetCurrentToken());
+                    return Expression.None;
+                }
+
+                var chainedCall = this.ParseCall(parseContext);
+                if (chainedCall is VariableExpression variableExpression)
+                {
+                    call = new PropertyGetExpression(call, variableExpression.Token);
+                    continue;
+                }
+
+                if (chainedCall is CallExpression callExpression)
+                {
+                    call = new CallExpression(call, callExpression.Name, callExpression.Arguments);
+                    continue;
+                }
             }
 
+            return call;
+        }
+
+        private Expression ParseCall(ParseContext parseContext)
+        {
+            var identifier = parseContext.GetCurrentToken();
+            if (!parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_LEFT))
+            {
+                return new VariableExpression(identifier);
+            }
+
+            if (parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_RIGHT))
+            {
+                return new CallExpression(Expression.None, identifier, Array.Empty<Expression>());
+            }
+
+            _ = parseContext.MoveNext();
             var argument = this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
@@ -52,7 +83,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            return new CallExpression(identifier, arguments.ToArray());
+            return new CallExpression(Expression.None, identifier, arguments.ToArray());
         }
     }
 }

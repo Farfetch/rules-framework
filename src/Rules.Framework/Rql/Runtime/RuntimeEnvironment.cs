@@ -1,5 +1,3 @@
-using Rules.Framework.Rql.Pipeline.Interpret;
-
 namespace Rules.Framework.Rql.Runtime
 {
     using System;
@@ -27,11 +25,13 @@ namespace Rules.Framework.Rql.Runtime
             if (this.runtimeData.ContainsKey(name))
             {
                 this.runtimeData[name] = value;
+                return;
             }
 
             if (this.parentRuntimeEnvironment is not null)
             {
                 this.parentRuntimeEnvironment.Assign(name, value);
+                return;
             }
 
             throw new IllegalRuntimeEnvironmentAccessException($"Cannot assign undefined '{name}'.", name);
