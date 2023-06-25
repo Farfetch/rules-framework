@@ -12,6 +12,8 @@ namespace Rules.Framework.Rql.Types
 
         public RqlType Type => type;
 
+        public static implicit operator RqlAny(RqlNothing rqlNothing) => new RqlAny(rqlNothing);
+
         public override string ToString()
             => $"<{Type.Name}>";
     }

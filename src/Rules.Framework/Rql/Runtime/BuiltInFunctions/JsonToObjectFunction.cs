@@ -1,6 +1,9 @@
 namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 {
+    using System;
+    using System.Collections.Generic;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Types;
 
@@ -24,7 +27,29 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
             }
 
             var jsonString = (RqlString)arguments[0];
-            return new RqlObject((object)JsonConvert.DeserializeObject<dynamic>(jsonString.Value));
+            var json = JsonConvert.DeserializeObject<object>(jsonString.Value);
+            return ConvertToRqlObject((IDictionary<string, JToken>)json);
+        }
+
+        private static RqlObject ConvertToRqlObject(IDictionary<string, JToken> values)
+        {
+            var rqlObject = new RqlObject();
+            foreach (var kv in values)
+            {
+                rqlObject.Properties[kv.Key] = new RqlAny(kv.Value.Type switch
+                {
+                    JTokenType.Null => new RqlNothing(),
+                    JTokenType.Integer => new RqlInteger(kv.Value.Value<int>()),
+                    JTokenType.Float => new RqlDecimal(kv.Value.Value<decimal>()),
+                    JTokenType.String => new RqlString(kv.Value.Value<string>()),
+                    JTokenType.Boolean => new RqlBool(kv.Value.Value<bool>()),
+                    JTokenType.Date => new RqlDate(kv.Value.Value<DateTime>()),
+                    JTokenType.Object => ConvertToRqlObject((IDictionary<string, JToken>)kv.Value),
+                    _ => throw new NotSupportedException($"The JSON token type '{kv.Value.Type}' is not supported."),
+                });
+            }
+
+            return rqlObject;
         }
     }
 }

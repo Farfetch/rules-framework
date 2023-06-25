@@ -20,6 +20,8 @@ namespace Rules.Framework.Rql.Types
 
         public readonly string Value { get; }
 
+        public static implicit operator RqlAny(RqlString rqlString) => new RqlAny(rqlString);
+
         public override string ToString()
             => $"<{Type.Name}> {this.Value}";
     }

@@ -222,6 +222,32 @@ namespace Rules.Framework.Rql
             return matchRqlBuilder.ToString();
         }
 
+        public string VisitNewObjectExpression(NewObjectExpression newObjectExpression)
+        {
+            var stringBuilder = new StringBuilder(newObjectExpression.Object.Lexeme);
+
+            if (newObjectExpression.PropertyAssignments.Length > 0)
+            {
+                stringBuilder.AppendLine()
+                    .Append('{');
+                for (int i = 0; i < newObjectExpression.PropertyAssignments.Length; i++)
+                {
+                    stringBuilder.AppendLine()
+                        .Append(new string(' ', 4))
+                        .Append(newObjectExpression.PropertyAssignments[i].Accept(this));
+
+                    if (i < newObjectExpression.PropertyAssignments.Length - 1)
+                    {
+                        stringBuilder.Append(',');
+                    }
+                }
+                stringBuilder.AppendLine()
+                    .Append('}');
+            }
+
+            return stringBuilder.ToString();
+        }
+
         public string VisitNoneExpression(NoneExpression noneExpression) => string.Empty;
 
         public string VisitNoneStatement(NoneStatement noneStatement) => string.Empty;

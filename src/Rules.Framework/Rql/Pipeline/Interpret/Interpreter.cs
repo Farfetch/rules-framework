@@ -293,7 +293,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         }
 
         public Task<object> VisitKeywordExpression(KeywordExpression keywordExpression)
-            => Task.FromResult<object>(new String(keywordExpression.Keyword.Lexeme));
+            => Task.FromResult<object>(new RqlString(keywordExpression.Keyword.Lexeme));
 
         public Task<object> VisitLiteralExpression(LiteralExpression literalExpression)
         {
@@ -311,7 +311,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 LiteralType.DateTime => new RqlDate((DateTime)literalExpression.Value),
                 LiteralType.Undefined => new RqlNothing(),
                 _ when literalExpression.Value is null => new RqlNothing(),
-                _ => new RqlObject(literalExpression.Value),
+                _ => throw new NotSupportedException($"Literal with type '{literalExpression.Type}' is not supported."),
             });
         }
 
@@ -338,6 +338,20 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return await this.rulesEngine.MatchManyAsync(contentType, matchDate.Value, conditions).ConfigureAwait(false);
         }
 
+        public async Task<object> VisitNewObjectExpression(NewObjectExpression newObjectExpression)
+        {
+            var rqlObject = new RqlObject();
+            var propertyAssignments = newObjectExpression.PropertyAssignments;
+            for (int i = 0; i < propertyAssignments.Length; i++)
+            {
+                var assignment = (AssignmentExpression)propertyAssignments[i];
+                var right = (IRuntimeValue)await assignment.Right.Accept(this).ConfigureAwait(false);
+                rqlObject.Properties[assignment.Left.Lexeme] = new RqlAny(right);
+            }
+
+            return rqlObject;
+        }
+
         public Task<object> VisitNoneExpression(NoneExpression noneExpression) => Task.FromResult<object>(new RqlNothing());
 
         public Task<IResult> VisitNoneStatement(NoneStatement statement) => Task.FromResult<IResult>(new ExpressionResult(string.Empty, new RqlNothing()));
@@ -357,7 +371,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             });
 
         public Task<object> VisitPlaceholderExpression(PlaceholderExpression placeholderExpression)
-            => Task.FromResult<object>(new String((string)placeholderExpression.Token.Literal));
+            => Task.FromResult<object>(new RqlString((string)placeholderExpression.Token.Literal));
 
         public async Task<object> VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression)
         {
@@ -376,7 +390,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
                 case "NUMBER":
                     RqlInteger priorityNumber = (RqlInteger)await priorityOptionExpression.Argument.Accept(this).ConfigureAwait(false);
-                    return RuleAddPriorityOption.ByPriorityNumber(priorityNumber.Value);
+                    return RuleAddPriorityOption.ByPriorityNumber((int)priorityNumber.Value);
 
                 default:
                     throw new NotSupportedException($"The option '{option}' is not supported");
@@ -638,7 +652,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var ruleName = (RqlString)await createStatement.RuleName.Accept(this).ConfigureAwait(false);
             var contentTypeName = (RqlString)await createStatement.ContentType.Accept(this).ConfigureAwait(false);
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName.Value, ignoreCase: true);
-            var content = await createStatement.Content.Accept(this).ConfigureAwait(false);
+            var content = (IRuntimeValue)await createStatement.Content.Accept(this).ConfigureAwait(false);
             var dateBegin = (RqlDate)await createStatement.DateBegin.Accept(this).ConfigureAwait(false);
             DateTime? dateEnd = null;
             if (createStatement.DateEnd != null)
@@ -656,7 +670,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var ruleBuilder = RuleBuilder.NewRule<TContentType, TConditionType>()
                 .WithName(ruleName.Value)
                 .WithDatesInterval(dateBegin.Value, dateEnd)
-                .WithContent(contentType, content);
+                .WithContent(contentType, content.RuntimeValue);
 
             if (condition != null)
             {

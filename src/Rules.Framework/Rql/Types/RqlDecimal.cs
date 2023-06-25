@@ -20,6 +20,8 @@ namespace Rules.Framework.Rql.Types
 
         public readonly decimal Value { get; }
 
+        public static implicit operator RqlAny(RqlDecimal rqlDecimal) => new RqlAny(rqlDecimal);
+
         public override string ToString()
             => $"<{Type.Name}> {this.Value}";
     }

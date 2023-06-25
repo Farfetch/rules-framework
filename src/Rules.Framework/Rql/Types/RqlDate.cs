@@ -20,6 +20,8 @@ namespace Rules.Framework.Rql.Types
 
         public readonly DateTime Value { get; }
 
+        public static implicit operator RqlAny(RqlDate rqlDate) => new RqlAny(rqlDate);
+
         public override string ToString()
             => $"<{Type.Name}> {this.Value}";
     }

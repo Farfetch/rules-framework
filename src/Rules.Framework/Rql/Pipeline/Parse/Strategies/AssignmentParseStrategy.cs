@@ -12,7 +12,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            var expression = this.ParseExpressionWith<NothingParseStrategy>(parseContext);
+            var expression = this.ParseExpressionWith<ObjectParseStrategy>(parseContext);
 
             if (parseContext.MoveNextIfNextToken(TokenType.ASSIGN))
             {

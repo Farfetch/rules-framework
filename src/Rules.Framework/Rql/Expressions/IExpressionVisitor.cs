@@ -22,6 +22,8 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitMatchExpression(MatchExpression matchExpression);
 
+        T VisitNewObjectExpression(NewObjectExpression newObjectExpression);
+
         T VisitNoneExpression(NoneExpression noneExpression);
 
         T VisitOperatorExpression(OperatorExpression operatorExpression);
