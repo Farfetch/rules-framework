@@ -12,7 +12,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.MoveNextIfCurrentToken(TokenType.PARENTHESIS_LEFT))
+            if (parseContext.MoveNextIfCurrentToken(TokenType.BRACKET_LEFT))
             {
                 var condition = this.ParseExpressionWith<ConditionGroupingParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
@@ -20,7 +20,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return Expression.None;
                 }
 
-                if (!parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_RIGHT))
+                if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_RIGHT))
                 {
                     parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetCurrentToken());
                     return Expression.None;

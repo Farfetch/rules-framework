@@ -36,7 +36,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
             var rqlObject = new RqlObject();
             foreach (var kv in values)
             {
-                rqlObject.Properties[kv.Key] = new RqlAny(kv.Value.Type switch
+                rqlObject[kv.Key] = new RqlAny(kv.Value.Type switch
                 {
                     JTokenType.Null => new RqlNothing(),
                     JTokenType.Integer => new RqlInteger(kv.Value.Value<int>()),

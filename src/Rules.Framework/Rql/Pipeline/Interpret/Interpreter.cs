@@ -338,6 +338,31 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return await this.rulesEngine.MatchManyAsync(contentType, matchDate.Value, conditions).ConfigureAwait(false);
         }
 
+        public async Task<object> VisitNewArrayExpression(NewArrayExpression newArrayExpression)
+        {
+            var sizeValue = (IRuntimeValue)await newArrayExpression.Size.Accept(this).ConfigureAwait(false);
+            var size = sizeValue is RqlInteger integer ? integer.Value : newArrayExpression.Values.Length;
+            var rqlArray = new RqlArray(size);
+
+            if (newArrayExpression.Values.Length > 0)
+            {
+                for (var i = 0; i < size; i++)
+                {
+                    var value = (IRuntimeValue)await newArrayExpression.Values[i].Accept(this).ConfigureAwait(false);
+                    rqlArray.Value[i] = new RqlAny(value);
+                }
+            }
+            else
+            {
+                for (var i = 0; i < size; i++)
+                {
+                    rqlArray.Value[i] = new RqlNothing();
+                }
+            }
+
+            return rqlArray;
+        }
+
         public async Task<object> VisitNewObjectExpression(NewObjectExpression newObjectExpression)
         {
             var rqlObject = new RqlObject();
@@ -346,7 +371,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var assignment = (AssignmentExpression)propertyAssignments[i];
                 var right = (IRuntimeValue)await assignment.Right.Accept(this).ConfigureAwait(false);
-                rqlObject.Properties[assignment.Left.Lexeme] = new RqlAny(right);
+                rqlObject[assignment.Left.Lexeme] = new RqlAny(right);
             }
 
             return rqlObject;
@@ -410,7 +435,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var instance = await propertyGetExpression.Instance.Accept(this).ConfigureAwait(false);
             if (instance is RqlObject rqlObject)
             {
-                if (rqlObject.Properties.TryGetValue(propertyGetExpression.Name.Lexeme, out var propertyValue))
+                if (rqlObject.TryGet(propertyGetExpression.Name.Lexeme, out var propertyValue))
                 {
                     return propertyValue;
                 }
@@ -436,7 +461,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             if (instance is RqlObject rqlObject)
             {
                 var value = (IRuntimeValue)await propertySetExpression.Value.Accept(this).ConfigureAwait(false);
-                rqlObject.Properties[propertySetExpression.Name.Lexeme] = new RqlAny(value);
+                rqlObject[propertySetExpression.Name.Lexeme] = new RqlAny(value);
                 return new RqlNothing();
             }
 

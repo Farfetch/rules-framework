@@ -4,6 +4,8 @@ namespace Rules.Framework.Rql.Types
     {
         public static RqlType Any { get; } = new RqlType("any");
 
+        public static RqlType Array { get; } = new RqlType("array");
+
         public static RqlType Bool { get; } = new RqlType("bool");
 
         public static RqlType Date { get; } = new RqlType("date");

@@ -16,6 +16,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "AND", TokenType.AND },
             { "APPLY", TokenType.APPLY },
             { "AS", TokenType.AS },
+            { "ARRAY", TokenType.ARRAY },
             { "BOTTOM", TokenType.BOTTOM },
             { "CONTENT", TokenType.CONTENT },
             { "CREATE", TokenType.CREATE },
@@ -204,10 +205,10 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             switch (@char)
             {
                 case '(':
-                    return CreateToken(scanContext, TokenType.PARENTHESIS_LEFT);
+                    return CreateToken(scanContext, TokenType.BRACKET_LEFT);
 
                 case ')':
-                    return CreateToken(scanContext, TokenType.PARENTHESIS_RIGHT);
+                    return CreateToken(scanContext, TokenType.BRACKET_RIGHT);
 
                 case '{':
                     return CreateToken(scanContext, TokenType.BRACE_LEFT);
@@ -226,6 +227,12 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
                 case '-':
                     return CreateToken(scanContext, TokenType.MINUS);
+
+                case '[':
+                    return CreateToken(scanContext, TokenType.STRAIGHT_BRACKET_LEFT);
+
+                case ']':
+                    return CreateToken(scanContext, TokenType.STRAIGHT_BRACKET_RIGHT);
 
                 case '!':
                     if (scanContext.MoveNextConditionally('='))

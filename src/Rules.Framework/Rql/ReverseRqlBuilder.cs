@@ -222,6 +222,35 @@ namespace Rules.Framework.Rql
             return matchRqlBuilder.ToString();
         }
 
+        public string VisitNewArrayExpression(NewArrayExpression newArrayExpression)
+        {
+            var stringBuilder = new StringBuilder(newArrayExpression.Array.Lexeme)
+                .Append(SPACE)
+                .Append(newArrayExpression.InitializerBeginToken.Lexeme);
+
+            if (newArrayExpression.Size == Expression.None)
+            {
+                stringBuilder.Append(newArrayExpression.Size.Accept(this));
+            }
+            else
+            {
+                for (int i = 0; i < newArrayExpression.Values.Length; i++)
+                {
+                    stringBuilder.Append(SPACE)
+                        .Append(newArrayExpression.Values[i].Accept(this));
+
+                    if (i < newArrayExpression.Values.Length - 1)
+                    {
+                        stringBuilder.Append(',');
+                    }
+                }
+            }
+
+            return stringBuilder.Append(SPACE)
+                .Append(newArrayExpression.InitializerEndToken.Lexeme)
+                .ToString();
+        }
+
         public string VisitNewObjectExpression(NewObjectExpression newObjectExpression)
         {
             var stringBuilder = new StringBuilder(newObjectExpression.Object.Lexeme);

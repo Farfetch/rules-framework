@@ -72,7 +72,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             var assign = parseContext.GetCurrentToken();
             _ = parseContext.MoveNext();
-            var right = this.ParseExpressionWith<ObjectParseStrategy>(parseContext);
+            var right = this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;

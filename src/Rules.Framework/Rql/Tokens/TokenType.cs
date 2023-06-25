@@ -10,6 +10,7 @@ namespace Rules.Framework.Rql.Tokens
         ALL,
         AND,
         APPLY,
+        ARRAY,
         AS,
         ASSIGN,
         BOTTOM,
@@ -71,12 +72,16 @@ namespace Rules.Framework.Rql.Tokens
 
         BRACE_LEFT,
         BRACE_RIGHT,
+        BRACKET_LEFT,
+        BRACKET_RIGHT,
         COMMA,
         DOT,
         MINUS,
         PARENTHESIS_LEFT,
         PARENTHESIS_RIGHT,
         SEMICOLON,
+        STRAIGHT_BRACKET_LEFT,
+        STRAIGHT_BRACKET_RIGHT,
         EOF,
 
         #endregion Tokens

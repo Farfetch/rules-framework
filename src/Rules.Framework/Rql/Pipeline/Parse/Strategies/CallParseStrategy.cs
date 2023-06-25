@@ -48,12 +48,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         private Expression ParseCall(ParseContext parseContext)
         {
             var identifier = parseContext.GetCurrentToken();
-            if (!parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_LEFT))
+            if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_LEFT))
             {
                 return new VariableExpression(identifier);
             }
 
-            if (parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_RIGHT))
+            if (parseContext.MoveNextIfNextToken(TokenType.BRACKET_RIGHT))
             {
                 return new CallExpression(Expression.None, identifier, Array.Empty<Expression>());
             }
@@ -77,7 +77,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 arguments.Add(argument);
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.PARENTHESIS_RIGHT))
+            if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_RIGHT))
             {
                 parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetCurrentToken());
                 return Expression.None;
