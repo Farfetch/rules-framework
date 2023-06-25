@@ -404,9 +404,29 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new ExpressionResult(rql, expressionResult);
         }
 
-        public Task<object> VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
+        public async Task<object> VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
         {
-            throw new NotImplementedException();
+            var rql = this.reverseRqlBuilder.BuildRql(propertyGetExpression);
+            var instance = await propertyGetExpression.Instance.Accept(this).ConfigureAwait(false);
+            if (instance is RqlObject rqlObject)
+            {
+                if (rqlObject.Properties.TryGetValue(propertyGetExpression.Name.Lexeme, out var propertyValue))
+                {
+                    return propertyValue;
+                }
+
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { $"Instance of '{nameof(RqlObject)}' does not contain property '{propertyGetExpression.Name.Lexeme}'." },
+                    propertyGetExpression.BeginPosition,
+                    propertyGetExpression.EndPosition);
+            }
+
+            throw CreateRuntimeException(
+                rql,
+                new[] { $"Instance of does not contain properties." },
+                propertyGetExpression.BeginPosition,
+                propertyGetExpression.EndPosition);
         }
 
         public async Task<IResult> VisitQueryStatement(RuleQueryStatement matchStatement)
