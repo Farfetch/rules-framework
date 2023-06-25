@@ -184,7 +184,7 @@ namespace Rules.Framework.Rql
             return inputConditionsRqlBuilder.ToString();
         }
 
-        public string VisitKeywordExpression(KeywordExpression keywordExpression) => keywordExpression.Keyword.Lexeme;
+        public string VisitKeywordExpression(KeywordExpression keywordExpression) => keywordExpression.Keyword.Lexeme.ToUpperInvariant();
 
         public string VisitLiteralExpression(LiteralExpression literalExpression) => literalExpression.Type switch
         {

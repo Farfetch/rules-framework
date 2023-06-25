@@ -56,10 +56,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         private Expression ParseObjectAssignment(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER))
+            if (!parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames))
             {
-                parseContext.EnterPanicMode("Expected identifier for object property.", parseContext.GetCurrentToken());
-                return Expression.None;
+                if (!parseContext.MoveNextIfCurrentToken(TokenType.ESCAPE) || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                {
+                    parseContext.EnterPanicMode("Expected identifier for object property.", parseContext.GetCurrentToken());
+                    return Expression.None;
+                }
             }
 
             var left = parseContext.GetCurrentToken();

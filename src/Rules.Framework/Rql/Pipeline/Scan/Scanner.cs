@@ -107,7 +107,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
         private static Token CreateToken(ScanContext scanContext, TokenType tokenType)
         {
-            string lexeme = scanContext.ExtractLexeme().ToUpperInvariant();
+            string lexeme = scanContext.ExtractLexeme();
             return CreateToken(scanContext, lexeme, tokenType, literal: null);
         }
 
@@ -233,6 +233,9 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
                 case ']':
                     return CreateToken(scanContext, TokenType.STRAIGHT_BRACKET_RIGHT);
+
+                case '#':
+                    return CreateToken(scanContext, TokenType.ESCAPE);
 
                 case '!':
                     if (scanContext.MoveNextConditionally('='))
