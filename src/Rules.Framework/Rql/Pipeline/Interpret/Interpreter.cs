@@ -441,6 +441,28 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return await this.rulesEngine.SearchAsync(searchArgs).ConfigureAwait(false);
         }
 
+        public async Task<object> VisitUnaryExpression(UnaryExpression expression)
+        {
+            var right = await expression.Right.Accept(this).ConfigureAwait(false);
+            if (right is RqlInteger rqlInteger)
+            {
+                return new RqlInteger(-rqlInteger.Value);
+            }
+
+            if (right is RqlDecimal rqlDecimal)
+            {
+                return new RqlDecimal(-rqlDecimal.Value);
+            }
+
+            var rql = this.reverseRqlBuilder.BuildRql(expression);
+            var rightRql = this.reverseRqlBuilder.BuildRql(expression.Right);
+            throw CreateRuntimeException(
+                rql,
+                new[] { $"Unary operator '{expression.Operator.Lexeme}' is not supported for expression '{rightRql}'." },
+                expression.BeginPosition,
+                expression.EndPosition);
+        }
+
         public async Task<object> VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableAttributeExpression)
         {
             var updatableAttributeExpressionValue = await updatableAttributeExpression.UpdatableAttribute.Accept(this).ConfigureAwait(false);

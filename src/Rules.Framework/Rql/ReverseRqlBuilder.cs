@@ -329,6 +329,8 @@ namespace Rules.Framework.Rql
             return searchRqlBuilder.ToString();
         }
 
+        public string VisitUnaryExpression(UnaryExpression expression) => $"{expression.Operator.Lexeme}{expression.Right.Accept(this)}";
+
         public string VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression) => updatableExpression.UpdatableAttribute.Accept(this);
 
         public string VisitUpdateStatement(UpdateStatement updateStatement)

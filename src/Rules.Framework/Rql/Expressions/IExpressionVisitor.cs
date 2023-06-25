@@ -36,6 +36,8 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitSearchExpression(SearchExpression searchExpression);
 
+        T VisitUnaryExpression(UnaryExpression expression);
+
         T VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression);
 
         T VisitValueConditionExpression(ValueConditionExpression valueConditionExpression);

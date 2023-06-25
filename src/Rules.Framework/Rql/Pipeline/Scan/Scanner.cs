@@ -142,7 +142,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             string lexeme;
             ConsumeDigits(scanContext);
 
-            if (scanContext.GetCurrentChar() == '.' && IsNumeric(scanContext.GetNextChar()))
+            if (scanContext.GetNextChar() == '.' && scanContext.MoveNext() && IsNumeric(scanContext.GetNextChar()))
             {
                 ConsumeDigits(scanContext);
                 lexeme = scanContext.ExtractLexeme();
@@ -223,6 +223,9 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
                 case '.':
                     return CreateToken(scanContext, TokenType.DOT);
+
+                case '-':
+                    return CreateToken(scanContext, TokenType.MINUS);
 
                 case '!':
                     if (scanContext.MoveNextConditionally('='))

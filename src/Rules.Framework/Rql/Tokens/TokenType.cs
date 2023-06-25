@@ -71,11 +71,12 @@ namespace Rules.Framework.Rql.Tokens
 
         BRACE_LEFT,
         BRACE_RIGHT,
+        COMMA,
         DOT,
+        MINUS,
         PARENTHESIS_LEFT,
         PARENTHESIS_RIGHT,
         SEMICOLON,
-        COMMA,
         EOF,
 
         #endregion Tokens
