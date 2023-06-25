@@ -34,6 +34,8 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression);
 
+        T VisitPropertySetExpression(PropertySetExpression propertySetExpression);
+
         T VisitSearchExpression(SearchExpression searchExpression);
 
         T VisitUnaryExpression(UnaryExpression expression);

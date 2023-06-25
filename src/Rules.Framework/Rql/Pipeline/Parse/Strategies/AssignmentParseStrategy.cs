@@ -30,7 +30,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return new AssignmentExpression(variableExpression.Token, assignmentToken, rightExpression);
                 }
 
-                // Set case, TBD.
+                if (expression is PropertyGetExpression propertyGetExpression)
+                {
+                    return new PropertySetExpression(propertyGetExpression.Instance, propertyGetExpression.Name, assignmentToken, rightExpression);
+                }
+
+                parseContext.EnterPanicMode("Expected assign variable or property set expression.", parseContext.GetCurrentToken());
+                return Expression.None;
             }
 
             return expression;

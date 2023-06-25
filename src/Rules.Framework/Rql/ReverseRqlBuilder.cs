@@ -297,6 +297,9 @@ namespace Rules.Framework.Rql
         public string VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
             => FormattableString.Invariant($"{propertyGetExpression.Instance.Accept(this)}.{propertyGetExpression.Name.Lexeme}");
 
+        public string VisitPropertySetExpression(PropertySetExpression propertySetExpression)
+            => $"{propertySetExpression.Instance.Accept(this)}.{propertySetExpression.Name.Lexeme} {propertySetExpression.Assign.Lexeme} {propertySetExpression.Value.Accept(this)}";
+
         public string VisitQueryStatement(RuleQueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
 
         public string VisitSearchExpression(SearchExpression searchExpression)

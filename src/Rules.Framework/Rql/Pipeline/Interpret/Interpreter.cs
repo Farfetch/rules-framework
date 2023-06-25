@@ -429,6 +429,24 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 propertyGetExpression.EndPosition);
         }
 
+        public async Task<object> VisitPropertySetExpression(PropertySetExpression propertySetExpression)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(propertySetExpression);
+            var instance = await propertySetExpression.Instance.Accept(this).ConfigureAwait(false);
+            if (instance is RqlObject rqlObject)
+            {
+                var value = (IRuntimeValue)await propertySetExpression.Value.Accept(this).ConfigureAwait(false);
+                rqlObject.Properties[propertySetExpression.Name.Lexeme] = new RqlAny(value);
+                return new RqlNothing();
+            }
+
+            throw CreateRuntimeException(
+                rql,
+                new[] { $"Instance of does not contain properties." },
+                propertySetExpression.BeginPosition,
+                propertySetExpression.EndPosition);
+        }
+
         public async Task<IResult> VisitQueryStatement(RuleQueryStatement matchStatement)
         {
             var rules = (IEnumerable<Rule<TContentType, TConditionType>>)await matchStatement.Query.Accept(this).ConfigureAwait(false);
