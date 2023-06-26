@@ -2,9 +2,9 @@ namespace Rules.Framework.Rql.Expressions
 {
     using Rules.Framework.Rql.Tokens;
 
-    internal class IndexerExpression : Expression
+    internal class IndexerGetExpression : Expression
     {
-        public IndexerExpression(Expression instance, Token indexLeftDelimeter, Expression index, Token indexRightDelimeter)
+        public IndexerGetExpression(Expression instance, Token indexLeftDelimeter, Expression index, Token indexRightDelimeter)
             : base(instance.BeginPosition, indexRightDelimeter.EndPosition)
         {
             this.Instance = instance;
@@ -21,6 +21,6 @@ namespace Rules.Framework.Rql.Expressions
 
         public Expression Instance { get; }
 
-        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitIndexerExpression(this);
+        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitIndexerGetExpression(this);
     }
 }

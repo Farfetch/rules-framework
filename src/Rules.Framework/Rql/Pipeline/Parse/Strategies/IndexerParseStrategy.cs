@@ -40,9 +40,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     continue;
                 }
 
-                if (chainedCall is IndexerExpression indexerExpression)
+                if (chainedCall is IndexerGetExpression indexerExpression)
                 {
-                    expression = new IndexerExpression(expression, indexerExpression.IndexLeftDelimeter, indexerExpression.Index, indexerExpression.IndexRightDelimeter);
+                    expression = new IndexerGetExpression(expression, indexerExpression.IndexLeftDelimeter, indexerExpression.Index, indexerExpression.IndexRightDelimeter);
                     continue;
                 }
             }
@@ -80,7 +80,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 }
 
                 var indexDelimeterRight = parseContext.GetCurrentToken();
-                return new IndexerExpression(call, indexDelimeterLeft, index, indexDelimeterRight);
+                return new IndexerGetExpression(call, indexDelimeterLeft, index, indexDelimeterRight);
             }
 
             return call;

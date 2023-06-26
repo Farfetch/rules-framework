@@ -273,32 +273,71 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<IResult> VisitDefinitionStatement(RuleDefinitionStatement definitionStatement)
             => await definitionStatement.Definition.Accept(this).ConfigureAwait(false);
 
-        public async Task<object> VisitIndexerExpression(IndexerExpression indexerExpression)
+        public async Task<object> VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
         {
-            var rql = this.reverseRqlBuilder.BuildRql(indexerExpression);
-            var instance = (IRuntimeValue)await indexerExpression.Instance.Accept(this).ConfigureAwait(false);
+            var rql = this.reverseRqlBuilder.BuildRql(indexerGetExpression);
+            var instance = (IRuntimeValue)await indexerGetExpression.Instance.Accept(this).ConfigureAwait(false);
+            if (instance.Type == RqlTypes.Any)
+            {
+                instance = ((RqlAny)instance).Unwrap();
+            }
+
             if (instance is not IIndexerGet indexerGet)
             {
                 var type = instance.Type == RqlTypes.Any ? ((RqlAny)instance).UnderlyingType.Name : instance.Type.Name;
                 throw CreateRuntimeException(
                     rql,
                     new[] { $"Type '{type}' is not a valid indexer target." },
-                    indexerExpression.BeginPosition,
-                    indexerExpression.EndPosition);
+                    indexerGetExpression.BeginPosition,
+                    indexerGetExpression.EndPosition);
             }
 
-            var index = (RqlInteger)await indexerExpression.Index.Accept(this).ConfigureAwait(false);
+            var index = (RqlInteger)await indexerGetExpression.Index.Accept(this).ConfigureAwait(false);
             if (index < 0 || index >= indexerGet.Size)
             {
                 var type = instance.Type == RqlTypes.Any ? ((RqlAny)instance).UnderlyingType.Name : instance.Type.Name;
                 throw CreateRuntimeException(
                     rql,
                     new[] { $"Index '{index}' is out of bounds for instance of '{type}'." },
-                    indexerExpression.BeginPosition,
-                    indexerExpression.EndPosition);
+                    indexerGetExpression.BeginPosition,
+                    indexerGetExpression.EndPosition);
             }
 
             return indexerGet.GetAtIndex(index);
+        }
+
+        public async Task<object> VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(indexerSetExpression);
+            var instance = (IRuntimeValue)await indexerSetExpression.Instance.Accept(this).ConfigureAwait(false);
+            if (instance.Type == RqlTypes.Any)
+            {
+                instance = ((RqlAny)instance).Unwrap();
+            }
+
+            if (instance is not IIndexerSet indexerSet)
+            {
+                var type = instance.Type == RqlTypes.Any ? ((RqlAny)instance).UnderlyingType.Name : instance.Type.Name;
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { $"Type '{type}' is not a valid indexer target." },
+                    indexerSetExpression.BeginPosition,
+                    indexerSetExpression.EndPosition);
+            }
+
+            var index = (RqlInteger)await indexerSetExpression.Index.Accept(this).ConfigureAwait(false);
+            if (index < 0 || index >= indexerSet.Size)
+            {
+                var type = instance.Type == RqlTypes.Any ? ((RqlAny)instance).UnderlyingType.Name : instance.Type.Name;
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { $"Index '{index}' is out of bounds for instance of '{type}'." },
+                    indexerSetExpression.BeginPosition,
+                    indexerSetExpression.EndPosition);
+            }
+
+            var value = (IRuntimeValue)await indexerSetExpression.Value.Accept(this).ConfigureAwait(false);
+            return indexerSet.SetAtIndex(index, new RqlAny(value));
         }
 
         public async Task<object> VisitInputConditionExpression(InputConditionExpression inputConditionExpression)

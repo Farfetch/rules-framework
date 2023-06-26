@@ -12,7 +12,9 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitConditionGroupingExpression(ConditionGroupingExpression expression);
 
-        T VisitIndexerExpression(IndexerExpression indexerExpression);
+        T VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression);
+
+        T VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression);
 
         T VisitInputConditionExpression(InputConditionExpression inputConditionExpression);
 

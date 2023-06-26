@@ -145,8 +145,11 @@ namespace Rules.Framework.Rql
 
         public string VisitDefinitionStatement(RuleDefinitionStatement definitionStatement) => $"{definitionStatement.Definition.Accept(this)};";
 
-        public string VisitIndexerExpression(IndexerExpression indexerExpression)
-            => $"{indexerExpression.Instance.Accept(this)}{indexerExpression.IndexLeftDelimeter.Lexeme}{indexerExpression.Index.Accept(this)}{indexerExpression.IndexRightDelimeter.Lexeme}";
+        public string VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
+            => $"{indexerGetExpression.Instance.Accept(this)}{indexerGetExpression.IndexLeftDelimeter.Lexeme}{indexerGetExpression.Index.Accept(this)}{indexerGetExpression.IndexRightDelimeter.Lexeme}";
+
+        public string VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression)
+            => $"{indexerSetExpression.Instance.Accept(this)}{indexerSetExpression.IndexLeftDelimeter.Lexeme}{indexerSetExpression.Index.Accept(this)}{indexerSetExpression.IndexRightDelimeter.Lexeme} {indexerSetExpression.Assign.Lexeme} {indexerSetExpression.Value.Accept(this)}";
 
         public string VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
         {

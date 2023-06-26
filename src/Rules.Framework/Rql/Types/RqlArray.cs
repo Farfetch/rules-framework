@@ -5,7 +5,7 @@ namespace Rules.Framework.Rql.Types
     using System.Text;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlArray : IRuntimeValue, IPropertyGet, IIndexerGet
+    public readonly struct RqlArray : IRuntimeValue, IPropertyGet, IIndexerGet, IIndexerSet
     {
         private static readonly Type runtimeType = typeof(object[]);
         private static readonly RqlType type = RqlTypes.Array;
@@ -56,6 +56,17 @@ namespace Rules.Framework.Rql.Types
             }
 
             throw new KeyNotFoundException($"Key with name '{name.Value}' has not been found.");
+        }
+
+        public RqlNothing SetAtIndex(RqlInteger index, RqlAny value)
+        {
+            if (index.Value < 0 || index.Value >= this.size)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), index, $"The value of '{index}' is out of the '{nameof(RqlArray)}' range.");
+            }
+
+            this.Value[index.Value] = value;
+            return new RqlNothing();
         }
 
         public override string ToString()

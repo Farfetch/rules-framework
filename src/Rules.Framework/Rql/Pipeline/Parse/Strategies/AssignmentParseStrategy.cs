@@ -35,7 +35,18 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return new PropertySetExpression(propertyGetExpression.Instance, propertyGetExpression.Name, assignmentToken, rightExpression);
                 }
 
-                parseContext.EnterPanicMode("Expected assign variable or property set expression.", parseContext.GetCurrentToken());
+                if (expression is IndexerGetExpression indexerExpression)
+                {
+                    return new IndexerSetExpression(
+                        indexerExpression.Instance,
+                        indexerExpression.IndexLeftDelimeter,
+                        indexerExpression.Index,
+                        indexerExpression.IndexRightDelimeter,
+                        assignmentToken,
+                        rightExpression);
+                }
+
+                parseContext.EnterPanicMode("Expected assign variable, property set, or indexer set expression.", parseContext.GetCurrentToken());
                 return Expression.None;
             }
 
