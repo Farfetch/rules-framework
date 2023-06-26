@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql.Types
 {
     using System;
+    using Rules.Framework.Rql.Runtime;
 
     public readonly struct RqlBool : IRuntimeValue
     {
@@ -20,7 +21,11 @@ namespace Rules.Framework.Rql.Types
 
         public readonly bool Value { get; }
 
+        public static implicit operator bool(RqlBool rqlBool) => rqlBool.Value;
+
         public static implicit operator RqlAny(RqlBool rqlBool) => new RqlAny(rqlBool);
+
+        public static implicit operator RqlBool(bool value) => new RqlBool(value);
 
         public override string ToString()
             => $"<{Type.Name}> {this.Value}";

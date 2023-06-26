@@ -3,8 +3,9 @@ namespace Rules.Framework.Rql.Types
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlArray : IRuntimeValue, IPropertyGet
+    public readonly struct RqlArray : IRuntimeValue, IPropertyGet, IIndexerGet
     {
         private static readonly Type runtimeType = typeof(object[]);
         private static readonly RqlType type = RqlTypes.Array;
@@ -20,22 +21,11 @@ namespace Rules.Framework.Rql.Types
 
         public object RuntimeValue => ConvertToNativeArray(this);
 
+        public RqlInteger Size => this.size;
+
         public RqlType Type => type;
 
         public readonly RqlAny[] Value { get; }
-
-        public RqlAny this[string name]
-        {
-            get
-            {
-                if (this.TryGet(name, out var result))
-                {
-                    return result;
-                }
-
-                throw new KeyNotFoundException($"Key with name '{name}' has not been found.");
-            }
-        }
 
         public static object[] ConvertToNativeArray(RqlArray rqlArray)
         {
@@ -46,6 +36,26 @@ namespace Rules.Framework.Rql.Types
             }
 
             return result;
+        }
+
+        public RqlAny GetAtIndex(RqlInteger index)
+        {
+            if (index.Value < 0 || index.Value >= this.size)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), index, $"The value of '{index}' is out of the '{nameof(RqlArray)}' range.");
+            }
+
+            return this.Value[index.Value];
+        }
+
+        public RqlAny GetPropertyValue(RqlString name)
+        {
+            if (this.TryGetPropertyValue(name, out var result))
+            {
+                return result;
+            }
+
+            throw new KeyNotFoundException($"Key with name '{name.Value}' has not been found.");
         }
 
         public override string ToString()
@@ -80,9 +90,9 @@ namespace Rules.Framework.Rql.Types
             return stringBuilder.ToString();
         }
 
-        public bool TryGet(string memberName, out RqlAny result)
+        public RqlBool TryGetPropertyValue(RqlString memberName, out RqlAny result)
         {
-            if (string.Equals(memberName, "Size", StringComparison.Ordinal))
+            if (string.Equals(memberName.Value, "Size", StringComparison.Ordinal))
             {
                 result = new RqlInteger(this.size);
                 return true;

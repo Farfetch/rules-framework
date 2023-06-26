@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER))
             {
-                return this.ParseExpressionWith<CallParseStrategy>(parseContext);
+                return this.ParseExpressionWith<IndexerParseStrategy>(parseContext);
             }
 
             if (parseContext.IsMatchCurrentToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL))

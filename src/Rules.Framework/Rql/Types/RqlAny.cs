@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql.Types
 {
     using System;
+    using Rules.Framework.Rql.Runtime;
 
     public readonly struct RqlAny : IRuntimeValue
     {

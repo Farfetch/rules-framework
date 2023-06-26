@@ -132,35 +132,46 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitCallExpression(CallExpression callExpression)
         {
             var rql = this.reverseRqlBuilder.BuildRql(callExpression);
-            string callableName = callExpression.Name.Lexeme.ToUpperInvariant();
-            var callee = this.runtimeEnvironment.Get(callableName);
-            if (callee is not ICallable)
+            try
+            {
+                var caller = await callExpression.Instance.Accept(this).ConfigureAwait(false);
+                string callableName = callExpression.Name.Lexeme.ToUpperInvariant();
+                var callee = this.runtimeEnvironment.Get(callableName);
+                if (callee is not ICallable)
+                {
+                    throw CreateRuntimeException(
+                        rql,
+                        new[] { $"'{callableName}' is not a callable identifier." },
+                        callExpression.BeginPosition,
+                        callExpression.EndPosition);
+                }
+
+                var callable = (ICallable)callee;
+                int argumentsLength = callExpression.Arguments.Length;
+                if (argumentsLength != callable.Arity)
+                {
+                    throw CreateRuntimeException(
+                        rql,
+                        new[] { FormattableString.Invariant($"'{callableName}' expects {callable.Arity} argument(s) but {argumentsLength} were provided.") },
+                        callExpression.BeginPosition, callExpression.EndPosition);
+                }
+
+                object[] arguments = new object[argumentsLength];
+                for (int i = 0; i < argumentsLength; i++)
+                {
+                    arguments[i] = await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
+                }
+
+                return callable.Call(this, caller, arguments);
+            }
+            catch (IllegalRuntimeEnvironmentAccessException ex)
             {
                 throw CreateRuntimeException(
                     rql,
-                    new[] { $"'{callableName}' is not a callable identifier." },
+                    new[] { ex.Message },
                     callExpression.BeginPosition,
                     callExpression.EndPosition);
             }
-
-            var callable = (ICallable)callee;
-            var caller = await callExpression.Instance.Accept(this).ConfigureAwait(false);
-            int argumentsLength = callExpression.Arguments.Length;
-            if (argumentsLength != callable.Arity)
-            {
-                throw CreateRuntimeException(
-                    rql,
-                    new[] { FormattableString.Invariant($"'{callableName}' expects {callable.Arity} argument(s) but {argumentsLength} were provided.") },
-                    callExpression.BeginPosition, callExpression.EndPosition);
-            }
-
-            object[] arguments = new object[argumentsLength];
-            for (int i = 0; i < argumentsLength; i++)
-            {
-                arguments[i] = await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
-            }
-
-            return callable.Call(this, caller, arguments);
         }
 
         public Task<object> VisitCardinalityExpression(CardinalityExpression expression) => expression.CardinalityKeyword.Accept(this);
@@ -261,6 +272,34 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public async Task<IResult> VisitDefinitionStatement(RuleDefinitionStatement definitionStatement)
             => await definitionStatement.Definition.Accept(this).ConfigureAwait(false);
+
+        public async Task<object> VisitIndexerExpression(IndexerExpression indexerExpression)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(indexerExpression);
+            var instance = (IRuntimeValue)await indexerExpression.Instance.Accept(this).ConfigureAwait(false);
+            if (instance is not IIndexerGet indexerGet)
+            {
+                var type = instance.Type == RqlTypes.Any ? ((RqlAny)instance).UnderlyingType.Name : instance.Type.Name;
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { $"Type '{type}' is not a valid indexer target." },
+                    indexerExpression.BeginPosition,
+                    indexerExpression.EndPosition);
+            }
+
+            var index = (RqlInteger)await indexerExpression.Index.Accept(this).ConfigureAwait(false);
+            if (index < 0 || index >= indexerGet.Size)
+            {
+                var type = instance.Type == RqlTypes.Any ? ((RqlAny)instance).UnderlyingType.Name : instance.Type.Name;
+                throw CreateRuntimeException(
+                    rql,
+                    new[] { $"Index '{index}' is out of bounds for instance of '{type}'." },
+                    indexerExpression.BeginPosition,
+                    indexerExpression.EndPosition);
+            }
+
+            return indexerGet.GetAtIndex(index);
+        }
 
         public async Task<object> VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
         {
@@ -371,7 +410,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var assignment = (AssignmentExpression)propertyAssignments[i];
                 var right = (IRuntimeValue)await assignment.Right.Accept(this).ConfigureAwait(false);
-                rqlObject[assignment.Left.Lexeme] = new RqlAny(right);
+                rqlObject.SetPropertyValue(assignment.Left.Lexeme, new RqlAny(right));
             }
 
             return rqlObject;
@@ -432,10 +471,15 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
         {
             var rql = this.reverseRqlBuilder.BuildRql(propertyGetExpression);
-            var instance = await propertyGetExpression.Instance.Accept(this).ConfigureAwait(false);
-            if (instance is RqlObject rqlObject)
+            var instance = (IRuntimeValue)await propertyGetExpression.Instance.Accept(this).ConfigureAwait(false);
+            if (instance.Type == RqlTypes.Any)
             {
-                if (rqlObject.TryGet(propertyGetExpression.Name.Lexeme, out var propertyValue))
+                instance = ((RqlAny)instance).Unwrap();
+            }
+
+            if (instance is IPropertyGet propertyGet)
+            {
+                if (propertyGet.TryGetPropertyValue(propertyGetExpression.Name.Lexeme, out var propertyValue))
                 {
                     return propertyValue;
                 }
@@ -449,7 +493,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             throw CreateRuntimeException(
                 rql,
-                new[] { $"Instance of does not contain properties." },
+                new[] { $"Instance does not contain properties." },
                 propertyGetExpression.BeginPosition,
                 propertyGetExpression.EndPosition);
         }
@@ -457,11 +501,16 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitPropertySetExpression(PropertySetExpression propertySetExpression)
         {
             var rql = this.reverseRqlBuilder.BuildRql(propertySetExpression);
-            var instance = await propertySetExpression.Instance.Accept(this).ConfigureAwait(false);
-            if (instance is RqlObject rqlObject)
+            var instance = (IRuntimeValue)await propertySetExpression.Instance.Accept(this).ConfigureAwait(false);
+            if (instance.Type == RqlTypes.Any)
+            {
+                instance = ((RqlAny)instance).Unwrap();
+            }
+
+            if (instance is IPropertySet propertySet)
             {
                 var value = (IRuntimeValue)await propertySetExpression.Value.Accept(this).ConfigureAwait(false);
-                rqlObject[propertySetExpression.Name.Lexeme] = new RqlAny(value);
+                propertySet.SetPropertyValue(propertySetExpression.Name.Lexeme, new RqlAny(value));
                 return new RqlNothing();
             }
 

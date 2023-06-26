@@ -1,6 +1,7 @@
-namespace Rules.Framework.Rql.Types
+namespace Rules.Framework.Rql.Runtime
 {
     using System;
+    using Rules.Framework.Rql.Types;
 
     internal interface IRuntimeValue
     {

@@ -145,6 +145,9 @@ namespace Rules.Framework.Rql
 
         public string VisitDefinitionStatement(RuleDefinitionStatement definitionStatement) => $"{definitionStatement.Definition.Accept(this)};";
 
+        public string VisitIndexerExpression(IndexerExpression indexerExpression)
+            => $"{indexerExpression.Instance.Accept(this)}{indexerExpression.IndexLeftDelimeter.Lexeme}{indexerExpression.Index.Accept(this)}{indexerExpression.IndexRightDelimeter.Lexeme}";
+
         public string VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
         {
             var left = inputConditionExpression.Left.Accept(this);

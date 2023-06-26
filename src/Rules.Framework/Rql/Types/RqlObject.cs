@@ -3,6 +3,7 @@ namespace Rules.Framework.Rql.Types
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using Rules.Framework.Rql.Runtime;
 
     public readonly struct RqlObject : IRuntimeValue, IPropertyGet, IPropertySet
     {
@@ -23,24 +24,16 @@ namespace Rules.Framework.Rql.Types
 
         public object Value => ConvertToDictionary(this);
 
-        public RqlAny this[string name]
-        {
-            get
-            {
-                return this.properties[name];
-            }
-            set
-            {
-                this.properties[name] = value;
-            }
-        }
-
         public static implicit operator RqlAny(RqlObject rqlObject) => new RqlAny(rqlObject);
+
+        public RqlAny GetPropertyValue(RqlString name) => this.properties[name.Value];
+
+        public RqlAny SetPropertyValue(RqlString name, RqlAny value) => this.properties[name.Value] = value;
 
         public override string ToString()
             => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
 
-        public bool TryGet(string memberName, out RqlAny result) => this.properties.TryGetValue(memberName, out result);
+        public RqlBool TryGetPropertyValue(RqlString memberName, out RqlAny result) => this.properties.TryGetValue(memberName.Value, out result);
 
         internal string ToString(int indent)
         {

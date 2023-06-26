@@ -12,6 +12,8 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitConditionGroupingExpression(ConditionGroupingExpression expression);
 
+        T VisitIndexerExpression(IndexerExpression indexerExpression);
+
         T VisitInputConditionExpression(InputConditionExpression inputConditionExpression);
 
         T VisitInputConditionsExpression(InputConditionsExpression inputConditionsExpression);

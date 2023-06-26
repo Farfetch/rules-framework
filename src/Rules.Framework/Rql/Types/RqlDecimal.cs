@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql.Types
 {
     using System;
+    using Rules.Framework.Rql.Runtime;
 
     public readonly struct RqlDecimal : IRuntimeValue
     {
@@ -20,7 +21,11 @@ namespace Rules.Framework.Rql.Types
 
         public readonly decimal Value { get; }
 
+        public static implicit operator decimal(RqlDecimal rqlDecimal) => rqlDecimal.Value;
+
         public static implicit operator RqlAny(RqlDecimal rqlDecimal) => new RqlAny(rqlDecimal);
+
+        public static implicit operator RqlDecimal(decimal value) => new RqlDecimal(value);
 
         public override string ToString()
             => $"<{Type.Name}> {this.Value}";

@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql.Types
 {
     using System;
+    using Rules.Framework.Rql.Runtime;
 
     public readonly struct RqlDate : IRuntimeValue
     {
@@ -20,7 +21,11 @@ namespace Rules.Framework.Rql.Types
 
         public readonly DateTime Value { get; }
 
+        public static implicit operator DateTime(RqlDate rqlDate) => rqlDate.Value;
+
         public static implicit operator RqlAny(RqlDate rqlDate) => new RqlAny(rqlDate);
+
+        public static implicit operator RqlDate(DateTime value) => new RqlDate(value);
 
         public override string ToString()
             => $"<{Type.Name}> {this.Value}";

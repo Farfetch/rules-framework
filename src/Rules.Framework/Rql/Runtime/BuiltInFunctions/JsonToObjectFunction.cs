@@ -36,7 +36,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
             var rqlObject = new RqlObject();
             foreach (var kv in values)
             {
-                rqlObject[kv.Key] = new RqlAny(kv.Value.Type switch
+                rqlObject.SetPropertyValue(kv.Key, new RqlAny(kv.Value.Type switch
                 {
                     JTokenType.Null => new RqlNothing(),
                     JTokenType.Integer => new RqlInteger(kv.Value.Value<int>()),
@@ -46,7 +46,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
                     JTokenType.Date => new RqlDate(kv.Value.Value<DateTime>()),
                     JTokenType.Object => ConvertToRqlObject((IDictionary<string, JToken>)kv.Value),
                     _ => throw new NotSupportedException($"The JSON token type '{kv.Value.Type}' is not supported."),
-                });
+                }));
             }
 
             return rqlObject;

@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql.Types
 {
     using System;
+    using Rules.Framework.Rql.Runtime;
 
     public readonly struct RqlInteger : IRuntimeValue
     {
@@ -20,7 +21,11 @@ namespace Rules.Framework.Rql.Types
 
         public readonly int Value { get; }
 
+        public static implicit operator int(RqlInteger rqlInteger) => rqlInteger.Value;
+
         public static implicit operator RqlAny(RqlInteger rqlInteger) => new RqlAny(rqlInteger);
+
+        public static implicit operator RqlInteger(int value) => new RqlInteger(value);
 
         public override string ToString()
             => $"<{Type.Name}> {this.Value}";

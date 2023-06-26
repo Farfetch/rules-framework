@@ -19,34 +19,6 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle call expression.");
             }
 
-            var call = this.ParseCall(parseContext);
-            while (parseContext.MoveNextIfNextToken(TokenType.DOT))
-            {
-                if (!parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
-                {
-                    parseContext.EnterPanicMode("Expected identifier after '.'.", parseContext.GetCurrentToken());
-                    return Expression.None;
-                }
-
-                var chainedCall = this.ParseCall(parseContext);
-                if (chainedCall is VariableExpression variableExpression)
-                {
-                    call = new PropertyGetExpression(call, variableExpression.Token);
-                    continue;
-                }
-
-                if (chainedCall is CallExpression callExpression)
-                {
-                    call = new CallExpression(call, callExpression.Name, callExpression.Arguments);
-                    continue;
-                }
-            }
-
-            return call;
-        }
-
-        private Expression ParseCall(ParseContext parseContext)
-        {
             var identifier = parseContext.GetCurrentToken();
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_LEFT))
             {
