@@ -13,6 +13,6 @@ namespace Rules.Framework.Rql.Runtime
 
         RqlType ReturnType { get; }
 
-        object Call(IInterpreter interpreter, object instance, object[] arguments);
+        IRuntimeValue Call(IInterpreter interpreter, IRuntimeValue instance, IRuntimeValue[] arguments);
     }
 }

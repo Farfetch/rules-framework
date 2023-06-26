@@ -15,9 +15,15 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
         public override RqlType ReturnType => RqlTypes.Object;
 
-        public override object Call(IInterpreter interpreter, object instance, object[] arguments)
+        public override IRuntimeValue Call(IInterpreter interpreter, IRuntimeValue instance, IRuntimeValue[] arguments)
         {
-            if (arguments[0] is not RqlString)
+            var jsonStringArgument = arguments[0];
+            if (jsonStringArgument.Type == RqlTypes.Any)
+            {
+                jsonStringArgument = ((RqlAny)jsonStringArgument).Unwrap();
+            }
+
+            if (jsonStringArgument is not RqlString jsonString)
             {
                 throw new RuntimeException(
                     $"Error on {this.Name}: expected string argument.",
@@ -26,7 +32,6 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
                     RqlSourcePosition.Empty);
             }
 
-            var jsonString = (RqlString)arguments[0];
             var json = JsonConvert.DeserializeObject<object>(jsonString.Value);
             return ConvertToRqlObject((IDictionary<string, JToken>)json);
         }

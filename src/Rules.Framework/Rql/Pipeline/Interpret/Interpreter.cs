@@ -134,7 +134,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var rql = this.reverseRqlBuilder.BuildRql(callExpression);
             try
             {
-                var caller = await callExpression.Instance.Accept(this).ConfigureAwait(false);
+                var caller = (IRuntimeValue)await callExpression.Instance.Accept(this).ConfigureAwait(false);
                 string callableName = callExpression.Name.Lexeme.ToUpperInvariant();
                 var callee = this.runtimeEnvironment.Get(callableName);
                 if (callee is not ICallable)
@@ -156,10 +156,10 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                         callExpression.BeginPosition, callExpression.EndPosition);
                 }
 
-                object[] arguments = new object[argumentsLength];
+                var arguments = new IRuntimeValue[argumentsLength];
                 for (int i = 0; i < argumentsLength; i++)
                 {
-                    arguments[i] = await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
+                    arguments[i] = (IRuntimeValue)await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
                 }
 
                 return callable.Call(this, caller, arguments);
