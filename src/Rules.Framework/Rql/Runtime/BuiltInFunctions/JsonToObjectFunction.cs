@@ -9,7 +9,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
     internal class JsonToObjectFunction : BuiltInFunctionBase
     {
-        public override string Name => "JSON_TO_OBJECT";
+        public override string Name => "JsonToObject";
 
         public override Parameter[] Parameters => new[] { new Parameter(RqlTypes.String, "jsonString") };
 

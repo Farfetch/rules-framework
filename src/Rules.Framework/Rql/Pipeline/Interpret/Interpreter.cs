@@ -133,7 +133,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             try
             {
                 var caller = (IRuntimeValue)await callExpression.Instance.Accept(this).ConfigureAwait(false);
-                string callableName = callExpression.Name.Lexeme.ToUpperInvariant();
+                string callableName = callExpression.Name.Lexeme;
                 var callee = this.runtimeEnvironment.Get(callableName);
                 if (callee is not ICallable)
                 {

@@ -6,7 +6,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
     internal class ShowFunction : BuiltInFunctionBase
     {
-        public override string Name => "SHOW";
+        public override string Name => "Show";
 
         public override Parameter[] Parameters => new[] { new Parameter(RqlTypes.String, "value") };
 

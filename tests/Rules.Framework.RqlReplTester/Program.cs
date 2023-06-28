@@ -18,7 +18,7 @@ namespace Rules.Framework.RqlReplTester
             {
                 RqlAny rqlAny when rqlAny.UnderlyingType == RqlTypes.Object => rqlAny.ToString() ?? string.Empty,
                 RqlAny rqlAny => rqlAny.ToString() ?? string.Empty,
-                _ => result.ToString(),
+                _ => result.Value.ToString(),
             };
             var value = rawValue!.Replace("\n", $"\n{tab}");
             Console.WriteLine($"{tab}{value}");
