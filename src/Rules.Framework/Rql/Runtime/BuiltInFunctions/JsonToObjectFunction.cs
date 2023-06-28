@@ -5,7 +5,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Rules.Framework.Rql.Pipeline.Interpret;
-    using Rules.Framework.Rql.Types;
+    using Rules.Framework.Rql.Runtime.Types;
 
     internal class JsonToObjectFunction : BuiltInFunctionBase
     {

@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Runtime
 {
-    using Rules.Framework.Rql.Types;
+    using Rules.Framework.Rql.Runtime.Types;
 
     internal interface IIndexerSet
     {

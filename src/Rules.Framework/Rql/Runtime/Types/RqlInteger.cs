@@ -1,4 +1,4 @@
-namespace Rules.Framework.Rql.Types
+namespace Rules.Framework.Rql.Runtime.Types
 {
     using System;
     using Rules.Framework.Rql.Runtime;

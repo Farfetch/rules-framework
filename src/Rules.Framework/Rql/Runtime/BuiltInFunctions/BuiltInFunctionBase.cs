@@ -3,7 +3,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
     using System.Linq;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
-    using Rules.Framework.Rql.Types;
+    using Rules.Framework.Rql.Runtime.Types;
 
     internal abstract class BuiltInFunctionBase : ICallable
     {

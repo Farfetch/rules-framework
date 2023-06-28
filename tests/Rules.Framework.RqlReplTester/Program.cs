@@ -5,7 +5,7 @@ namespace Rules.Framework.RqlReplTester
     using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
     using Rules.Framework.IntegrationTests.Common.Scenarios;
     using Rules.Framework.Rql;
-    using Rules.Framework.Rql.Types;
+    using Rules.Framework.Rql.Runtime.Types;
 
     internal class Program
     {

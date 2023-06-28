@@ -2,7 +2,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 {
     using System;
     using Rules.Framework.Rql.Pipeline.Interpret;
-    using Rules.Framework.Rql.Types;
+    using Rules.Framework.Rql.Runtime.Types;
 
     internal class ShowFunction : BuiltInFunctionBase
     {

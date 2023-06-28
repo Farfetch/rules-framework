@@ -1,4 +1,4 @@
-using Rules.Framework.Rql.Types;
+using Rules.Framework.Rql.Runtime.Types;
 
 namespace Rules.Framework.Rql.Runtime
 {

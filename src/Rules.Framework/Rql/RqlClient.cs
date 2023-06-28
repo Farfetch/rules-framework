@@ -8,7 +8,7 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
-    using Rules.Framework.Rql.Types;
+    using Rules.Framework.Rql.Runtime.Types;
 
     internal class RqlClient<TContentType, TConditionType> : IRqlClient<TContentType, TConditionType>
     {

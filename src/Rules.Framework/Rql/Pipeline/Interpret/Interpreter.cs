@@ -9,9 +9,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Rql.Expressions;
     using Rules.Framework.Rql.Runtime;
+    using Rules.Framework.Rql.Runtime.Types;
     using Rules.Framework.Rql.Statements;
     using Rules.Framework.Rql.Tokens;
-    using Rules.Framework.Rql.Types;
     using Rules.Framework.Source;
 
     internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
