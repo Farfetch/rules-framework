@@ -105,7 +105,7 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public RqlBool TryGetPropertyValue(RqlString memberName, out RqlAny result)
         {
-            if (string.Equals(memberName.Value, "Size", StringComparison.Ordinal))
+            if (string.Equals(memberName, "Size", StringComparison.Ordinal))
             {
                 result = new RqlInteger(this.size);
                 return true;

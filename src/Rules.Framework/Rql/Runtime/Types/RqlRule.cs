@@ -18,12 +18,12 @@ namespace Rules.Framework.Rql.Runtime.Types
             this.Value = rule;
             this.properties = new Dictionary<string, RqlAny>(StringComparer.Ordinal)
             {
-                { "ACTIVE", new RqlBool(rule.Active) },
-                { "DATEBEGIN", new RqlDate(rule.DateBegin) },
-                { "DATEEND", rule.DateEnd.HasValue ? new RqlDate(rule.DateEnd.Value) : new RqlNothing() },
-                { "NAME", new RqlString(rule.Name) },
-                { "PRIORITY", new RqlInteger(rule.Priority) },
-                { "ROOTCONDITION", rule.RootCondition is not null ? ConvertCondition(rule.RootCondition) : new RqlNothing() },
+                { "Active", new RqlBool(rule.Active) },
+                { "DateBegin", new RqlDate(rule.DateBegin) },
+                { "DateEnd", rule.DateEnd.HasValue ? new RqlDate(rule.DateEnd.Value) : new RqlNothing() },
+                { "Name", new RqlString(rule.Name) },
+                { "Priority", new RqlInteger(rule.Priority) },
+                { "RootCondition", rule.RootCondition is not null ? ConvertCondition(rule.RootCondition) : new RqlNothing() },
             };
         }
 
@@ -52,7 +52,7 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public RqlBool TryGetPropertyValue(RqlString memberName, out RqlAny result)
         {
-            var upperMemberName = memberName.Value.ToUpperInvariant();
+            var upperMemberName = memberName.Value;
             if (this.properties.TryGetValue(upperMemberName, out result))
             {
                 return true;
@@ -115,19 +115,19 @@ namespace Rules.Framework.Rql.Runtime.Types
 
                     var composedConditionProperties = new Dictionary<string, RqlAny>(StringComparer.Ordinal)
                     {
-                        { "CHILDCONDITIONNODES", childConditions },
-                        { "LOGICALOPERATOR", new RqlString(ccn.LogicalOperator.ToString()) },
+                        { "ChildConditionNodes", childConditions },
+                        { "LogicalOperator", new RqlString(ccn.LogicalOperator.ToString()) },
                     };
                     return new RqlReadOnlyObject(composedConditionProperties);
 
                 case ValueConditionNode<TConditionType> vcn:
                     var valueConditionProperties = new Dictionary<string, RqlAny>(StringComparer.Ordinal)
                     {
-                        { "CONDITIONTYPE", new RqlString(vcn.ConditionType.ToString()) },
-                        { "DATATYPE", new RqlString(vcn.DataType.ToString()) },
-                        { "LOGICALOPERATOR", new RqlString(vcn.LogicalOperator.ToString()) },
-                        { "OPERAND", ConvertValue(vcn.Operand) },
-                        { "OPERATOR", new RqlString(vcn.Operator.ToString()) },
+                        { "ConditionType", new RqlString(vcn.ConditionType.ToString()) },
+                        { "DataType", new RqlString(vcn.DataType.ToString()) },
+                        { "LogicalOperator", new RqlString(vcn.LogicalOperator.ToString()) },
+                        { "Operand", ConvertValue(vcn.Operand) },
+                        { "Operator", new RqlString(vcn.Operator.ToString()) },
                     };
                     return new RqlReadOnlyObject(valueConditionProperties);
 

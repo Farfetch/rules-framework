@@ -94,7 +94,7 @@ namespace Rules.Framework.Rql
             var lines = new List<RulesSetResultLine<TContentType, TConditionType>>(rqlArray.Size);
             for (int i = 0; i < rqlArray.Size; i++)
             {
-                var rule = rqlArray.Value[i].Unwrap<RqlRule<TContentType, TConditionType>>().Value;
+                var rule = rqlArray.Value[i].Unwrap<RqlRule<TContentType, TConditionType>>();
                 var rulesSetResultLine = new RulesSetResultLine<TContentType, TConditionType>(i + 1, rule);
                 lines.Add(rulesSetResultLine);
             }

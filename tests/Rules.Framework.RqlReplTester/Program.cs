@@ -16,9 +16,9 @@ namespace Rules.Framework.RqlReplTester
             Console.WriteLine();
             var rawValue = result.Value switch
             {
-                RqlAny rqlAny when rqlAny.UnderlyingType == RqlTypes.Object => rqlAny.Value?.ToString() ?? string.Empty,
-                RqlAny rqlAny => rqlAny.Value?.ToString() ?? string.Empty,
-                _ => result.Value.ToString(),
+                RqlAny rqlAny when rqlAny.UnderlyingType == RqlTypes.Object => rqlAny.ToString() ?? string.Empty,
+                RqlAny rqlAny => rqlAny.ToString() ?? string.Empty,
+                _ => result.ToString(),
             };
             var value = rawValue!.Replace("\n", $"\n{tab}");
             Console.WriteLine($"{tab}{value}");
@@ -46,13 +46,14 @@ namespace Rules.Framework.RqlReplTester
 
                 foreach (var line in result.Lines)
                 {
+                    var rule = line.Rule.Value;
                     var lineNumber = line.LineNumber.ToString();
-                    var priority = line.Rule.Priority.ToString();
-                    var active = line.Rule.Active ? "Active" : "Inactive";
-                    var dateBegin = line.Rule.DateBegin.Date.ToString("yyyy-MM-ddZ");
-                    var dateEnd = line.Rule.DateEnd?.Date.ToString("yyyy-MM-ddZ") ?? "(no end)";
-                    var ruleName = line.Rule.Name;
-                    var content = JsonConvert.SerializeObject(line.Rule.ContentContainer.GetContentAs<object>());
+                    var priority = rule.Priority.ToString();
+                    var active = rule.Active ? "Active" : "Inactive";
+                    var dateBegin = rule.DateBegin.Date.ToString("yyyy-MM-ddZ");
+                    var dateEnd = rule.DateEnd?.Date.ToString("yyyy-MM-ddZ") ?? "(no end)";
+                    var ruleName = rule.Name;
+                    var content = JsonConvert.SerializeObject(rule.ContentContainer.GetContentAs<object>());
 
                     Console.WriteLine($"{tab} | {lineNumber} | {priority,-8} | {active,-8} | {dateBegin,-11} - {dateEnd,-11} | {ruleName}: {content}");
                 }
