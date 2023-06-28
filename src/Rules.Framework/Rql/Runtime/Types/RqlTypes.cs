@@ -18,6 +18,10 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public static RqlType Object { get; } = new RqlType("object");
 
+        public static RqlType ReadOnlyObject { get; } = new RqlType("read_only_object");
+
+        public static RqlType Rule { get; } = new RqlType("rule");
+
         public static RqlType String { get; } = new RqlType("string");
     }
 }

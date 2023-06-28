@@ -1,10 +1,8 @@
-namespace Rules.Framework.Rql.Statements
+namespace Rules.Framework.Rql.Expressions
 {
-    using Rules.Framework.Rql.Expressions;
-
-    internal class CreateStatement : Statement
+    internal class CreateExpression : Expression
     {
-        public CreateStatement(
+        public CreateExpression(
             Expression ruleName,
             Expression contentType,
             Expression content,
@@ -40,6 +38,6 @@ namespace Rules.Framework.Rql.Statements
 
         public Expression RuleName { get; }
 
-        public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.VisitCreateStatement(this);
+        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitCreateExpression(this);
     }
 }

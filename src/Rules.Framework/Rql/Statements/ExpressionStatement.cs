@@ -2,9 +2,9 @@ namespace Rules.Framework.Rql.Statements
 {
     using Rules.Framework.Rql.Expressions;
 
-    internal class ProgrammableSubLanguageStatement : Statement
+    internal class ExpressionStatement : Statement
     {
-        public ProgrammableSubLanguageStatement(Expression expression)
+        public ExpressionStatement(Expression expression)
             : base(expression.BeginPosition, expression.EndPosition)
         {
             this.Expression = expression;
@@ -12,6 +12,6 @@ namespace Rules.Framework.Rql.Statements
 
         public Expression Expression { get; }
 
-        public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.VisitProgrammableSubLanguageStatement(this);
+        public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.VisitExpressionStatement(this);
     }
 }

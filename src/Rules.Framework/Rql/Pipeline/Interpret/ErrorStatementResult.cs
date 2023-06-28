@@ -1,8 +1,8 @@
 namespace Rules.Framework.Rql.Pipeline.Interpret
 {
-    internal class ErrorResult : IResult
+    internal class ErrorStatementResult : IResult
     {
-        public ErrorResult(string message, string rql, RqlSourcePosition beginPosition, RqlSourcePosition endPosition)
+        public ErrorStatementResult(string message, string rql, RqlSourcePosition beginPosition, RqlSourcePosition endPosition)
         {
             this.Message = message;
             this.Rql = rql;

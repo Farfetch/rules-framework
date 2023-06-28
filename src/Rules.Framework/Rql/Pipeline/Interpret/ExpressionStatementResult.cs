@@ -1,8 +1,8 @@
 namespace Rules.Framework.Rql.Pipeline.Interpret
 {
-    internal class ExpressionResult : IResult
+    internal class ExpressionStatementResult : IResult
     {
-        public ExpressionResult(string rql, object result)
+        public ExpressionStatementResult(string rql, object result)
         {
             if (string.IsNullOrWhiteSpace(rql))
             {

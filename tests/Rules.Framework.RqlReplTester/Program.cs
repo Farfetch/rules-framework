@@ -31,9 +31,9 @@ namespace Rules.Framework.RqlReplTester
             {
                 Console.WriteLine($"{tab}{result.Rql}");
                 Console.WriteLine($"{tab}{new string('-', Math.Min(result.Rql.Length, Console.WindowWidth - 5))}");
-                if (result.AffectedRules > 0)
+                if (result.NumberOfRules > 0)
                 {
-                    Console.WriteLine($"{tab} {result.AffectedRules} rules were affected.");
+                    Console.WriteLine($"{tab} {result.NumberOfRules} rules were returned.");
                 }
                 else
                 {
@@ -57,11 +57,11 @@ namespace Rules.Framework.RqlReplTester
                     Console.WriteLine($"{tab} | {lineNumber} | {priority,-8} | {active,-8} | {dateBegin,-11} - {dateEnd,-11} | {ruleName}: {content}");
                 }
             }
-            else if (result.AffectedRules > 0)
+            else if (result.NumberOfRules > 0)
             {
                 Console.WriteLine($"{tab}{result.Rql}");
                 Console.WriteLine($"{tab}{new string('-', result.Rql.Length)}");
-                Console.WriteLine($"{tab} {result.AffectedRules} rules were affected.");
+                Console.WriteLine($"{tab} {result.NumberOfRules} rules were affected.");
             }
             else
             {

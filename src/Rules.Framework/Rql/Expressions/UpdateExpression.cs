@@ -1,11 +1,10 @@
-namespace Rules.Framework.Rql.Statements
+namespace Rules.Framework.Rql.Expressions
 {
     using System.Linq;
-    using Rules.Framework.Rql.Expressions;
 
-    internal class UpdateStatement : Statement
+    internal class UpdateExpression : Expression
     {
-        public UpdateStatement(Expression ruleName, Expression contentType, Expression[] updatableAttributes)
+        public UpdateExpression(Expression ruleName, Expression contentType, Expression[] updatableAttributes)
             : base(ruleName.BeginPosition, updatableAttributes.Last().EndPosition)
         {
             this.RuleName = ruleName;
@@ -19,6 +18,6 @@ namespace Rules.Framework.Rql.Statements
 
         public Expression[] UpdatableAttributes { get; }
 
-        public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.VisitUpdateStatement(this);
+        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitUpdateExpression(this);
     }
 }

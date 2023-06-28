@@ -60,8 +60,8 @@ namespace Rules.Framework.Rql
                 return interpretResult.Results.Select(s => ConvertResult(s));
             }
 
-            var errorResults = interpretResult.Results.Where(s => s is ErrorResult)
-                .Cast<ErrorResult>()
+            var errorResults = interpretResult.Results.Where(s => s is ErrorStatementResult)
+                .Cast<ErrorStatementResult>()
                 .Select(s => new RqlError(s.Message, s.Rql, s.BeginPosition, s.EndPosition));
             throw new RqlException("Errors have occurred processing provided RQL source.", errorResults);
         }
@@ -81,11 +81,48 @@ namespace Rules.Framework.Rql
 
         private static IResult ConvertResult(Pipeline.Interpret.IResult result) => result switch
         {
-            RulesSetStatementResult<TContentType, TConditionType> rulesSetStatementResult => rulesSetStatementResult.ResultSet,
             NothingStatementResult nothingStatementResult => new NothingResult(nothingStatementResult.Rql),
-            ExpressionResult expressionResult when expressionResult.Result is RqlNothing => new NothingResult(expressionResult.Rql),
-            ExpressionResult expressionResult => new ValueResult(expressionResult.Rql, expressionResult.Result),
+            ExpressionStatementResult expressionStatementResult when IsRulesSetResult(expressionStatementResult) => ConvertToRulesSetResult(expressionStatementResult),
+            ExpressionStatementResult expressionStatementResult when expressionStatementResult.Result is RqlNothing => new NothingResult(expressionStatementResult.Rql),
+            ExpressionStatementResult expressionStatementResult => new ValueResult(expressionStatementResult.Rql, expressionStatementResult.Result),
             _ => throw new NotSupportedException($"Result of type '{result.GetType().FullName}' is not supported."),
         };
+
+        private static RulesSetResult<TContentType, TConditionType> ConvertToRulesSetResult(ExpressionStatementResult expressionStatementResult)
+        {
+            var rqlArray = (RqlArray)expressionStatementResult.Result;
+            var lines = new List<RulesSetResultLine<TContentType, TConditionType>>(rqlArray.Size);
+            for (int i = 0; i < rqlArray.Size; i++)
+            {
+                var rule = rqlArray.Value[i].Unwrap<RqlRule<TContentType, TConditionType>>().Value;
+                var rulesSetResultLine = new RulesSetResultLine<TContentType, TConditionType>(i + 1, rule);
+                lines.Add(rulesSetResultLine);
+            }
+
+            return new RulesSetResult<TContentType, TConditionType>(expressionStatementResult.Rql, rqlArray.Size, lines);
+        }
+
+        private static bool IsRulesSetResult(ExpressionStatementResult expressionStatementResult)
+        {
+            if (expressionStatementResult.Result is RqlArray rqlArray)
+            {
+                if (rqlArray.Size <= 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < rqlArray.Size; i++)
+                {
+                    if (rqlArray.Value[i].UnderlyingType != RqlTypes.Rule)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
     }
 }

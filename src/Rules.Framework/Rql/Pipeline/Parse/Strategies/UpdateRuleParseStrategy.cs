@@ -3,17 +3,16 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
     using System;
     using System.Collections.Generic;
     using Rules.Framework.Rql.Expressions;
-    using Rules.Framework.Rql.Statements;
     using Rules.Framework.Rql.Tokens;
 
-    internal class UpdateRuleParseStrategy : ParseStrategyBase<Statement>, IStatementParseStrategy
+    internal class UpdateRuleParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
     {
         public UpdateRuleParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Statement Parse(ParseContext parseContext)
+        public override Expression Parse(ParseContext parseContext)
         {
             if (!parseContext.MoveNextIfCurrentToken(TokenType.UPDATE))
             {
@@ -23,31 +22,31 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             if (!parseContext.IsMatchCurrentToken(TokenType.RULE))
             {
                 parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
-                return Statement.None;
+                return Expression.None;
             }
 
             var ruleName = this.ParseExpressionWith<RuleNameParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Statement.None;
+                return Expression.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
             {
                 parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
-                return Statement.None;
+                return Expression.None;
             }
 
             var contentType = this.ParseExpressionWith<ContentTypeParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Statement.None;
+                return Expression.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.SET))
             {
                 parseContext.EnterPanicMode("Expected token 'SET'.", parseContext.GetCurrentToken());
-                return Statement.None;
+                return Expression.None;
             }
 
             var updatableAttribute = this.ParseExpressionWith<UpdatableAttributeParseStrategy>(parseContext);
@@ -57,14 +56,14 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 if (!parseContext.MoveNextIfNextToken(TokenType.SET))
                 {
                     parseContext.EnterPanicMode("Expected token 'SET'.", parseContext.GetCurrentToken());
-                    return Statement.None;
+                    return Expression.None;
                 }
 
                 updatableAttribute = this.ParseExpressionWith<UpdatableAttributeParseStrategy>(parseContext);
                 updatableAttributes.Add(updatableAttribute);
             }
 
-            return new UpdateStatement(ruleName, contentType, updatableAttributes.ToArray());
+            return new UpdateExpression(ruleName, contentType, updatableAttributes.ToArray());
         }
     }
 }

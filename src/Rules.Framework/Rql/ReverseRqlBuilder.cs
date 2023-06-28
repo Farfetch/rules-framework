@@ -30,10 +30,10 @@ namespace Rules.Framework.Rql
             return statement.Accept(this);
         }
 
-        public string VisitActivationStatement(ActivationStatement activationStatement)
+        public string VisitActivationExpression(ActivationExpression activationExpression)
         {
-            var ruleName = activationStatement.RuleName.Accept(this);
-            var contentType = activationStatement.ContentType.Accept(this);
+            var ruleName = activationExpression.RuleName.Accept(this);
+            var contentType = activationExpression.ContentType.Accept(this);
             return $"ACTIVATE {ruleName} {contentType}";
         }
 
@@ -91,59 +91,57 @@ namespace Rules.Framework.Rql
         public string VisitConditionGroupingExpression(ConditionGroupingExpression expression)
             => $"({expression.RootCondition.Accept(this)})";
 
-        public string VisitCreateStatement(CreateStatement createStatement)
+        public string VisitCreateExpression(CreateExpression createExpression)
         {
             var stringBuilder = new StringBuilder("CREATE RULE")
                 .Append(SPACE)
-                .Append(createStatement.RuleName.Accept(this))
+                .Append(createExpression.RuleName.Accept(this))
                 .Append(SPACE)
                 .Append("AS")
                 .Append(SPACE)
-                .Append(createStatement.ContentType.Accept(this))
+                .Append(createExpression.ContentType.Accept(this))
                 .Append(SPACE)
                 .Append("WITH CONTENT")
                 .Append(SPACE)
-                .Append(createStatement.Content.Accept(this))
+                .Append(createExpression.Content.Accept(this))
                 .Append(SPACE)
                 .Append("BEGINS ON")
                 .Append(SPACE)
-                .Append(createStatement.DateBegin.Accept(this));
+                .Append(createExpression.DateBegin.Accept(this));
 
-            if (createStatement.DateEnd != null)
+            if (createExpression.DateEnd != null)
             {
                 stringBuilder.Append(SPACE)
                     .Append("ENDS ON")
                     .Append(SPACE)
-                    .Append(createStatement.DateEnd.Accept(this));
+                    .Append(createExpression.DateEnd.Accept(this));
             }
 
-            if (createStatement.Condition != null)
+            if (createExpression.Condition != null)
             {
                 stringBuilder.Append(SPACE)
                     .Append("APPLY WHEN")
                     .Append(SPACE)
-                    .Append(createStatement.Condition.Accept(this));
+                    .Append(createExpression.Condition.Accept(this));
             }
 
-            if (createStatement.PriorityOption != null)
+            if (createExpression.PriorityOption != null)
             {
                 stringBuilder.Append(SPACE)
                     .Append("SET")
                     .Append(SPACE)
-                    .Append(createStatement.PriorityOption.Accept(this));
+                    .Append(createExpression.PriorityOption.Accept(this));
             }
 
             return stringBuilder.ToString();
         }
 
-        public string VisitDeactivationStatement(DeactivationStatement deactivationStatement)
+        public string VisitDeactivationExpression(DeactivationExpression deactivationExpression)
         {
-            var ruleName = deactivationStatement.RuleName.Accept(this);
-            var contentType = deactivationStatement.ContentType.Accept(this);
+            var ruleName = deactivationExpression.RuleName.Accept(this);
+            var contentType = deactivationExpression.ContentType.Accept(this);
             return $"DEACTIVATE {ruleName} {contentType}";
         }
-
-        public string VisitDefinitionStatement(RuleDefinitionStatement definitionStatement) => $"{definitionStatement.Definition.Accept(this)};";
 
         public string VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
             => $"{indexerGetExpression.Instance.Accept(this)}{indexerGetExpression.IndexLeftDelimeter.Lexeme}{indexerGetExpression.Index.Accept(this)}{indexerGetExpression.IndexRightDelimeter.Lexeme}";
@@ -326,7 +324,7 @@ namespace Rules.Framework.Rql
             return stringBuilder.ToString();
         }
 
-        public string VisitProgrammableSubLanguageStatement(ProgrammableSubLanguageStatement programmableStatement)
+        public string VisitExpressionStatement(ExpressionStatement programmableStatement)
             => $"{programmableStatement.Expression.Accept(this)};";
 
         public string VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
@@ -334,8 +332,6 @@ namespace Rules.Framework.Rql
 
         public string VisitPropertySetExpression(PropertySetExpression propertySetExpression)
             => $"{propertySetExpression.Instance.Accept(this)}.{propertySetExpression.Name.Lexeme} {propertySetExpression.Assign.Lexeme} {propertySetExpression.Value.Accept(this)}";
-
-        public string VisitQueryStatement(RuleQueryStatement matchStatement) => $"{matchStatement.Query.Accept(this)};";
 
         public string VisitSearchExpression(SearchExpression searchExpression)
         {
@@ -371,10 +367,10 @@ namespace Rules.Framework.Rql
 
         public string VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression) => updatableExpression.UpdatableAttribute.Accept(this);
 
-        public string VisitUpdateStatement(UpdateStatement updateStatement)
+        public string VisitUpdateExpression(UpdateExpression updateExpression)
         {
-            var ruleName = updateStatement.RuleName.Accept(this);
-            var contentType = updateStatement.ContentType.Accept(this);
+            var ruleName = updateExpression.RuleName.Accept(this);
+            var contentType = updateExpression.ContentType.Accept(this);
             var stringBuilder = new StringBuilder("UPDATE RULE ")
                 .Append(ruleName)
                 .Append(SPACE)
@@ -383,14 +379,14 @@ namespace Rules.Framework.Rql
                 .Append(contentType)
                 .Append(SPACE);
 
-            for (int i = 0; i < updateStatement.UpdatableAttributes.Length; i++)
+            for (int i = 0; i < updateExpression.UpdatableAttributes.Length; i++)
             {
-                var updatableAttribute = updateStatement.UpdatableAttributes[i].Accept(this);
+                var updatableAttribute = updateExpression.UpdatableAttributes[i].Accept(this);
                 stringBuilder.Append("SET")
                     .Append(SPACE)
                     .Append(updatableAttribute);
 
-                if (i < updateStatement.UpdatableAttributes.Length - 1)
+                if (i < updateExpression.UpdatableAttributes.Length - 1)
                 {
                     stringBuilder.Append(',')
                         .Append(SPACE);

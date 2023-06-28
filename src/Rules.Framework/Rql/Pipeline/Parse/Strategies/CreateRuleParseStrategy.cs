@@ -2,17 +2,16 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
     using Rules.Framework.Rql.Expressions;
-    using Rules.Framework.Rql.Statements;
     using Rules.Framework.Rql.Tokens;
 
-    internal class CreateRuleParseStrategy : ParseStrategyBase<Statement>, IStatementParseStrategy
+    internal class CreateRuleParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
     {
         public CreateRuleParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Statement Parse(ParseContext parseContext)
+        public override Expression Parse(ParseContext parseContext)
         {
             if (!parseContext.MoveNextIfCurrentToken(TokenType.CREATE))
             {
@@ -22,48 +21,48 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             if (!parseContext.IsMatchCurrentToken(TokenType.RULE))
             {
                 parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
-                return Statement.None;
+                return Expression.None;
             }
 
             var ruleName = this.ParseExpressionWith<RuleNameParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Statement.None;
+                return Expression.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
             {
                 parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
-                return Statement.None;
+                return Expression.None;
             }
 
             var contentType = this.ParseExpressionWith<ContentTypeParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Statement.None;
+                return Expression.None;
             }
 
             var ruleContent = ParseContent(parseContext);
             if (parseContext.PanicMode)
             {
-                return Statement.None;
+                return Expression.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.STARTS))
             {
                 parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetCurrentToken());
-                return Statement.None;
+                return Expression.None;
             }
 
             var dateBegin = this.ParseExpressionWith<DateBeginParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Statement.None;
+                return Expression.None;
             }
 
             (var dateEnd, var condition, var priorityOption) = this.ParseOptionals(parseContext);
 
-            return new CreateStatement(ruleName, contentType, ruleContent, dateBegin, dateEnd, condition, priorityOption);
+            return new CreateExpression(ruleName, contentType, ruleContent, dateBegin, dateEnd, condition, priorityOption);
         }
 
         private Expression ParseContent(ParseContext parseContext)

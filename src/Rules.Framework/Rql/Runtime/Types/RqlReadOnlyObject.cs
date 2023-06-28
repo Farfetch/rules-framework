@@ -3,17 +3,16 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlObject : IRuntimeValue, IPropertyGet, IPropertySet
+    public readonly struct RqlReadOnlyObject : IRuntimeValue, IPropertyGet
     {
         private static readonly Type runtimeType = typeof(object);
-        private static readonly RqlType type = RqlTypes.Object;
-        private readonly Dictionary<string, RqlAny> properties;
+        private static readonly RqlType type = RqlTypes.ReadOnlyObject;
+        private readonly IDictionary<string, RqlAny> properties;
 
-        public RqlObject()
+        internal RqlReadOnlyObject(IDictionary<string, RqlAny> properties)
         {
-            this.properties = new Dictionary<string, RqlAny>(StringComparer.Ordinal);
+            this.properties = properties;
         }
 
         public Type RuntimeType => runtimeType;
@@ -24,11 +23,9 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public object Value => ConvertToDictionary(this);
 
-        public static implicit operator RqlAny(RqlObject rqlObject) => new RqlAny(rqlObject);
+        public static implicit operator RqlAny(RqlReadOnlyObject rqlReadOnlyObject) => new RqlAny(rqlReadOnlyObject);
 
         public RqlAny GetPropertyValue(RqlString name) => this.properties[name.Value];
-
-        public RqlAny SetPropertyValue(RqlString name, RqlAny value) => this.properties[name.Value] = value;
 
         public override string ToString()
             => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
@@ -74,7 +71,7 @@ namespace Rules.Framework.Rql.Runtime.Types
                 .ToString();
         }
 
-        private static IDictionary<string, object> ConvertToDictionary(RqlObject value)
+        private static IDictionary<string, object> ConvertToDictionary(RqlReadOnlyObject value)
         {
             var result = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (var kvp in value.properties)

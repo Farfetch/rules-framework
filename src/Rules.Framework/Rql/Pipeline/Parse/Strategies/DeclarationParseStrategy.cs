@@ -17,7 +17,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseStatementWith<VariableDeclarationParseStrategy>(parseContext);
             }
 
-            var statement = this.ParseStatementWith<StatementParseStrategy>(parseContext);
+            var statement = this.ParseStatementWith<ExpressionStatementParseStrategy>(parseContext);
             if (statement == Statement.None && !parseContext.PanicMode)
             {
                 var currentToken = parseContext.GetCurrentToken();

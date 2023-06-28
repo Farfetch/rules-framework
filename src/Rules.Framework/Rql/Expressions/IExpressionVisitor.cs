@@ -2,6 +2,8 @@ namespace Rules.Framework.Rql.Expressions
 {
     internal interface IExpressionVisitor<T>
     {
+        T VisitActivationExpression(ActivationExpression activationExpression);
+
         T VisitAssignExpression(AssignmentExpression expression);
 
         T VisitCallExpression(CallExpression callExpression);
@@ -11,6 +13,10 @@ namespace Rules.Framework.Rql.Expressions
         T VisitComposedConditionExpression(ComposedConditionExpression expression);
 
         T VisitConditionGroupingExpression(ConditionGroupingExpression expression);
+
+        T VisitCreateExpression(CreateExpression createExpression);
+
+        T VisitDeactivationExpression(DeactivationExpression deactivationExpression);
 
         T VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression);
 
@@ -47,6 +53,8 @@ namespace Rules.Framework.Rql.Expressions
         T VisitUnaryExpression(UnaryExpression expression);
 
         T VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression);
+
+        T VisitUpdateExpression(UpdateExpression updateExpression);
 
         T VisitValueConditionExpression(ValueConditionExpression valueConditionExpression);
 

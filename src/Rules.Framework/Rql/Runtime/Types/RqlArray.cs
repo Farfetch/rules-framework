@@ -38,6 +38,8 @@ namespace Rules.Framework.Rql.Runtime.Types
             return result;
         }
 
+        public static implicit operator RqlAny(RqlArray rqlArray) => new RqlAny(rqlArray);
+
         public RqlAny GetAtIndex(RqlInteger index)
         {
             if (index.Value < 0 || index.Value >= this.size)
