@@ -20,17 +20,17 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
         private readonly IRulesSource<TContentType, TConditionType> rulesSource;
         private bool disposedValue;
-        private IRuntimeEnvironment runtimeEnvironment;
+        private IRuntime runtime;
 
         public Interpreter(
             IRulesEngine<TContentType, TConditionType> rulesEngine,
             IRulesSource<TContentType, TConditionType> rulesSource,
-            IRuntimeEnvironment environment,
+            IRuntime runtime,
             IReverseRqlBuilder reverseRqlBuilder)
         {
             this.rulesEngine = rulesEngine;
             this.rulesSource = rulesSource;
-            this.runtimeEnvironment = environment;
+            this.runtime = runtime;
             this.reverseRqlBuilder = reverseRqlBuilder;
         }
 
@@ -114,7 +114,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var variableName = (string)await assignmentExpression.Left.Accept(this).ConfigureAwait(false);
                 var value = await assignmentExpression.Right.Accept(this).ConfigureAwait(false);
-                this.runtimeEnvironment.Assign(variableName, value);
+                this.runtime.Environment.Assign(variableName, value);
                 return new RqlNothing();
             }
             catch (IllegalRuntimeEnvironmentAccessException ex)
@@ -135,30 +135,31 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var caller = (IRuntimeValue)await callExpression.Instance.Accept(this).ConfigureAwait(false);
                 string callableName = (string)await callExpression.Name.Accept(this).ConfigureAwait(false);
-                var callee = this.runtimeEnvironment.Get(callableName);
-                if (callee is not ICallable)
+                int argumentsLength = callExpression.Arguments.Length;
+                var arguments = new IRuntimeValue[argumentsLength];
+                for (int i = 0; i < argumentsLength; i++)
+                {
+                    arguments[i] = (IRuntimeValue)await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
+                }
+
+                var callable = caller is RqlNothing
+                    ? this.runtime.CallableTable.ResolveCallable(callableName, arguments.Select(a => a.Type).ToArray())
+                    : this.runtime.CallableTable.ResolveCallable(caller.Type, callableName, arguments.Select(a => a.Type).ToArray());
+                if (callable is null)
                 {
                     throw CreateRuntimeException(
                         rql,
-                        new[] { $"'{callableName}' is not a callable identifier." },
+                        new[] { $"'{callableName}' is not a valid callable." },
                         callExpression.BeginPosition,
                         callExpression.EndPosition);
                 }
 
-                var callable = (ICallable)callee;
-                int argumentsLength = callExpression.Arguments.Length;
                 if (argumentsLength != callable.Arity)
                 {
                     throw CreateRuntimeException(
                         rql,
                         new[] { FormattableString.Invariant($"'{callableName}' expects {callable.Arity} argument(s) but {argumentsLength} were provided.") },
                         callExpression.BeginPosition, callExpression.EndPosition);
-                }
-
-                var arguments = new IRuntimeValue[argumentsLength];
-                for (int i = 0; i < argumentsLength; i++)
-                {
-                    arguments[i] = (IRuntimeValue)await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
                 }
 
                 return callable.Call(this, caller, arguments);
@@ -617,8 +618,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableAttributeExpression)
         {
             var updatableAttributeExpressionValue = await updatableAttributeExpression.UpdatableAttribute.Accept(this).ConfigureAwait(false);
-            var rule = (Rule<TContentType, TConditionType>)this.runtimeEnvironment.Get(".rule");
-            var rql = (string)this.runtimeEnvironment.Get(".rql");
+            var rule = (Rule<TContentType, TConditionType>)this.runtime.Environment.Get(".rule");
+            var rql = (string)this.runtime.Environment.Get(".rql");
             switch (updatableAttributeExpression.Kind)
             {
                 case UpdatableAttributeKind.DateEnd:
@@ -702,10 +703,10 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
 
             var rule = rules.First();
-            using (this.ScopeRuntimeEnvironment())
+            using (this.runtime.CreateScope())
             {
-                this.runtimeEnvironment.Define(".rule", rule);
-                this.runtimeEnvironment.Define(".rql", rql);
+                this.runtime.Environment.Define(".rule", rule);
+                this.runtime.Environment.Define(".rql", rql);
 
                 var updatableAttributes = updateExpression.UpdatableAttributes;
                 var updatableAttributesLength = updatableAttributes.Length;
@@ -748,7 +749,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var rql = this.reverseRqlBuilder.BuildRql(variableDeclarationStatement);
             var variableName = (string)await variableDeclarationStatement.Name.Accept(this).ConfigureAwait(false);
             var assignable = await variableDeclarationStatement.Assignable.Accept(this).ConfigureAwait(false);
-            this.runtimeEnvironment.Define(variableName, assignable);
+            this.runtime.Environment.Define(variableName, assignable);
             return new NothingStatementResult(rql);
         }
 
@@ -757,7 +758,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             try
             {
                 var variableName = (string)await variableExpression.Name.Accept(this).ConfigureAwait(false);
-                return this.runtimeEnvironment.Get(variableName);
+                return this.runtime.Environment.Get(variableName);
             }
             catch (IllegalRuntimeEnvironmentAccessException ex)
             {
@@ -776,8 +777,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 if (disposing)
                 {
-                    this.runtimeEnvironment.Dispose();
-                    this.runtimeEnvironment = null;
+                    this.runtime.Dispose();
+                    this.runtime = null;
                 }
 
                 disposedValue = true;
@@ -850,14 +851,6 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
 
             return ruleBuilder.Build();
-        }
-
-        private IDisposable ScopeRuntimeEnvironment()
-        {
-            var parentRuntimeEnvironment = this.runtimeEnvironment;
-            var childRuntimeEnvironment = this.runtimeEnvironment.CreateScopedChildRuntimeEnvironment();
-            this.runtimeEnvironment = parentRuntimeEnvironment;
-            return childRuntimeEnvironment;
         }
     }
 }

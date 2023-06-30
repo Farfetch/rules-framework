@@ -8,7 +8,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
     {
         public override string Name => "Show";
 
-        public override Parameter[] Parameters => new[] { new Parameter(RqlTypes.String, "value") };
+        public override Parameter[] Parameters => new[] { new Parameter(RqlTypes.Any, "value") };
 
         public override RqlType ReturnType => RqlTypes.Nothing;
 

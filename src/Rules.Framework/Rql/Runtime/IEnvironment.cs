@@ -2,11 +2,13 @@ namespace Rules.Framework.Rql.Runtime
 {
     using System;
 
-    internal interface IRuntimeEnvironment : IDisposable
+    internal interface IEnvironment : IDisposable
     {
+        IEnvironment Parent { get; }
+
         void Assign(string name, object value);
 
-        IRuntimeEnvironment CreateScopedChildRuntimeEnvironment();
+        IEnvironment CreateScopedChildEnvironment();
 
         void Define(string name, object value);
 

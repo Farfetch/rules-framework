@@ -11,7 +11,7 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         internal RqlString(string value)
         {
-            this.Value = value;
+            this.Value = value ?? string.Empty;
         }
 
         public Type RuntimeType => runtimeType;

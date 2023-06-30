@@ -3,22 +3,24 @@ namespace Rules.Framework.Rql.Runtime
     using System;
     using System.Collections.Generic;
 
-    internal class RuntimeEnvironment : IRuntimeEnvironment
+    internal class RqlEnvironment : IEnvironment
     {
-        private readonly IRuntimeEnvironment parentRuntimeEnvironment;
+        private readonly IEnvironment parentRuntimeEnvironment;
         private readonly Dictionary<string, object> runtimeData;
         private bool disposedValue;
 
-        public RuntimeEnvironment()
+        public RqlEnvironment()
             : this(parentRuntimeEnvironment: null)
         {
         }
 
-        public RuntimeEnvironment(IRuntimeEnvironment parentRuntimeEnvironment)
+        public RqlEnvironment(IEnvironment parentRuntimeEnvironment)
         {
             this.parentRuntimeEnvironment = parentRuntimeEnvironment;
             this.runtimeData = new Dictionary<string, object>(StringComparer.Ordinal);
         }
+
+        public IEnvironment Parent => this.parentRuntimeEnvironment;
 
         public void Assign(string name, object value)
         {
@@ -37,8 +39,8 @@ namespace Rules.Framework.Rql.Runtime
             throw new IllegalRuntimeEnvironmentAccessException($"Cannot assign undefined '{name}'.", name);
         }
 
-        public IRuntimeEnvironment CreateScopedChildRuntimeEnvironment()
-            => new RuntimeEnvironment(this);
+        public IEnvironment CreateScopedChildEnvironment()
+            => new RqlEnvironment(this);
 
         public void Define(string name, object value)
                     => this.runtimeData[name] = value;

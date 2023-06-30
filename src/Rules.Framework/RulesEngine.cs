@@ -130,9 +130,11 @@ namespace Rules.Framework
                 throw new NotSupportedException($"Rule Query Language is not supported for non-enum types of {nameof(TConditionType)}.");
             }
 
-            var runtimeEnvironment = new RuntimeEnvironment().Initialize();
+            var callableTable = new RqlCallableTable().Initialize();
+            var runtimeEnvironment = new RqlEnvironment();
+            var rqlRuntime = RqlRuntime.Create(callableTable, runtimeEnvironment);
             var reverseRqlBuilder = new ReverseRqlBuilder();
-            var interpreter = new Interpreter<TContentType, TConditionType>(this, this.rulesSource, runtimeEnvironment, reverseRqlBuilder);
+            var interpreter = new Interpreter<TContentType, TConditionType>(this, this.rulesSource, rqlRuntime, reverseRqlBuilder);
             return new RqlClient<TContentType, TConditionType>(interpreter);
         }
 
