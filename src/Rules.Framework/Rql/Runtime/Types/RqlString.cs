@@ -39,7 +39,7 @@ namespace Rules.Framework.Rql.Runtime.Types
         }
 
         public override string ToString()
-                    => $"<{Type.Name}> {this.Value}";
+                    => @$"<{Type.Name}> ""{this.Value}""";
 
         public RqlBool TryGetPropertyValue(RqlString memberName, out RqlAny result)
         {

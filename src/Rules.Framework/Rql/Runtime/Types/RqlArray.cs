@@ -98,7 +98,7 @@ namespace Rules.Framework.Rql.Runtime.Types
             {
                 stringBuilder.AppendLine()
                     .Append(new string(' ', indent))
-                    .Append("{")
+                    .Append('{')
                     .AppendLine();
                 var min = Math.Min(this.size, 5);
                 for (int i = 0; i < min; i++)
@@ -122,7 +122,7 @@ namespace Rules.Framework.Rql.Runtime.Types
 
                 stringBuilder.AppendLine()
                     .Append(new string(' ', indent))
-                    .Append("}");
+                    .Append('}');
             }
 
             return stringBuilder.ToString();
