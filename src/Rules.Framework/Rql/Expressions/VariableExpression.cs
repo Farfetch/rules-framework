@@ -1,16 +1,14 @@
 namespace Rules.Framework.Rql.Expressions
 {
-    using Rules.Framework.Rql.Tokens;
-
     internal class VariableExpression : Expression
     {
-        public VariableExpression(Token token)
-            : base(token.BeginPosition, token.EndPosition)
+        public VariableExpression(Expression identifier)
+            : base(identifier.BeginPosition, identifier.EndPosition)
         {
-            this.Token = token;
+            this.Name = identifier;
         }
 
-        public Token Token { get; }
+        public Expression Name { get; }
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitVariableExpression(this);
     }

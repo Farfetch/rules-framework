@@ -112,13 +112,17 @@ namespace Rules.Framework.Rql.Pipeline.Scan
         }
 
         private static Token CreateToken(ScanContext scanContext, string lexeme, TokenType tokenType, object literal)
-            => Token.Create(
-                    lexeme,
-                    literal,
-                    scanContext.TokenCandidate.BeginPosition,
-                    scanContext.TokenCandidate.EndPosition,
-                    scanContext.TokenCandidate.Length,
-                    tokenType);
+        {
+            var isEscaped = lexeme.Length > 0 && IsEscape(lexeme[0]);
+            return Token.Create(
+                lexeme,
+                isEscaped,
+                literal,
+                scanContext.TokenCandidate.BeginPosition,
+                scanContext.TokenCandidate.EndPosition,
+                scanContext.TokenCandidate.Length,
+                tokenType);
+        }
 
         private static Token HandleIdentifier(ScanContext scanContext)
         {
@@ -197,6 +201,8 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
         private static bool IsAlphaNumeric(char @char) => IsAlpha(@char) || IsNumeric(@char);
 
+        private static bool IsEscape(char @char) => @char == '#';
+
         private static bool IsNumeric(char @char) => @char >= '0' && @char <= '9';
 
         private static Token ScanNextToken(ScanContext scanContext)
@@ -233,9 +239,6 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
                 case ']':
                     return CreateToken(scanContext, TokenType.STRAIGHT_BRACKET_RIGHT);
-
-                case '#':
-                    return CreateToken(scanContext, TokenType.ESCAPE);
 
                 case '!':
                     if (scanContext.MoveNextConditionally('='))
@@ -296,6 +299,17 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
                     if (IsAlpha(@char))
                     {
+                        return HandleIdentifier(scanContext);
+                    }
+
+                    if (IsEscape(@char))
+                    {
+                        if (!scanContext.MoveNext())
+                        {
+                            scanContext.TokenCandidate.MarkAsError($"Expected char after '{@char}'");
+                            return Token.None;
+                        }
+
                         return HandleIdentifier(scanContext);
                     }
 

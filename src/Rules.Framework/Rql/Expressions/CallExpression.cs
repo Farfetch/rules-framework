@@ -1,11 +1,10 @@
 namespace Rules.Framework.Rql.Expressions
 {
     using System.Linq;
-    using Rules.Framework.Rql.Tokens;
 
     internal class CallExpression : Expression
     {
-        public CallExpression(Expression instance, Token name, Expression[] arguments)
+        public CallExpression(Expression instance, Expression name, Expression[] arguments)
             : base(name.BeginPosition, arguments.LastOrDefault()?.EndPosition ?? name.EndPosition)
         {
             this.Instance = instance;
@@ -17,7 +16,7 @@ namespace Rules.Framework.Rql.Expressions
 
         public Expression Instance { get; }
 
-        public Token Name { get; }
+        public Expression Name { get; }
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitCallExpression(this);
     }

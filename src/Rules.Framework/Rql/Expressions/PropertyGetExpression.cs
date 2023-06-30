@@ -1,10 +1,8 @@
 namespace Rules.Framework.Rql.Expressions
 {
-    using Rules.Framework.Rql.Tokens;
-
     internal class PropertyGetExpression : Expression
     {
-        public PropertyGetExpression(Expression instance, Token name)
+        public PropertyGetExpression(Expression instance, Expression name)
             : base(instance.BeginPosition, name.EndPosition)
         {
             this.Instance = instance;
@@ -13,7 +11,7 @@ namespace Rules.Framework.Rql.Expressions
 
         public Expression Instance { get; }
 
-        public Token Name { get; }
+        public Expression Name { get; }
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitPropertyGetExpression(this);
     }

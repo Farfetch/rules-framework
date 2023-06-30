@@ -26,7 +26,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Statement.None;
             }
 
-            var variableIdentifier = parseContext.GetCurrentToken();
+            var variableIdentifier = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
             Expression assignable;
             if (parseContext.MoveNextIfNextToken(TokenType.ASSIGN))
             {

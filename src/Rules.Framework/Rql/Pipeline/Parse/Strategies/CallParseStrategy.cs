@@ -19,7 +19,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle call expression.");
             }
 
-            var identifier = parseContext.GetCurrentToken();
+            var identifier = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_LEFT))
             {
                 return new VariableExpression(identifier);

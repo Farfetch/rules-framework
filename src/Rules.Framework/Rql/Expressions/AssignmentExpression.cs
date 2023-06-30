@@ -4,7 +4,7 @@ namespace Rules.Framework.Rql.Expressions
 
     internal class AssignmentExpression : Expression
     {
-        public AssignmentExpression(Token left, Token assign, Expression right)
+        public AssignmentExpression(Expression left, Token assign, Expression right)
             : base(left.BeginPosition, right.EndPosition)
         {
             this.Left = left;
@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Expressions
 
         public Token Assign { get; }
 
-        public Token Left { get; }
+        public Expression Left { get; }
 
         public Expression Right { get; }
 

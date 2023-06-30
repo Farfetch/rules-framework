@@ -30,7 +30,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 var chainedCall = this.ParseIndexer(parseContext);
                 if (chainedCall is VariableExpression variableExpression)
                 {
-                    expression = new PropertyGetExpression(expression, variableExpression.Token);
+                    expression = new PropertyGetExpression(expression, variableExpression.Name);
                     continue;
                 }
 

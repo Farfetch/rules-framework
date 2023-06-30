@@ -112,8 +112,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             try
             {
+                var variableName = (string)await assignmentExpression.Left.Accept(this).ConfigureAwait(false);
                 var value = await assignmentExpression.Right.Accept(this).ConfigureAwait(false);
-                this.runtimeEnvironment.Assign(assignmentExpression.Left.Lexeme.ToUpperInvariant(), value);
+                this.runtimeEnvironment.Assign(variableName, value);
                 return new RqlNothing();
             }
             catch (IllegalRuntimeEnvironmentAccessException ex)
@@ -133,7 +134,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             try
             {
                 var caller = (IRuntimeValue)await callExpression.Instance.Accept(this).ConfigureAwait(false);
-                string callableName = callExpression.Name.Lexeme;
+                string callableName = (string)await callExpression.Name.Accept(this).ConfigureAwait(false);
                 var callee = this.runtimeEnvironment.Get(callableName);
                 if (callee is not ICallable)
                 {
@@ -270,6 +271,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var expressionResult = await programmableStatement.Expression.Accept(this).ConfigureAwait(false);
             return new ExpressionStatementResult(rql, expressionResult);
         }
+
+        public Task<object> VisitIdentifierExpression(IdentifierExpression identifierExpression)
+            => Task.FromResult<object>(identifierExpression.Identifier.UnescapedLexeme);
 
         public async Task<object> VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
         {
@@ -456,8 +460,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             for (int i = 0; i < propertyAssignments.Length; i++)
             {
                 var assignment = (AssignmentExpression)propertyAssignments[i];
+                var left = (string)await assignment.Left.Accept(this).ConfigureAwait(false);
                 var right = (IRuntimeValue)await assignment.Right.Accept(this).ConfigureAwait(false);
-                rqlObject.SetPropertyValue(assignment.Left.Lexeme, new RqlAny(right));
+                rqlObject.SetPropertyValue(left, new RqlAny(right));
             }
 
             return rqlObject;
@@ -519,14 +524,15 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             if (instance is IPropertyGet propertyGet)
             {
-                if (propertyGet.TryGetPropertyValue(propertyGetExpression.Name.Lexeme, out var propertyValue))
+                var propertyName = (string)await propertyGetExpression.Name.Accept(this).ConfigureAwait(false);
+                if (propertyGet.TryGetPropertyValue(propertyName, out var propertyValue))
                 {
                     return propertyValue;
                 }
 
                 throw CreateRuntimeException(
                     rql,
-                    new[] { $"Instance of '{nameof(RqlObject)}' does not contain property '{propertyGetExpression.Name.Lexeme}'." },
+                    new[] { $"Instance of '{nameof(RqlObject)}' does not contain property '{propertyName}'." },
                     propertyGetExpression.BeginPosition,
                     propertyGetExpression.EndPosition);
             }
@@ -549,8 +555,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             if (instance is IPropertySet propertySet)
             {
+                var propertyName = (string)await propertySetExpression.Name.Accept(this).ConfigureAwait(false);
                 var value = (IRuntimeValue)await propertySetExpression.Value.Accept(this).ConfigureAwait(false);
-                propertySet.SetPropertyValue(propertySetExpression.Name.Lexeme, new RqlAny(value));
+                propertySet.SetPropertyValue(propertyName, new RqlAny(value));
                 return new RqlNothing();
             }
 
@@ -739,16 +746,18 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<IResult> VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
         {
             var rql = this.reverseRqlBuilder.BuildRql(variableDeclarationStatement);
+            var variableName = (string)await variableDeclarationStatement.Name.Accept(this).ConfigureAwait(false);
             var assignable = await variableDeclarationStatement.Assignable.Accept(this).ConfigureAwait(false);
-            this.runtimeEnvironment.Define(variableDeclarationStatement.Name.Lexeme.ToUpperInvariant(), assignable);
+            this.runtimeEnvironment.Define(variableName, assignable);
             return new NothingStatementResult(rql);
         }
 
-        public Task<object> VisitVariableExpression(VariableExpression variableExpression)
+        public async Task<object> VisitVariableExpression(VariableExpression variableExpression)
         {
             try
             {
-                return Task.FromResult(this.runtimeEnvironment.Get(variableExpression.Token.Lexeme.ToUpperInvariant()));
+                var variableName = (string)await variableExpression.Name.Accept(this).ConfigureAwait(false);
+                return this.runtimeEnvironment.Get(variableName);
             }
             catch (IllegalRuntimeEnvironmentAccessException ex)
             {

@@ -4,7 +4,7 @@ namespace Rules.Framework.Rql.Expressions
 
     internal class PropertySetExpression : Expression
     {
-        public PropertySetExpression(Expression instance, Token name, Token assign, Expression value)
+        public PropertySetExpression(Expression instance, Expression name, Token assign, Expression value)
             : base(instance.EndPosition, value.EndPosition)
         {
             this.Instance = instance;
@@ -17,7 +17,7 @@ namespace Rules.Framework.Rql.Expressions
 
         public Expression Instance { get; }
 
-        public Token Name { get; }
+        public Expression Name { get; }
 
         public Expression Value { get; }
 

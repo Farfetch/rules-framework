@@ -18,6 +18,8 @@ namespace Rules.Framework.Rql.Expressions
 
         T VisitDeactivationExpression(DeactivationExpression deactivationExpression);
 
+        T VisitIdentifierExpression(IdentifierExpression identifierExpression);
+
         T VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression);
 
         T VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression);

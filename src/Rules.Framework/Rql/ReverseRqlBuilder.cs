@@ -38,11 +38,11 @@ namespace Rules.Framework.Rql
         }
 
         public string VisitAssignExpression(AssignmentExpression expression)
-            => FormattableString.Invariant($"{expression.Left.Lexeme} {expression.Assign.Lexeme} {expression.Right.Accept(this)}");
+            => FormattableString.Invariant($"{expression.Left.Accept(this)} {expression.Assign.Lexeme} {expression.Right.Accept(this)}");
 
         public string VisitCallExpression(CallExpression callExpression)
         {
-            var stringBuilder = new StringBuilder(callExpression.Name.Lexeme.ToUpperInvariant())
+            var stringBuilder = new StringBuilder(callExpression.Name.Accept(this))
                 .Append('(');
 
             int argumentsLength = callExpression.Arguments.Length;
@@ -143,8 +143,13 @@ namespace Rules.Framework.Rql
             return $"DEACTIVATE {ruleName} {contentType}";
         }
 
+        public string VisitExpressionStatement(ExpressionStatement programmableStatement)
+            => $"{programmableStatement.Expression.Accept(this)};";
+
+        public string VisitIdentifierExpression(IdentifierExpression identifierExpression) => identifierExpression.Identifier.Lexeme;
+
         public string VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
-            => $"{indexerGetExpression.Instance.Accept(this)}{indexerGetExpression.IndexLeftDelimeter.Lexeme}{indexerGetExpression.Index.Accept(this)}{indexerGetExpression.IndexRightDelimeter.Lexeme}";
+                            => $"{indexerGetExpression.Instance.Accept(this)}{indexerGetExpression.IndexLeftDelimeter.Lexeme}{indexerGetExpression.Index.Accept(this)}{indexerGetExpression.IndexRightDelimeter.Lexeme}";
 
         public string VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression)
             => $"{indexerSetExpression.Instance.Accept(this)}{indexerSetExpression.IndexLeftDelimeter.Lexeme}{indexerSetExpression.Index.Accept(this)}{indexerSetExpression.IndexRightDelimeter.Lexeme} {indexerSetExpression.Assign.Lexeme} {indexerSetExpression.Value.Accept(this)}";
@@ -324,14 +329,11 @@ namespace Rules.Framework.Rql
             return stringBuilder.ToString();
         }
 
-        public string VisitExpressionStatement(ExpressionStatement programmableStatement)
-            => $"{programmableStatement.Expression.Accept(this)};";
-
         public string VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
-            => FormattableString.Invariant($"{propertyGetExpression.Instance.Accept(this)}.{propertyGetExpression.Name.Lexeme}");
+            => FormattableString.Invariant($"{propertyGetExpression.Instance.Accept(this)}.{propertyGetExpression.Name.Accept(this)}");
 
         public string VisitPropertySetExpression(PropertySetExpression propertySetExpression)
-            => $"{propertySetExpression.Instance.Accept(this)}.{propertySetExpression.Name.Lexeme} {propertySetExpression.Assign.Lexeme} {propertySetExpression.Value.Accept(this)}";
+            => $"{propertySetExpression.Instance.Accept(this)}.{propertySetExpression.Name.Accept(this)} {propertySetExpression.Assign.Lexeme} {propertySetExpression.Value.Accept(this)}";
 
         public string VisitSearchExpression(SearchExpression searchExpression)
         {
@@ -404,7 +406,7 @@ namespace Rules.Framework.Rql
         {
             var stringBuilder = new StringBuilder(variableDeclarationStatement.Keyword.Lexeme)
                 .Append(SPACE)
-                .Append(variableDeclarationStatement.Name.Lexeme);
+                .Append(variableDeclarationStatement.Name.Accept(this));
 
             if (variableDeclarationStatement.Assignable != Expression.None)
             {
@@ -418,6 +420,6 @@ namespace Rules.Framework.Rql
                 .ToString();
         }
 
-        public string VisitVariableExpression(VariableExpression variableExpression) => variableExpression.Token.Lexeme;
+        public string VisitVariableExpression(VariableExpression variableExpression) => variableExpression.Name.Accept(this);
     }
 }

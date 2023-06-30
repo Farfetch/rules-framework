@@ -27,7 +27,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
                 if (expression is VariableExpression variableExpression)
                 {
-                    return new AssignmentExpression(variableExpression.Token, assignmentToken, rightExpression);
+                    return new AssignmentExpression(variableExpression.Name, assignmentToken, rightExpression);
                 }
 
                 if (expression is PropertyGetExpression propertyGetExpression)

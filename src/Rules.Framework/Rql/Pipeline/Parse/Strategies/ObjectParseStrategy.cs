@@ -58,15 +58,15 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (!parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames))
             {
-                if (!parseContext.MoveNextIfCurrentToken(TokenType.ESCAPE) || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                var currentToken = parseContext.GetCurrentToken();
+                if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
                 {
                     parseContext.EnterPanicMode("Expected identifier for object property.", parseContext.GetCurrentToken());
                     return Expression.None;
                 }
             }
 
-            var left = parseContext.GetCurrentToken();
-
+            var left = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.ASSIGN))
             {
                 parseContext.EnterPanicMode("Expected token '='.", parseContext.GetCurrentToken());
