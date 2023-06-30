@@ -42,7 +42,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
                 if (chainedCall is IndexerGetExpression indexerExpression)
                 {
-                    expression = new IndexerGetExpression(expression, indexerExpression.IndexLeftDelimeter, indexerExpression.Index, indexerExpression.IndexRightDelimeter);
+                    var propertyGetExpression = new PropertyGetExpression(expression, ((VariableExpression)indexerExpression.Instance).Name);
+                    expression = new IndexerGetExpression(propertyGetExpression, indexerExpression.IndexLeftDelimeter, indexerExpression.Index, indexerExpression.IndexRightDelimeter);
                     continue;
                 }
             }
