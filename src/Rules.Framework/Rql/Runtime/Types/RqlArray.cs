@@ -72,36 +72,7 @@ namespace Rules.Framework.Rql.Runtime.Types
         }
 
         public override string ToString()
-        {
-            var stringBuilder = new StringBuilder()
-                .Append('<')
-                .Append(this.Type.Name)
-                .Append('>')
-                .Append(' ');
-
-            if (this.size > 0)
-            {
-                stringBuilder.Append("{ ");
-                var min = Math.Min(this.size, 5);
-                for (int i = 0; i < min; i++)
-                {
-                    stringBuilder.Append(this.Value[i]);
-                    if (i < min - 1)
-                    {
-                        stringBuilder.Append(", ");
-                    }
-                }
-
-                if (min < this.size)
-                {
-                    stringBuilder.Append(", ...");
-                }
-
-                stringBuilder.Append(" }");
-            }
-
-            return stringBuilder.ToString();
-        }
+            => this.ToString(0);
 
         public RqlBool TryGetPropertyValue(RqlString memberName, out RqlAny result)
         {
@@ -113,6 +84,48 @@ namespace Rules.Framework.Rql.Runtime.Types
 
             result = new RqlNothing();
             return false;
+        }
+
+        internal string ToString(int indent)
+        {
+            var stringBuilder = new StringBuilder()
+                .Append('<')
+                .Append(this.Type.Name)
+                .Append('>')
+                .Append(' ');
+
+            if (this.size > 0)
+            {
+                stringBuilder.AppendLine()
+                    .Append(new string(' ', indent))
+                    .Append("{")
+                    .AppendLine();
+                var min = Math.Min(this.size, 5);
+                for (int i = 0; i < min; i++)
+                {
+                    stringBuilder.Append(new string(' ', indent + 4))
+                        .Append(this.Value[i]);
+                    if (i < min - 1)
+                    {
+                        stringBuilder.Append(',')
+                            .AppendLine();
+                    }
+                }
+
+                if (min < this.size)
+                {
+                    stringBuilder.Append(',')
+                        .AppendLine()
+                        .Append(new string(' ', indent + 4))
+                        .Append("...");
+                }
+
+                stringBuilder.AppendLine()
+                    .Append(new string(' ', indent))
+                    .Append("}");
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }

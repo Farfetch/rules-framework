@@ -492,7 +492,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression)
         {
             var option = (RqlString)await priorityOptionExpression.PriorityOption.Accept(this).ConfigureAwait(false);
-            switch (option.Value)
+            switch (option.Value.ToUpperInvariant())
             {
                 case "TOP":
                     return RuleAddPriorityOption.AtTop;

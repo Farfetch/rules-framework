@@ -61,7 +61,7 @@ namespace Rules.Framework.Rql.Runtime.Types
 
                 if (property.Value.UnderlyingType == RqlTypes.Array)
                 {
-                    stringBuilder.Append(property.Value.Unwrap<RqlArray>().ToString());
+                    stringBuilder.Append(property.Value.Unwrap<RqlArray>().ToString(indent));
                     continue;
                 }
 
