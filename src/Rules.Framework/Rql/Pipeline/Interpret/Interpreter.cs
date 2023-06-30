@@ -142,7 +142,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                     arguments[i] = (IRuntimeValue)await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
                 }
 
-                var callable = caller is RqlNothing
+                var callable = caller is RqlNothing && callExpression.Instance == Expression.None
                     ? this.runtime.CallableTable.ResolveCallable(callableName, arguments.Select(a => a.Type).ToArray())
                     : this.runtime.CallableTable.ResolveCallable(caller.Type, callableName, arguments.Select(a => a.Type).ToArray());
                 if (callable is null)

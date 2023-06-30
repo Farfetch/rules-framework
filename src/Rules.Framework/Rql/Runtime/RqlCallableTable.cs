@@ -104,7 +104,7 @@ namespace Rules.Framework.Rql.Runtime
         }
 
         private ICallable ResolveCallable(
-                                            RqlString callableSpace,
+            RqlString callableSpace,
             RqlString callableName,
             RqlType[] argumentTypes)
         {
@@ -123,9 +123,9 @@ namespace Rules.Framework.Rql.Runtime
                         {
                             break;
                         }
-
-                        return callable;
                     }
+
+                    return callable;
                 }
                 while (callableNode.Next != null);
             }
