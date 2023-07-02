@@ -13,7 +13,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.STARTS))
+            if (!parseContext.IsMatchCurrentToken(TokenType.BEGINS))
             {
                 throw new InvalidOperationException("Unable to handle date begin expression.");
             }

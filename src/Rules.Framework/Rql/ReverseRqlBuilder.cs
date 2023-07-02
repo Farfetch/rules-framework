@@ -348,11 +348,11 @@ namespace Rules.Framework.Rql
                 .Append(SPACE)
                 .Append(contentType)
                 .Append(SPACE)
-                .Append("ON RANGE")
+                .Append("BEGINS ON")
                 .Append(SPACE)
                 .Append(dateBegin)
                 .Append(SPACE)
-                .Append("TO")
+                .Append("ENDS ON")
                 .Append(SPACE)
                 .Append(dateEnd);
 
