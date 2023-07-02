@@ -46,12 +46,13 @@ namespace Rules.Framework.Rql.Tokens
 
         #region Literals
 
-        STRING,
-        INT,
-        DECIMAL,
         BOOL,
+        DATE,
+        DECIMAL,
         IDENTIFIER,
+        INT,
         PLACEHOLDER,
+        STRING,
 
         #endregion Literals
 

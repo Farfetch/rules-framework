@@ -58,7 +58,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            var priorityValue = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+            var priorityValue = this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
@@ -76,7 +76,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            var ruleName = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+            var ruleName = this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;

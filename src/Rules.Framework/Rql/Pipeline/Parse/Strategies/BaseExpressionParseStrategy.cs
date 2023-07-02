@@ -17,9 +17,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseExpressionWith<IndexerParseStrategy>(parseContext);
             }
 
-            if (parseContext.IsMatchCurrentToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL))
+            if (parseContext.IsMatchCurrentToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL, TokenType.DATE))
             {
-                return this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+                return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             }
 
             parseContext.EnterPanicMode("Expected expression.", parseContext.GetCurrentToken());

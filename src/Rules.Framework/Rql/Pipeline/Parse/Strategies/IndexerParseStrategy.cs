@@ -68,7 +68,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return Expression.None;
                 }
 
-                var index = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+                var index = this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
                     return Expression.None;

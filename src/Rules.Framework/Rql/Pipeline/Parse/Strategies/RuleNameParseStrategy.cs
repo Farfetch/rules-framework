@@ -24,7 +24,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            return this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+            return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
         }
     }
 }

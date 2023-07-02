@@ -28,6 +28,6 @@ namespace Rules.Framework.Rql.Runtime.Types
         public static implicit operator RqlDate(DateTime value) => new RqlDate(value);
 
         public override string ToString()
-            => $"<{Type.Name}> {this.Value}";
+            => $"<{Type.Name}> {this.Value:g}";
     }
 }

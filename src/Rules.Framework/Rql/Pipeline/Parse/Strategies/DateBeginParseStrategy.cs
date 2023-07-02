@@ -24,13 +24,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.STRING))
-            {
-                parseContext.EnterPanicMode("Expected begin date and time.", parseContext.GetCurrentToken());
-                return Expression.None;
-            }
-
-            return this.ParseExpressionWith<DateTimeLiteralParseStrategy>(parseContext);
+            _ = parseContext.MoveNext();
+            return this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
         }
     }
 }

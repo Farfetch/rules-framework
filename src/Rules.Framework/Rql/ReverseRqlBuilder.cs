@@ -199,7 +199,7 @@ namespace Rules.Framework.Rql
         {
             LiteralType.String or LiteralType.Undefined => literalExpression.Token.Lexeme,
             LiteralType.Decimal or LiteralType.Integer or LiteralType.Bool => literalExpression.Value.ToString(),
-            LiteralType.DateTime => $"\"{literalExpression.Value:yyyy-MM-ddTHH:mm:ssZ}\"",
+            LiteralType.DateTime => $"${literalExpression.Value:yyyy-MM-ddTHH:mm:ssZ}$",
             _ => throw new NotSupportedException($"The literal type '{literalExpression.Type}' is not supported."),
         };
 

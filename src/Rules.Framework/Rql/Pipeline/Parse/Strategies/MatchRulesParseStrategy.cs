@@ -67,13 +67,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.STRING))
-            {
-                parseContext.EnterPanicMode("Expect match date and time.", parseContext.GetCurrentToken());
-                return Expression.None;
-            }
-
-            var matchDate = this.ParseExpressionWith<DateTimeLiteralParseStrategy>(parseContext);
+            _ = parseContext.MoveNext();
+            var matchDate = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;

@@ -19,7 +19,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (parseContext.MoveNextIfNextToken(TokenType.STRING))
             {
-                var contentType = this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+                var contentType = this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
                     return Expression.None;

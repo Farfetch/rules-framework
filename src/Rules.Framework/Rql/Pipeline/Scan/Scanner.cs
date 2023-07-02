@@ -124,6 +124,26 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                 tokenType);
         }
 
+        private static Token HandleDate(ScanContext scanContext)
+        {
+            while (scanContext.GetNextChar() != '$' && scanContext.MoveNext())
+            {
+            }
+
+            if (scanContext.IsEof())
+            {
+                scanContext.TokenCandidate.MarkAsError("Unterminated date.");
+                return Token.None;
+            }
+
+            _ = scanContext.MoveNext();
+
+            // Trim the surrounding dollar symbols.
+            var lexeme = scanContext.ExtractLexeme();
+            var value = Regex.Unescape(lexeme[1..^1]);
+            return CreateToken(scanContext, lexeme, TokenType.DATE, value);
+        }
+
         private static Token HandleIdentifier(ScanContext scanContext)
         {
             ConsumeAlphaNumeric(scanContext);
@@ -277,6 +297,9 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                     }
 
                     return CreateToken(scanContext, TokenType.GREATER_THAN);
+
+                case '$':
+                    return HandleDate(scanContext);
 
                 case ' ':
                 case '\r':

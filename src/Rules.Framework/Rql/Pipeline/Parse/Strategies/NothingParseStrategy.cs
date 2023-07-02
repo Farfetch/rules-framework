@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (parseContext.IsMatchCurrentToken(TokenType.NOTHING))
             {
-                return this.ParseExpressionWith<DefaultLiteralParseStrategy>(parseContext);
+                return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             }
 
             return this.ParseExpressionWith<UnaryParseStrategy>(parseContext);

@@ -389,7 +389,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 LiteralType.String when literalExpression.Value is null => new RqlNothing(),
                 LiteralType.String => new RqlString((string)literalExpression.Value),
                 LiteralType.DateTime when literalExpression.Value is null => new RqlNothing(),
-                LiteralType.DateTime => new RqlDate((DateTime)literalExpression.Value),
+                LiteralType.DateTime => new RqlDate(((DateTime)literalExpression.Value).ToUniversalTime()),
                 LiteralType.Undefined => new RqlNothing(),
                 _ when literalExpression.Value is null => new RqlNothing(),
                 _ => throw new NotSupportedException($"Literal with type '{literalExpression.Type}' is not supported."),
