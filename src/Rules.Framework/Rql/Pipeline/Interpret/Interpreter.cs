@@ -164,11 +164,11 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
                 return callable.Call(this, caller, arguments);
             }
-            catch (IllegalRuntimeEnvironmentAccessException ex)
+            catch (CallableTableException ex)
             {
                 throw CreateRuntimeException(
                     rql,
-                    new[] { ex.Message },
+                    new[] { $"{ex.Message} - {ex.CallableSpace}.{ex.CallableName}({ex.CallableParameterTypes.Aggregate((p1, p2) => $"{p1}, {p2}")})" },
                     callExpression.BeginPosition,
                     callExpression.EndPosition);
             }
