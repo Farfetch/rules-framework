@@ -12,7 +12,6 @@ namespace Rules.Framework.Rql.Runtime
             var showFunction = new ShowFunction();
             callableTable.AddCallable(showFunction);
             var toStringParameterlessFunction = new ToStringParameterlessFunction();
-            callableTable.AddCallable(RqlTypes.Any, toStringParameterlessFunction);
             callableTable.AddCallable(RqlTypes.Array, toStringParameterlessFunction);
             callableTable.AddCallable(RqlTypes.Bool, toStringParameterlessFunction);
             callableTable.AddCallable(RqlTypes.Date, toStringParameterlessFunction);
@@ -23,6 +22,14 @@ namespace Rules.Framework.Rql.Runtime
             callableTable.AddCallable(RqlTypes.ReadOnlyObject, toStringParameterlessFunction);
             callableTable.AddCallable(RqlTypes.Rule, toStringParameterlessFunction);
             callableTable.AddCallable(RqlTypes.String, toStringParameterlessFunction);
+            var notEmptyGivenArrayFunction = new NotEmptyGivenArrayFunction();
+            callableTable.AddCallable(notEmptyGivenArrayFunction);
+            var notEmptyParameterlessFunction = new NotEmptyParameterlessFunction();
+            callableTable.AddCallable(RqlTypes.Array, notEmptyParameterlessFunction);
+            var emptyGivenArrayFunction = new EmptyGivenArrayFunction();
+            callableTable.AddCallable(emptyGivenArrayFunction);
+            var emptyParameterlessFunction = new EmptyParameterlessFunction();
+            callableTable.AddCallable(RqlTypes.Array, emptyParameterlessFunction);
             return callableTable;
         }
     }

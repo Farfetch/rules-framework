@@ -134,6 +134,11 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             try
             {
                 var caller = (IRuntimeValue)await callExpression.Instance.Accept(this).ConfigureAwait(false);
+                if (caller.Type == RqlTypes.Any)
+                {
+                    caller = ((RqlAny)caller).Unwrap();
+                }
+
                 string callableName = (string)await callExpression.Name.Accept(this).ConfigureAwait(false);
                 int argumentsLength = callExpression.Arguments.Length;
                 var arguments = new IRuntimeValue[argumentsLength];
@@ -166,9 +171,12 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
             catch (CallableTableException ex)
             {
+                var parameterTypesAsString = ex.CallableParameterTypes.Length > 0
+                    ? ex.CallableParameterTypes.Aggregate((p1, p2) => $"{p1}, {p2}")
+                    : string.Empty;
                 throw CreateRuntimeException(
                     rql,
-                    new[] { $"{ex.Message} - {ex.CallableSpace}.{ex.CallableName}({ex.CallableParameterTypes.Aggregate((p1, p2) => $"{p1}, {p2}")})" },
+                    new[] { $"{ex.Message} - {ex.CallableSpace}.{ex.CallableName}({parameterTypesAsString})" },
                     callExpression.BeginPosition,
                     callExpression.EndPosition);
             }

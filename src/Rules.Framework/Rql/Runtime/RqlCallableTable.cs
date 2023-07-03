@@ -115,22 +115,27 @@ namespace Rules.Framework.Rql.Runtime
                 do
                 {
                     var callable = callableNode.Value;
+                    var isMatch = true;
                     for (int i = 0; i < argumentTypes.Length; i++)
                     {
                         var argument = argumentTypes[i];
                         var parameter = callable.Parameters[i].Type;
                         if (!argument.IsAssignableTo(parameter))
                         {
+                            isMatch = false;
                             break;
                         }
                     }
 
-                    return callable;
+                    if (isMatch)
+                    {
+                        return callable;
+                    }
                 }
                 while (callableNode.Next != null);
             }
 
-            throw new CallableTableException("Callable has not been found.", callableSpace, callableName, argumentTypes.Select(t => t.Name).ToArray());
+            throw new CallableTableException("No such callable for given instance, name, and parameters.", callableSpace, callableName, argumentTypes.Select(t => t.Name).ToArray());
         }
     }
 }
