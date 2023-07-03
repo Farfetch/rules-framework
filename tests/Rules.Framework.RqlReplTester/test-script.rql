@@ -1,0 +1,3 @@
+var #rules = match one rule for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$ with { @NumberOfKings is 1, @NumberOfQueens is 1, @NumberOfJacks is 1, @NumberOfTens is 1, @NumberOfNines is 1, @KingOfClubs is true, @QueenOfDiamonds is true, @JackOfClubs is true, @TenOfHearts is true, @NineOfSpades is true };
+
+Show(#rules);

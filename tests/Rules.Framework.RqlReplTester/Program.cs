@@ -1,6 +1,7 @@
 namespace Rules.Framework.RqlReplTester
 {
     using System.Text;
+    using McMaster.Extensions.CommandLineUtils;
     using Newtonsoft.Json;
     using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
     using Rules.Framework.IntegrationTests.Common.Scenarios;
@@ -10,6 +11,54 @@ namespace Rules.Framework.RqlReplTester
     internal class Program
     {
         private static readonly string tab = new string(' ', 4);
+
+        private static async Task ExecuteAsync(IRqlClient<ContentTypes, ConditionTypes> rqlClient, string? input)
+        {
+            try
+            {
+                var results = await rqlClient.ExecuteAsync(input);
+                foreach (var result in results)
+                {
+                    switch (result)
+                    {
+                        case RulesSetResult<ContentTypes, ConditionTypes> rulesResultSet:
+                            HandleRulesSetResult(rulesResultSet);
+                            break;
+
+                        case NothingResult:
+                            // Nothing to be done.
+                            break;
+
+                        case ValueResult valueResult:
+                            HandleObjectResult(valueResult);
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"Result type is not supported: '{result.GetType().FullName}'");
+                    }
+                }
+            }
+            catch (RqlException rqlException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"{rqlException.Message} Errors:");
+
+                foreach (var rqlError in rqlException.Errors)
+                {
+                    var errorMessageBuilder = new StringBuilder(" - ")
+                        .Append(rqlError.Text)
+                        .Append(" @")
+                        .Append(rqlError.BeginPosition)
+                        .Append('-')
+                        .Append(rqlError.EndPosition);
+                    Console.WriteLine(errorMessageBuilder.ToString());
+                }
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
+
+            Console.WriteLine();
+        }
 
         private static void HandleObjectResult(ValueResult result)
         {
@@ -72,76 +121,57 @@ namespace Rules.Framework.RqlReplTester
             }
         }
 
-        private static async Task Main()
+        private static async Task<int> Main(string[] args)
         {
-            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+            var app = new CommandLineApplication();
+
+            app.HelpOption();
+
+            var artifactsPathOption = app.Option("-s|--script <ARTIFACTS_PATH>", "Sets a script to be executed", CommandOptionType.SingleValue, config =>
+            {
+                config.DefaultValue = null;
+            });
+
+            app.OnExecuteAsync(async (ct) =>
+            {
+                var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
                 .SetInMemoryDataSource()
                 .Build();
 
-            await ScenarioLoader.LoadScenarioAsync(rulesEngine, new Scenario8Data());
-            var rqlClient = rulesEngine.GetRqlClient();
+                await ScenarioLoader.LoadScenarioAsync(rulesEngine, new Scenario8Data());
+                var rqlClient = rulesEngine.GetRqlClient();
 
-            while (true)
-            {
-                Console.Write("> ");
-                var input = Console.ReadLine();
-                if (string.IsNullOrEmpty(input))
+                var script = artifactsPathOption.Value();
+                if (string.IsNullOrEmpty(script))
                 {
-                    continue;
-                }
-
-                if (input.ToUpperInvariant() == "EXIT")
-                {
-                    break;
-                }
-
-                try
-                {
-                    var results = await rqlClient.ExecuteAsync(input);
-                    foreach (var result in results)
+                    while (true)
                     {
-                        switch (result)
+                        Console.Write("> ");
+                        var input = Console.ReadLine();
+                        if (string.IsNullOrEmpty(input))
                         {
-                            case RulesSetResult<ContentTypes, ConditionTypes> rulesResultSet:
-                                HandleRulesSetResult(rulesResultSet);
-                                break;
-
-                            case NothingResult:
-                                // Nothing to be done.
-                                break;
-
-                            case ValueResult valueResult:
-                                HandleObjectResult(valueResult);
-                                break;
-
-                            default:
-                                throw new NotSupportedException($"Result type is not supported: '{result.GetType().FullName}'");
+                            continue;
                         }
+
+                        if (input.ToUpperInvariant() == "EXIT")
+                        {
+                            break;
+                        }
+
+                        await ExecuteAsync(rqlClient, input);
                     }
                 }
-                catch (RqlException rqlException)
+                else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"{rqlException.Message} Errors:");
-
-                    foreach (var rqlError in rqlException.Errors)
-                    {
-                        var errorMessageBuilder = new StringBuilder(" - ")
-                            .Append(rqlError.Text)
-                            .Append(" @")
-                            .Append(rqlError.BeginPosition)
-                            .Append('-')
-                            .Append(rqlError.EndPosition);
-                        Console.WriteLine(errorMessageBuilder.ToString());
-                    }
-
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    var scriptFullPath = Path.Combine(Environment.CurrentDirectory, script);
+                    var scriptContent = await File.ReadAllTextAsync(scriptFullPath, ct).ConfigureAwait(false);
+                    await ExecuteAsync(rqlClient, scriptContent);
                 }
+            });
 
-                Console.WriteLine();
-            }
+            return await app.ExecuteAsync(args).ConfigureAwait(false);
         }
     }
 }
