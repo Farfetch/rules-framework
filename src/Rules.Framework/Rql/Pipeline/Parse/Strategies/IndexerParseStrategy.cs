@@ -1,7 +1,7 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
-    using Rules.Framework.Rql.Expressions;
+    using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Tokens;
 
     internal class IndexerParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy

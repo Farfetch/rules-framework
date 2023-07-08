@@ -1,8 +1,8 @@
 namespace Rules.Framework.Rql.Pipeline.Parse
 {
     using System.Collections.Generic;
+    using Rules.Framework.Rql.Ast.Statements;
     using Rules.Framework.Rql.Messages;
-    using Rules.Framework.Rql.Statements;
 
     internal class ParseResult
     {

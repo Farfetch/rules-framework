@@ -3,8 +3,8 @@ namespace Rules.Framework.Rql
     using System;
     using System.Linq;
     using System.Text;
-    using Rules.Framework.Rql.Expressions;
-    using Rules.Framework.Rql.Statements;
+    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Statements;
 
     internal class ReverseRqlBuilder : IReverseRqlBuilder, IExpressionVisitor<string>, IStatementVisitor<string>
     {

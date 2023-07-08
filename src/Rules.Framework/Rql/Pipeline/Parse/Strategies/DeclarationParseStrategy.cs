@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
-    using Rules.Framework.Rql.Statements;
+    using Rules.Framework.Rql.Ast.Statements;
     using Rules.Framework.Rql.Tokens;
 
     internal class DeclarationParseStrategy : ParseStrategyBase<Statement>, IStatementParseStrategy

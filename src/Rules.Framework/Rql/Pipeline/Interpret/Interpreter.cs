@@ -7,10 +7,10 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
-    using Rules.Framework.Rql.Expressions;
+    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Statements;
     using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.Types;
-    using Rules.Framework.Rql.Statements;
     using Rules.Framework.Rql.Tokens;
     using Rules.Framework.Source;
 

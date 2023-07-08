@@ -1,7 +1,7 @@
 namespace Rules.Framework.Rql
 {
-    using Rules.Framework.Rql.Expressions;
-    using Rules.Framework.Rql.Statements;
+    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Statements;
 
     internal interface IReverseRqlBuilder
     {

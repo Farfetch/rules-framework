@@ -1,7 +1,7 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
-    using Rules.Framework.Rql.Expressions;
-    using Rules.Framework.Rql.Statements;
+    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Statements;
 
     internal abstract class ParseStrategyBase<TParseOutput> : IParseStrategy<TParseOutput>
     {

@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
-    using Rules.Framework.Rql.Expressions;
+    using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Tokens;
 
     internal class InputConditionParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy

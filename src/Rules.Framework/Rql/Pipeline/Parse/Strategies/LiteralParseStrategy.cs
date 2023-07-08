@@ -2,7 +2,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
     using System.Globalization;
-    using Rules.Framework.Rql.Expressions;
+    using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Tokens;
 
     internal class LiteralParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy

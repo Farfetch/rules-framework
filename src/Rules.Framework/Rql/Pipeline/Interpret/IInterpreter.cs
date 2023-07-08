@@ -3,7 +3,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Rql.Statements;
+    using Rules.Framework.Rql.Ast.Statements;
 
     internal interface IInterpreter : IDisposable
     {
