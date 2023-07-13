@@ -2,22 +2,20 @@ namespace Rules.Framework.WebUI.Sample.Enums
 {
     public enum ContentTypes
     {
-        None = 0,
+        TestNumber = 0,
 
-        TestNumber = 1,
+        TestString = 1,
 
-        TestString = 2,
+        TestBoolean = 2,
 
-        TestBoolean = 3,
+        TestDecimal = 3,
 
-        TestDecimal = 4,
+        TestShort = 4,
 
-        TestShort = 5,
+        TestDateTime = 5,
 
-        TestDateTime = 6,
+        TestLong = 6,
 
-        TestLong = 7,
-
-        TestBlob = 8
+        TestBlob = 7
     }
 }

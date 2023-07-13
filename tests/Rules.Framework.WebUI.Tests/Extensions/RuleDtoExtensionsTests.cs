@@ -20,9 +20,9 @@ namespace Rules.Framework.WebUI.Tests.Extensions
         {
             // Arrange
             var genericRule = new GenericRule();
-
+            var contentType = "contentType";
             // Act
-            var ruleDto = genericRule.ToRuleDto(this.ruleStatusDtoAnalyzer);
+            var ruleDto = genericRule.ToRuleDto(contentType, this.ruleStatusDtoAnalyzer);
 
             // Assert
             ruleDto.Should().NotBeNull();

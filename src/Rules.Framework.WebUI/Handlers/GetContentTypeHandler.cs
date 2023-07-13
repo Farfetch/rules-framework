@@ -13,14 +13,14 @@ namespace Rules.Framework.WebUI.Handlers
     {
         private static readonly string[] resourcePath = new[] { "/{0}/api/v1/contentTypes" };
 
-        private readonly IGenericRulesEngine genericRulesEngineAdapter;
+        private readonly IGenericRulesEngine genericRulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetContentTypeHandler(IGenericRulesEngine rulesEngine,
+        public GetContentTypeHandler(IGenericRulesEngine genericRulesEngine,
             IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer,
             WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
-            this.genericRulesEngineAdapter = rulesEngine;
+            this.genericRulesEngine = genericRulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
@@ -30,7 +30,7 @@ namespace Rules.Framework.WebUI.Handlers
         {
             try
             {
-                var contents = this.genericRulesEngineAdapter.GetContentTypes();
+                var contents = this.genericRulesEngine.GetContentTypes();
 
                 var contentTypes = new List<ContentTypeDto>();
                 var index = 0;
@@ -38,7 +38,7 @@ namespace Rules.Framework.WebUI.Handlers
                 {
                     var genericContentType = new GenericContentType { Identifier = identifier };
 
-                    var genericRules = await this.genericRulesEngineAdapter
+                    var genericRules = await this.genericRulesEngine
                         .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericContentType,
                             DateTime.MinValue,
                             DateTime.MaxValue))
