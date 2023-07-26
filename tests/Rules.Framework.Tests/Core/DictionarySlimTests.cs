@@ -27,7 +27,7 @@ namespace Rules.Framework.Tests.Core
 
             // Assert
             actual.Should().ThrowExactly<ArgumentException>()
-                .Which.ParamName.Should().Be("key");
+                .Which.ParamName.Should().Be("item");
         }
 
         [Fact]
@@ -43,8 +43,8 @@ namespace Rules.Framework.Tests.Core
             var actual = () => dictionarySlim.Add(key, value);
 
             // Assert
-            actual.Should().ThrowExactly<ArgumentNullException>()
-                .Which.ParamName.Should().Be("key");
+            actual.Should().ThrowExactly<ArgumentException>()
+                .Which.ParamName.Should().Be("item");
         }
 
         [Fact]
