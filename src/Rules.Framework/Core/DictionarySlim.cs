@@ -5,7 +5,7 @@ namespace Rules.Framework.Core
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    internal sealed class DictionarySlim<TKey, TValue> : IDictionary<TKey, TValue>, IEnumerable, IEnumerable<KeyValuePair<TKey, TValue>>
+    internal sealed class DictionarySlim<TKey, TValue> : IDictionary<TKey, TValue>
     {
         private readonly IEqualityComparer<TKey> keysComparer;
         private readonly IEqualityComparer<TValue> valuesComparer;
@@ -86,27 +86,7 @@ namespace Rules.Framework.Core
             }
         }
 
-        public void Add(TKey key, TValue value)
-        {
-            if (key is null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-
-            var existentItemIndex = this.FindIndex(key);
-
-            if (existentItemIndex >= 0)
-            {
-                throw new ArgumentException("An element with the same key already exists in the System.Collections.Generic.IDictionary`2.", nameof(key));
-            }
-
-            if (this.lastUsedIndex >= this.Count - 1)
-            {
-                this.GrowEntriesArray();
-            }
-
-            this.entries[++this.lastUsedIndex] = new KeyValuePair<TKey, TValue>(key, value);
-        }
+        public void Add(TKey key, TValue value) => this.Add(new KeyValuePair<TKey, TValue>(key, value));
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
