@@ -1,7 +1,6 @@
 namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 {
     using System.Linq;
-    using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.Types;
 
@@ -15,7 +14,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
         public abstract RqlType ReturnType { get; }
 
-        public abstract IRuntimeValue Call(IInterpreter interpreter, IRuntimeValue instance, IRuntimeValue[] arguments);
+        public abstract IRuntimeValue Call(IRuntimeValue instance, IRuntimeValue[] arguments);
 
         public override string ToString()
             => $"[built-in function] {this.ToRql()}";

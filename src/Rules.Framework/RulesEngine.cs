@@ -132,9 +132,9 @@ namespace Rules.Framework
 
             var callableTable = new RqlCallableTable().Initialize();
             var runtimeEnvironment = new RqlEnvironment();
-            var rqlRuntime = RqlRuntime.Create(callableTable, runtimeEnvironment);
+            var rqlRuntime = RqlRuntime<TContentType, TConditionType>.Create(callableTable, runtimeEnvironment, this, this.rulesSource);
             var reverseRqlBuilder = new ReverseRqlBuilder();
-            var interpreter = new Interpreter<TContentType, TConditionType>(this, this.rulesSource, rqlRuntime, reverseRqlBuilder);
+            var interpreter = new Interpreter<TContentType, TConditionType>(rqlRuntime, reverseRqlBuilder);
             return new RqlClient<TContentType, TConditionType>(interpreter);
         }
 

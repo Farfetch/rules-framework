@@ -4,7 +4,6 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime.Types;
 
     internal class JsonToObjectFunction : BuiltInFunctionBase
@@ -15,7 +14,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
         public override RqlType ReturnType => RqlTypes.Object;
 
-        public override IRuntimeValue Call(IInterpreter interpreter, IRuntimeValue instance, IRuntimeValue[] arguments)
+        public override IRuntimeValue Call(IRuntimeValue instance, IRuntimeValue[] arguments)
         {
             var jsonStringArgument = arguments[0];
             if (jsonStringArgument.Type == RqlTypes.Any)
@@ -25,11 +24,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
             if (jsonStringArgument is not RqlString jsonString)
             {
-                throw new RuntimeException(
-                    $"Error on {this.Name}: expected string argument.",
-                    this.ToRql(),
-                    RqlSourcePosition.Empty,
-                    RqlSourcePosition.Empty);
+                throw new RuntimeException($"Error on {this.Name}: expected string argument.");
             }
 
             var json = JsonConvert.DeserializeObject<object>(jsonString.Value);

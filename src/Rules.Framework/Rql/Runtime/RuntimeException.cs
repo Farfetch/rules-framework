@@ -1,35 +1,23 @@
 namespace Rules.Framework.Rql.Runtime
 {
     using System;
-    using System.Runtime.Serialization;
-    using Rules.Framework.Rql;
+    using System.Collections.Generic;
+    using System.Linq;
 
     internal class RuntimeException : Exception
     {
-        public RuntimeException(
-            string message,
-            string rql,
-            RqlSourcePosition beginPosition,
-            RqlSourcePosition endPosition)
-            : base(message)
+        public RuntimeException(string error)
+            : base(error)
         {
-            this.Rql = rql;
-            this.BeginPosition = beginPosition;
-            this.EndPosition = endPosition;
+            this.Errors = new[] { error };
         }
 
-        protected RuntimeException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        public RuntimeException(IEnumerable<string> errors)
+            : base(errors.Aggregate((e1, e2) => $"{e1}{Environment.NewLine}{e2}"))
         {
-            this.Rql = info.GetString(nameof(this.Rql));
-            this.BeginPosition = (RqlSourcePosition)info.GetValue(nameof(this.BeginPosition), typeof(RqlSourcePosition));
-            this.EndPosition = (RqlSourcePosition)info.GetValue(nameof(this.EndPosition), typeof(RqlSourcePosition));
+            this.Errors = errors;
         }
 
-        public RqlSourcePosition BeginPosition { get; }
-
-        public RqlSourcePosition EndPosition { get; }
-
-        public string Rql { get; }
+        public IEnumerable<string> Errors { get; }
     }
 }

@@ -1,7 +1,6 @@
 namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 {
     using System;
-    using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime.Types;
 
     internal class EmptyParameterlessFunction : BuiltInFunctionBase
@@ -12,7 +11,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
         public override RqlType ReturnType => RqlTypes.Bool;
 
-        public override IRuntimeValue Call(IInterpreter interpreter, IRuntimeValue instance, IRuntimeValue[] arguments)
+        public override IRuntimeValue Call(IRuntimeValue instance, IRuntimeValue[] arguments)
             => new RqlBool(((RqlArray)instance).Size == 0);
     }
 }
