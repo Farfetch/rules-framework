@@ -13,12 +13,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.MoveNextIfNextToken(TokenType.SET))
+            if (!parseContext.IsMatchCurrentToken(TokenType.SET))
             {
                 throw new InvalidOperationException("Unable to handle updatable attribute expression.");
             }
 
-            if (parseContext.IsMatchNextToken(TokenType.ENDS))
+            if (parseContext.MoveNextIfNextToken(TokenType.ENDS))
             {
                 var dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
@@ -29,7 +29,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return new UpdatableAttributeExpression(dateEnd, UpdatableAttributeKind.DateEnd);
             }
 
-            if (parseContext.IsMatchNextToken(TokenType.PRIORITY))
+            if (parseContext.MoveNextIfNextToken(TokenType.PRIORITY))
             {
                 var priorityOption = this.ParseExpressionWith<PriorityOptionParseStrategy>(parseContext);
                 if (parseContext.PanicMode)

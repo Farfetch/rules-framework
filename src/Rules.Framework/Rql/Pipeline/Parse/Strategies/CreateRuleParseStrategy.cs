@@ -113,6 +113,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             Expression priorityOption = null;
             if (parseContext.MoveNextIfNextToken(TokenType.SET))
             {
+                if (!parseContext.MoveNextIfNextToken(TokenType.PRIORITY))
+                {
+                    parseContext.EnterPanicMode("Expected token 'PRIORITY'.", parseContext.GetCurrentToken());
+                    return (Expression.None, Expression.None, Expression.None);
+                }
+
                 priorityOption = this.ParseExpressionWith<PriorityOptionParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {

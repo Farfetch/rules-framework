@@ -13,15 +13,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.SET))
+            if (!parseContext.IsMatchCurrentToken(TokenType.PRIORITY))
             {
                 throw new InvalidOperationException("Unable to handle priority option expression.");
-            }
-
-            if (!parseContext.MoveNextIfNextToken(TokenType.PRIORITY))
-            {
-                parseContext.EnterPanicMode("Expected token 'PRIORITY'.", parseContext.GetCurrentToken());
-                return Expression.None;
             }
 
             if (parseContext.MoveNextIfNextToken(TokenType.TOP, TokenType.BOTTOM))
