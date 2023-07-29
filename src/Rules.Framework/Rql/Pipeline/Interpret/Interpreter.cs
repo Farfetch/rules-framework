@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using Rules.Framework.Rql.Runtime.Types;
     using Rules.Framework.Rql.Tokens;
 
-    internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<object>>, ISegmentVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
+    internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<IRuntimeValue>>, ISegmentVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
     {
         private readonly IReverseRqlBuilder reverseRqlBuilder;
         private bool disposedValue;
@@ -59,7 +59,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return interpretResult;
         }
 
-        public async Task<object> VisitActivationExpression(ActivationExpression activationExpression)
+        public async Task<IRuntimeValue> VisitActivationExpression(ActivationExpression activationExpression)
         {
             try
             {
@@ -74,12 +74,12 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitAssignExpression(AssignmentExpression assignmentExpression)
+        public async Task<IRuntimeValue> VisitAssignExpression(AssignmentExpression assignmentExpression)
         {
             try
             {
                 var variableName = (RqlString)await assignmentExpression.Left.Accept(this).ConfigureAwait(false);
-                var value = (IRuntimeValue)await assignmentExpression.Right.Accept(this).ConfigureAwait(false);
+                var value = await assignmentExpression.Right.Accept(this).ConfigureAwait(false);
                 return this.runtime.Assign(variableName, value);
             }
             catch (RuntimeException ex)
@@ -88,18 +88,18 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitCallExpression(CallExpression callExpression)
+        public async Task<IRuntimeValue> VisitCallExpression(CallExpression callExpression)
         {
             try
             {
-                var caller = (IRuntimeValue)await callExpression.Instance.Accept(this).ConfigureAwait(false);
+                var caller = await callExpression.Instance.Accept(this).ConfigureAwait(false);
 
                 string callableName = (RqlString)await callExpression.Name.Accept(this).ConfigureAwait(false);
                 int argumentsLength = callExpression.Arguments.Length;
                 var arguments = new IRuntimeValue[argumentsLength];
                 for (int i = 0; i < argumentsLength; i++)
                 {
-                    arguments[i] = (IRuntimeValue)await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
+                    arguments[i] = await callExpression.Arguments[i].Accept(this).ConfigureAwait(false);
                 }
 
                 if (caller is RqlNothing && callExpression.Instance == Expression.None)
@@ -107,7 +107,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                     caller = null;
                 }
 
-                return this.runtime.Call(callableName, caller, arguments);
+                return this.runtime.Call(callableName, caller!, arguments);
             }
             catch (RuntimeException ex)
             {
@@ -115,7 +115,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public Task<object> VisitCardinalitySegment(CardinalitySegment expression) => expression.CardinalityKeyword.Accept(this);
+        public async Task<object> VisitCardinalitySegment(CardinalitySegment expression) => await expression.CardinalityKeyword.Accept(this).ConfigureAwait(false);
 
         public async Task<object> VisitComposedConditionSegment(ComposedConditionSegment expression)
         {
@@ -136,12 +136,12 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitConditionGroupingSegment(ConditionGroupingSegment expression)
             => await expression.RootCondition.Accept(this).ConfigureAwait(false);
 
-        public async Task<object> VisitCreateExpression(CreateExpression createExpression)
+        public async Task<IRuntimeValue> VisitCreateExpression(CreateExpression createExpression)
         {
             var ruleName = (RqlString)await createExpression.RuleName.Accept(this).ConfigureAwait(false);
             var contentTypeName = (RqlString)await createExpression.ContentType.Accept(this).ConfigureAwait(false);
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName.Value, ignoreCase: true);
-            var content = (IRuntimeValue)await createExpression.Content.Accept(this).ConfigureAwait(false);
+            var content = await createExpression.Content.Accept(this).ConfigureAwait(false);
             var dateBegin = (RqlDate)await createExpression.DateBegin.Accept(this).ConfigureAwait(false);
             RqlAny dateEnd = new RqlNothing();
             if (createExpression.DateEnd != null)
@@ -149,7 +149,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 dateEnd = (RqlDate)await createExpression.DateEnd.Accept(this).ConfigureAwait(false);
             }
 
-            IConditionNode<TConditionType> condition = null;
+            IConditionNode<TConditionType> condition = null!;
             if (createExpression.Condition != null)
             {
                 condition = (IConditionNode<TConditionType>)await createExpression.Condition.Accept(this).ConfigureAwait(false);
@@ -168,7 +168,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitDateEndSegment(DateEndSegment dateEndSegment)
             => await dateEndSegment.DateEnd.Accept(this).ConfigureAwait(false);
 
-        public async Task<object> VisitDeactivationExpression(DeactivationExpression deactivationExpression)
+        public async Task<IRuntimeValue> VisitDeactivationExpression(DeactivationExpression deactivationExpression)
         {
             var ruleName = (RqlString)await deactivationExpression.RuleName.Accept(this).ConfigureAwait(false);
             var contentTypeName = (RqlString)await deactivationExpression.ContentType.Accept(this).ConfigureAwait(false);
@@ -183,14 +183,14 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new ExpressionStatementResult(rql, expressionResult);
         }
 
-        public Task<object> VisitIdentifierExpression(IdentifierExpression identifierExpression)
-            => Task.FromResult<object>(new RqlString(identifierExpression.Identifier.UnescapedLexeme));
+        public Task<IRuntimeValue> VisitIdentifierExpression(IdentifierExpression identifierExpression)
+            => Task.FromResult<IRuntimeValue>(new RqlString(identifierExpression.Identifier.UnescapedLexeme));
 
-        public async Task<object> VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
+        public async Task<IRuntimeValue> VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
         {
             try
             {
-                var instance = (IRuntimeValue)await indexerGetExpression.Instance.Accept(this).ConfigureAwait(false);
+                var instance = await indexerGetExpression.Instance.Accept(this).ConfigureAwait(false);
                 var index = (RqlInteger)await indexerGetExpression.Index.Accept(this).ConfigureAwait(false);
                 return this.runtime.GetAtIndex(instance, index);
             }
@@ -200,13 +200,13 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression)
+        public async Task<IRuntimeValue> VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression)
         {
             try
             {
-                var instance = (IRuntimeValue)await indexerSetExpression.Instance.Accept(this).ConfigureAwait(false);
+                var instance = await indexerSetExpression.Instance.Accept(this).ConfigureAwait(false);
                 var index = (RqlInteger)await indexerSetExpression.Index.Accept(this).ConfigureAwait(false);
-                var value = (IRuntimeValue)await indexerSetExpression.Value.Accept(this).ConfigureAwait(false);
+                var value = await indexerSetExpression.Value.Accept(this).ConfigureAwait(false);
                 return this.runtime.SetAtIndex(instance, index, value);
             }
             catch (RuntimeException re)
@@ -223,7 +223,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, inputConditionExpression);
             }
 
-            var conditionValue = (IRuntimeValue)await inputConditionExpression.Right.Accept(this).ConfigureAwait(false);
+            var conditionValue = await inputConditionExpression.Right.Accept(this).ConfigureAwait(false);
             return new Condition<TConditionType>((TConditionType)conditionType, conditionValue.RuntimeValue);
         }
 
@@ -240,12 +240,12 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return conditions;
         }
 
-        public Task<object> VisitKeywordExpression(KeywordExpression keywordExpression)
-            => Task.FromResult<object>(new RqlString(keywordExpression.Keyword.Lexeme));
+        public Task<IRuntimeValue> VisitKeywordExpression(KeywordExpression keywordExpression)
+            => Task.FromResult<IRuntimeValue>(new RqlString(keywordExpression.Keyword.Lexeme));
 
-        public Task<object> VisitLiteralExpression(LiteralExpression literalExpression)
+        public Task<IRuntimeValue> VisitLiteralExpression(LiteralExpression literalExpression)
         {
-            return Task.FromResult<object>(literalExpression.Type switch
+            return Task.FromResult<IRuntimeValue>(literalExpression.Type switch
             {
                 LiteralType.Bool when literalExpression.Value is null => new RqlNothing(),
                 LiteralType.Bool => new RqlBool((bool)literalExpression.Value),
@@ -263,7 +263,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             });
         }
 
-        public async Task<object> VisitMatchExpression(MatchExpression matchExpression)
+        public async Task<IRuntimeValue> VisitMatchExpression(MatchExpression matchExpression)
         {
             var cardinality = (RqlString)await matchExpression.Cardinality.Accept(this).ConfigureAwait(false);
             var contentTypeName = (RqlString)await matchExpression.ContentType.Accept(this).ConfigureAwait(false);
@@ -278,9 +278,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return await this.runtime.MatchRulesAsync(matchCardinality, contentType, matchDate, conditions).ConfigureAwait(false);
         }
 
-        public async Task<object> VisitNewArrayExpression(NewArrayExpression newArrayExpression)
+        public async Task<IRuntimeValue> VisitNewArrayExpression(NewArrayExpression newArrayExpression)
         {
-            var sizeValue = (IRuntimeValue)await newArrayExpression.Size.Accept(this).ConfigureAwait(false);
+            var sizeValue = await newArrayExpression.Size.Accept(this).ConfigureAwait(false);
             var size = sizeValue is RqlInteger integer ? integer.Value : newArrayExpression.Values.Length;
             var rqlArray = new RqlArray(size);
 
@@ -288,7 +288,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 for (var i = 0; i < size; i++)
                 {
-                    var value = (IRuntimeValue)await newArrayExpression.Values[i].Accept(this).ConfigureAwait(false);
+                    var value = await newArrayExpression.Values[i].Accept(this).ConfigureAwait(false);
                     rqlArray.Value[i] = new RqlAny(value);
                 }
             }
@@ -303,7 +303,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return rqlArray;
         }
 
-        public async Task<object> VisitNewObjectExpression(NewObjectExpression newObjectExpression)
+        public async Task<IRuntimeValue> VisitNewObjectExpression(NewObjectExpression newObjectExpression)
         {
             var rqlObject = new RqlObject();
             var propertyAssignments = newObjectExpression.PropertyAssignments;
@@ -311,14 +311,14 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var assignment = (AssignmentExpression)propertyAssignments[i];
                 var left = (RqlString)await assignment.Left.Accept(this).ConfigureAwait(false);
-                var right = (IRuntimeValue)await assignment.Right.Accept(this).ConfigureAwait(false);
+                var right = await assignment.Right.Accept(this).ConfigureAwait(false);
                 rqlObject.SetPropertyValue(left, new RqlAny(right));
             }
 
             return rqlObject;
         }
 
-        public Task<object> VisitNoneExpression(NoneExpression noneExpression) => Task.FromResult<object>(new RqlNothing());
+        public Task<IRuntimeValue> VisitNoneExpression(NoneExpression noneExpression) => Task.FromResult<IRuntimeValue>(new RqlNothing());
 
         public Task<object> VisitNoneSegment(NoneSegment noneSegment) => Task.FromResult<object>(new RqlNothing());
 
@@ -338,8 +338,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 _ => throw new NotSupportedException($"The token type '{operatorExpression.Token.Type}' is not supported as valid operator."),
             });
 
-        public Task<object> VisitPlaceholderExpression(PlaceholderExpression placeholderExpression)
-            => Task.FromResult<object>(new RqlString((string)placeholderExpression.Token.Literal));
+        public Task<IRuntimeValue> VisitPlaceholderExpression(PlaceholderExpression placeholderExpression)
+            => Task.FromResult<IRuntimeValue>(new RqlString((string)placeholderExpression.Token.Literal));
 
         public async Task<object> VisitPriorityOptionSegment(PriorityOptionSegment priorityOptionExpression)
         {
@@ -366,11 +366,11 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
+        public async Task<IRuntimeValue> VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression)
         {
             try
             {
-                var instance = (IRuntimeValue)await propertyGetExpression.Instance.Accept(this).ConfigureAwait(false);
+                var instance = await propertyGetExpression.Instance.Accept(this).ConfigureAwait(false);
                 var propertyName = (RqlString)await propertyGetExpression.Name.Accept(this).ConfigureAwait(false);
                 return this.runtime.GetPropertyValue(instance, propertyName);
             }
@@ -380,13 +380,13 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitPropertySetExpression(PropertySetExpression propertySetExpression)
+        public async Task<IRuntimeValue> VisitPropertySetExpression(PropertySetExpression propertySetExpression)
         {
             try
             {
-                var instance = (IRuntimeValue)await propertySetExpression.Instance.Accept(this).ConfigureAwait(false);
+                var instance = await propertySetExpression.Instance.Accept(this).ConfigureAwait(false);
                 var propertyName = (RqlString)await propertySetExpression.Name.Accept(this).ConfigureAwait(false);
-                var value = (IRuntimeValue)await propertySetExpression.Value.Accept(this).ConfigureAwait(false);
+                var value = await propertySetExpression.Value.Accept(this).ConfigureAwait(false);
                 return this.runtime.SetPropertyValue(instance, propertyName, value);
             }
             catch (RuntimeException re)
@@ -395,7 +395,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitSearchExpression(SearchExpression searchExpression)
+        public async Task<IRuntimeValue> VisitSearchExpression(SearchExpression searchExpression)
         {
             var contentTypeName = (RqlString)await searchExpression.ContentType.Accept(this).ConfigureAwait(false);
             var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName.Value, ignoreCase: true);
@@ -411,7 +411,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return await this.runtime.SearchRulesAsync(contentType, dateBegin, dateEnd, searchArgs).ConfigureAwait(false);
         }
 
-        public async Task<object> VisitUnaryExpression(UnaryExpression unaryExpression)
+        public async Task<IRuntimeValue> VisitUnaryExpression(UnaryExpression unaryExpression)
         {
             try
             {
@@ -420,7 +420,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                     "-" => Runtime.Operators.Minus,
                     _ => Runtime.Operators.None,
                 };
-                var right = (IRuntimeValue)await unaryExpression.Right.Accept(this).ConfigureAwait(false);
+                var right = await unaryExpression.Right.Accept(this).ConfigureAwait(false);
                 return this.runtime.ApplyUnary(right, @operator);
             }
             catch (RuntimeException re)
@@ -446,7 +446,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitUpdateExpression(UpdateExpression updateExpression)
+        public async Task<IRuntimeValue> VisitUpdateExpression(UpdateExpression updateExpression)
         {
             try
             {
@@ -473,7 +473,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var conditionTypeName = (RqlString)await valueConditionExpression.Left.Accept(this).ConfigureAwait(false);
             var conditionType = (TConditionType)Enum.Parse(typeof(TConditionType), conditionTypeName.Value, ignoreCase: true);
             var @operator = (Core.Operators)await valueConditionExpression.Operator.Accept(this).ConfigureAwait(false);
-            var rightOperand = (IRuntimeValue)await valueConditionExpression.Right.Accept(this).ConfigureAwait(false);
+            var rightOperand = await valueConditionExpression.Right.Accept(this).ConfigureAwait(false);
             var dataType = rightOperand switch
             {
                 RqlInteger _ or IEnumerable<RqlInteger> _ => DataTypes.Integer,
@@ -489,12 +489,12 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             var rql = this.reverseRqlBuilder.BuildRql(variableDeclarationStatement);
             var variableName = (RqlString)await variableDeclarationStatement.Name.Accept(this).ConfigureAwait(false);
-            var assignable = (IRuntimeValue)await variableDeclarationStatement.Assignable.Accept(this).ConfigureAwait(false);
+            var assignable = await variableDeclarationStatement.Assignable.Accept(this).ConfigureAwait(false);
             this.runtime.DeclareVariable(variableName, assignable);
             return new NothingStatementResult(rql);
         }
 
-        public async Task<object> VisitVariableExpression(VariableExpression variableExpression)
+        public async Task<IRuntimeValue> VisitVariableExpression(VariableExpression variableExpression)
         {
             try
             {
@@ -514,7 +514,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 if (disposing)
                 {
                     this.runtime.Dispose();
-                    this.runtime = null;
+                    this.runtime = null!;
                 }
 
                 disposedValue = true;
