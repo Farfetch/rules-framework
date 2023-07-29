@@ -118,7 +118,7 @@ namespace Rules.Framework.Rql.Runtime
         {
             try
             {
-                if (instance.Type == RqlTypes.Any)
+                if (instance is not null && instance.Type == RqlTypes.Any)
                 {
                     instance = ((RqlAny)instance).Unwrap();
                 }
