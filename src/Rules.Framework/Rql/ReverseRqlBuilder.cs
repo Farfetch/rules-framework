@@ -3,21 +3,29 @@ namespace Rules.Framework.Rql
     using System;
     using System.Linq;
     using System.Text;
+    using Rules.Framework.Rql.Ast;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Ast.Statements;
 
-    internal class ReverseRqlBuilder : IReverseRqlBuilder, IExpressionVisitor<string>, IStatementVisitor<string>
+    internal class ReverseRqlBuilder : IReverseRqlBuilder, IExpressionVisitor<string>, ISegmentVisitor<string>, IStatementVisitor<string>
     {
         private const char SPACE = ' ';
 
-        public string BuildRql(Expression expression)
+        public string BuildRql(IAstElement astElement)
         {
-            if (expression is null)
+            if (astElement is null)
             {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException(nameof(astElement));
             }
 
-            return expression.Accept(this);
+            return astElement switch
+            {
+                Expression expression => expression.Accept(this),
+                Segment segment => segment.Accept(this),
+                Statement statement => statement.Accept(this),
+                _ => throw new NotSupportedException($"The given AST element is not supported: {astElement.GetType().FullName}."),
+            };
         }
 
         public string BuildRql(Statement statement)
@@ -61,10 +69,10 @@ namespace Rules.Framework.Rql
                 .ToString();
         }
 
-        public string VisitCardinalityExpression(CardinalityExpression expression)
+        public string VisitCardinalitySegment(CardinalitySegment expression)
             => $"{expression.CardinalityKeyword.Accept(this)} {expression.RuleKeyword.Accept(this)}";
 
-        public string VisitComposedConditionExpression(ComposedConditionExpression expression)
+        public string VisitComposedConditionSegment(ComposedConditionSegment expression)
         {
             var logicalOperator = expression.LogicalOperator.Accept(this);
             var stringBuilder = new StringBuilder();
@@ -88,7 +96,7 @@ namespace Rules.Framework.Rql
             return stringBuilder.ToString();
         }
 
-        public string VisitConditionGroupingExpression(ConditionGroupingExpression expression)
+        public string VisitConditionGroupingSegment(ConditionGroupingSegment expression)
             => $"({expression.RootCondition.Accept(this)})";
 
         public string VisitCreateExpression(CreateExpression createExpression)
@@ -136,6 +144,8 @@ namespace Rules.Framework.Rql
             return stringBuilder.ToString();
         }
 
+        public string VisitDateEndSegment(DateEndSegment dateEndSegment) => dateEndSegment.Accept(this);
+
         public string VisitDeactivationExpression(DeactivationExpression deactivationExpression)
         {
             var ruleName = deactivationExpression.RuleName.Accept(this);
@@ -154,7 +164,7 @@ namespace Rules.Framework.Rql
         public string VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression)
             => $"{indexerSetExpression.Instance.Accept(this)}{indexerSetExpression.IndexLeftDelimeter.Lexeme}{indexerSetExpression.Index.Accept(this)}{indexerSetExpression.IndexRightDelimeter.Lexeme} {indexerSetExpression.Assign.Lexeme} {indexerSetExpression.Value.Accept(this)}";
 
-        public string VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
+        public string VisitInputConditionSegment(InputConditionSegment inputConditionExpression)
         {
             var left = inputConditionExpression.Left.Accept(this);
             var @operator = inputConditionExpression.Operator.Lexeme;
@@ -162,7 +172,7 @@ namespace Rules.Framework.Rql
             return $"{left} {@operator} {right}";
         }
 
-        public string VisitInputConditionsExpression(InputConditionsExpression inputConditionsExpression)
+        public string VisitInputConditionsSegment(InputConditionsSegment inputConditionsExpression)
         {
             var inputConditionsRqlBuilder = new StringBuilder();
             if (inputConditionsExpression.InputConditions.Any())
@@ -288,13 +298,15 @@ namespace Rules.Framework.Rql
 
         public string VisitNoneExpression(NoneExpression noneExpression) => string.Empty;
 
+        public string VisitNoneSegment(NoneSegment noneSegment) => string.Empty;
+
         public string VisitNoneStatement(NoneStatement noneStatement) => string.Empty;
 
-        public string VisitOperatorExpression(OperatorExpression operatorExpression) => operatorExpression.Token.Lexeme;
+        public string VisitOperatorSegment(OperatorSegment operatorExpression) => operatorExpression.Token.Lexeme;
 
         public string VisitPlaceholderExpression(PlaceholderExpression placeholderExpression) => placeholderExpression.Token.Lexeme;
 
-        public string VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression)
+        public string VisitPriorityOptionSegment(PriorityOptionSegment priorityOptionExpression)
         {
             var stringBuilder = new StringBuilder("PRIORITY ");
             var priorityOption = priorityOptionExpression.PriorityOption.Accept(this);
@@ -367,7 +379,7 @@ namespace Rules.Framework.Rql
 
         public string VisitUnaryExpression(UnaryExpression expression) => $"{expression.Operator.Lexeme}{expression.Right.Accept(this)}";
 
-        public string VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression) => updatableExpression.UpdatableAttribute.Accept(this);
+        public string VisitUpdatableAttributeSegment(UpdatableAttributeSegment updatableExpression) => updatableExpression.UpdatableAttribute.Accept(this);
 
         public string VisitUpdateExpression(UpdateExpression updateExpression)
         {
@@ -399,7 +411,7 @@ namespace Rules.Framework.Rql
                 .ToString();
         }
 
-        public string VisitValueConditionExpression(ValueConditionExpression valueConditionExpression)
+        public string VisitValueConditionSegment(ValueConditionSegment valueConditionExpression)
             => $"{valueConditionExpression.Left.Accept(this)} {valueConditionExpression.Operator.Accept(this)} {valueConditionExpression.Right.Accept(this)}";
 
         public string VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)

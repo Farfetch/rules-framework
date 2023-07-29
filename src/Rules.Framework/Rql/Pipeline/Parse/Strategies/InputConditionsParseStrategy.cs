@@ -2,17 +2,17 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class InputConditionsParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class InputConditionsParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         public InputConditionsParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
             if (!parseContext.MoveNextIfCurrentToken(TokenType.WITH))
             {
@@ -22,22 +22,22 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             if (!parseContext.IsMatchCurrentToken(TokenType.BRACE_LEFT))
             {
                 parseContext.EnterPanicMode("Expected '{' after WITH.", parseContext.GetCurrentToken());
-                return Expression.None;
+                return Segment.None;
             }
 
             var inputConditionExpression = this.ParseInputCondition(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return Segment.None;
             }
 
-            var inputConditionExpressions = new List<Expression> { inputConditionExpression };
+            var inputConditionExpressions = new List<Segment> { inputConditionExpression };
             while (parseContext.MoveNextIfNextToken(TokenType.COMMA))
             {
                 inputConditionExpression = this.ParseInputCondition(parseContext);
                 if (parseContext.PanicMode)
                 {
-                    return Expression.None;
+                    return Segment.None;
                 }
 
                 inputConditionExpressions.Add(inputConditionExpression);
@@ -46,21 +46,21 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACE_RIGHT))
             {
                 parseContext.EnterPanicMode("Expected ',' or '}' after input condition.", parseContext.GetCurrentToken());
-                return Expression.None;
+                return Segment.None;
             }
 
-            return new InputConditionsExpression(inputConditionExpressions.ToArray());
+            return new InputConditionsSegment(inputConditionExpressions.ToArray());
         }
 
-        private Expression ParseInputCondition(ParseContext parseContext)
+        private Segment ParseInputCondition(ParseContext parseContext)
         {
             if (parseContext.MoveNextIfNextToken(TokenType.PLACEHOLDER))
             {
-                return this.ParseExpressionWith<InputConditionParseStrategy>(parseContext);
+                return this.ParseSegmentWith<InputConditionParseStrategy>(parseContext);
             }
 
             parseContext.EnterPanicMode("Expected placeholder (@<placeholder name>) for condition.", parseContext.GetCurrentToken());
-            return Expression.None;
+            return Segment.None;
         }
     }
 }

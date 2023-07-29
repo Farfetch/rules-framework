@@ -1,10 +1,12 @@
-namespace Rules.Framework.Rql.Ast.Expressions
+using Rules.Framework.Rql.Ast.Expressions;
+
+namespace Rules.Framework.Rql.Ast.Segments
 {
     using Rules.Framework.Rql.Tokens;
 
-    internal class InputConditionExpression : Expression
+    internal class InputConditionSegment : Segment
     {
-        public InputConditionExpression(Expression left, Token @operator, Expression right)
+        public InputConditionSegment(Expression left, Token @operator, Expression right)
             : base(left.BeginPosition, right.EndPosition)
         {
             this.Left = left;
@@ -18,6 +20,6 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Expression Right { get; }
 
-        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitInputConditionExpression(this);
+        public override T Accept<T>(ISegmentVisitor<T> visitor) => visitor.VisitInputConditionSegment(this);
     }
 }

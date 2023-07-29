@@ -2,7 +2,7 @@ namespace Rules.Framework.Rql.Ast.Statements
 {
     using Rules.Framework.Rql;
 
-    internal abstract class Statement
+    internal abstract class Statement : IAstElement
     {
         protected Statement(RqlSourcePosition beginPosition, RqlSourcePosition endPosition)
         {

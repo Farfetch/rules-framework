@@ -1,17 +1,17 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
-    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class PriorityOptionParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class PriorityOptionParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         public PriorityOptionParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
             if (!parseContext.IsMatchCurrentToken(TokenType.PRIORITY))
             {
@@ -28,7 +28,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 if (!parseContext.MoveNextIfNextToken(TokenType.NAME))
                 {
                     parseContext.EnterPanicMode("Expected token 'NAME'.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    return Segment.None;
                 }
 
                 return ParseRuleName(parseContext);
@@ -40,54 +40,54 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
 
             parseContext.EnterPanicMode("Expect one priority option (TOP, BOTTOM, RULE NAME <name>, or NUMBER <priority value>.", parseContext.GetCurrentToken());
-            return Expression.None;
+            return Segment.None;
         }
 
-        private Expression ParsePriorityNumber(ParseContext parseContext)
+        private Segment ParsePriorityNumber(ParseContext parseContext)
         {
             var keyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.INT))
             {
                 parseContext.EnterPanicMode("Expected priority value.", parseContext.GetCurrentToken());
-                return Expression.None;
+                return Segment.None;
             }
 
             var priorityValue = this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return Segment.None;
             }
 
-            return new PriorityOptionExpression(keyword, priorityValue);
+            return new PriorityOptionSegment(keyword, priorityValue);
         }
 
-        private Expression ParseRuleName(ParseContext parseContext)
+        private Segment ParseRuleName(ParseContext parseContext)
         {
             var keyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.STRING))
             {
                 parseContext.EnterPanicMode("Expected rule name.", parseContext.GetCurrentToken());
-                return Expression.None;
+                return Segment.None;
             }
 
             var ruleName = this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return Segment.None;
             }
 
-            return new PriorityOptionExpression(keyword, ruleName);
+            return new PriorityOptionSegment(keyword, ruleName);
         }
 
-        private Expression ParseTopOrBottom(ParseContext parseContext)
+        private Segment ParseTopOrBottom(ParseContext parseContext)
         {
             var keyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return Segment.None;
             }
 
-            return new PriorityOptionExpression(keyword, argument: null);
+            return new PriorityOptionSegment(keyword, argument: null);
         }
     }
 }

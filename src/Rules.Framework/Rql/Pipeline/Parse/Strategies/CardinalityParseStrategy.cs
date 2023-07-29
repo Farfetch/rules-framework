@@ -1,16 +1,16 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
-    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class CardinalityParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class CardinalityParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         public CardinalityParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
             if (parseContext.IsMatchCurrentToken(TokenType.ONE))
             {
@@ -18,12 +18,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 if (!parseContext.MoveNextIfNextToken(TokenType.RULE))
                 {
                     parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    return Segment.None;
                 }
 
                 var ruleKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
 
-                return new CardinalityExpression(oneCardinalityKeyword, ruleKeyword);
+                return new CardinalitySegment(oneCardinalityKeyword, ruleKeyword);
             }
 
             if (parseContext.IsMatchCurrentToken(TokenType.ALL))
@@ -32,16 +32,16 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 if (!parseContext.MoveNextIfNextToken(TokenType.RULES))
                 {
                     parseContext.EnterPanicMode("Expected token 'RULES'.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    return Segment.None;
                 }
 
                 var ruleKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
 
-                return new CardinalityExpression(allCardinalityKeyword, ruleKeyword);
+                return new CardinalitySegment(allCardinalityKeyword, ruleKeyword);
             }
 
             parseContext.EnterPanicMode("Expected tokens 'ONE' or 'ALL'.", parseContext.GetCurrentToken());
-            return Expression.None;
+            return Segment.None;
         }
     }
 }

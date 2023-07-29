@@ -1,5 +1,7 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using Rules.Framework.Rql.Ast.Segments;
+
     internal class CreateExpression : Expression
     {
         public CreateExpression(
@@ -8,8 +10,8 @@ namespace Rules.Framework.Rql.Ast.Expressions
             Expression content,
             Expression dateBegin,
             Expression dateEnd,
-            Expression condition,
-            Expression priorityOption)
+            Segment condition,
+            Segment priorityOption)
             : base(ruleName.BeginPosition, priorityOption?.EndPosition
                     ?? condition?.EndPosition
                     ?? dateEnd?.EndPosition
@@ -24,7 +26,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
             this.PriorityOption = priorityOption;
         }
 
-        public Expression Condition { get; }
+        public Segment Condition { get; }
 
         public Expression Content { get; }
 
@@ -34,7 +36,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Expression DateEnd { get; }
 
-        public Expression PriorityOption { get; }
+        public Segment PriorityOption { get; }
 
         public Expression RuleName { get; }
 

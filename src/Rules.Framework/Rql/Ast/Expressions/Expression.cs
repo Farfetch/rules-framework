@@ -2,7 +2,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
 {
     using Rules.Framework.Rql;
 
-    internal abstract class Expression
+    internal abstract class Expression : IAstElement
     {
         protected Expression(RqlSourcePosition beginPosition, RqlSourcePosition endPosition)
         {

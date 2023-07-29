@@ -2,6 +2,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
     internal class CreateRuleParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
@@ -88,7 +89,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             return this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
         }
 
-        private (Expression, Expression, Expression) ParseOptionals(ParseContext parseContext)
+        private (Expression, Segment, Segment) ParseOptionals(ParseContext parseContext)
         {
             Expression dateEnd = null;
             if (parseContext.MoveNextIfNextToken(TokenType.ENDS))
@@ -96,33 +97,33 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
-                    return (Expression.None, Expression.None, Expression.None);
+                    return (Expression.None, Segment.None, Segment.None);
                 }
             }
 
-            Expression condition = null;
+            Segment condition = null;
             if (parseContext.MoveNextIfNextToken(TokenType.APPLY))
             {
-                condition = this.ParseExpressionWith<ConditionsDefinitionParseStrategy>(parseContext);
+                condition = this.ParseSegmentWith<ConditionsDefinitionParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
-                    return (Expression.None, Expression.None, Expression.None);
+                    return (Expression.None, Segment.None, Segment.None);
                 }
             }
 
-            Expression priorityOption = null;
+            Segment priorityOption = null;
             if (parseContext.MoveNextIfNextToken(TokenType.SET))
             {
                 if (!parseContext.MoveNextIfNextToken(TokenType.PRIORITY))
                 {
                     parseContext.EnterPanicMode("Expected token 'PRIORITY'.", parseContext.GetCurrentToken());
-                    return (Expression.None, Expression.None, Expression.None);
+                    return (Expression.None, Segment.None, Segment.None);
                 }
 
-                priorityOption = this.ParseExpressionWith<PriorityOptionParseStrategy>(parseContext);
+                priorityOption = this.ParseSegmentWith<PriorityOptionParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
-                    return (Expression.None, Expression.None, Expression.None);
+                    return (Expression.None, Segment.None, Segment.None);
                 }
             }
 

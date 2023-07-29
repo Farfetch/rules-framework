@@ -2,6 +2,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
     internal class MatchRulesParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
@@ -18,7 +19,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle match rules expression.");
             }
 
-            var cardinality = this.ParseExpressionWith<CardinalityParseStrategy>(parseContext);
+            var cardinality = this.ParseSegmentWith<CardinalityParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
@@ -42,10 +43,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            Expression inputConditionsExpression;
+            Segment inputConditionsExpression;
             if (parseContext.MoveNextIfNextToken(TokenType.WITH))
             {
-                inputConditionsExpression = this.ParseExpressionWith<InputConditionsParseStrategy>(parseContext);
+                inputConditionsExpression = this.ParseSegmentWith<InputConditionsParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
                     return Expression.None;
@@ -53,7 +54,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
             else
             {
-                inputConditionsExpression = Expression.None;
+                inputConditionsExpression = Segment.None;
             }
 
             return new MatchExpression(cardinality, contentType, matchDate, inputConditionsExpression);

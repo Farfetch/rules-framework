@@ -1,10 +1,11 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
     using System.Linq;
+    using Rules.Framework.Rql.Ast.Segments;
 
     internal class UpdateExpression : Expression
     {
-        public UpdateExpression(Expression ruleName, Expression contentType, Expression[] updatableAttributes)
+        public UpdateExpression(Expression ruleName, Expression contentType, Segment[] updatableAttributes)
             : base(ruleName.BeginPosition, updatableAttributes.Last().EndPosition)
         {
             this.RuleName = ruleName;
@@ -16,7 +17,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Expression RuleName { get; }
 
-        public Expression[] UpdatableAttributes { get; }
+        public Segment[] UpdatableAttributes { get; }
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitUpdateExpression(this);
     }

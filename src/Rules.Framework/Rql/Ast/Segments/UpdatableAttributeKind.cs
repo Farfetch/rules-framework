@@ -1,4 +1,4 @@
-namespace Rules.Framework.Rql.Ast.Expressions
+namespace Rules.Framework.Rql.Ast.Segments
 {
     internal enum UpdatableAttributeKind
     {

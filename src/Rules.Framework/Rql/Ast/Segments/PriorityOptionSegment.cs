@@ -1,8 +1,10 @@
-namespace Rules.Framework.Rql.Ast.Expressions
+namespace Rules.Framework.Rql.Ast.Segments
 {
-    internal class PriorityOptionExpression : Expression
+    using Rules.Framework.Rql.Ast.Expressions;
+
+    internal class PriorityOptionSegment : Segment
     {
-        public PriorityOptionExpression(
+        public PriorityOptionSegment(
             Expression priorityOption,
             Expression argument)
             : base(priorityOption.BeginPosition, argument?.EndPosition ?? priorityOption.EndPosition)
@@ -15,6 +17,6 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Expression PriorityOption { get; }
 
-        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitPriorityOptionExpression(this);
+        public override T Accept<T>(ISegmentVisitor<T> visitor) => visitor.VisitPriorityOptionSegment(this);
     }
 }

@@ -8,12 +8,6 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         T VisitCallExpression(CallExpression callExpression);
 
-        T VisitCardinalityExpression(CardinalityExpression expression);
-
-        T VisitComposedConditionExpression(ComposedConditionExpression expression);
-
-        T VisitConditionGroupingExpression(ConditionGroupingExpression expression);
-
         T VisitCreateExpression(CreateExpression createExpression);
 
         T VisitDeactivationExpression(DeactivationExpression deactivationExpression);
@@ -23,10 +17,6 @@ namespace Rules.Framework.Rql.Ast.Expressions
         T VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression);
 
         T VisitIndexerSetExpression(IndexerSetExpression indexerSetExpression);
-
-        T VisitInputConditionExpression(InputConditionExpression inputConditionExpression);
-
-        T VisitInputConditionsExpression(InputConditionsExpression inputConditionsExpression);
 
         T VisitKeywordExpression(KeywordExpression keywordExpression);
 
@@ -40,11 +30,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         T VisitNoneExpression(NoneExpression noneExpression);
 
-        T VisitOperatorExpression(OperatorExpression operatorExpression);
-
         T VisitPlaceholderExpression(PlaceholderExpression placeholderExpression);
-
-        T VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression);
 
         T VisitPropertyGetExpression(PropertyGetExpression propertyGetExpression);
 
@@ -54,11 +40,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         T VisitUnaryExpression(UnaryExpression expression);
 
-        T VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableExpression);
-
         T VisitUpdateExpression(UpdateExpression updateExpression);
-
-        T VisitValueConditionExpression(ValueConditionExpression valueConditionExpression);
 
         T VisitVariableExpression(VariableExpression variableExpression);
     }

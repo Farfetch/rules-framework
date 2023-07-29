@@ -1,17 +1,17 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
-    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class OperatorParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class OperatorParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         public OperatorParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
             var currentToken = parseContext.GetCurrentToken();
             switch (currentToken.Type)
@@ -24,7 +24,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 case TokenType.NOT_EQUAL:
                 case TokenType.IN:
                 case TokenType.NOT_IN:
-                    return new OperatorExpression(currentToken);
+                    return new OperatorSegment(currentToken);
 
                 default:
                     throw new InvalidOperationException("Unable to handle operator expression.");

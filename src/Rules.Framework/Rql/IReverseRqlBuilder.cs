@@ -1,12 +1,9 @@
 namespace Rules.Framework.Rql
 {
-    using Rules.Framework.Rql.Ast.Expressions;
-    using Rules.Framework.Rql.Ast.Statements;
+    using Rules.Framework.Rql.Ast;
 
     internal interface IReverseRqlBuilder
     {
-        string BuildRql(Expression expression);
-
-        string BuildRql(Statement statement);
+        string BuildRql(IAstElement astElement);
     }
 }

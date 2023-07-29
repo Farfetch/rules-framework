@@ -4,6 +4,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse
     {
         TExpressionParseStrategy GetExpressionParseStrategy<TExpressionParseStrategy>() where TExpressionParseStrategy : IExpressionParseStrategy;
 
+        TSegmentParseStrategy GetSegmentParseStrategy<TSegmentParseStrategy>() where TSegmentParseStrategy : ISegmentParseStrategy;
+
         TStatementParseStrategy GetStatementParseStrategy<TStatementParseStrategy>() where TStatementParseStrategy : IStatementParseStrategy;
     }
 }

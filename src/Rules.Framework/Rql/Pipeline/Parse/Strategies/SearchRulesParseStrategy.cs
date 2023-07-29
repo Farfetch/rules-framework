@@ -2,6 +2,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
     internal class SearchRulesParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
@@ -60,10 +61,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            Expression inputConditionsExpression;
+            Segment inputConditionsExpression;
             if (parseContext.MoveNextIfNextToken(TokenType.WITH))
             {
-                inputConditionsExpression = this.ParseExpressionWith<InputConditionsParseStrategy>(parseContext);
+                inputConditionsExpression = this.ParseSegmentWith<InputConditionsParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
                     return Expression.None;
@@ -71,7 +72,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
             else
             {
-                inputConditionsExpression = Expression.None;
+                inputConditionsExpression = Segment.None;
             }
 
             return new SearchExpression(contentType, dateBegin, dateEnd, inputConditionsExpression);

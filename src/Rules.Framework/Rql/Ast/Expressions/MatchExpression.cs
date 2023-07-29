@@ -1,12 +1,14 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using Rules.Framework.Rql.Ast.Segments;
+
     internal class MatchExpression : Expression
     {
         public MatchExpression(
-            Expression cardinality,
+            Segment cardinality,
             Expression contentType,
             Expression matchDate,
-            Expression inputConditions)
+            Segment inputConditions)
             : base(cardinality.BeginPosition, inputConditions?.EndPosition ?? matchDate.EndPosition)
         {
             this.Cardinality = cardinality;
@@ -15,11 +17,11 @@ namespace Rules.Framework.Rql.Ast.Expressions
             this.InputConditions = inputConditions;
         }
 
-        public Expression Cardinality { get; }
+        public Segment Cardinality { get; }
 
         public Expression ContentType { get; }
 
-        public Expression InputConditions { get; }
+        public Segment InputConditions { get; }
 
         public Expression MatchDate { get; }
 

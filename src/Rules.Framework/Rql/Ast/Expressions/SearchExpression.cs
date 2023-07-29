@@ -1,11 +1,13 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using Rules.Framework.Rql.Ast.Segments;
+
     internal class SearchExpression : Expression
     {
         public SearchExpression(Expression contentType,
             Expression dateBegin,
             Expression dateEnd,
-            Expression inputConditions)
+            Segment inputConditions)
             : base(contentType.BeginPosition, inputConditions?.EndPosition ?? dateEnd.EndPosition)
         {
             this.ContentType = contentType;
@@ -20,7 +22,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Expression DateEnd { get; }
 
-        public Expression InputConditions { get; }
+        public Segment InputConditions { get; }
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitSearchExpression(this);
     }

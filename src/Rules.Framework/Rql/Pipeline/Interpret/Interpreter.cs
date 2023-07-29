@@ -5,14 +5,16 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Rql.Ast;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Ast.Statements;
     using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.RuleManipulation;
     using Rules.Framework.Rql.Runtime.Types;
     using Rules.Framework.Rql.Tokens;
 
-    internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
+    internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<object>>, ISegmentVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
     {
         private readonly IReverseRqlBuilder reverseRqlBuilder;
         private bool disposedValue;
@@ -113,9 +115,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public Task<object> VisitCardinalityExpression(CardinalityExpression expression) => expression.CardinalityKeyword.Accept(this);
+        public Task<object> VisitCardinalitySegment(CardinalitySegment expression) => expression.CardinalityKeyword.Accept(this);
 
-        public async Task<object> VisitComposedConditionExpression(ComposedConditionExpression expression)
+        public async Task<object> VisitComposedConditionSegment(ComposedConditionSegment expression)
         {
             var logicalOperatorName = (RqlString)await expression.LogicalOperator.Accept(this).ConfigureAwait(false);
             var logicalOperator = Enum.Parse<LogicalOperators>(logicalOperatorName.Value, ignoreCase: true);
@@ -131,7 +133,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new ComposedConditionNode<TConditionType>(logicalOperator, childConditionNodes);
         }
 
-        public async Task<object> VisitConditionGroupingExpression(ConditionGroupingExpression expression)
+        public async Task<object> VisitConditionGroupingSegment(ConditionGroupingSegment expression)
             => await expression.RootCondition.Accept(this).ConfigureAwait(false);
 
         public async Task<object> VisitCreateExpression(CreateExpression createExpression)
@@ -162,6 +164,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var createRuleArgs = CreateRuleArgs<TContentType, TConditionType>.Create(contentType, ruleName, content, dateBegin, dateEnd, condition, priorityOption);
             return await this.runtime.CreateRuleAsync(createRuleArgs).ConfigureAwait(false);
         }
+
+        public async Task<object> VisitDateEndSegment(DateEndSegment dateEndSegment)
+            => await dateEndSegment.DateEnd.Accept(this).ConfigureAwait(false);
 
         public async Task<object> VisitDeactivationExpression(DeactivationExpression deactivationExpression)
         {
@@ -210,7 +215,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitInputConditionExpression(InputConditionExpression inputConditionExpression)
+        public async Task<object> VisitInputConditionSegment(InputConditionSegment inputConditionExpression)
         {
             var conditionTypeName = (RqlString)await inputConditionExpression.Left.Accept(this).ConfigureAwait(false);
             if (!Enum.TryParse(typeof(TConditionType), conditionTypeName.Value, out var conditionType))
@@ -222,7 +227,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new Condition<TConditionType>((TConditionType)conditionType, conditionValue.RuntimeValue);
         }
 
-        public async Task<object> VisitInputConditionsExpression(InputConditionsExpression inputConditionsExpression)
+        public async Task<object> VisitInputConditionsSegment(InputConditionsSegment inputConditionsExpression)
         {
             var inputConditions = inputConditionsExpression.InputConditions;
             var inputConditionsLength = inputConditions.Length;
@@ -315,9 +320,11 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public Task<object> VisitNoneExpression(NoneExpression noneExpression) => Task.FromResult<object>(new RqlNothing());
 
+        public Task<object> VisitNoneSegment(NoneSegment noneSegment) => Task.FromResult<object>(new RqlNothing());
+
         public Task<IResult> VisitNoneStatement(NoneStatement statement) => Task.FromResult<IResult>(new ExpressionStatementResult(string.Empty, new RqlNothing()));
 
-        public Task<object> VisitOperatorExpression(OperatorExpression operatorExpression)
+        public Task<object> VisitOperatorSegment(OperatorSegment operatorExpression)
             => Task.FromResult<object>(result: operatorExpression.Token.Type switch
             {
                 TokenType.EQUAL => Core.Operators.Equal,
@@ -334,7 +341,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public Task<object> VisitPlaceholderExpression(PlaceholderExpression placeholderExpression)
             => Task.FromResult<object>(new RqlString((string)placeholderExpression.Token.Literal));
 
-        public async Task<object> VisitPriorityOptionExpression(PriorityOptionExpression priorityOptionExpression)
+        public async Task<object> VisitPriorityOptionSegment(PriorityOptionSegment priorityOptionExpression)
         {
             var option = (RqlString)await priorityOptionExpression.PriorityOption.Accept(this).ConfigureAwait(false);
             var optionAsUppercase = option.Value.ToUpperInvariant();
@@ -422,7 +429,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitUpdatableAttributeExpression(UpdatableAttributeExpression updatableAttributeExpression)
+        public async Task<object> VisitUpdatableAttributeSegment(UpdatableAttributeSegment updatableAttributeExpression)
         {
             var updatableAttributeExpressionValue = await updatableAttributeExpression.UpdatableAttribute.Accept(this).ConfigureAwait(false);
             switch (updatableAttributeExpression.Kind)
@@ -461,7 +468,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<object> VisitValueConditionExpression(ValueConditionExpression valueConditionExpression)
+        public async Task<object> VisitValueConditionSegment(ValueConditionSegment valueConditionExpression)
         {
             var conditionTypeName = (RqlString)await valueConditionExpression.Left.Accept(this).ConfigureAwait(false);
             var conditionType = (TConditionType)Enum.Parse(typeof(TConditionType), conditionTypeName.Value, ignoreCase: true);
@@ -514,21 +521,21 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        private Exception CreateInterpreterException(IEnumerable<string> errors, Expression expression)
+        private Exception CreateInterpreterException(IEnumerable<string> errors, IAstElement astElement)
         {
-            var rql = this.reverseRqlBuilder.BuildRql(expression);
+            var rql = this.reverseRqlBuilder.BuildRql(astElement);
             var separator = $"{Environment.NewLine}\t - ";
             var errorsText = string.Join(separator, errors);
             return new InterpreterException(
                 $"Errors have occurred while executing sentence:{separator}{errorsText}",
                 rql,
-                expression.BeginPosition,
-                expression.EndPosition);
+                astElement.BeginPosition,
+                astElement.EndPosition);
         }
 
-        private Exception CreateInterpreterException(string error, Expression expression)
+        private Exception CreateInterpreterException(string error, IAstElement astElement)
         {
-            return CreateInterpreterException(new[] { error }, expression);
+            return CreateInterpreterException(new[] { error }, astElement);
         }
     }
 }

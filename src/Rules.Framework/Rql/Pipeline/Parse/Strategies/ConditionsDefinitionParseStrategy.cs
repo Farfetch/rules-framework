@@ -1,17 +1,17 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
-    using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class ConditionsDefinitionParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class ConditionsDefinitionParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         public ConditionsDefinitionParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
             if (!parseContext.MoveNextIfCurrentToken(TokenType.APPLY))
             {
@@ -21,10 +21,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             if (!parseContext.MoveNextIfCurrentToken(TokenType.WHEN))
             {
                 parseContext.EnterPanicMode("Expect token 'WHEN'.", parseContext.GetCurrentToken());
-                return Expression.None;
+                return Segment.None;
             }
 
-            return this.ParseExpressionWith<ConditionGroupingParseStrategy>(parseContext);
+            return this.ParseSegmentWith<ConditionGroupingParseStrategy>(parseContext);
         }
     }
 }

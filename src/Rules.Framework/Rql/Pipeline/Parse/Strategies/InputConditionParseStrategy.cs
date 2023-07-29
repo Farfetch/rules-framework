@@ -1,16 +1,17 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class InputConditionParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class InputConditionParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         public InputConditionParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
             if (parseContext.IsMatchCurrentToken(TokenType.PLACEHOLDER))
             {
@@ -20,7 +21,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 if (!parseContext.MoveNextIfNextToken(TokenType.IS))
                 {
                     parseContext.EnterPanicMode("Expected token 'IS'.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    return Segment.None;
                 }
 
                 var operatorToken = parseContext.GetCurrentToken();
@@ -30,18 +31,18 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     var rightExpression = this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
                     if (parseContext.PanicMode)
                     {
-                        return Expression.None;
+                        return Segment.None;
                     }
 
-                    return new InputConditionExpression(leftExpression, operatorToken, rightExpression);
+                    return new InputConditionSegment(leftExpression, operatorToken, rightExpression);
                 }
 
                 parseContext.EnterPanicMode("Expected literal for condition", parseContext.GetCurrentToken());
-                return Expression.None;
+                return Segment.None;
             }
 
             parseContext.EnterPanicMode("Expected placeholder (@<placeholder name>) for condition", parseContext.GetCurrentToken());
-            return Expression.None;
+            return Segment.None;
         }
     }
 }

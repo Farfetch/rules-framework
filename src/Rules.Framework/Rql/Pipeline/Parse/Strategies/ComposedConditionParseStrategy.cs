@@ -2,32 +2,33 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System.Collections.Generic;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class ComposedConditionParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class ComposedConditionParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         public ComposedConditionParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
-            var conditionGrouping = this.ParseExpressionWith<ConditionGroupingParseStrategy>(parseContext);
+            var conditionGrouping = this.ParseSegmentWith<ConditionGroupingParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return Segment.None;
             }
 
             if (!parseContext.IsMatchNextToken(TokenType.AND, TokenType.OR))
             {
                 parseContext.EnterPanicMode("Expected logical operator ('AND' or 'OR').", parseContext.GetCurrentToken());
-                return Expression.None;
+                return Segment.None;
             }
 
             TokenType logicalOperatorTokenType = TokenType.None;
             Expression logicalOperator = null;
-            var childConditions = new List<Expression> { conditionGrouping };
+            var childConditions = new List<Segment> { conditionGrouping };
             while (parseContext.MoveNextIfNextToken(TokenType.AND, TokenType.OR))
             {
                 if (logicalOperatorTokenType == TokenType.None)
@@ -36,31 +37,31 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     logicalOperator = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
                     if (parseContext.PanicMode)
                     {
-                        return Expression.None;
+                        return Segment.None;
                     }
                 }
                 else if (!parseContext.IsMatchCurrentToken(logicalOperatorTokenType))
                 {
                     parseContext.EnterPanicMode("Mixup of logical operators ('AND' + 'OR') under the same condition grouping is not supported.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    return Segment.None;
                 }
 
                 if (!parseContext.MoveNext())
                 {
                     parseContext.EnterPanicMode("Expected condition after logical operator .", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    return Segment.None;
                 }
 
-                var nextCondition = this.ParseExpressionWith<ConditionGroupingParseStrategy>(parseContext);
+                var nextCondition = this.ParseSegmentWith<ConditionGroupingParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
-                    return Expression.None;
+                    return Segment.None;
                 }
 
                 childConditions.Add(nextCondition);
             }
 
-            return new ComposedConditionExpression(logicalOperator, childConditions.ToArray());
+            return new ComposedConditionSegment(logicalOperator, childConditions.ToArray());
         }
     }
 }

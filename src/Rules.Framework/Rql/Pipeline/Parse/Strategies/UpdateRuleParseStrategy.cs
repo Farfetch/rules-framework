@@ -3,6 +3,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
     using System;
     using System.Collections.Generic;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
     internal class UpdateRuleParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
@@ -49,8 +50,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            var updatableAttribute = this.ParseExpressionWith<UpdatableAttributeParseStrategy>(parseContext);
-            var updatableAttributes = new List<Expression> { updatableAttribute };
+            var updatableAttribute = this.ParseSegmentWith<UpdatableAttributeParseStrategy>(parseContext);
+            var updatableAttributes = new List<Segment> { updatableAttribute };
             while (parseContext.MoveNextIfNextToken(TokenType.COMMA))
             {
                 if (!parseContext.MoveNextIfNextToken(TokenType.SET))
@@ -59,7 +60,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return Expression.None;
                 }
 
-                updatableAttribute = this.ParseExpressionWith<UpdatableAttributeParseStrategy>(parseContext);
+                updatableAttribute = this.ParseSegmentWith<UpdatableAttributeParseStrategy>(parseContext);
                 updatableAttributes.Add(updatableAttribute);
             }
 
