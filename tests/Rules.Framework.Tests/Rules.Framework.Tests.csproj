@@ -7,6 +7,14 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <LangVersion>10.0</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <LangVersion>10.0</LangVersion>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<None Remove="Evaluation\Compiled\ConditionBuilders\OneToOneValueConditionNodeExpressionBuilderTests.GoldenFile1.csx" />
 		<None Remove="Evaluation\Compiled\ManyToManyValueConditionNodeExpressionBuilderTests.GoldenFile1.csx" />

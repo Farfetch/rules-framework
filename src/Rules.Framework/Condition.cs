@@ -13,12 +13,12 @@ namespace Rules.Framework
         /// <summary>
         /// Creates a Condition.
         /// </summary>
-        /// <param name="Type">The type of the condition.</param>
-        /// <param name="Value">The value of the condition.</param>
-        public Condition(TConditionType Type, object Value)
+        /// <param name="type">The type of the condition.</param>
+        /// <param name="value">The value of the condition.</param>
+        public Condition(TConditionType type, object value)
         {
-            this.Type = Type;
-            this.Value = Value;
+            this.Type = type;
+            this.Value = value;
         }
 
         /// <summary>

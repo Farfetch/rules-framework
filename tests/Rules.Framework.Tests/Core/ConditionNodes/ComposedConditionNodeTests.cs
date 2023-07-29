@@ -39,7 +39,7 @@ namespace Rules.Framework.Tests.Core.ConditionNodes
             var valueConditionNode = actual.As<ComposedConditionNode<ConditionType>>();
             valueConditionNode.LogicalOperator.Should().Be(expectedLogicalOperator);
             valueConditionNode.ChildConditionNodes.Should().BeEquivalentTo(expectedChildConditionNodes);
-            valueConditionNode.Properties.Should().BeEmpty();
+            valueConditionNode.Properties.Should().BeEquivalentTo(sut.Properties);
         }
 
         [Fact]

@@ -1,6 +1,7 @@
 namespace Rules.Framework.Providers.MongoDb.Serialization
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Dynamic;
     using System.Globalization;
@@ -11,6 +12,15 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
 
     internal sealed class DynamicToStrongTypeContentSerializer : IContentSerializer
     {
+        private static readonly Type expandoObjectType = typeof(ExpandoObject);
+
+        private static readonly Type objectType = typeof(object);
+
+        private static readonly Type stringType = typeof(string);
+
+        private static readonly ConcurrentDictionary<string, IDictionary<string, PropertyInfo>> typePropertiesCache
+                            = new ConcurrentDictionary<string, IDictionary<string, PropertyInfo>>(StringComparer.Ordinal);
+
         public object Deserialize(object serializedContent, Type type)
         {
             if (serializedContent is null)
@@ -24,34 +34,73 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
             }
 
             var serializedContentType = serializedContent.GetType();
-            if (serializedContentType.IsValueType || typeof(string).IsAssignableFrom(serializedContentType))
+            if (serializedContentType.IsValueType || stringType.IsAssignableFrom(serializedContentType))
             {
                 return Parse(serializedContent, type);
             }
 
-            if (!typeof(ExpandoObject).IsAssignableFrom(serializedContentType))
+            if (!expandoObjectType.IsAssignableFrom(serializedContentType))
             {
                 throw new NotSupportedException($"The serialized content type is not supported for deserialization: {serializedContent.GetType().FullName}");
             }
 
-            var serializedContentDictionary = serializedContent as IDictionary<string, object>;
-            var reflectionInformation = type
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .ToDictionary(x => x.Name, StringComparer.Ordinal);
-            object deserializedRepresentation = null;
+            if (type == objectType || type == expandoObjectType)
+            {
+                return serializedContent;
+            }
 
+            return DeserializeToType((IDictionary<string, object>)serializedContent, type);
+        }
+
+        public object Serialize(object content)
+        {
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            var type = content.GetType();
+
+            if (type.IsEnum)
+            {
+                // Returns the enum literal name, and if that's not available (i.e. no literal
+                // defined for the value), return the value itself
+                return Enum.GetName(type, content) ?? content;
+            }
+
+            if (type == stringType || type == expandoObjectType)
+            {
+                return content;
+            }
+
+            var reflectedProperties = GetReflectedProperties(type);
+            var serializedContent = new ExpandoObject();
+            foreach (var key in reflectedProperties.Keys)
+            {
+                var propertyValue = reflectedProperties[key].GetValue(content);
+                serializedContent.TryAdd(key, propertyValue);
+            }
+
+            return serializedContent;
+        }
+
+        private static object DeserializeToType(IDictionary<string, object> serializedContent, Type type)
+        {
+            var serializedContentDictionary = serializedContent;
+            var reflectedProperties = GetReflectedProperties(type);
+            object deserializedRepresentation;
             try
             {
-                deserializedRepresentation = Activator.CreateInstance(type, true);
+                deserializedRepresentation = Activator.CreateInstance(type, nonPublic: true);
             }
-            catch (MissingMethodException mme) when (mme.Message.Contains("parameterless"))
+            catch (MissingMethodException mme) when (mme.Message.Contains("parameterless", StringComparison.Ordinal))
             {
                 throw new NotSupportedException($"The target type '{type.FullName}' must define a default (no parameters) constructor.", mme);
             }
 
             foreach (string key in serializedContentDictionary.Keys)
             {
-                if (reflectionInformation.TryGetValue(key, out PropertyInfo currentPropertyInfo))
+                if (reflectedProperties.TryGetValue(key, out PropertyInfo currentPropertyInfo))
                 {
                     var serializedPropertyValue = serializedContentDictionary[key];
 
@@ -73,7 +122,11 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
             return deserializedRepresentation;
         }
 
-        public object Serialize(object content) => throw new NotSupportedException();
+        private static IDictionary<string, PropertyInfo> GetReflectedProperties(Type type) => typePropertiesCache.GetOrAdd(
+            type.FullName,
+            (_, t) => t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .ToDictionary(x => x.Name, StringComparer.Ordinal),
+            type);
 
         private static object Parse(object value, Type type)
         {

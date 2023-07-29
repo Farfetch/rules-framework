@@ -2,10 +2,8 @@ namespace Rules.Framework.Providers.InMemory
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
-    using Rules.Framework.Providers.InMemory.DataModel;
 
     /// <summary>
     /// The rules data source implementation for usage backed with a in-memory database.
@@ -39,12 +37,11 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            return Task.Run(() =>
-            {
-                RuleDataModel<TContentType, TConditionType> ruleDataModel = this.ruleFactory.CreateRule(rule);
+            var ruleDataModel = this.ruleFactory.CreateRule(rule);
 
-                this.inMemoryRulesStorage.AddRule(ruleDataModel);
-            });
+            this.inMemoryRulesStorage.AddRule(ruleDataModel);
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -57,17 +54,25 @@ namespace Rules.Framework.Providers.InMemory
         /// <returns></returns>
         public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
         {
-            return Task.Run(() =>
+            var filteredByContent = this.inMemoryRulesStorage.GetRulesBy(contentType);
+
+            var filteredRules = new Rule<TContentType, TConditionType>[filteredByContent.Count];
+            var i = 0;
+            foreach (var ruleDataModel in filteredByContent)
             {
-                var filteredByContent = this.inMemoryRulesStorage.GetRulesBy(contentType);
+                if (ruleDataModel.DateBegin <= dateEnd && (ruleDataModel.DateEnd is null || ruleDataModel.DateEnd > dateBegin))
+                {
+                    var rule = this.ruleFactory.CreateRule(ruleDataModel);
+                    filteredRules[i++] = rule;
+                }
+            }
 
-                var filteredByDate = filteredByContent.Where(rule =>
-                    rule.DateBegin <= dateEnd
-                    && (rule.DateEnd is null || rule.DateEnd > dateBegin)
-                );
+            if (filteredRules.Length > i)
+            {
+                Array.Resize(ref filteredRules, i);
+            }
 
-                return filteredByDate.Select(r => this.ruleFactory.CreateRule(r)).AsEnumerable();
-            });
+            return Task.FromResult<IEnumerable<Rule<TContentType, TConditionType>>>(filteredRules);
         }
 
         /// <summary>
@@ -83,29 +88,40 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(rulesFilterArgs));
             }
 
-            return Task.Run(() =>
+            var ruleDataModels = this.inMemoryRulesStorage.GetAllRules();
+
+            var filteredRules = new Rule<TContentType, TConditionType>[ruleDataModels.Count];
+            var i = 0;
+            foreach (var ruleDataModel in ruleDataModels)
             {
-                IEnumerable<RuleDataModel<TContentType, TConditionType>> ruleDataModels = this.inMemoryRulesStorage.GetAllRules();
-
-                IEnumerable<RuleDataModel<TContentType, TConditionType>> filtered = ruleDataModels;
-
-                if (!object.Equals(rulesFilterArgs.ContentType, default(TContentType)))
+                if (!object.Equals(rulesFilterArgs.ContentType, default(TContentType))
+                    && !object.Equals(ruleDataModel.ContentType, rulesFilterArgs.ContentType))
                 {
-                    filtered = filtered.Where(r => object.Equals(r.ContentType, rulesFilterArgs.ContentType));
+                    continue;
                 }
 
-                if (!string.IsNullOrWhiteSpace(rulesFilterArgs.Name))
+                if (!string.IsNullOrWhiteSpace(rulesFilterArgs.Name)
+                    && !string.Equals(ruleDataModel.Name, rulesFilterArgs.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    filtered = filtered.Where(r => string.Equals(r.Name, rulesFilterArgs.Name, StringComparison.InvariantCultureIgnoreCase));
+                    continue;
                 }
 
-                if (rulesFilterArgs.Priority.HasValue)
+                if (rulesFilterArgs.Priority.HasValue
+                    && ruleDataModel.Priority == rulesFilterArgs.Priority)
                 {
-                    filtered = filtered.Where(r => r.Priority == rulesFilterArgs.Priority);
+                    continue;
                 }
 
-                return filtered.Select(r => this.ruleFactory.CreateRule(r)).AsEnumerable();
-            });
+                var rule = this.ruleFactory.CreateRule(ruleDataModel);
+                filteredRules[i++] = rule;
+            }
+
+            if (filteredRules.Length > i)
+            {
+                Array.Resize(ref filteredRules, i);
+            }
+
+            return Task.FromResult<IEnumerable<Rule<TContentType, TConditionType>>>(filteredRules);
         }
 
         /// <summary>
@@ -121,12 +137,11 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            return Task.Run(() =>
-            {
-                RuleDataModel<TContentType, TConditionType> newRuleDataModel = this.ruleFactory.CreateRule(rule);
+            var newRuleDataModel = this.ruleFactory.CreateRule(rule);
 
-                this.inMemoryRulesStorage.UpdateRule(newRuleDataModel);
-            });
+            this.inMemoryRulesStorage.UpdateRule(newRuleDataModel);
+
+            return Task.CompletedTask;
         }
     }
 }

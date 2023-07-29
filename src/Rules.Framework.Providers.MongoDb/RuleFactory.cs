@@ -60,11 +60,12 @@ namespace Rules.Framework.Providers.MongoDb
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            var content = rule.ContentContainer.GetContentAs<dynamic>();
+            var content = rule.ContentContainer.GetContentAs<object>();
+            var serializedContent = this.contentSerializationProvider.GetContentSerializer(rule.ContentContainer.ContentType).Serialize(content);
 
             var ruleDataModel = new RuleDataModel
             {
-                Content = content,
+                Content = serializedContent,
                 ContentType = Convert.ToString(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
@@ -89,10 +90,12 @@ namespace Rules.Framework.Providers.MongoDb
 
             var composedConditionNodeBuilder = conditionNodeBuilder.AsComposed()
                 .WithLogicalOperator(composedConditionNodeDataModel.LogicalOperator);
-
-            foreach (ConditionNodeDataModel child in composedConditionNodeDataModel.ChildConditionNodes)
+            var childConditionNodes = composedConditionNodeDataModel.ChildConditionNodes;
+            var count = childConditionNodes.Length;
+            var i = -1;
+            while (++i < count)
             {
-                composedConditionNodeBuilder.AddCondition(cnb => ConvertConditionNode(cnb, child));
+                composedConditionNodeBuilder.AddCondition(cnb => ConvertConditionNode(cnb, childConditionNodes[i]));
             }
 
             var composedConditionNode = composedConditionNodeBuilder.Build();
@@ -104,15 +107,20 @@ namespace Rules.Framework.Providers.MongoDb
             return composedConditionNode;
         }
 
-        private static ValueConditionNodeDataModel ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode) => new ValueConditionNodeDataModel
+        private static ValueConditionNodeDataModel ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode)
         {
-            ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
-            LogicalOperator = LogicalOperators.Eval,
-            DataType = valueConditionNode.DataType,
-            Operand = valueConditionNode.Operand,
-            Operator = valueConditionNode.Operator,
-            Properties = valueConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
-        };
+            var properties = FilterProperties(valueConditionNode.Properties);
+
+            return new ValueConditionNodeDataModel
+            {
+                ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
+                LogicalOperator = LogicalOperators.Eval,
+                DataType = valueConditionNode.DataType,
+                Operand = valueConditionNode.Operand,
+                Operator = valueConditionNode.Operator,
+                Properties = properties,
+            };
+        }
 
         private static IConditionNode<TConditionType> CreateValueConditionNode(IConditionNodeBuilder<TConditionType> conditionNodeBuilder, ValueConditionNodeDataModel conditionNodeDataModel)
         {
@@ -125,19 +133,19 @@ namespace Rules.Framework.Providers.MongoDb
                     .SetOperand(Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                     .Build(),
                 DataTypes.Decimal => conditionNodeBuilder.AsValued(conditionType)
-                   .OfDataType<decimal>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
-                   .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                   .Build(),
+                    .OfDataType<decimal>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
+                    .Build(),
                 DataTypes.String => conditionNodeBuilder.AsValued(conditionType)
-                   .OfDataType<string>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
-                   .SetOperand(Convert.ToString(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
-                   .Build(),
+                    .OfDataType<string>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(Convert.ToString(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
+                    .Build(),
                 DataTypes.Boolean => conditionNodeBuilder.AsValued(conditionType)
-                   .OfDataType<bool>()
-                   .WithComparisonOperator(conditionNodeDataModel.Operator)
-                   .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
+                    .OfDataType<bool>()
+                    .WithComparisonOperator(conditionNodeDataModel.Operator)
+                    .SetOperand(Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture))
                     .Build(),
 
                 DataTypes.ArrayInteger => conditionNodeBuilder.AsValued(conditionType)
@@ -171,6 +179,22 @@ namespace Rules.Framework.Providers.MongoDb
             return valueConditionNode;
         }
 
+        private static IDictionary<string, object> FilterProperties(IDictionary<string, object> source)
+        {
+            var properties = new Dictionary<string, object>(StringComparer.Ordinal);
+            foreach (var property in source)
+            {
+                if (property.Key.StartsWith("_compilation", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                properties[property.Key] = property.Value;
+            }
+
+            return properties;
+        }
+
         private static T Parse<T>(string value)
             => (T)Parse(value, typeof(T));
 
@@ -179,18 +203,20 @@ namespace Rules.Framework.Providers.MongoDb
 
         private ConditionNodeDataModel ConvertComposedConditionNode(ComposedConditionNode<TConditionType> composedConditionNode)
         {
-            var conditionNodeDataModels = new List<ConditionNodeDataModel>(composedConditionNode.ChildConditionNodes.Count());
-
+            var conditionNodeDataModels = new ConditionNodeDataModel[composedConditionNode.ChildConditionNodes.Count()];
+            var i = 0;
             foreach (var child in composedConditionNode.ChildConditionNodes)
             {
-                conditionNodeDataModels.Add(this.ConvertConditionNode(child));
+                conditionNodeDataModels[i++] = this.ConvertConditionNode(child);
             }
+
+            var properties = FilterProperties(composedConditionNode.Properties);
 
             return new ComposedConditionNodeDataModel
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator,
-                Properties = composedConditionNode.Properties.ToDictionary(x => x.Key, x => x.Value, StringComparer.Ordinal),
+                Properties = properties,
             };
         }
 

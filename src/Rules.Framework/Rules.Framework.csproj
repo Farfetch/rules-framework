@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <LangVersion>9.0</LangVersion>
+        <LangVersion>10.0</LangVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Authors></Authors>
         <Version></Version>
@@ -17,6 +17,9 @@
         <PackageTags>rules rulesframework</PackageTags>
         <Description>A generic rules framework that allows defining and evaluating rules for complex business scenarios.</Description>
         <Copyright></Copyright>
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

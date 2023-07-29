@@ -19,13 +19,7 @@ namespace Rules.Framework.Evaluation.Interpreted
         }
 
         public Func<IDictionary<TConditionType, object>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
-        {
-            return valueConditionNode switch
-            {
-                ValueConditionNode<TConditionType> valueConditionNodeImpl => (conditions) => Eval(conditions, valueConditionNodeImpl, matchMode),
-                _ => throw new NotSupportedException($"Unsupported value condition node: '{valueConditionNode.GetType().Name}'."),
-            };
-        }
+            => (conditions) => Eval(conditions, valueConditionNode, matchMode);
 
         private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
         {
@@ -48,9 +42,9 @@ namespace Rules.Framework.Evaluation.Interpreted
                 }
             }
 
-            var conditionEvalDispatcher = this.conditionEvalDispatchProvider.GetEvalDispatcher(leftOperand, valueConditionNode.Operator, rightOperand);
+            var conditionEvalDispatcher = this.conditionEvalDispatchProvider.GetEvalDispatcher(leftOperand!, valueConditionNode.Operator, rightOperand);
 
-            return conditionEvalDispatcher.EvalDispatch(valueConditionNode.DataType, leftOperand, valueConditionNode.Operator, rightOperand);
+            return conditionEvalDispatcher.EvalDispatch(valueConditionNode.DataType, leftOperand!, valueConditionNode.Operator, rightOperand);
         }
     }
 }

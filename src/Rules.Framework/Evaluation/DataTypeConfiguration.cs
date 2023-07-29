@@ -5,8 +5,14 @@ namespace Rules.Framework.Evaluation
 
     internal sealed class DataTypeConfiguration
     {
-        private DataTypeConfiguration()
+        private DataTypeConfiguration(
+            DataTypes dataType,
+            Type type,
+            object @default)
         {
+            this.DataType = dataType;
+            this.Type = type;
+            this.Default = @default;
         }
 
         public DataTypes DataType { get; private set; }
@@ -22,12 +28,7 @@ namespace Rules.Framework.Evaluation
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return new DataTypeConfiguration
-            {
-                DataType = dataType,
-                Default = @default,
-                Type = type,
-            };
+            return new DataTypeConfiguration(dataType, type, @default);
         }
     }
 }

@@ -1,9 +1,7 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using BenchmarkDotNet.Attributes;
-    using Rules.Framework.Core;
 
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark1 : IBenchmark
@@ -13,6 +11,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
+
+        [Params("in-memory", "mongo-db")]
+        public string? Provider { get; set; }
 
         [Benchmark]
         public async Task RunAsync()
@@ -26,7 +27,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
             this.rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<ContentTypes>()
                 .WithConditionType<ConditionTypes>()
-                .SetDataSource(new InMemoryRulesDataSource<ContentTypes, ConditionTypes>(Enumerable.Empty<Rule<ContentTypes, ConditionTypes>>()))
+                .SetDataSourceForBenchmark(this.Provider!, nameof(Benchmark1))
                 .Configure(options =>
                 {
                     options.EnableCompilation = this.EnableCompilation;
@@ -42,8 +43,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
         [GlobalCleanup]
         public async Task TearDownAsync()
         {
+            await Extensions.TearDownProviderAsync(this.Provider!, nameof(Benchmark1)).ConfigureAwait(false);
             this.rulesEngine = null;
-            await Task.CompletedTask.ConfigureAwait(false);
         }
     }
 }

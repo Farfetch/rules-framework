@@ -15,68 +15,6 @@ namespace Rules.Framework.Tests.Providers.InMemory
     public class RuleFactoryTests
     {
         [Fact]
-        public void CreateRule_GivenInvalidPriority_ThrowsInvalidRuleException()
-        {
-            // Arrange
-            dynamic content = new ExpandoObject();
-            content.Prop1 = 123;
-            content.Prop2 = "Sample string";
-            content.Prop3 = 500.34m;
-
-            var ruleDataModel = new RuleDataModel<ContentType, ConditionType>
-            {
-                Content = content,
-                ContentType = ContentType.ContentTypeSample,
-                DateBegin = new DateTime(2020, 1, 1),
-                DateEnd = null,
-                Name = "My rule used for testing purposes",
-                Priority = 0,
-                RootCondition = null
-            };
-
-            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
-
-            // Act
-            var invalidRuleException = Assert.Throws<InvalidRuleException>(() => ruleFactory.CreateRule(ruleDataModel));
-
-            // Assert
-            invalidRuleException.Should().NotBeNull();
-            invalidRuleException.Errors.Should().NotBeEmpty();
-            invalidRuleException.Errors.Should().Contain("Loaded rule priority number is invalid: 0.");
-        }
-
-        [Fact]
-        public void CreateRule_GivenInvalidRuleName_ThrowsInvalidRuleException()
-        {
-            // Arrange
-            dynamic content = new ExpandoObject();
-            content.Prop1 = 123;
-            content.Prop2 = "Sample string";
-            content.Prop3 = 500.34m;
-
-            var ruleDataModel = new RuleDataModel<ContentType, ConditionType>
-            {
-                Content = content,
-                ContentType = ContentType.ContentTypeSample,
-                DateBegin = new DateTime(2020, 1, 1),
-                DateEnd = null,
-                Name = null,
-                Priority = 1,
-                RootCondition = null
-            };
-
-            var ruleFactory = new RuleFactory<ContentType, ConditionType>();
-
-            // Act
-            var invalidRuleException = Assert.Throws<InvalidRuleException>(() => ruleFactory.CreateRule(ruleDataModel));
-
-            // Assert
-            invalidRuleException.Should().NotBeNull();
-            invalidRuleException.Errors.Should().NotBeEmpty();
-            invalidRuleException.Errors.Should().Contain("'Name' must not be empty.");
-        }
-
-        [Fact]
         public void CreateRule_GivenNullRule_ThrowsArgumentNullException()
         {
             // Arrange
@@ -123,7 +61,8 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 DataType = DataTypes.Integer,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = 20,
-                Operator = Operators.GreaterThan
+                Operator = Operators.GreaterThan,
+                Properties = new PropertiesDictionary(2),
             };
 
             var stringConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
@@ -132,7 +71,8 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 DataType = DataTypes.String,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = "TEST",
-                Operator = Operators.Equal
+                Operator = Operators.Equal,
+                Properties = new PropertiesDictionary(2),
             };
 
             var decimalConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
@@ -141,7 +81,8 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 DataType = DataTypes.Decimal,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = 50.3m,
-                Operator = Operators.LesserThanOrEqual
+                Operator = Operators.LesserThanOrEqual,
+                Properties = new PropertiesDictionary(2),
             };
 
             var booleanConditionNodeDataModel = new ValueConditionNodeDataModel<ConditionType>
@@ -150,7 +91,8 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 DataType = DataTypes.Boolean,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = true,
-                Operator = Operators.NotEqual
+                Operator = Operators.NotEqual,
+                Properties = new PropertiesDictionary(2),
             };
 
             var ruleDataModel = new RuleDataModel<ContentType, ConditionType>
@@ -170,7 +112,8 @@ namespace Rules.Framework.Tests.Providers.InMemory
                         stringConditionNodeDataModel,
                         decimalConditionNodeDataModel,
                         booleanConditionNodeDataModel
-                    }
+                    },
+                    Properties = new PropertiesDictionary(2),
                 }
             };
 

@@ -186,6 +186,9 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             Mock.Get(contentSerializer)
                 .Setup(x => x.Deserialize(It.IsAny<object>(), It.IsAny<Type>()))
                 .Returns((object)content);
+            Mock.Get(contentSerializer)
+                .Setup(x => x.Serialize(It.IsAny<object>()))
+                .Returns((object)content);
 
             var contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
             Mock.Get(contentSerializationProvider)

@@ -37,7 +37,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
                 },
                 "Best Server Default"
             }
-        };
+        }.SelectMany(x => new[] { false, true }.Select(c => new object[] { x[0], x[1], c }));
 
         private readonly IMongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
@@ -50,13 +50,17 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
 
         [Theory]
         [MemberData(nameof(DataTest))]
-        public async Task BestServer_InEvaluation(IEnumerable<Condition<BestServerConditions>> conditions, string expectedRuleName)
+        public async Task BestServer_InEvaluation(IEnumerable<Condition<BestServerConditions>> conditions, string expectedRuleName, bool enableCompilation)
         {
             // Arrange
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<BestServerConfigurations>()
                 .WithConditionType<BestServerConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
+                .Configure(opt =>
+                {
+                    opt.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act 1 - Create rule with "in" operator
