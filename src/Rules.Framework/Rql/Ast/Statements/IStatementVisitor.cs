@@ -2,9 +2,11 @@ namespace Rules.Framework.Rql.Ast.Statements
 {
     internal interface IStatementVisitor<T>
     {
-        T VisitNoneStatement(NoneStatement noneStatement);
+        T VisitBlockStatement(BlockStatement block);
 
-        T VisitExpressionStatement(ExpressionStatement programmableStatement);
+        T VisitExpressionStatement(ExpressionStatement expressionStatement);
+
+        T VisitNoneStatement(NoneStatement noneStatement);
 
         T VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement);
     }

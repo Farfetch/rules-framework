@@ -48,6 +48,23 @@ namespace Rules.Framework.Rql
         public string VisitAssignExpression(AssignmentExpression expression)
             => FormattableString.Invariant($"{expression.Left.Accept(this)} {expression.Assign.Lexeme} {expression.Right.Accept(this)}");
 
+        public string VisitBlockStatement(BlockStatement blockStatement)
+        {
+            var stringBuilder = new StringBuilder(blockStatement.BeginBrace.Lexeme)
+                .AppendLine();
+            var statements = blockStatement.Statements;
+            var statementsLength = statements.Length;
+            for (int i = 0; i < statementsLength; i++)
+            {
+                var statementRql = statements[i].Accept(this);
+                statementRql = statementRql.Replace("\n", $"\n{new string(SPACE, 4)}", StringComparison.Ordinal);
+                stringBuilder.AppendLine(statementRql);
+            }
+
+            return stringBuilder.Append(blockStatement.EndBrace.Lexeme)
+                .ToString();
+        }
+
         public string VisitCallExpression(CallExpression callExpression)
         {
             var stringBuilder = new StringBuilder(callExpression.Name.Accept(this))

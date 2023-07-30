@@ -88,6 +88,29 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
+        public async Task<IResult> VisitBlockStatement(BlockStatement blockStatement)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(blockStatement);
+            IResult result = null!;
+            var statements = blockStatement.Statements;
+            var statementsLength = statements.Length;
+            if (statementsLength > 0)
+            {
+                for (int i = 0; i < statementsLength; i++)
+                {
+                    result = await statements[i].Accept(this).ConfigureAwait(false);
+                    if (!result.Success)
+                    {
+                        return result;
+                    }
+                }
+
+                return result;
+            }
+
+            return new ExpressionStatementResult(rql, new RqlNothing());
+        }
+
         public async Task<IRuntimeValue> VisitCallExpression(CallExpression callExpression)
         {
             try
