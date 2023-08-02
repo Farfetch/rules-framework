@@ -209,6 +209,27 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public Task<IRuntimeValue> VisitIdentifierExpression(IdentifierExpression identifierExpression)
             => Task.FromResult<IRuntimeValue>(new RqlString(identifierExpression.Identifier.UnescapedLexeme));
 
+        public async Task<IResult> VisitIfStatement(IfStatement ifStatement)
+        {
+            var condition = await ifStatement.Condition.Accept(this).ConfigureAwait(false);
+            if (condition.Type == RqlTypes.Any)
+            {
+                condition = ((RqlAny)condition).Unwrap();
+            }
+
+            if (condition.Type != RqlTypes.Bool)
+            {
+                throw CreateInterpreterException("Expected bool value for 'if' condition.", ifStatement);
+            }
+
+            if ((RqlBool)condition)
+            {
+                return await ifStatement.ThenBranch.Accept(this).ConfigureAwait(false);
+            }
+
+            return await ifStatement.ElseBranch.Accept(this).ConfigureAwait(false);
+        }
+
         public async Task<IRuntimeValue> VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
         {
             try

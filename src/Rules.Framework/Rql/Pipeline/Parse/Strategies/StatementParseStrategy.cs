@@ -12,6 +12,11 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Statement Parse(ParseContext parseContext)
         {
+            if (parseContext.IsMatchCurrentToken(TokenType.IF))
+            {
+                return this.ParseStatementWith<IfParseStrategy>(parseContext);
+            }
+
             if (parseContext.IsMatchCurrentToken(TokenType.BRACE_LEFT))
             {
                 return this.ParseStatementWith<BlockParseStrategy>(parseContext);

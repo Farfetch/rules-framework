@@ -8,5 +8,26 @@ var #rules = match one rule for "TexasHoldemPokerSingleCombinations" on $2023-01
 }
 
 {
-	// Blank on purpose.
+	
 }
+
+if (#rules.NotEmpty())
+{
+	Show("Rules are not empty!");
+	Show(#rules[0]);
+}
+
+if (#rules.Empty())
+{
+	Show("Rules are empty!");
+}
+else
+{
+	Show("Found rules for you!");
+}
+
+var arr = array { 1, 2, 3 };
+if (arr.Empty())
+	Show("Array is empty.");
+else
+	Show(arr);

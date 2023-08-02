@@ -175,6 +175,28 @@ namespace Rules.Framework.Rql
 
         public string VisitIdentifierExpression(IdentifierExpression identifierExpression) => identifierExpression.Identifier.Lexeme;
 
+        public string VisitIfStatement(IfStatement ifStatement)
+        {
+            var condition = ifStatement.Condition.Accept(this);
+            var thenBranch = ifStatement.ThenBranch.Accept(this);
+            var elseBranch = ifStatement.ElseBranch.Accept(this);
+            var stringBuilder = new StringBuilder("if (")
+                .Append(condition)
+                .Append(')')
+                .AppendLine()
+                .Append(thenBranch);
+
+            if (!string.IsNullOrEmpty(elseBranch))
+            {
+                stringBuilder.AppendLine()
+                    .Append("else")
+                    .AppendLine()
+                    .Append(elseBranch);
+            }
+
+            return stringBuilder.ToString();
+        }
+
         public string VisitIndexerGetExpression(IndexerGetExpression indexerGetExpression)
                             => $"{indexerGetExpression.Instance.Accept(this)}{indexerGetExpression.IndexLeftDelimeter.Lexeme}{indexerGetExpression.Index.Accept(this)}{indexerGetExpression.IndexRightDelimeter.Lexeme}";
 

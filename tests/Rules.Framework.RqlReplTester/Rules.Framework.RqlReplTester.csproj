@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Content Include="test-script.rql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
