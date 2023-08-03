@@ -42,6 +42,8 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         T VisitUpdateExpression(UpdateExpression updateExpression);
 
+        T VisitVariableDeclarationExpression(VariableDeclarationExpression variableDeclarationExpression);
+
         T VisitVariableExpression(VariableExpression variableExpression);
     }
 }

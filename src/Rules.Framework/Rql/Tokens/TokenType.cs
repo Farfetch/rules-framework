@@ -21,6 +21,7 @@ namespace Rules.Framework.Rql.Tokens
         ELSE,
         ENDS,
         FOR,
+        FOREACH,
         IF,
         IS,
         MATCH,

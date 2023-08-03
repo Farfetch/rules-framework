@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Content Include="test-script.rql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

@@ -165,7 +165,13 @@ namespace Rules.Framework.RqlReplTester
                 }
                 else
                 {
-                    var scriptFullPath = Path.Combine(Environment.CurrentDirectory, script);
+                    var directory = Directory.GetParent(Environment.CurrentDirectory);
+                    while (!string.Equals(directory!.Name, "bin"))
+                    {
+                        directory = directory.Parent;
+                    }
+
+                    var scriptFullPath = Path.Combine(directory.Parent!.FullName, script);
                     var scriptContent = await File.ReadAllTextAsync(scriptFullPath, ct).ConfigureAwait(false);
                     await ExecuteAsync(rqlClient, scriptContent);
                 }

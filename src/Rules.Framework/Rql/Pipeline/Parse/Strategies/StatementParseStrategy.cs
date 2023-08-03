@@ -17,6 +17,11 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseStatementWith<IfParseStrategy>(parseContext);
             }
 
+            if (parseContext.IsMatchCurrentToken(TokenType.FOREACH))
+            {
+                return this.ParseStatementWith<ForEachParseStrategy>(parseContext);
+            }
+
             if (parseContext.IsMatchCurrentToken(TokenType.BRACE_LEFT))
             {
                 return this.ParseStatementWith<BlockParseStrategy>(parseContext);

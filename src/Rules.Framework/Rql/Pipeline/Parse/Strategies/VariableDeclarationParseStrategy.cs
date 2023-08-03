@@ -2,17 +2,16 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
     using System;
     using Rules.Framework.Rql.Ast.Expressions;
-    using Rules.Framework.Rql.Ast.Statements;
     using Rules.Framework.Rql.Tokens;
 
-    internal class VariableDeclarationParseStrategy : ParseStrategyBase<Statement>, IStatementParseStrategy
+    internal class VariableDeclarationParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
     {
         public VariableDeclarationParseStrategy(IParseStrategyProvider parseStrategyProvider)
             : base(parseStrategyProvider)
         {
         }
 
-        public override Statement Parse(ParseContext parseContext)
+        public override Expression Parse(ParseContext parseContext)
         {
             if (!parseContext.IsMatchCurrentToken(TokenType.VAR))
             {
@@ -23,32 +22,11 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             if (!parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
             {
                 parseContext.EnterPanicMode("Expected variable identifier.", parseContext.GetCurrentToken());
-                return Statement.None;
+                return Expression.None;
             }
 
             var variableIdentifier = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
-            Expression assignable;
-            if (parseContext.MoveNextIfNextToken(TokenType.ASSIGN))
-            {
-                _ = parseContext.MoveNext();
-                assignable = this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Statement.None;
-                }
-            }
-            else
-            {
-                assignable = Expression.None;
-            }
-
-            if (!parseContext.MoveNextIfNextToken(TokenType.SEMICOLON))
-            {
-                parseContext.EnterPanicMode("Expected token ';'.", parseContext.GetCurrentToken());
-                return Statement.None;
-            }
-
-            return new VariableDeclarationStatement(keywordToken, variableIdentifier, assignable);
+            return new VariableDeclarationExpression(keywordToken, variableIdentifier);
         }
     }
 }

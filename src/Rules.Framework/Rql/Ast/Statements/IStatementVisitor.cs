@@ -6,10 +6,12 @@ namespace Rules.Framework.Rql.Ast.Statements
 
         T VisitExpressionStatement(ExpressionStatement expressionStatement);
 
+        T VisitForEachStatement(ForEachStatement forEachStatement);
+
         T VisitIfStatement(IfStatement ifStatement);
 
         T VisitNoneStatement(NoneStatement noneStatement);
 
-        T VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement);
+        T VisitVariableBootstrapStatement(VariableBootstrapStatement variableBootstrapStatement);
     }
 }

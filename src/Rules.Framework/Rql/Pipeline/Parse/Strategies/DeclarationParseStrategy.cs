@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (parseContext.IsMatchCurrentToken(TokenType.VAR))
             {
-                return this.ParseStatementWith<VariableDeclarationParseStrategy>(parseContext);
+                return this.ParseStatementWith<VariableBootstrapParseStrategy>(parseContext);
             }
 
             var statement = this.ParseStatementWith<StatementParseStrategy>(parseContext);

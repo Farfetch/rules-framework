@@ -206,6 +206,36 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new ExpressionStatementResult(rql, expressionResult);
         }
 
+        public async Task<IResult> VisitForEachStatement(ForEachStatement forEachStatement)
+        {
+            var rql = this.reverseRqlBuilder.BuildRql(forEachStatement);
+            var source = await forEachStatement.SourceExpression.Accept(this).ConfigureAwait(false);
+            if (source.Type == RqlTypes.Any)
+            {
+                source = ((RqlAny)source).Unwrap();
+            }
+
+            if (source.Type != RqlTypes.Array)
+            {
+                throw CreateInterpreterException("Expected array value for 'foreach' source.", forEachStatement);
+            }
+
+            var sourceArray = (RqlArray)source;
+            var length = sourceArray.Size;
+            using (var scope = this.runtime.CreateScope())
+            {
+                _ = await forEachStatement.VariableDeclaration.Accept(this).ConfigureAwait(false);
+                var variableName = (RqlString)await ((VariableDeclarationExpression)forEachStatement.VariableDeclaration).Name.Accept(this).ConfigureAwait(false);
+                for (int i = 0; i < length; i++)
+                {
+                    this.runtime.Assign(variableName, sourceArray.GetAtIndex(i));
+                    _ = await forEachStatement.ForEachActionStatement.Accept(this).ConfigureAwait(false);
+                }
+            }
+
+            return new NothingStatementResult(rql);
+        }
+
         public Task<IRuntimeValue> VisitIdentifierExpression(IdentifierExpression identifierExpression)
             => Task.FromResult<IRuntimeValue>(new RqlString(identifierExpression.Identifier.UnescapedLexeme));
 
@@ -529,13 +559,19 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return new ValueConditionNode<TConditionType>(dataType, conditionType, @operator, rightOperand.RuntimeValue);
         }
 
-        public async Task<IResult> VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
+        public async Task<IResult> VisitVariableBootstrapStatement(VariableBootstrapStatement variableBootstrapStatement)
         {
-            var rql = this.reverseRqlBuilder.BuildRql(variableDeclarationStatement);
-            var variableName = (RqlString)await variableDeclarationStatement.Name.Accept(this).ConfigureAwait(false);
-            var assignable = await variableDeclarationStatement.Assignable.Accept(this).ConfigureAwait(false);
+            var rql = this.reverseRqlBuilder.BuildRql(variableBootstrapStatement);
+            var variableName = (RqlString)await ((VariableDeclarationExpression)variableBootstrapStatement.VariableDeclaration).Name.Accept(this).ConfigureAwait(false);
+            var assignable = await variableBootstrapStatement.Assignable.Accept(this).ConfigureAwait(false);
             this.runtime.DeclareVariable(variableName, assignable);
             return new NothingStatementResult(rql);
+        }
+
+        public async Task<IRuntimeValue> VisitVariableDeclarationExpression(VariableDeclarationExpression variableDeclarationExpression)
+        {
+            var variableName = (RqlString)await variableDeclarationExpression.Name.Accept(this).ConfigureAwait(false);
+            return this.runtime.DeclareVariable(variableName, new RqlNothing());
         }
 
         public async Task<IRuntimeValue> VisitVariableExpression(VariableExpression variableExpression)

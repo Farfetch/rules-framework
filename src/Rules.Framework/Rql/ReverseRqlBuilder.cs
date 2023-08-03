@@ -173,6 +173,23 @@ namespace Rules.Framework.Rql
         public string VisitExpressionStatement(ExpressionStatement programmableStatement)
             => $"{programmableStatement.Expression.Accept(this)};";
 
+        public string VisitForEachStatement(ForEachStatement forEachStatement)
+        {
+            var stringBuilder = new StringBuilder(forEachStatement.ForEachToken.Lexeme)
+                .Append(SPACE)
+                .Append('(')
+                .Append(forEachStatement.VariableDeclaration.Accept(this))
+                .Append(SPACE)
+                .Append(forEachStatement.InToken.Lexeme)
+                .Append(SPACE)
+                .Append(forEachStatement.SourceExpression.Accept(this))
+                .Append(')')
+                .AppendLine()
+                .Append(forEachStatement.ForEachActionStatement.Accept(this));
+
+            return stringBuilder.ToString();
+        }
+
         public string VisitIdentifierExpression(IdentifierExpression identifierExpression) => identifierExpression.Identifier.Lexeme;
 
         public string VisitIfStatement(IfStatement ifStatement)
@@ -453,23 +470,24 @@ namespace Rules.Framework.Rql
         public string VisitValueConditionSegment(ValueConditionSegment valueConditionExpression)
             => $"{valueConditionExpression.Left.Accept(this)} {valueConditionExpression.Operator.Accept(this)} {valueConditionExpression.Right.Accept(this)}";
 
-        public string VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
+        public string VisitVariableBootstrapStatement(VariableBootstrapStatement variableBootstrapStatement)
         {
-            var stringBuilder = new StringBuilder(variableDeclarationStatement.Keyword.Lexeme)
-                .Append(SPACE)
-                .Append(variableDeclarationStatement.Name.Accept(this));
+            var stringBuilder = new StringBuilder(variableBootstrapStatement.VariableDeclaration.Accept(this));
 
-            if (variableDeclarationStatement.Assignable != Expression.None)
+            if (variableBootstrapStatement.Assignable != Expression.None)
             {
                 stringBuilder.Append(SPACE)
                     .Append('=')
                     .Append(SPACE)
-                    .Append(variableDeclarationStatement.Assignable.Accept(this));
+                    .Append(variableBootstrapStatement.Assignable.Accept(this));
             }
 
             return stringBuilder.Append(';')
                 .ToString();
         }
+
+        public string VisitVariableDeclarationExpression(VariableDeclarationExpression variableDeclarationExpression)
+            => $"{variableDeclarationExpression.Keyword.Lexeme} {variableDeclarationExpression.Name.Accept(this)}";
 
         public string VisitVariableExpression(VariableExpression variableExpression) => variableExpression.Name.Accept(this);
     }
