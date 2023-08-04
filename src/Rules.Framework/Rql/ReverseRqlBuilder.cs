@@ -48,6 +48,9 @@ namespace Rules.Framework.Rql
         public string VisitAssignExpression(AssignmentExpression expression)
             => FormattableString.Invariant($"{expression.Left.Accept(this)} {expression.Assign.Lexeme} {expression.Right.Accept(this)}");
 
+        public string VisitBinaryExpression(BinaryExpression binaryExpression)
+            => FormattableString.Invariant($"{binaryExpression.LeftExpression.Accept(this)} {binaryExpression.OperatorToken.Lexeme} {binaryExpression.RightExpression.Accept(this)}");
+
         public string VisitBlockStatement(BlockStatement blockStatement)
         {
             var stringBuilder = new StringBuilder(blockStatement.BeginBrace.Lexeme)

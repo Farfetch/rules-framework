@@ -28,6 +28,8 @@ namespace Rules.Framework.Rql.Runtime
 
         RqlNothing DeclareVariable(RqlString variableName, IRuntimeValue variableValue);
 
+        IRuntimeValue Divide(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
         RqlAny GetAtIndex(IRuntimeValue indexer, RqlInteger index);
 
         RqlAny GetPropertyValue(IRuntimeValue instance, RqlString propertyName);
@@ -39,6 +41,8 @@ namespace Rules.Framework.Rql.Runtime
             TContentType contentType,
             RqlDate matchDate,
             IEnumerable<Condition<TConditionType>> conditions);
+
+        IRuntimeValue Multiply(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
         ValueTask<RqlArray> SearchRulesAsync(TContentType contentType, RqlDate dateBegin, RqlDate dateEnd, SearchArgs<TContentType, TConditionType> searchArgs);
 

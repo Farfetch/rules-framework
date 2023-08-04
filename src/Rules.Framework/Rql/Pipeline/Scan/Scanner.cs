@@ -264,6 +264,12 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                 case ']':
                     return CreateToken(scanContext, TokenType.STRAIGHT_BRACKET_RIGHT);
 
+                case '/':
+                    return CreateToken(scanContext, TokenType.DIVIDE);
+
+                case '*':
+                    return CreateToken(scanContext, TokenType.MULTIPLY);
+
                 case '!':
                     if (scanContext.MoveNextConditionally('='))
                     {

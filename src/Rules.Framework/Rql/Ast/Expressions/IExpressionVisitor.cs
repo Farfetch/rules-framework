@@ -6,6 +6,8 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         T VisitAssignExpression(AssignmentExpression expression);
 
+        T VisitBinaryExpression(BinaryExpression binaryExpression);
+
         T VisitCallExpression(CallExpression callExpression);
 
         T VisitCreateExpression(CreateExpression createExpression);

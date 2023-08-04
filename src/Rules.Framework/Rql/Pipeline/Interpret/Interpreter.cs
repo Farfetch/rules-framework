@@ -88,6 +88,31 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
+        public async Task<IRuntimeValue> VisitBinaryExpression(BinaryExpression binaryExpression)
+        {
+            try
+            {
+                var left = await binaryExpression.LeftExpression.Accept(this).ConfigureAwait(false);
+                var right = await binaryExpression.RightExpression.Accept(this).ConfigureAwait(false);
+
+                switch (binaryExpression.OperatorToken.Type)
+                {
+                    case TokenType.DIVIDE:
+                        return this.runtime.Divide(left, right);
+
+                    case TokenType.MULTIPLY:
+                        return this.runtime.Multiply(left, right);
+
+                    default:
+                        return new RqlNothing();
+                }
+            }
+            catch (RuntimeException ex)
+            {
+                throw CreateInterpreterException(ex.Message, binaryExpression);
+            }
+        }
+
         public async Task<IResult> VisitBlockStatement(BlockStatement blockStatement)
         {
             var rql = this.reverseRqlBuilder.BuildRql(blockStatement);

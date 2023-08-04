@@ -254,6 +254,17 @@ namespace Rules.Framework.Rql.Runtime
             GC.SuppressFinalize(this);
         }
 
+        public IRuntimeValue Divide(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
+        {
+            RqlInteger left when rightOperand is RqlInteger right => new RqlInteger(left.Value / right.Value),
+            RqlInteger when rightOperand is RqlDecimal => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {RqlTypes.Decimal.Name}. A conversion via 'ToInteger()' of right operand is possible."),
+            RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {rightOperand.Type.Name}."),
+            RqlDecimal left when rightOperand is RqlDecimal right => new RqlDecimal(left.Value / right.Value),
+            RqlDecimal when rightOperand is RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {RqlTypes.Integer.Name}. A conversion via 'ToDecimal()' of right operand is possible."),
+            RqlDecimal => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {rightOperand.Type.Name}."),
+            _ => throw new RuntimeException($"Cannot divide operand of type {leftOperand.Type.Name}."),
+        };
+
         public RqlAny GetAtIndex(IRuntimeValue indexer, RqlInteger index)
         {
             if (indexer.Type == RqlTypes.Any)
@@ -338,6 +349,17 @@ namespace Rules.Framework.Rql.Runtime
 
             return rqlArrayAll;
         }
+
+        public IRuntimeValue Multiply(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
+        {
+            RqlInteger left when rightOperand is RqlInteger right => new RqlInteger(left.Value * right.Value),
+            RqlInteger when rightOperand is RqlDecimal right => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {RqlTypes.Decimal.Name}. A conversion via 'ToInteger()' of right operand is possible."),
+            RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {rightOperand.Type.Name}."),
+            RqlDecimal left when rightOperand is RqlDecimal right => new RqlDecimal(left.Value * right.Value),
+            RqlDecimal when rightOperand is RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {RqlTypes.Integer.Name}. A conversion via 'ToDecimal()' of right operand is possible."),
+            RqlDecimal => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {rightOperand.Type.Name}."),
+            _ => throw new RuntimeException($"Cannot multiply operand of type {leftOperand.Type.Name}."),
+        };
 
         public async ValueTask<RqlArray> SearchRulesAsync(TContentType contentType, RqlDate dateBegin, RqlDate dateEnd, SearchArgs<TContentType, TConditionType> searchArgs)
         {

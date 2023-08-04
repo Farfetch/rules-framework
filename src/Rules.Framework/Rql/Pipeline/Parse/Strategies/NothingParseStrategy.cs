@@ -17,7 +17,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             }
 
-            return this.ParseExpressionWith<UnaryParseStrategy>(parseContext);
+            return this.ParseExpressionWith<FactorParseStrategy>(parseContext);
         }
     }
 }
