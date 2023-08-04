@@ -1,6 +1,8 @@
 namespace Rules.Framework.Rql.Runtime
 {
     using Rules.Framework.Rql.Runtime.BuiltInFunctions;
+    using Rules.Framework.Rql.Runtime.BuiltInFunctions.RqlDecimalFunctions;
+    using Rules.Framework.Rql.Runtime.BuiltInFunctions.RqlIntegerFunctions;
     using Rules.Framework.Rql.Runtime.Types;
 
     internal static class RqlCallableTableInitializerExtension
@@ -30,6 +32,10 @@ namespace Rules.Framework.Rql.Runtime
             callableTable.AddCallable(emptyGivenArrayFunction);
             var emptyParameterlessFunction = new EmptyParameterlessFunction();
             callableTable.AddCallable(RqlTypes.Array, emptyParameterlessFunction);
+            var rqlIntegerToDecimalParameterlessFunction = new ToDecimalParameterlessFunction();
+            callableTable.AddCallable(RqlTypes.Integer, rqlIntegerToDecimalParameterlessFunction);
+            var rqlDecimalToIntegerParameterlessFunction = new ToIntegerParameterlessFunction();
+            callableTable.AddCallable(RqlTypes.Decimal, rqlDecimalToIntegerParameterlessFunction);
             return callableTable;
         }
     }
