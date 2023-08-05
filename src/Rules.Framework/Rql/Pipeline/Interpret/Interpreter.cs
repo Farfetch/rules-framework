@@ -100,8 +100,14 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                     case TokenType.DIVIDE:
                         return this.runtime.Divide(left, right);
 
+                    case TokenType.MINUS:
+                        return this.runtime.Subtract(left, right);
+
                     case TokenType.MULTIPLY:
                         return this.runtime.Multiply(left, right);
+
+                    case TokenType.PLUS:
+                        return this.runtime.Sum(left, right);
 
                     default:
                         return new RqlNothing();

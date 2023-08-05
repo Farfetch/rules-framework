@@ -50,6 +50,10 @@ namespace Rules.Framework.Rql.Runtime
 
         RqlNothing SetPropertyValue(IRuntimeValue instance, RqlString propertyName, IRuntimeValue propertyValue);
 
+        IRuntimeValue Subtract(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        IRuntimeValue Sum(IRuntimeValue leftOperand, IRuntimeValue rightOperant);
+
         ValueTask<RqlArray> UpdateRuleAsync(UpdateRuleArgs<TContentType> args);
     }
 }

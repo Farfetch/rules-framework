@@ -412,6 +412,28 @@ namespace Rules.Framework.Rql.Runtime
             throw new RuntimeException($"Instance of does not contain properties.");
         }
 
+        public IRuntimeValue Subtract(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
+        {
+            RqlInteger left when rightOperand is RqlInteger right => new RqlInteger(left.Value - right.Value),
+            RqlInteger when rightOperand is RqlDecimal right => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {RqlTypes.Decimal.Name}. A conversion via 'ToInteger()' of right operand is possible."),
+            RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {rightOperand.Type.Name}."),
+            RqlDecimal left when rightOperand is RqlDecimal right => new RqlDecimal(left.Value - right.Value),
+            RqlDecimal when rightOperand is RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {RqlTypes.Integer.Name}. A conversion via 'ToDecimal()' of right operand is possible."),
+            RqlDecimal => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {rightOperand.Type.Name}."),
+            _ => throw new RuntimeException($"Cannot subtract operand of type {leftOperand.Type.Name}."),
+        };
+
+        public IRuntimeValue Sum(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
+        {
+            RqlInteger left when rightOperand is RqlInteger right => new RqlInteger(left.Value + right.Value),
+            RqlInteger when rightOperand is RqlDecimal right => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {RqlTypes.Decimal.Name}. A conversion via 'ToInteger()' of right operand is possible."),
+            RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Integer.Name} but found {rightOperand.Type.Name}."),
+            RqlDecimal left when rightOperand is RqlDecimal right => new RqlDecimal(left.Value + right.Value),
+            RqlDecimal when rightOperand is RqlInteger => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {RqlTypes.Integer.Name}. A conversion via 'ToDecimal()' of right operand is possible."),
+            RqlDecimal => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {rightOperand.Type.Name}."),
+            _ => throw new RuntimeException($"Cannot sum operand of type {leftOperand.Type.Name}."),
+        };
+
         public async ValueTask<RqlArray> UpdateRuleAsync(UpdateRuleArgs<TContentType> args)
         {
             var rules = await this.rulesSource

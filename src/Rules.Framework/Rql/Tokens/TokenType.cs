@@ -68,9 +68,11 @@ namespace Rules.Framework.Rql.Tokens
         LESS_THAN,
         LESS_THAN_OR_EQUAL,
         IN,
+        MINUS,
         MULTIPLY,
         NOT_EQUAL,
         NOT_IN,
+        PLUS,
 
         #endregion Operators
 
@@ -83,7 +85,6 @@ namespace Rules.Framework.Rql.Tokens
         COMMA,
         DOT,
         ESCAPE,
-        MINUS,
         SEMICOLON,
         STRAIGHT_BRACKET_LEFT,
         STRAIGHT_BRACKET_RIGHT,

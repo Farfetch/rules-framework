@@ -255,6 +255,9 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                 case '.':
                     return CreateToken(scanContext, TokenType.DOT);
 
+                case '+':
+                    return CreateToken(scanContext, TokenType.PLUS);
+
                 case '-':
                     return CreateToken(scanContext, TokenType.MINUS);
 
