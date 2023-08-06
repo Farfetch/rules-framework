@@ -50,6 +50,10 @@ namespace Rules.Framework.Rql.Runtime
 
         IRuntimeValue GetVariableValue(RqlString variableName);
 
+        RqlBool LogicAnd(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        RqlBool LogicOr(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
         ValueTask<RqlArray> MatchRulesAsync(
             MatchCardinality matchCardinality,
             TContentType contentType,

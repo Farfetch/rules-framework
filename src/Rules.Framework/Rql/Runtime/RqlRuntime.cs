@@ -372,6 +372,20 @@ namespace Rules.Framework.Rql.Runtime
             }
         }
 
+        public RqlBool LogicAnd(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
+        {
+            RqlBool left when rightOperand is RqlBool right => new RqlBool(left.Value && right.Value),
+            RqlBool => throw new RuntimeException($"Expected right operand of type {RqlTypes.Bool.Name} but found {rightOperand.Type.Name}."),
+            _ => throw new RuntimeException($"Cannot use operand of type {leftOperand.Type.Name} for a logical and."),
+        };
+
+        public RqlBool LogicOr(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
+        {
+            RqlBool left when rightOperand is RqlBool right => new RqlBool(left.Value || right.Value),
+            RqlBool => throw new RuntimeException($"Expected right operand of type {RqlTypes.Bool.Name} but found {rightOperand.Type.Name}."),
+            _ => throw new RuntimeException($"Cannot use operand of type {leftOperand.Type.Name} for a logical or."),
+        };
+
         public async ValueTask<RqlArray> MatchRulesAsync(MatchCardinality matchCardinality, TContentType contentType, RqlDate matchDate, IEnumerable<Condition<TConditionType>> conditions)
         {
             if (matchCardinality == MatchCardinality.None)

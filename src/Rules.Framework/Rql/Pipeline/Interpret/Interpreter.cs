@@ -100,6 +100,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
                 switch (binaryExpression.OperatorToken.Type)
                 {
+                    case TokenType.AND:
+                        return this.runtime.LogicAnd(left, right);
+
                     case TokenType.DIVIDE:
                         return this.runtime.Divide(left, right);
 
@@ -126,6 +129,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
                     case TokenType.NOT_EQUAL:
                         return this.runtime.CompareNotEqual(left, right);
+
+                    case TokenType.OR:
+                        return this.runtime.LogicOr(left, right);
 
                     case TokenType.PLUS:
                         return this.runtime.Sum(left, right);
