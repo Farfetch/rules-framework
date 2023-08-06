@@ -19,7 +19,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (parseContext.MoveNextIfNextToken(TokenType.PLUS, TokenType.MINUS))
             {
-                var operatorToken = parseContext.GetCurrentToken();
+                var operatorSegment = this.ParseSegmentWith<OperatorParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
                 _ = parseContext.MoveNext();
                 var rightExpression = this.ParseExpressionWith<FactorParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
@@ -27,7 +32,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return Expression.None;
                 }
 
-                return new BinaryExpression(unaryExpression, operatorToken, rightExpression);
+                return new BinaryExpression(unaryExpression, operatorSegment, rightExpression);
             }
 
             return unaryExpression;

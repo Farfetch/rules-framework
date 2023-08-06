@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Runtime
 
         ValueTask<RqlArray> ActivateRuleAsync(TContentType contentType, string ruleName);
 
-        IRuntimeValue ApplyUnary(IRuntimeValue value, Operators @operator);
+        IRuntimeValue ApplyUnary(IRuntimeValue value, RqlOperators rqlOperator);
 
         RqlNothing Assign(string variableName, IRuntimeValue variableValue);
 
@@ -26,11 +26,15 @@ namespace Rules.Framework.Rql.Runtime
 
         RqlBool CompareGreaterThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
+        RqlBool CompareIn(IRuntimeValue leftOperand, RqlArray rightOperand);
+
         RqlBool CompareLesserThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
         RqlBool CompareLesserThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
         RqlBool CompareNotEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        RqlBool CompareNotIn(IRuntimeValue leftOperand, RqlArray rightOperand);
 
         ValueTask<RqlArray> CreateRuleAsync(CreateRuleArgs<TContentType, TConditionType> createRuleArgs);
 

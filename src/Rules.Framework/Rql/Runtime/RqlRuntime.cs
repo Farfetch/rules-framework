@@ -83,9 +83,9 @@ namespace Rules.Framework.Rql.Runtime
             return result;
         }
 
-        public IRuntimeValue ApplyUnary(IRuntimeValue value, Operators @operator)
+        public IRuntimeValue ApplyUnary(IRuntimeValue value, RqlOperators rqlOperator)
         {
-            if (@operator == Operators.Minus)
+            if (rqlOperator == RqlOperators.Minus)
             {
                 if (value is RqlInteger rqlInteger)
                 {
@@ -98,7 +98,7 @@ namespace Rules.Framework.Rql.Runtime
                 }
             }
 
-            throw new RuntimeException($"Unary operator {@operator} is not supported for value '{value}'.");
+            throw new RuntimeException($"Unary operator {rqlOperator} is not supported for value '{value}'.");
         }
 
         public RqlNothing Assign(string variableName, IRuntimeValue variableValue)
@@ -174,6 +174,20 @@ namespace Rules.Framework.Rql.Runtime
             _ => throw new RuntimeException($"Cannot compare operand of type {leftOperand.Type.Name}."),
         };
 
+        public RqlBool CompareIn(IRuntimeValue leftOperand, RqlArray rightOperand)
+        {
+            var size = rightOperand.Size;
+            for (int i = 0; i < size; i++)
+            {
+                if (this.CompareEqual(this.EnsureUnwrapped(rightOperand.GetAtIndex(i)), leftOperand))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public RqlBool CompareLesserThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
         {
             RqlInteger left when rightOperand is RqlInteger right => new RqlBool(left.Value < right.Value),
@@ -198,6 +212,8 @@ namespace Rules.Framework.Rql.Runtime
 
         public RqlBool CompareNotEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand)
             => !this.CompareEqual(leftOperand, rightOperand);
+
+        public RqlBool CompareNotIn(IRuntimeValue leftOperand, RqlArray rightOperand) => !this.CompareIn(leftOperand, rightOperand);
 
         public async ValueTask<RqlArray> CreateRuleAsync(CreateRuleArgs<TContentType, TConditionType> createRuleArgs)
         {

@@ -32,6 +32,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { "IS", TokenType.IS },
             { "MATCH", TokenType.MATCH },
             { "NAME", TokenType.NAME },
+            { "NOT", TokenType.NOT },
             { "NOTHING", TokenType.NOTHING },
             { "NUMBER", TokenType.NUMBER },
             { "OBJECT", TokenType.OBJECT },
@@ -268,10 +269,10 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                     return CreateToken(scanContext, TokenType.STRAIGHT_BRACKET_RIGHT);
 
                 case '/':
-                    return CreateToken(scanContext, TokenType.DIVIDE);
+                    return CreateToken(scanContext, TokenType.SLASH);
 
                 case '*':
-                    return CreateToken(scanContext, TokenType.MULTIPLY);
+                    return CreateToken(scanContext, TokenType.STAR);
 
                 case '!':
                     if (scanContext.MoveNextConditionally('='))

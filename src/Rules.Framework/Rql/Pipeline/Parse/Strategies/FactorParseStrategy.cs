@@ -18,9 +18,14 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            if (parseContext.MoveNextIfNextToken(TokenType.DIVIDE, TokenType.MULTIPLY))
+            if (parseContext.MoveNextIfNextToken(TokenType.SLASH, TokenType.STAR))
             {
-                var operatorToken = parseContext.GetCurrentToken();
+                var operatorSegment = this.ParseSegmentWith<OperatorParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
                 _ = parseContext.MoveNext();
                 var rightExpression = this.ParseExpressionWith<UnaryParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
@@ -28,7 +33,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return Expression.None;
                 }
 
-                return new BinaryExpression(unaryExpression, operatorToken, rightExpression);
+                return new BinaryExpression(unaryExpression, operatorSegment, rightExpression);
             }
 
             return unaryExpression;

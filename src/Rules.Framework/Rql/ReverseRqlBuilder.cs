@@ -49,7 +49,7 @@ namespace Rules.Framework.Rql
             => FormattableString.Invariant($"{expression.Left.Accept(this)} {expression.Assign.Lexeme} {expression.Right.Accept(this)}");
 
         public string VisitBinaryExpression(BinaryExpression binaryExpression)
-            => FormattableString.Invariant($"{binaryExpression.LeftExpression.Accept(this)} {binaryExpression.OperatorToken.Lexeme} {binaryExpression.RightExpression.Accept(this)}");
+            => FormattableString.Invariant($"{binaryExpression.LeftExpression.Accept(this)} {binaryExpression.OperatorSegment.Accept(this)} {binaryExpression.RightExpression.Accept(this)}");
 
         public string VisitBlockStatement(BlockStatement blockStatement)
         {
@@ -361,7 +361,8 @@ namespace Rules.Framework.Rql
 
         public string VisitNoneStatement(NoneStatement noneStatement) => string.Empty;
 
-        public string VisitOperatorSegment(OperatorSegment operatorExpression) => operatorExpression.Token.Lexeme;
+        public string VisitOperatorSegment(OperatorSegment operatorExpression)
+            => operatorExpression.Tokens.Select(t => t.Lexeme).Aggregate((t1, t2) => string.Join(t1, SPACE, t2));
 
         public string VisitPlaceholderExpression(PlaceholderExpression placeholderExpression) => placeholderExpression.Token.Lexeme;
 

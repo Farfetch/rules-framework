@@ -1,20 +1,20 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
-    using Rules.Framework.Rql.Tokens;
+    using Rules.Framework.Rql.Ast.Segments;
 
     internal class BinaryExpression : Expression
     {
-        public BinaryExpression(Expression leftExpression, Token operatorToken, Expression rightExpression)
+        public BinaryExpression(Expression leftExpression, Segment operatorSegment, Expression rightExpression)
             : base(leftExpression.BeginPosition, rightExpression.EndPosition)
         {
             this.LeftExpression = leftExpression;
-            this.OperatorToken = operatorToken;
+            this.OperatorSegment = operatorSegment;
             this.RightExpression = rightExpression;
         }
 
         public Expression LeftExpression { get; }
 
-        public Token OperatorToken { get; }
+        public Segment OperatorSegment { get; }
 
         public Expression RightExpression { get; }
 

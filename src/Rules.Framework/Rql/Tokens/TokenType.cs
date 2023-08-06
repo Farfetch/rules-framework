@@ -61,7 +61,7 @@ namespace Rules.Framework.Rql.Tokens
 
         #region Operators
 
-        DIVIDE,
+        SLASH,
         EQUAL,
         GREATER_THAN,
         GREATER_THAN_OR_EQUAL,
@@ -69,9 +69,9 @@ namespace Rules.Framework.Rql.Tokens
         LESS_THAN_OR_EQUAL,
         IN,
         MINUS,
-        MULTIPLY,
+        STAR,
         NOT_EQUAL,
-        NOT_IN,
+        NOT,
         PLUS,
 
         #endregion Operators

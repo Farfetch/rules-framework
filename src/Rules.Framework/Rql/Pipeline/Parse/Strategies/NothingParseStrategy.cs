@@ -13,7 +13,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.IsMatchCurrentToken(TokenType.NOTHING))
+            if (!parseContext.IsMatchCurrentToken(TokenType.NOTHING))
             {
                 throw new InvalidOperationException("Unable to handle nothing expression.");
             }

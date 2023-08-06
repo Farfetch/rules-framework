@@ -2,6 +2,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
@@ -94,46 +95,63 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var left = await binaryExpression.LeftExpression.Accept(this).ConfigureAwait(false);
                 var right = await binaryExpression.RightExpression.Accept(this).ConfigureAwait(false);
+                var rqlOperator = (RqlOperators)await binaryExpression.OperatorSegment.Accept(this).ConfigureAwait(false);
 
                 left = this.runtime.EnsureUnwrapped(left);
                 right = this.runtime.EnsureUnwrapped(right);
 
-                switch (binaryExpression.OperatorToken.Type)
+                switch (rqlOperator)
                 {
-                    case TokenType.AND:
+                    case RqlOperators.And:
                         return this.runtime.LogicAnd(left, right);
 
-                    case TokenType.DIVIDE:
+                    case RqlOperators.Slash:
                         return this.runtime.Divide(left, right);
 
-                    case TokenType.EQUAL:
+                    case RqlOperators.Equals:
                         return this.runtime.CompareEqual(left, right);
 
-                    case TokenType.GREATER_THAN:
+                    case RqlOperators.GreaterThan:
                         return this.runtime.CompareGreaterThan(left, right);
 
-                    case TokenType.GREATER_THAN_OR_EQUAL:
+                    case RqlOperators.GreaterThanOrEquals:
                         return this.runtime.CompareGreaterThanOrEqual(left, right);
 
-                    case TokenType.LESS_THAN:
+                    case RqlOperators.In:
+                        if (right.Type != RqlTypes.Array)
+                        {
+                            throw CreateInterpreterException($"Expected right operand of type '{RqlTypes.Array.Name}' for operator 'in'.", binaryExpression.RightExpression);
+                        }
+
+                        return this.runtime.CompareIn(left, (RqlArray)right);
+
+                    case RqlOperators.LesserThan:
                         return this.runtime.CompareLesserThan(left, right);
 
-                    case TokenType.LESS_THAN_OR_EQUAL:
+                    case RqlOperators.LesserThanOrEquals:
                         return this.runtime.CompareLesserThanOrEqual(left, right);
 
-                    case TokenType.MINUS:
+                    case RqlOperators.Minus:
                         return this.runtime.Subtract(left, right);
 
-                    case TokenType.MULTIPLY:
+                    case RqlOperators.Star:
                         return this.runtime.Multiply(left, right);
 
-                    case TokenType.NOT_EQUAL:
+                    case RqlOperators.NotEquals:
                         return this.runtime.CompareNotEqual(left, right);
 
-                    case TokenType.OR:
+                    case RqlOperators.NotIn:
+                        if (right.Type != RqlTypes.Array)
+                        {
+                            throw CreateInterpreterException($"Expected right operand of type '{RqlTypes.Array.Name}' for operator 'not in'.", binaryExpression.RightExpression);
+                        }
+
+                        return this.runtime.CompareNotIn(left, (RqlArray)right);
+
+                    case RqlOperators.Or:
                         return this.runtime.LogicOr(left, right);
 
-                    case TokenType.PLUS:
+                    case RqlOperators.Plus:
                         return this.runtime.Sum(left, right);
 
                     default:
@@ -457,18 +475,78 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public Task<IResult> VisitNoneStatement(NoneStatement statement) => Task.FromResult<IResult>(new ExpressionStatementResult(string.Empty, new RqlNothing()));
 
         public Task<object> VisitOperatorSegment(OperatorSegment operatorExpression)
-            => Task.FromResult<object>(result: operatorExpression.Token.Type switch
+        {
+            var resultOperator = RqlOperators.None;
+            switch (operatorExpression.Tokens[0].Type)
             {
-                TokenType.EQUAL => Core.Operators.Equal,
-                TokenType.NOT_EQUAL => Core.Operators.NotEqual,
-                TokenType.GREATER_THAN => Core.Operators.GreaterThan,
-                TokenType.GREATER_THAN_OR_EQUAL => Core.Operators.GreaterThanOrEqual,
-                TokenType.LESS_THAN => Core.Operators.LesserThan,
-                TokenType.LESS_THAN_OR_EQUAL => Core.Operators.LesserThanOrEqual,
-                TokenType.IN => Core.Operators.In,
-                TokenType.NOT_IN => Core.Operators.NotIn,
-                _ => throw new NotSupportedException($"The token type '{operatorExpression.Token.Type}' is not supported as valid operator."),
-            });
+                case TokenType.AND:
+                    resultOperator = RqlOperators.And;
+                    break;
+
+                case TokenType.EQUAL:
+                    resultOperator = RqlOperators.Equals;
+                    break;
+
+                case TokenType.GREATER_THAN:
+                    resultOperator = RqlOperators.GreaterThan;
+                    break;
+
+                case TokenType.GREATER_THAN_OR_EQUAL:
+                    resultOperator = RqlOperators.GreaterThanOrEquals;
+                    break;
+
+                case TokenType.IN:
+                    resultOperator = RqlOperators.In;
+                    break;
+
+                case TokenType.LESS_THAN:
+                    resultOperator = RqlOperators.LesserThan;
+                    break;
+
+                case TokenType.LESS_THAN_OR_EQUAL:
+                    resultOperator = RqlOperators.LesserThanOrEquals;
+                    break;
+
+                case TokenType.MINUS:
+                    resultOperator = RqlOperators.Minus;
+                    break;
+
+                case TokenType.NOT:
+                    if (operatorExpression.Tokens.Length > 1 && operatorExpression.Tokens[1].Type == TokenType.IN)
+                    {
+                        resultOperator = RqlOperators.NotIn;
+                    }
+                    break;
+
+                case TokenType.NOT_EQUAL:
+                    resultOperator = RqlOperators.NotEquals;
+                    break;
+
+                case TokenType.OR:
+                    resultOperator = RqlOperators.Or;
+                    break;
+
+                case TokenType.PLUS:
+                    resultOperator = RqlOperators.Plus;
+                    break;
+
+                case TokenType.SLASH:
+                    resultOperator = RqlOperators.Slash;
+                    break;
+
+                case TokenType.STAR:
+                    resultOperator = RqlOperators.Star;
+                    break;
+            }
+
+            if (resultOperator == RqlOperators.None)
+            {
+                var tokenTypes = operatorExpression.Tokens.Select(t => $"'{t.Type}'").Aggregate((t1, t2) => $"{t1}, {t2}");
+                throw new NotSupportedException($"The tokens with types [{tokenTypes}] are not supported as a valid operator.");
+            }
+
+            return Task.FromResult<object>(resultOperator);
+        }
 
         public Task<IRuntimeValue> VisitPlaceholderExpression(PlaceholderExpression placeholderExpression)
             => Task.FromResult<IRuntimeValue>(new RqlString((string)placeholderExpression.Token.Literal));
@@ -549,8 +627,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var @operator = unaryExpression.Operator.Lexeme switch
                 {
-                    "-" => Runtime.Operators.Minus,
-                    _ => Runtime.Operators.None,
+                    "-" => Runtime.RqlOperators.Minus,
+                    _ => Runtime.RqlOperators.None,
                 };
                 var right = await unaryExpression.Right.Accept(this).ConfigureAwait(false);
                 return this.runtime.ApplyUnary(right, @operator);
@@ -604,7 +682,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             var conditionTypeName = (RqlString)await valueConditionExpression.Left.Accept(this).ConfigureAwait(false);
             var conditionType = (TConditionType)Enum.Parse(typeof(TConditionType), conditionTypeName.Value, ignoreCase: true);
-            var @operator = (Core.Operators)await valueConditionExpression.Operator.Accept(this).ConfigureAwait(false);
+            var rqlOperator = (RqlOperators)await valueConditionExpression.Operator.Accept(this).ConfigureAwait(false);
+            var @operator = rqlOperator.ToCoreOperator();
             var rightOperand = await valueConditionExpression.Right.Accept(this).ConfigureAwait(false);
             var dataType = rightOperand switch
             {
