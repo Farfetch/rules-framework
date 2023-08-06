@@ -96,67 +96,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 var left = await binaryExpression.LeftExpression.Accept(this).ConfigureAwait(false);
                 var right = await binaryExpression.RightExpression.Accept(this).ConfigureAwait(false);
                 var rqlOperator = (RqlOperators)await binaryExpression.OperatorSegment.Accept(this).ConfigureAwait(false);
-
-                left = this.runtime.EnsureUnwrapped(left);
-                right = this.runtime.EnsureUnwrapped(right);
-
-                switch (rqlOperator)
-                {
-                    case RqlOperators.And:
-                        return this.runtime.LogicAnd(left, right);
-
-                    case RqlOperators.Slash:
-                        return this.runtime.Divide(left, right);
-
-                    case RqlOperators.Equals:
-                        return this.runtime.CompareEqual(left, right);
-
-                    case RqlOperators.GreaterThan:
-                        return this.runtime.CompareGreaterThan(left, right);
-
-                    case RqlOperators.GreaterThanOrEquals:
-                        return this.runtime.CompareGreaterThanOrEqual(left, right);
-
-                    case RqlOperators.In:
-                        if (right.Type != RqlTypes.Array)
-                        {
-                            throw CreateInterpreterException($"Expected right operand of type '{RqlTypes.Array.Name}' for operator 'in'.", binaryExpression.RightExpression);
-                        }
-
-                        return this.runtime.CompareIn(left, (RqlArray)right);
-
-                    case RqlOperators.LesserThan:
-                        return this.runtime.CompareLesserThan(left, right);
-
-                    case RqlOperators.LesserThanOrEquals:
-                        return this.runtime.CompareLesserThanOrEqual(left, right);
-
-                    case RqlOperators.Minus:
-                        return this.runtime.Subtract(left, right);
-
-                    case RqlOperators.Star:
-                        return this.runtime.Multiply(left, right);
-
-                    case RqlOperators.NotEquals:
-                        return this.runtime.CompareNotEqual(left, right);
-
-                    case RqlOperators.NotIn:
-                        if (right.Type != RqlTypes.Array)
-                        {
-                            throw CreateInterpreterException($"Expected right operand of type '{RqlTypes.Array.Name}' for operator 'not in'.", binaryExpression.RightExpression);
-                        }
-
-                        return this.runtime.CompareNotIn(left, (RqlArray)right);
-
-                    case RqlOperators.Or:
-                        return this.runtime.LogicOr(left, right);
-
-                    case RqlOperators.Plus:
-                        return this.runtime.Sum(left, right);
-
-                    default:
-                        return new RqlNothing();
-                }
+                return this.runtime.ApplyBinary(left, rqlOperator, right);
             }
             catch (RuntimeException ex)
             {

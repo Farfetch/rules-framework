@@ -14,27 +14,13 @@ namespace Rules.Framework.Rql.Runtime
 
         ValueTask<RqlArray> ActivateRuleAsync(TContentType contentType, string ruleName);
 
+        IRuntimeValue ApplyBinary(IRuntimeValue leftOperand, RqlOperators rqlOperator, IRuntimeValue rightOperand);
+
         IRuntimeValue ApplyUnary(IRuntimeValue value, RqlOperators rqlOperator);
 
         RqlNothing Assign(string variableName, IRuntimeValue variableValue);
 
         IRuntimeValue Call(string callableName, IRuntimeValue instance, IRuntimeValue[] arguments);
-
-        RqlBool CompareEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        RqlBool CompareGreaterThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        RqlBool CompareGreaterThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        RqlBool CompareIn(IRuntimeValue leftOperand, RqlArray rightOperand);
-
-        RqlBool CompareLesserThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        RqlBool CompareLesserThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        RqlBool CompareNotEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        RqlBool CompareNotIn(IRuntimeValue leftOperand, RqlArray rightOperand);
 
         ValueTask<RqlArray> CreateRuleAsync(CreateRuleArgs<TContentType, TConditionType> createRuleArgs);
 
@@ -44,19 +30,11 @@ namespace Rules.Framework.Rql.Runtime
 
         RqlNothing DeclareVariable(RqlString variableName, IRuntimeValue variableValue);
 
-        IRuntimeValue Divide(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        IRuntimeValue EnsureUnwrapped(IRuntimeValue runtimeValue);
-
         RqlAny GetAtIndex(IRuntimeValue indexer, RqlInteger index);
 
         RqlAny GetPropertyValue(IRuntimeValue instance, RqlString propertyName);
 
         IRuntimeValue GetVariableValue(RqlString variableName);
-
-        RqlBool LogicAnd(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        RqlBool LogicOr(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
         ValueTask<RqlArray> MatchRulesAsync(
             MatchCardinality matchCardinality,
@@ -64,17 +42,11 @@ namespace Rules.Framework.Rql.Runtime
             RqlDate matchDate,
             IEnumerable<Condition<TConditionType>> conditions);
 
-        IRuntimeValue Multiply(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
         ValueTask<RqlArray> SearchRulesAsync(TContentType contentType, RqlDate dateBegin, RqlDate dateEnd, SearchArgs<TContentType, TConditionType> searchArgs);
 
         RqlNothing SetAtIndex(IRuntimeValue indexer, RqlInteger index, IRuntimeValue value);
 
         RqlNothing SetPropertyValue(IRuntimeValue instance, RqlString propertyName, IRuntimeValue propertyValue);
-
-        IRuntimeValue Subtract(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
-
-        IRuntimeValue Sum(IRuntimeValue leftOperand, IRuntimeValue rightOperant);
 
         ValueTask<RqlArray> UpdateRuleAsync(UpdateRuleArgs<TContentType> args);
     }
