@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.IsMatchCurrentToken(TokenType.OBJECT))
+            if (!parseContext.IsMatchCurrentToken(TokenType.OBJECT))
             {
                 throw new InvalidOperationException("Unable to handle object expression.");
             }
