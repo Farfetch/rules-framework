@@ -42,7 +42,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseExpressionWith<SearchRulesParseStrategy>(parseContext);
             }
 
-            return this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
+            return this.ParseExpressionWith<LogicOrParseStrategy>(parseContext);
         }
     }
 }

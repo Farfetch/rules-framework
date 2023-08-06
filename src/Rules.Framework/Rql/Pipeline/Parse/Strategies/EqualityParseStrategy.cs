@@ -12,7 +12,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            var unaryExpression = this.ParseExpressionWith<ComparisonParseStrategy>(parseContext);
+            var unaryExpression = this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
@@ -22,7 +22,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             {
                 var operatorToken = parseContext.GetCurrentToken();
                 _ = parseContext.MoveNext();
-                var rightExpression = this.ParseExpressionWith<ComparisonParseStrategy>(parseContext);
+                var rightExpression = this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
                     return Expression.None;
