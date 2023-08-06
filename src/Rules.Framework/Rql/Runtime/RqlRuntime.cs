@@ -149,6 +149,9 @@ namespace Rules.Framework.Rql.Runtime
             }
         }
 
+        public RqlBool CompareEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand)
+            => leftOperand.Type != rightOperand.Type ? false : object.Equals(leftOperand, rightOperand);
+
         public RqlBool CompareGreaterThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand) => leftOperand switch
         {
             RqlInteger left when rightOperand is RqlInteger right => new RqlBool(left.Value > right.Value),
@@ -192,6 +195,9 @@ namespace Rules.Framework.Rql.Runtime
             RqlDecimal => throw new RuntimeException($"Expected right operand of type {RqlTypes.Decimal.Name} but found {rightOperand.Type.Name}."),
             _ => throw new RuntimeException($"Cannot compare operand of type {leftOperand.Type.Name}."),
         };
+
+        public RqlBool CompareNotEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand)
+            => !this.CompareEqual(leftOperand, rightOperand);
 
         public async ValueTask<RqlArray> CreateRuleAsync(CreateRuleArgs<TContentType, TConditionType> createRuleArgs)
         {

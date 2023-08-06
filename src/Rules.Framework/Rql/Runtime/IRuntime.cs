@@ -20,6 +20,8 @@ namespace Rules.Framework.Rql.Runtime
 
         IRuntimeValue Call(string callableName, IRuntimeValue instance, IRuntimeValue[] arguments);
 
+        RqlBool CompareEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
         RqlBool CompareGreaterThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
         RqlBool CompareGreaterThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
@@ -27,6 +29,8 @@ namespace Rules.Framework.Rql.Runtime
         RqlBool CompareLesserThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
         RqlBool CompareLesserThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        RqlBool CompareNotEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
 
         ValueTask<RqlArray> CreateRuleAsync(CreateRuleArgs<TContentType, TConditionType> createRuleArgs);
 

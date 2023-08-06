@@ -103,6 +103,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                     case TokenType.DIVIDE:
                         return this.runtime.Divide(left, right);
 
+                    case TokenType.EQUAL:
+                        return this.runtime.CompareEqual(left, right);
+
                     case TokenType.GREATER_THAN:
                         return this.runtime.CompareGreaterThan(left, right);
 
@@ -120,6 +123,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
                     case TokenType.MULTIPLY:
                         return this.runtime.Multiply(left, right);
+
+                    case TokenType.NOT_EQUAL:
+                        return this.runtime.CompareNotEqual(left, right);
 
                     case TokenType.PLUS:
                         return this.runtime.Sum(left, right);
