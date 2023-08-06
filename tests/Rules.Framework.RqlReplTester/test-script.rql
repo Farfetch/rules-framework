@@ -35,6 +35,10 @@ else
 foreach (var #rule in #rules)
 {
 	Show(#rule.#Name);
+	if (#rule.#Priority >= 50)
+	{
+		Show("Big priority but not that big.");
+	}
 }
 
 foreach (var num in arr)

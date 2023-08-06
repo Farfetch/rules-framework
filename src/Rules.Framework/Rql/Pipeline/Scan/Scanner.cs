@@ -301,7 +301,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                 case '<':
                     if (scanContext.MoveNextConditionally('='))
                     {
-                        return CreateToken(scanContext, TokenType.GREATER_THAN_OR_EQUAL);
+                        return CreateToken(scanContext, TokenType.LESS_THAN_OR_EQUAL);
                     }
 
                     if (scanContext.MoveNextConditionally('>'))
@@ -309,7 +309,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                         return CreateToken(scanContext, TokenType.NOT_EQUAL);
                     }
 
-                    return CreateToken(scanContext, TokenType.GREATER_THAN);
+                    return CreateToken(scanContext, TokenType.LESS_THAN);
 
                 case '$':
                     return HandleDate(scanContext);

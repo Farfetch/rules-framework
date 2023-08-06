@@ -95,10 +95,25 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 var left = await binaryExpression.LeftExpression.Accept(this).ConfigureAwait(false);
                 var right = await binaryExpression.RightExpression.Accept(this).ConfigureAwait(false);
 
+                left = this.runtime.EnsureUnwrapped(left);
+                right = this.runtime.EnsureUnwrapped(right);
+
                 switch (binaryExpression.OperatorToken.Type)
                 {
                     case TokenType.DIVIDE:
                         return this.runtime.Divide(left, right);
+
+                    case TokenType.GREATER_THAN:
+                        return this.runtime.CompareGreaterThan(left, right);
+
+                    case TokenType.GREATER_THAN_OR_EQUAL:
+                        return this.runtime.CompareGreaterThanOrEqual(left, right);
+
+                    case TokenType.LESS_THAN:
+                        return this.runtime.CompareLesserThan(left, right);
+
+                    case TokenType.LESS_THAN_OR_EQUAL:
+                        return this.runtime.CompareLesserThanOrEqual(left, right);
 
                     case TokenType.MINUS:
                         return this.runtime.Subtract(left, right);

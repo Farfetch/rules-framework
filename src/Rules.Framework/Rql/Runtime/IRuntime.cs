@@ -20,6 +20,14 @@ namespace Rules.Framework.Rql.Runtime
 
         IRuntimeValue Call(string callableName, IRuntimeValue instance, IRuntimeValue[] arguments);
 
+        RqlBool CompareGreaterThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        RqlBool CompareGreaterThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        RqlBool CompareLesserThan(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        RqlBool CompareLesserThanOrEqual(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
         ValueTask<RqlArray> CreateRuleAsync(CreateRuleArgs<TContentType, TConditionType> createRuleArgs);
 
         IDisposable CreateScope();
@@ -29,6 +37,8 @@ namespace Rules.Framework.Rql.Runtime
         RqlNothing DeclareVariable(RqlString variableName, IRuntimeValue variableValue);
 
         IRuntimeValue Divide(IRuntimeValue leftOperand, IRuntimeValue rightOperand);
+
+        IRuntimeValue EnsureUnwrapped(IRuntimeValue runtimeValue);
 
         RqlAny GetAtIndex(IRuntimeValue indexer, RqlInteger index);
 

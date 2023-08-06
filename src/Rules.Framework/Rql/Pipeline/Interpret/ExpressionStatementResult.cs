@@ -4,11 +4,6 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     {
         public ExpressionStatementResult(string rql, object result)
         {
-            if (string.IsNullOrWhiteSpace(rql))
-            {
-                throw new System.ArgumentException($"'{nameof(rql)}' cannot be null or whitespace.", nameof(rql));
-            }
-
             this.Rql = rql;
             this.Result = result;
         }
