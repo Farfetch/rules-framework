@@ -17,6 +17,21 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseExpressionWith<IndexerParseStrategy>(parseContext);
             }
 
+            if (parseContext.IsMatchCurrentToken(TokenType.ARRAY))
+            {
+                return this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
+            }
+
+            if (parseContext.IsMatchCurrentToken(TokenType.OBJECT))
+            {
+                return this.ParseExpressionWith<ObjectParseStrategy>(parseContext);
+            }
+
+            if (parseContext.IsMatchCurrentToken(TokenType.NOTHING))
+            {
+                return this.ParseExpressionWith<NothingParseStrategy>(parseContext);
+            }
+
             if (parseContext.IsMatchCurrentToken(TokenType.STRING, TokenType.INT, TokenType.BOOL, TokenType.DECIMAL, TokenType.DATE))
             {
                 return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);

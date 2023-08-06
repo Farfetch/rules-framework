@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 {
+    using System;
     using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Tokens;
 
@@ -14,10 +15,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (parseContext.IsMatchCurrentToken(TokenType.NOTHING))
             {
-                return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
+                throw new InvalidOperationException("Unable to handle nothing expression.");
             }
 
-            return this.ParseExpressionWith<ComparisonParseStrategy>(parseContext);
+            return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
         }
     }
 }

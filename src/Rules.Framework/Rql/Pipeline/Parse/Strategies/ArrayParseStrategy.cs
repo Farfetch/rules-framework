@@ -14,65 +14,70 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.IsMatchCurrentToken(TokenType.ARRAY))
+            if (!parseContext.IsMatchCurrentToken(TokenType.ARRAY))
             {
-                var arrayToken = parseContext.GetCurrentToken();
-                if (parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_LEFT))
-                {
-                    var initializerBeginToken = parseContext.GetCurrentToken();
-                    _ = parseContext.MoveNext();
-                    var size = this.ParseSizeExpression(parseContext);
-                    if (parseContext.PanicMode)
-                    {
-                        return Expression.None;
-                    }
-
-                    if (!parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_RIGHT))
-                    {
-                        parseContext.EnterPanicMode("Expected token ']'.", parseContext.GetCurrentToken());
-                        return Expression.None;
-                    }
-
-                    var initializerEndToken = parseContext.GetCurrentToken();
-                    return new NewArrayExpression(arrayToken, initializerBeginToken, size, Array.Empty<Expression>(), initializerEndToken);
-                }
-
-                if (parseContext.MoveNextIfNextToken(TokenType.BRACE_LEFT))
-                {
-                    var initializerBeginToken = parseContext.GetCurrentToken();
-                    _ = parseContext.MoveNext();
-                    var literal = this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
-                    if (parseContext.PanicMode)
-                    {
-                        return Expression.None;
-                    }
-
-                    _ = parseContext.MoveNext();
-                    var values = new List<Expression> { literal };
-                    while (parseContext.MoveNextIfCurrentToken(TokenType.COMMA))
-                    {
-                        literal = this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
-                        if (parseContext.PanicMode)
-                        {
-                            return Expression.None;
-                        }
-
-                        values.Add(literal);
-                        _ = parseContext.MoveNext();
-                    }
-
-                    if (!parseContext.IsMatchCurrentToken(TokenType.BRACE_RIGHT))
-                    {
-                        parseContext.EnterPanicMode("Expected token '}'.", parseContext.GetCurrentToken());
-                        return Expression.None;
-                    }
-
-                    var initializerEndToken = parseContext.GetCurrentToken();
-                    return new NewArrayExpression(arrayToken, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
-                }
+                throw new InvalidOperationException("Unable to handle array expression.");
             }
 
-            return this.ParseExpressionWith<ObjectParseStrategy>(parseContext);
+            var arrayToken = parseContext.GetCurrentToken();
+            Token initializerBeginToken;
+            Token initializerEndToken;
+            if (parseContext.MoveNextIfNextToken(TokenType.BRACE_LEFT))
+            {
+                initializerBeginToken = parseContext.GetCurrentToken();
+                _ = parseContext.MoveNext();
+                var literal = this.ParseExpressionWith<LogicOrParseStrategy>(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
+                _ = parseContext.MoveNext();
+                var values = new List<Expression> { literal };
+                while (parseContext.MoveNextIfCurrentToken(TokenType.COMMA))
+                {
+                    literal = this.ParseExpressionWith<LogicOrParseStrategy>(parseContext);
+                    if (parseContext.PanicMode)
+                    {
+                        return Expression.None;
+                    }
+
+                    values.Add(literal);
+                    _ = parseContext.MoveNext();
+                }
+
+                if (!parseContext.IsMatchCurrentToken(TokenType.BRACE_RIGHT))
+                {
+                    parseContext.EnterPanicMode("Expected token '}'.", parseContext.GetCurrentToken());
+                    return Expression.None;
+                }
+
+                initializerEndToken = parseContext.GetCurrentToken();
+                return new NewArrayExpression(arrayToken, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_LEFT))
+            {
+                parseContext.EnterPanicMode("Expected token '['.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
+            initializerBeginToken = parseContext.GetCurrentToken();
+            _ = parseContext.MoveNext();
+            var size = this.ParseSizeExpression(parseContext);
+            if (parseContext.PanicMode)
+            {
+                return Expression.None;
+            }
+
+            if (!parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_RIGHT))
+            {
+                parseContext.EnterPanicMode("Expected token ']'.", parseContext.GetCurrentToken());
+                return Expression.None;
+            }
+
+            initializerEndToken = parseContext.GetCurrentToken();
+            return new NewArrayExpression(arrayToken, initializerBeginToken, size, Array.Empty<Expression>(), initializerEndToken);
         }
 
         private Expression ParseSizeExpression(ParseContext parseContext)

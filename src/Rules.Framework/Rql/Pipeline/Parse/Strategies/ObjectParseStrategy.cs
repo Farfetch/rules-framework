@@ -16,42 +16,42 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (parseContext.IsMatchCurrentToken(TokenType.OBJECT))
             {
-                var objectToken = parseContext.GetCurrentToken();
-                if (parseContext.MoveNextIfNextToken(TokenType.BRACE_LEFT))
+                throw new InvalidOperationException("Unable to handle object expression.");
+            }
+
+            var objectToken = parseContext.GetCurrentToken();
+            if (parseContext.MoveNextIfNextToken(TokenType.BRACE_LEFT))
+            {
+                _ = parseContext.MoveNext();
+                var objectAssignment = this.ParseObjectAssignment(parseContext);
+                if (parseContext.PanicMode)
+                {
+                    return Expression.None;
+                }
+
+                var objectAssignments = new List<Expression> { objectAssignment };
+                while (parseContext.MoveNextIfNextToken(TokenType.COMMA))
                 {
                     _ = parseContext.MoveNext();
-                    var objectAssignment = this.ParseObjectAssignment(parseContext);
+                    objectAssignment = this.ParseObjectAssignment(parseContext);
                     if (parseContext.PanicMode)
                     {
                         return Expression.None;
                     }
 
-                    var objectAssignments = new List<Expression> { objectAssignment };
-                    while (parseContext.MoveNextIfNextToken(TokenType.COMMA))
-                    {
-                        _ = parseContext.MoveNext();
-                        objectAssignment = this.ParseObjectAssignment(parseContext);
-                        if (parseContext.PanicMode)
-                        {
-                            return Expression.None;
-                        }
-
-                        objectAssignments.Add(objectAssignment);
-                    }
-
-                    if (!parseContext.MoveNextIfNextToken(TokenType.BRACE_RIGHT))
-                    {
-                        parseContext.EnterPanicMode("Expected token '}'.", parseContext.GetCurrentToken());
-                        return Expression.None;
-                    }
-
-                    return new NewObjectExpression(objectToken, objectAssignments.ToArray());
+                    objectAssignments.Add(objectAssignment);
                 }
 
-                return new NewObjectExpression(objectToken, Array.Empty<Expression>());
+                if (!parseContext.MoveNextIfNextToken(TokenType.BRACE_RIGHT))
+                {
+                    parseContext.EnterPanicMode("Expected token '}'.", parseContext.GetCurrentToken());
+                    return Expression.None;
+                }
+
+                return new NewObjectExpression(objectToken, objectAssignments.ToArray());
             }
 
-            return this.ParseExpressionWith<NothingParseStrategy>(parseContext);
+            return new NewObjectExpression(objectToken, Array.Empty<Expression>());
         }
 
         private Expression ParseObjectAssignment(ParseContext parseContext)
