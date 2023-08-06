@@ -14,15 +14,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.ARRAY))
-            {
-                throw new InvalidOperationException("Unable to handle array expression.");
-            }
-
-            var arrayToken = parseContext.GetCurrentToken();
             Token initializerBeginToken;
             Token initializerEndToken;
-            if (parseContext.MoveNextIfNextToken(TokenType.BRACE_LEFT))
+            if (parseContext.IsMatchCurrentToken(TokenType.BRACE_LEFT))
             {
                 initializerBeginToken = parseContext.GetCurrentToken();
                 _ = parseContext.MoveNext();
@@ -53,9 +47,15 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 }
 
                 initializerEndToken = parseContext.GetCurrentToken();
-                return new NewArrayExpression(arrayToken, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
+                return new NewArrayExpression(Token.None, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
             }
 
+            if (!parseContext.IsMatchCurrentToken(TokenType.ARRAY))
+            {
+                throw new InvalidOperationException("Unable to handle array expression.");
+            }
+
+            var arrayToken = parseContext.GetCurrentToken();
             if (!parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_LEFT))
             {
                 parseContext.EnterPanicMode("Expected token '['.", parseContext.GetCurrentToken());

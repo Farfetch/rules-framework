@@ -26,7 +26,7 @@ else
 	Show("Found rules for you!");
 }
 
-var arr = array { 1, 2, 3 };
+var arr = { 1, 2, 3 };
 if (arr.Empty())
 	Show("Array is empty.");
 else

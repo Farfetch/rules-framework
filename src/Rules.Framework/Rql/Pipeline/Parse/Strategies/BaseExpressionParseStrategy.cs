@@ -17,7 +17,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseExpressionWith<IndexerParseStrategy>(parseContext);
             }
 
-            if (parseContext.IsMatchCurrentToken(TokenType.ARRAY))
+            if (parseContext.IsMatchCurrentToken(TokenType.ARRAY, TokenType.BRACE_LEFT))
             {
                 return this.ParseExpressionWith<ArrayParseStrategy>(parseContext);
             }
