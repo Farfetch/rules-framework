@@ -12,7 +12,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER))
+            var currentToken = parseContext.GetCurrentToken();
+            if (parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames) || (currentToken.IsEscaped && !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames)))
             {
                 return this.ParseExpressionWith<IndexerParseStrategy>(parseContext);
             }
@@ -37,7 +38,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
             }
 
-            parseContext.EnterPanicMode("Expected expression.", parseContext.GetCurrentToken());
+            parseContext.EnterPanicMode("Expected expression.", currentToken);
             return Expression.None;
         }
     }

@@ -13,18 +13,26 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER))
+            if (!parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames))
             {
-                throw new InvalidOperationException("Unable to handle indexer expression.");
+                var currentToken = parseContext.GetCurrentToken();
+                if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                {
+                    throw new InvalidOperationException("Unable to handle indexer expression.");
+                }
             }
 
             var expression = this.ParseIndexer(parseContext);
             while (parseContext.MoveNextIfNextToken(TokenType.DOT))
             {
-                if (!parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
+                if (!parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames))
                 {
-                    parseContext.EnterPanicMode("Expected identifier after '.'.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    var currentToken = parseContext.GetCurrentToken();
+                    if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                    {
+                        parseContext.EnterPanicMode("Expected identifier after '.'.", parseContext.GetCurrentToken());
+                        return Expression.None;
+                    }
                 }
 
                 var chainedCall = this.ParseIndexer(parseContext);

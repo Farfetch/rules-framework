@@ -1,75 +1,29 @@
 namespace Rules.Framework.Rql.Tokens
 {
-    internal class Constants
-    {
-        internal static TokenType[] AllowedEscapedIdentifierNames => new[]
-        {
-            TokenType.ACTIVATE,
-            TokenType.ALL,
-            TokenType.AND,
-            TokenType.APPLY,
-            TokenType.ARRAY,
-            TokenType.AS,
-            TokenType.ASSIGN,
-            TokenType.BEGINS,
-            TokenType.BOTTOM,
-            TokenType.CONTENT,
-            TokenType.CREATE,
-            TokenType.DEACTIVATE,
-            TokenType.ENDS,
-            TokenType.FOR,
-            TokenType.IDENTIFIER,
-            TokenType.IS,
-            TokenType.MATCH,
-            TokenType.NAME,
-            TokenType.NOTHING,
-            TokenType.NUMBER,
-            TokenType.OBJECT,
-            TokenType.ON,
-            TokenType.ONE,
-            TokenType.OR,
-            TokenType.PRIORITY,
-            TokenType.RANGE,
-            TokenType.RULE,
-            TokenType.RULES,
-            TokenType.SEARCH,
-            TokenType.SET,
-            TokenType.TO,
-            TokenType.TOP,
-            TokenType.UPDATE,
-            TokenType.VAR,
-            TokenType.WHEN,
-            TokenType.WITH,
-        };
+    using System;
+    using System.Linq;
+    using System.Reflection;
 
-        internal static TokenType[] AllowedUnescapedIdentifierNames => new[]
+    internal static class Constants
+    {
+        private static readonly TokenType[] allowedEscapedIdentifierNames;
+
+        private static readonly TokenType[] allowedUnescapedIdentifierNames;
+
+        static Constants()
         {
-            TokenType.ALL,
-            TokenType.AND,
-            TokenType.APPLY,
-            TokenType.AS,
-            TokenType.ASSIGN,
-            TokenType.BEGINS,
-            TokenType.BOTTOM,
-            TokenType.CONTENT,
-            TokenType.ENDS,
-            TokenType.FOR,
-            TokenType.IDENTIFIER,
-            TokenType.IS,
-            TokenType.NAME,
-            TokenType.NUMBER,
-            TokenType.ON,
-            TokenType.ONE,
-            TokenType.OR,
-            TokenType.PRIORITY,
-            TokenType.RANGE,
-            TokenType.RULE,
-            TokenType.RULES,
-            TokenType.SET,
-            TokenType.TO,
-            TokenType.TOP,
-            TokenType.WHEN,
-            TokenType.WITH,
-        };
+            var tokenTypeType = typeof(TokenType);
+            var allowedEscapedIdentifierMembers = tokenTypeType.GetMembers()
+                .Where(mi => mi.GetCustomAttribute<AllowAsIdentifierAttribute>() is not null);
+            allowedEscapedIdentifierNames = allowedEscapedIdentifierMembers.Select(mi => Enum.Parse<TokenType>(mi.Name))
+                .ToArray();
+            allowedUnescapedIdentifierNames = allowedEscapedIdentifierMembers.Where(mi => !mi.GetCustomAttribute<AllowAsIdentifierAttribute>().RequireEscaping)
+                .Select(mi => Enum.Parse<TokenType>(mi.Name))
+                .ToArray();
+        }
+
+        internal static TokenType[] AllowedEscapedIdentifierNames => allowedEscapedIdentifierNames;
+
+        internal static TokenType[] AllowedUnescapedIdentifierNames => allowedUnescapedIdentifierNames;
     }
 }

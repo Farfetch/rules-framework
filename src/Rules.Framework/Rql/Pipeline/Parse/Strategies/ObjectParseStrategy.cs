@@ -61,7 +61,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 var currentToken = parseContext.GetCurrentToken();
                 if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
                 {
-                    parseContext.EnterPanicMode("Expected identifier for object property.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected identifier for object property.", currentToken);
                     return Expression.None;
                 }
             }

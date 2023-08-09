@@ -6,43 +6,115 @@ namespace Rules.Framework.Rql.Tokens
 
         #region Keywords
 
+        [AllowAsIdentifier(RequireEscaping = true)]
         ACTIVATE,
+
+        [AllowAsIdentifier]
         ALL,
+
+        [AllowAsIdentifier]
         AND,
+
+        [AllowAsIdentifier]
         APPLY,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         ARRAY,
+
+        [AllowAsIdentifier]
         AS,
-        ASSIGN,
+
+        [AllowAsIdentifier]
         BEGINS,
+
+        [AllowAsIdentifier]
         BOTTOM,
+
+        [AllowAsIdentifier]
         CONTENT,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         CREATE,
+
+        [AllowAsIdentifier]
         DEACTIVATE,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         ELSE,
+
+        [AllowAsIdentifier]
         ENDS,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         FOR,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         FOREACH,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         IF,
+
+        [AllowAsIdentifier]
         IS,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         MATCH,
+
+        [AllowAsIdentifier]
         NAME,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         NOTHING,
+
+        [AllowAsIdentifier]
         NUMBER,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         OBJECT,
+
+        [AllowAsIdentifier]
         ON,
+
+        [AllowAsIdentifier]
         ONE,
+
+        [AllowAsIdentifier]
         OR,
+
+        [AllowAsIdentifier]
         PRIORITY,
+
+        [AllowAsIdentifier]
         RANGE,
+
+        [AllowAsIdentifier]
         RULE,
+
+        [AllowAsIdentifier]
         RULES,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         SEARCH,
+
+        [AllowAsIdentifier]
         SET,
+
+        [AllowAsIdentifier]
         TO,
+
+        [AllowAsIdentifier]
         TOP,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         UPDATE,
+
+        [AllowAsIdentifier(RequireEscaping = true)]
         VAR,
+
+        [AllowAsIdentifier]
         WHEN,
+
+        [AllowAsIdentifier]
         WITH,
 
         #endregion Keywords
@@ -52,7 +124,10 @@ namespace Rules.Framework.Rql.Tokens
         BOOL,
         DATE,
         DECIMAL,
+
+        [AllowAsIdentifier]
         IDENTIFIER,
+
         INT,
         PLACEHOLDER,
         STRING,
@@ -61,7 +136,7 @@ namespace Rules.Framework.Rql.Tokens
 
         #region Operators
 
-        SLASH,
+        ASSIGN,
         EQUAL,
         GREATER_THAN,
         GREATER_THAN_OR_EQUAL,
@@ -73,6 +148,7 @@ namespace Rules.Framework.Rql.Tokens
         NOT_EQUAL,
         NOT,
         PLUS,
+        SLASH,
 
         #endregion Operators
 

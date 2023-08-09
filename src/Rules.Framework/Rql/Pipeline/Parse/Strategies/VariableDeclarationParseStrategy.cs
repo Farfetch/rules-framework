@@ -19,10 +19,14 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
 
             var keywordToken = parseContext.GetCurrentToken();
-            if (!parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
+            if (!parseContext.MoveNextIfNextToken(Constants.AllowedUnescapedIdentifierNames))
             {
-                parseContext.EnterPanicMode("Expected variable identifier.", parseContext.GetCurrentToken());
-                return Expression.None;
+                var currentToken = parseContext.GetCurrentToken();
+                if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                {
+                    parseContext.EnterPanicMode("Expected variable identifier.", currentToken);
+                    return Expression.None;
+                }
             }
 
             var variableIdentifier = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);

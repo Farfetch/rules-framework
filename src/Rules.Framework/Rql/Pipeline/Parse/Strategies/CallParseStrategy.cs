@@ -14,9 +14,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Expression Parse(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.IDENTIFIER))
+            if (!parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames))
             {
-                throw new InvalidOperationException("Unable to handle call expression.");
+                var currentToken = parseContext.GetCurrentToken();
+                if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                {
+                    throw new InvalidOperationException("Unable to handle call expression.");
+                }
             }
 
             var identifier = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
