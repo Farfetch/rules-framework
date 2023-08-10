@@ -17,7 +17,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 var oneCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
                 if (!parseContext.MoveNextIfNextToken(TokenType.RULE))
                 {
-                    parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected token 'RULE'.", parseContext.GetNextToken());
                     return Segment.None;
                 }
 
@@ -31,7 +31,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 var allCardinalityKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
                 if (!parseContext.MoveNextIfNextToken(TokenType.RULES))
                 {
-                    parseContext.EnterPanicMode("Expected token 'RULES'.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected token 'RULES'.", parseContext.GetNextToken());
                     return Segment.None;
                 }
 

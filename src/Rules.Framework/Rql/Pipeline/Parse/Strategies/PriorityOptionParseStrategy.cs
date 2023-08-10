@@ -27,7 +27,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             {
                 if (!parseContext.MoveNextIfNextToken(TokenType.NAME))
                 {
-                    parseContext.EnterPanicMode("Expected token 'NAME'.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected token 'NAME'.", parseContext.GetNextToken());
                     return Segment.None;
                 }
 
@@ -39,7 +39,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return ParsePriorityNumber(parseContext);
             }
 
-            parseContext.EnterPanicMode("Expect one priority option (TOP, BOTTOM, RULE NAME <name>, or NUMBER <priority value>.", parseContext.GetCurrentToken());
+            parseContext.EnterPanicMode("Expect one priority option (TOP, BOTTOM, RULE NAME <name>, or NUMBER <priority value>.", parseContext.GetNextToken());
             return Segment.None;
         }
 
@@ -48,7 +48,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var keyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.INT))
             {
-                parseContext.EnterPanicMode("Expected priority value.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected priority value.", parseContext.GetNextToken());
                 return Segment.None;
             }
 
@@ -66,7 +66,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var keyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.STRING))
             {
-                parseContext.EnterPanicMode("Expected rule name.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected rule name.", parseContext.GetNextToken());
                 return Segment.None;
             }
 
@@ -87,7 +87,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Segment.None;
             }
 
-            return new PriorityOptionSegment(keyword, argument: null);
+            return new PriorityOptionSegment(keyword, argument: null!);
         }
     }
 }

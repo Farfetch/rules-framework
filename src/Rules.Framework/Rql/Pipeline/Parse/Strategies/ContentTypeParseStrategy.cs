@@ -33,7 +33,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 // TODO: future support.
             }
 
-            parseContext.EnterPanicMode("Expected content type name.", parseContext.GetCurrentToken());
+            parseContext.EnterPanicMode("Expected content type name.", parseContext.GetNextToken());
             return Expression.None;
         }
     }

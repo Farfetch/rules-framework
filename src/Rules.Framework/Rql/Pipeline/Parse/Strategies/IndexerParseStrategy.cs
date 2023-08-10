@@ -72,7 +72,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 var indexDelimeterLeft = parseContext.GetCurrentToken();
                 if (!parseContext.MoveNextIfNextToken(TokenType.INT))
                 {
-                    parseContext.EnterPanicMode("Expected integer literal token as index.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected integer literal token as index.", parseContext.GetNextToken());
                     return Expression.None;
                 }
 
@@ -84,7 +84,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
                 if (!parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_RIGHT))
                 {
-                    parseContext.EnterPanicMode("Expected token ']'.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected token ']'.", parseContext.GetNextToken());
                     return Expression.None;
                 }
 

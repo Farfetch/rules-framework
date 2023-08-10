@@ -24,7 +24,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNext())
             {
-                parseContext.EnterPanicMode("Expected binary operator.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected binary operator.", parseContext.GetNextToken());
                 return Segment.None;
             }
 
@@ -36,7 +36,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.INT, TokenType.STRING, TokenType.BOOL, TokenType.DECIMAL, TokenType.IDENTIFIER))
             {
-                parseContext.EnterPanicMode("Expected value for condition.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected value for condition.", parseContext.GetNextToken());
                 return Segment.None;
             }
 

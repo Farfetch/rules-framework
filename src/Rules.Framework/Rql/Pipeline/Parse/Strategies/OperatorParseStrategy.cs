@@ -40,7 +40,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 case TokenType.NOT:
                     if (!parseContext.MoveNextIfNextToken(TokenType.IN))
                     {
-                        parseContext.EnterPanicMode("Expected token 'in'.", parseContext.GetCurrentToken());
+                        parseContext.EnterPanicMode("Expected token 'in'.", parseContext.GetNextToken());
                         return Segment.None;
                     }
 

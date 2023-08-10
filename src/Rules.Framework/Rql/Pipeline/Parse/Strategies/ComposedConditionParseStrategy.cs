@@ -22,7 +22,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.IsMatchNextToken(TokenType.AND, TokenType.OR))
             {
-                parseContext.EnterPanicMode("Expected logical operator ('AND' or 'OR').", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected logical operator ('AND' or 'OR').", parseContext.GetNextToken());
                 return Segment.None;
             }
 

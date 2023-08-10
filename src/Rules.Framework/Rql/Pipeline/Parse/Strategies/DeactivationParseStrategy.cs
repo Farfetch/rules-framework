@@ -32,7 +32,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
             {
-                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 

@@ -44,7 +44,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
                 if (!parseContext.MoveNextIfNextToken(TokenType.BRACE_RIGHT))
                 {
-                    parseContext.EnterPanicMode("Expected token '}'.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected token '}'.", parseContext.GetNextToken());
                     return Expression.None;
                 }
 
@@ -69,7 +69,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var left = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.ASSIGN))
             {
-                parseContext.EnterPanicMode("Expected token '='.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token '='.", parseContext.GetNextToken());
                 return Expression.None;
             }
 

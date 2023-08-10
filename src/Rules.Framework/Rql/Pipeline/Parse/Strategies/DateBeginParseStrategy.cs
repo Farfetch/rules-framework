@@ -20,7 +20,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.ON))
             {
-                parseContext.EnterPanicMode("Expected token 'ON'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'ON'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 

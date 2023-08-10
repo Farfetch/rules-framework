@@ -27,7 +27,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
             {
-                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
@@ -64,7 +64,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (!parseContext.MoveNextIfNextToken(TokenType.ON))
             {
-                parseContext.EnterPanicMode("Expect token 'ON'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expect token 'ON'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 

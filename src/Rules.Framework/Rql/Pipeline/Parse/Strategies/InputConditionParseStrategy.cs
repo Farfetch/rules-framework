@@ -37,7 +37,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     return new InputConditionSegment(leftExpression, operatorToken, rightExpression);
                 }
 
-                parseContext.EnterPanicMode("Expected literal for condition", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected literal for condition", parseContext.GetNextToken());
                 return Segment.None;
             }
 

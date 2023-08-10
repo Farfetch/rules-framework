@@ -45,13 +45,16 @@ namespace Rules.Framework.Rql.Pipeline.Parse
         }
 
         public Token GetCurrentToken()
+            => this.GetToken(this.Offset);
+
+        public Token GetNextToken()
         {
-            if (this.Offset < 0)
+            if (this.Offset + 1 >= this.Tokens.Count)
             {
-                throw new InvalidOperationException("Must invoke MoveNext() first.");
+                return this.GetToken(this.Tokens.Count - 1);
             }
 
-            return this.Tokens[this.Offset];
+            return this.GetToken(this.Offset + 1);
         }
 
         public bool IsEof() => this.IsEof(this.Offset);
@@ -86,6 +89,16 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             }
 
             return false;
+        }
+
+        private Token GetToken(int offset)
+        {
+            if (offset < 0)
+            {
+                throw new InvalidOperationException("Must invoke MoveNext() first.");
+            }
+
+            return this.Tokens[offset];
         }
 
         private bool IsEof(int offset) => offset >= this.Tokens.Count || this.Tokens[offset].Type == TokenType.EOF;

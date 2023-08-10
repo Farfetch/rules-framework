@@ -21,7 +21,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var ifKeyword = parseContext.GetCurrentToken();
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_LEFT))
             {
-                parseContext.EnterPanicMode("Expected token '('.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token '('.", parseContext.GetNextToken());
                 return Statement.None;
             }
 
@@ -34,13 +34,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_RIGHT))
             {
-                parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetNextToken());
                 return Statement.None;
             }
 
             if (!parseContext.MoveNext())
             {
-                parseContext.EnterPanicMode("Expected statement after 'if' condition.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected statement after 'if' condition.", parseContext.GetNextToken());
                 return Statement.None;
             }
 
@@ -54,7 +54,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             {
                 if (!parseContext.MoveNext())
                 {
-                    parseContext.EnterPanicMode("Expected statement after 'else' keyword.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected statement after 'else' keyword.", parseContext.GetNextToken());
                     return Statement.None;
                 }
 

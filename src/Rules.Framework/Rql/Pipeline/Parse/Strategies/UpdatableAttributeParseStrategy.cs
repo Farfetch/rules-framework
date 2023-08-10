@@ -40,7 +40,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return new UpdatableAttributeSegment(priorityOption, UpdatableAttributeKind.PriorityOption);
             }
 
-            parseContext.EnterPanicMode("Expected updatable attribute (ENDS ON <date end>, PRIORITY NUMBER <priority value>).", parseContext.GetCurrentToken());
+            parseContext.EnterPanicMode("Expected updatable attribute (ENDS ON <date end>, PRIORITY NUMBER <priority value>).", parseContext.GetNextToken());
             return Segment.None;
         }
     }

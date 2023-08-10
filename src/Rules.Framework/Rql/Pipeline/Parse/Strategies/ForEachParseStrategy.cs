@@ -21,13 +21,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var forEachToken = parseContext.GetCurrentToken();
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_LEFT))
             {
-                parseContext.EnterPanicMode("Expected token '('.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token '('.", parseContext.GetNextToken());
                 return Statement.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.VAR))
             {
-                parseContext.EnterPanicMode("Expected variable declaration.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected variable declaration.", parseContext.GetNextToken());
                 return Statement.None;
             }
 
@@ -39,7 +39,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.IN))
             {
-                parseContext.EnterPanicMode("Expected token 'in'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'in'.", parseContext.GetNextToken());
                 return Statement.None;
             }
 
@@ -53,7 +53,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_RIGHT))
             {
-                parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetNextToken());
                 return Statement.None;
             }
 

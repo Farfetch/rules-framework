@@ -21,10 +21,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var keywordToken = parseContext.GetCurrentToken();
             if (!parseContext.MoveNextIfNextToken(Constants.AllowedUnescapedIdentifierNames))
             {
-                var currentToken = parseContext.GetCurrentToken();
-                if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                var nextToken = parseContext.GetNextToken();
+                if (!nextToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
                 {
-                    parseContext.EnterPanicMode("Expected variable identifier.", currentToken);
+                    parseContext.EnterPanicMode("Expected variable identifier.", nextToken);
                     return Expression.None;
                 }
             }

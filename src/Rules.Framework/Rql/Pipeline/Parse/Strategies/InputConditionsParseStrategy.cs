@@ -45,7 +45,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACE_RIGHT))
             {
-                parseContext.EnterPanicMode("Expected ',' or '}' after input condition.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected ',' or '}' after input condition.", parseContext.GetNextToken());
                 return Segment.None;
             }
 
@@ -59,7 +59,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return this.ParseSegmentWith<InputConditionParseStrategy>(parseContext);
             }
 
-            parseContext.EnterPanicMode("Expected placeholder (@<placeholder name>) for condition.", parseContext.GetCurrentToken());
+            parseContext.EnterPanicMode("Expected placeholder (@<placeholder name>) for condition.", parseContext.GetNextToken());
             return Segment.None;
         }
     }

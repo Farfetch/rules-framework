@@ -39,7 +39,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BEGINS))
             {
-                parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
@@ -51,7 +51,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.ENDS))
             {
-                parseContext.EnterPanicMode("Expected token 'ENDS'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'ENDS'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 

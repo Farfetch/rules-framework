@@ -55,7 +55,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACKET_RIGHT))
             {
-                parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token ')'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 

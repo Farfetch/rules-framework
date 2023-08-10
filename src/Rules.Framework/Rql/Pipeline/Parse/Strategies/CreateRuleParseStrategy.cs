@@ -33,7 +33,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
             {
-                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
@@ -51,7 +51,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BEGINS))
             {
-                parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
@@ -70,19 +70,19 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
             if (!parseContext.MoveNextIfNextToken(TokenType.WITH))
             {
-                parseContext.EnterPanicMode("Expected token 'WITH'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'WITH'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.CONTENT))
             {
-                parseContext.EnterPanicMode("Expected token 'CONTENT'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected token 'CONTENT'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.INT, TokenType.DECIMAL, TokenType.STRING, TokenType.BOOL, TokenType.IDENTIFIER))
             {
-                parseContext.EnterPanicMode("Expected expression.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode("Expected expression.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
@@ -91,7 +91,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         private (Expression, Segment, Segment) ParseOptionals(ParseContext parseContext)
         {
-            Expression dateEnd = null;
+            Expression dateEnd = null!;
             if (parseContext.MoveNextIfNextToken(TokenType.ENDS))
             {
                 dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);
@@ -101,7 +101,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 }
             }
 
-            Segment condition = null;
+            Segment condition = null!;
             if (parseContext.MoveNextIfNextToken(TokenType.APPLY))
             {
                 condition = this.ParseSegmentWith<ConditionsDefinitionParseStrategy>(parseContext);
@@ -111,12 +111,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 }
             }
 
-            Segment priorityOption = null;
+            Segment priorityOption = null!;
             if (parseContext.MoveNextIfNextToken(TokenType.SET))
             {
                 if (!parseContext.MoveNextIfNextToken(TokenType.PRIORITY))
                 {
-                    parseContext.EnterPanicMode("Expected token 'PRIORITY'.", parseContext.GetCurrentToken());
+                    parseContext.EnterPanicMode("Expected token 'PRIORITY'.", parseContext.GetNextToken());
                     return (Expression.None, Segment.None, Segment.None);
                 }
 
