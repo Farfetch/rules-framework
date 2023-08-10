@@ -547,8 +547,13 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public async Task<IRuntimeValue> VisitSearchExpression(SearchExpression searchExpression)
         {
-            var contentTypeName = (RqlString)await searchExpression.ContentType.Accept(this).ConfigureAwait(false);
-            var contentType = (TContentType)Enum.Parse(typeof(TContentType), contentTypeName.Value, ignoreCase: true);
+            var contentTypeValue = await searchExpression.ContentType.Accept(this).ConfigureAwait(false);
+            if (contentTypeValue.Type != RqlTypes.String)
+            {
+                throw CreateInterpreterException($"Expected a content type value of type '{RqlTypes.String.Name}'.", searchExpression.ContentType);
+            }
+
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), ((RqlString)contentTypeValue).Value, ignoreCase: true);
             var dateBegin = (RqlDate)await searchExpression.DateBegin.Accept(this).ConfigureAwait(false);
             var dateEnd = (RqlDate)await searchExpression.DateEnd.Accept(this).ConfigureAwait(false);
             var conditions = (IEnumerable<Condition<TConditionType>>)await searchExpression.InputConditions.Accept(this).ConfigureAwait(false);
@@ -567,8 +572,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             {
                 var @operator = unaryExpression.Operator.Lexeme switch
                 {
-                    "-" => Runtime.RqlOperators.Minus,
-                    _ => Runtime.RqlOperators.None,
+                    "-" => RqlOperators.Minus,
+                    _ => RqlOperators.None,
                 };
                 var right = await unaryExpression.Right.Accept(this).ConfigureAwait(false);
                 return this.runtime.ApplyUnary(right, @operator);

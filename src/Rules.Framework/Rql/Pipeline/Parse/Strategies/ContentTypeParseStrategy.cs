@@ -17,24 +17,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle content type expression.");
             }
 
-            if (parseContext.MoveNextIfNextToken(TokenType.STRING))
+            if (!parseContext.MoveNext())
             {
-                var contentType = this.ParseExpressionWith<LiteralParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Expression.None;
-                }
-
-                return contentType;
+                parseContext.EnterPanicMode("Expected content type name.", parseContext.GetNextToken());
+                return Expression.None;
             }
 
-            if (parseContext.MoveNextIfNextToken(TokenType.IDENTIFIER))
-            {
-                // TODO: future support.
-            }
-
-            parseContext.EnterPanicMode("Expected content type name.", parseContext.GetNextToken());
-            return Expression.None;
+            return this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
         }
     }
 }
