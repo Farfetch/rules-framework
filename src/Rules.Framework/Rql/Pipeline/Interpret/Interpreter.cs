@@ -410,7 +410,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public Task<IRuntimeValue> VisitNoneExpression(NoneExpression noneExpression) => Task.FromResult<IRuntimeValue>(new RqlNothing());
 
-        public Task<object> VisitNoneSegment(NoneSegment noneSegment) => Task.FromResult<object>(new RqlNothing());
+        public Task<object> VisitNoneSegment(NoneSegment noneSegment) => Task.FromResult<object>(null!);
 
         public Task<IResult> VisitNoneStatement(NoneStatement statement) => Task.FromResult<IResult>(new ExpressionStatementResult(string.Empty, new RqlNothing()));
 
@@ -559,7 +559,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var conditions = (IEnumerable<Condition<TConditionType>>)await searchExpression.InputConditions.Accept(this).ConfigureAwait(false);
             var searchArgs = new SearchArgs<TContentType, TConditionType>(contentType, dateBegin.Value, dateEnd.Value)
             {
-                Conditions = conditions,
+                Conditions = conditions ?? Enumerable.Empty<Condition<TConditionType>>(),
                 ExcludeRulesWithoutSearchConditions = true,
             };
 
