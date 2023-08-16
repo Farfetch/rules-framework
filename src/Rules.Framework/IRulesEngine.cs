@@ -4,6 +4,7 @@ namespace Rules.Framework
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Rules.Framework.Core;
+    using Rules.Framework.Rql;
 
     internal interface IRulesEngine<TContentType, TConditionType>
     {
@@ -14,6 +15,8 @@ namespace Rules.Framework
         Task<RuleOperationResult> DeactivateRuleAsync(Rule<TContentType, TConditionType> rule);
 
         PriorityCriterias GetPriorityCriteria();
+
+        IRqlClient<TContentType, TConditionType> GetRqlClient();
 
         Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
 

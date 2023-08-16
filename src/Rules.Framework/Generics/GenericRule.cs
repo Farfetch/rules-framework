@@ -18,6 +18,11 @@ namespace Rules.Framework.Generics
         public object Content { get; internal set; }
 
         /// <summary>
+        /// Gets the content type.
+        /// </summary>
+        public GenericContentType ContentType { get; internal set; }
+
+        /// <summary>
         /// Gets the date from which the rule begins being applicable.
         /// </summary>
         public DateTime DateBegin { get; internal set; }
@@ -41,5 +46,25 @@ namespace Rules.Framework.Generics
         /// Gets the rule root condition. This property is null when rule has no conditions.
         /// </summary>
         public GenericConditionNode RootCondition { get; internal set; }
+
+        public static GenericRule Create(
+            string name,
+            GenericContentType contentType,
+            object content,
+            bool active,
+            DateTime dateBegin,
+            DateTime? dateEnd,
+            int priority,
+            GenericConditionNode rootCondition) => new GenericRule
+            {
+                Active = active,
+                Content = content,
+                ContentType = contentType,
+                DateBegin = dateBegin,
+                DateEnd = dateEnd,
+                Name = name,
+                Priority = priority,
+                RootCondition = rootCondition,
+            };
     }
 }

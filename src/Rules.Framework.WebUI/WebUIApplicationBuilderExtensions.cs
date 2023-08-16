@@ -89,7 +89,7 @@ namespace Rules.Framework.WebUI
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
 
             app.UseEndpoints(builder =>
-                {
+            {
                 var razorLightEngine = builder.ServiceProvider.GetRequiredService<IRazorLightEngine>();
                 var httpRequestHandlers = new List<IHttpRequestHandler>
                 {
@@ -97,7 +97,7 @@ namespace Rules.Framework.WebUI
                     new GetConfigurationsHandler(genericRulesEngine, webUIOptions),
                     new GetContentTypeHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
                     new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
-                },
+                    new PostRqlHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
                 };
 
                 foreach (var httpRequestHandler in httpRequestHandlers)

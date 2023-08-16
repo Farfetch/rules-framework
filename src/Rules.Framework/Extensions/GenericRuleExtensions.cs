@@ -1,5 +1,6 @@
 namespace Rules.Framework.Extensions
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.Core;
@@ -46,6 +47,10 @@ namespace Rules.Framework.Extensions
             {
                 RootCondition = rule.RootCondition?.ToGenericConditionNode(),
                 Content = rule.ContentContainer.GetContentAs<dynamic>(),
+                ContentType = new GenericContentType
+                {
+                    Identifier = Enum.Parse(typeof(TContentType), rule.ContentContainer.ContentType!.ToString()).ToString(),
+                },
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,

@@ -24,6 +24,12 @@ namespace Rules.Framework.Generics
         PriorityCriterias GetPriorityCriteria();
 
         /// <summary>
+        /// Gets a new Rule Query Language client.
+        /// </summary>
+        /// <returns></returns>
+        IGenericRqlClient GetRqlClient();
+
+        /// <summary>
         /// Searches the asynchronous.
         /// </summary>
         /// <param name="genericSearchArgs">The search arguments.</param>
