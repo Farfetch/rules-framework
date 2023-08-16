@@ -59,6 +59,11 @@ namespace Rules.Framework.Rql.Pipeline.Scan
         {
             var nextOffset = this.Offset + 1;
 
+            if (nextOffset >= this.source.Length)
+            {
+                return false;
+            }
+
             if (this.source[nextOffset] != expected)
             {
                 return false;
