@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.WebUI.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.BenchmarkTests", "tests\Rules.Framework.BenchmarkTests\Rules.Framework.BenchmarkTests.csproj", "{16C9F383-3B58-4911-9D26-7FDB907DD0D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rules.Framework.RqlReplTester", "tests\Rules.Framework.RqlReplTester\Rules.Framework.RqlReplTester.csproj", "{456B4709-5BFE-4A6F-A472-5B903120019F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.RqlReplTester", "tests\Rules.Framework.RqlReplTester\Rules.Framework.RqlReplTester.csproj", "{456B4709-5BFE-4A6F-A472-5B903120019F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

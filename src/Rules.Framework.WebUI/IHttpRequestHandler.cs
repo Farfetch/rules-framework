@@ -5,6 +5,10 @@ namespace Rules.Framework.WebUI
 
     internal interface IHttpRequestHandler
     {
-        Task<bool> HandleAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next);
+        HttpMethod HttpMethod { get; }
+
+        string[] ResourcePaths { get; }
+
+        Task HandleAsync(HttpContext httpContext);
     }
 }

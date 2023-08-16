@@ -9,7 +9,7 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal sealed class GetConfigurationsHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/{0}/api/v1/configurations" };
+        private static readonly string[] resourcePath = new[] { "api/v1/configurations" };
 
         private readonly IGenericRulesEngine rulesEngine;
 
@@ -18,10 +18,11 @@ namespace Rules.Framework.WebUI.Handlers
             this.rulesEngine = rulesEngine;
         }
 
-        protected override HttpMethod HttpMethod => HttpMethod.GET;
+        public override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
+        public override async Task HandleAsync(HttpContext httpContext)
         {
+            var httpResponse = httpContext.Response;
             try
             {
                 var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
@@ -31,11 +32,11 @@ namespace Rules.Framework.WebUI.Handlers
                     { "PriorityCriteria", priorityCriteria.ToString() }
                 };
 
-                return this.WriteResponseAsync(httpResponse, configurations, (int)HttpStatusCode.OK);
+                await this.WriteResponseAsync(httpResponse, configurations, (int)HttpStatusCode.OK).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                return this.WriteExceptionResponseAsync(httpResponse, ex);
+                await this.WriteExceptionResponseAsync(httpResponse, ex).ConfigureAwait(false);
             }
         }
     }

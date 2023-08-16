@@ -1,7 +1,6 @@
 namespace Rules.Framework.WebUI
 {
     using System;
-    using System.Linq;
     using System.Net;
     using System.Text;
     using System.Text.Json;
@@ -16,9 +15,9 @@ namespace Rules.Framework.WebUI
         protected readonly JsonSerializerOptions SerializerOptions;
         protected readonly WebUIOptions WebUIOptions;
 
-        protected WebUIRequestHandlerBase(string[] resourcePath, WebUIOptions webUIOptions)
+        protected WebUIRequestHandlerBase(string[] resourcePaths, WebUIOptions webUIOptions)
         {
-            this.ResourcePath = resourcePath;
+            this.ResourcePaths = PreProcessResourcePaths(resourcePaths, webUIOptions);
             this.WebUIOptions = webUIOptions;
             this.SerializerOptions = new JsonSerializerOptions
             {
@@ -31,44 +30,11 @@ namespace Rules.Framework.WebUI
             this.SerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeDto>());
         }
 
-        protected abstract HttpMethod HttpMethod { get; }
+        public abstract HttpMethod HttpMethod { get; }
 
-        protected string[] ResourcePath { get; }
+        public string[] ResourcePaths { get; }
 
-        public virtual async Task<bool> HandleAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
-        {
-            if (!this.CanHandle(httpRequest))
-            {
-                return false;
-            }
-
-            await this.HandleRequestAsync(httpRequest, httpResponse, next).ConfigureAwait(false);
-
-            return true;
-        }
-
-        protected bool CanHandle(HttpRequest httpRequest)
-        {
-            var resource = httpRequest.Path.ToUriComponent();
-
-            var resourcesPath = this.ResourcePath.Select(r => string.Format(r, this.WebUIOptions.RoutePrefix));
-
-            if (!resourcesPath.Contains(resource))
-            {
-                return false;
-            }
-
-            var method = httpRequest.Method;
-
-            if (!method.Equals(this.HttpMethod.ToString()))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        protected abstract Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next);
+        public abstract Task HandleAsync(HttpContext httpContext);
 
         protected Task WriteExceptionResponseAsync(HttpResponse httpResponse, Exception exception)
         {
@@ -92,6 +58,23 @@ namespace Rules.Framework.WebUI
 
                 await httpResponse.WriteAsync(body, Encoding.UTF8).ConfigureAwait(false);
             }
+        }
+
+        private static string[] PreProcessResourcePaths(string[] resourcePaths, WebUIOptions webUIOptions)
+        {
+            var prefix = string.Empty;
+            if (!string.IsNullOrEmpty(webUIOptions.RoutePrefix))
+            {
+                prefix = $"{webUIOptions?.RoutePrefix}/";
+            }
+
+            var processedResourcePaths = new string[resourcePaths.Length];
+            for (int i = 0; i < resourcePaths.Length; i++)
+            {
+                processedResourcePaths[i] = $"{prefix}{resourcePaths[i]}";
+            }
+
+            return processedResourcePaths;
         }
     }
 }

@@ -1,27 +1,30 @@
 namespace Rules.Framework.WebUI.Handlers
 {
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using RazorLight;
 
     internal sealed class GetIndexPageHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/{0}", "/{0}/", "/{0}/index.html" };
+        private static readonly string[] resourcePaths = new[] { "", "index.html" };
+        private readonly IRazorLightEngine razorLightEngine;
 
-        public GetIndexPageHandler(WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
+        public GetIndexPageHandler(IRazorLightEngine razorLightEngine, WebUIOptions webUIOptions)
+            : base(resourcePaths, webUIOptions)
         {
+            this.razorLightEngine = razorLightEngine;
         }
 
-        protected override HttpMethod HttpMethod => HttpMethod.GET;
+        public override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
+        public override async Task HandleAsync(HttpContext httpContext)
         {
+            var httpRequest = httpContext.Request;
             var path = httpRequest.Path.Value;
-            var httpContext = httpRequest.HttpContext;
 
             if (Regex.IsMatch(path, $"^/?{Regex.Escape(this.WebUIOptions.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
@@ -35,7 +38,7 @@ namespace Rules.Framework.WebUI.Handlers
 
             if (Regex.IsMatch(path, $"^/{Regex.Escape(this.WebUIOptions.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
-                await this.RespondWithIndexHtmlAsync(httpContext.Response, next).ConfigureAwait(false);
+                await this.RespondWithIndexHtmlAsync(httpContext.Response).ConfigureAwait(false);
             }
         }
 
@@ -48,16 +51,16 @@ namespace Rules.Framework.WebUI.Handlers
             }
         }
 
-        private IDictionary<string, string> GetIndexArguments()
+        private object GetIndexArguments()
         {
-            return new Dictionary<string, string>
+            return new
             {
-                { "%(DocumentTitle)", this.WebUIOptions.DocumentTitle },
-                { "%(HeadContent)", this.WebUIOptions.HeadContent }
+                DocumentTitle = this.WebUIOptions.DocumentTitle,
+                HeadContent = this.WebUIOptions.HeadContent,
             };
         }
 
-        private async Task RespondWithIndexHtmlAsync(HttpResponse httpResponse, RequestDelegate next)
+        private async Task RespondWithIndexHtmlAsync(HttpResponse httpResponse)
         {
             if (!httpResponse.HasStarted)
             {
@@ -69,20 +72,22 @@ namespace Rules.Framework.WebUI.Handlers
                 using (var stream = this.WebUIOptions.IndexStream())
                 {
                     httpResponse.Body = stream;
-                    await next(httpResponse.HttpContext).ConfigureAwait(false);
-
                     using (var reader = new StreamReader(stream))
                     {
                         var body = await reader.ReadToEndAsync().ConfigureAwait(false);
-
-                        var responseTextBuilder = new StringBuilder(body);
-
-                        foreach (var entry in this.GetIndexArguments())
+                        string result;
+                        var cacheResult = this.razorLightEngine.Handler.Cache.RetrieveTemplate("index");
+                        if (cacheResult.Success)
                         {
-                            responseTextBuilder.Replace(entry.Key, entry.Value);
+                            var templatePage = cacheResult.Template.TemplatePageFactory.Invoke();
+                            result = await this.razorLightEngine.RenderTemplateAsync(templatePage, this.GetIndexArguments()).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            result = await this.razorLightEngine.CompileRenderStringAsync("index", body, this.GetIndexArguments()).ConfigureAwait(false);
                         }
 
-                        var byteArray = Encoding.UTF8.GetBytes(responseTextBuilder.ToString());
+                        var byteArray = Encoding.UTF8.GetBytes(result);
                         using (var newStream = new MemoryStream(byteArray))
                         {
                             httpResponse.Body = originalBody;

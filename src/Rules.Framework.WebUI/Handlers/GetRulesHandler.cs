@@ -14,7 +14,7 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal sealed class GetRulesHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/{0}/api/v1/rules" };
+        private static readonly string[] resourcePath = new[] { "api/v1/rules" };
         private readonly IGenericRulesEngine genericRulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
@@ -24,12 +24,12 @@ namespace Rules.Framework.WebUI.Handlers
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
-        protected override HttpMethod HttpMethod => HttpMethod.GET;
+        public override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override async Task HandleRequestAsync(HttpRequest httpRequest,
-            HttpResponse httpResponse,
-            RequestDelegate next)
+        public override async Task HandleAsync(HttpContext httpContext)
         {
+            var httpRequest = httpContext.Request;
+            var httpResponse = httpContext.Response;
             var rulesFilter = this.GetRulesFilterFromRequest(httpRequest);
 
             if (!IsValidFilterDates(rulesFilter))
@@ -140,7 +140,7 @@ namespace Rules.Framework.WebUI.Handlers
                     genericRules = genericRules.OrderBy(r => r.Priority);
                 }
 
-                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(identifier, this.ruleStatusDtoAnalyzer)));
+                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(this.ruleStatusDtoAnalyzer)));
 
                 return genericRulesDto;
             }

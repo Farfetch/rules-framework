@@ -5,6 +5,7 @@ namespace Rules.Framework.WebUI
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
+    using RazorLight;
     using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Handlers;
@@ -87,14 +88,48 @@ namespace Rules.Framework.WebUI
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
 
-            app.UseMiddleware<WebUIMiddleware>(
-                new List<IHttpRequestHandler>
+            app.UseEndpoints(builder =>
                 {
-                    new GetIndexPageHandler(webUIOptions),
+                var razorLightEngine = builder.ServiceProvider.GetRequiredService<IRazorLightEngine>();
+                var httpRequestHandlers = new List<IHttpRequestHandler>
+                {
+                    new GetIndexPageHandler(razorLightEngine, webUIOptions),
                     new GetConfigurationsHandler(genericRulesEngine, webUIOptions),
                     new GetContentTypeHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
-                    new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions)
+                    new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
                 },
+                };
+
+                foreach (var httpRequestHandler in httpRequestHandlers)
+                {
+                    foreach (var routePattern in httpRequestHandler.ResourcePaths)
+                    {
+                        switch (httpRequestHandler.HttpMethod)
+                        {
+                            case HttpMethod.GET:
+                                builder.MapGet(routePattern, async (httpContext) => await httpRequestHandler.HandleAsync(httpContext).ConfigureAwait(false));
+                                break;
+
+                            case HttpMethod.POST:
+                                builder.MapPost(routePattern, async (httpContext) => await httpRequestHandler.HandleAsync(httpContext).ConfigureAwait(false));
+                                break;
+
+                            case HttpMethod.PUT:
+                                builder.MapPut(routePattern, async (httpContext) => await httpRequestHandler.HandleAsync(httpContext).ConfigureAwait(false));
+                                break;
+
+                            case HttpMethod.DELETE:
+                                builder.MapDelete(routePattern, async (httpContext) => await httpRequestHandler.HandleAsync(httpContext).ConfigureAwait(false));
+                                break;
+
+                            default:
+                                throw new NotSupportedException($"Mapping of specified http method is not supported: {httpRequestHandler.HttpMethod}.");
+                        }
+                    }
+                }
+            });
+            app.UseMiddleware<WebUIMiddleware>(
+                new List<IHttpRequestHandler>(0),
                 webUIOptions);
 
             return app;

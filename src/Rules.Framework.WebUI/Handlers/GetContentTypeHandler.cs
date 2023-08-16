@@ -11,7 +11,7 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal sealed class GetContentTypeHandler : WebUIRequestHandlerBase
     {
-        private static readonly string[] resourcePath = new[] { "/{0}/api/v1/contentTypes" };
+        private static readonly string[] resourcePath = new[] { "api/v1/contentTypes" };
 
         private readonly IGenericRulesEngine genericRulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
@@ -24,10 +24,11 @@ namespace Rules.Framework.WebUI.Handlers
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
-        protected override HttpMethod HttpMethod => HttpMethod.GET;
+        public override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
+        public override async Task HandleAsync(HttpContext httpContext)
         {
+            var httpResponse = httpContext.Response;
             try
             {
                 var contents = this.genericRulesEngine.GetContentTypes();

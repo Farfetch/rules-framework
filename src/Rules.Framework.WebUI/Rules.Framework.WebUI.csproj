@@ -17,7 +17,7 @@
 	<RepositoryType>Git</RepositoryType>
 	<PackageTags>rules rulesframework web ui</PackageTags>
 	<Description>A rules framework web ui that allows you to see the rules configured in your application</Description>
-	<Copyright></Copyright>	  
+	<Copyright></Copyright>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -38,6 +38,10 @@
 	
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <PackageReference Include="RazorLight" Version="2.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>

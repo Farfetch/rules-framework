@@ -1,7 +1,6 @@
 namespace Rules.Framework.WebUI
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
@@ -32,11 +31,7 @@ namespace Rules.Framework.WebUI
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            var anyHandlerExecuted = await this.ExecuteHandlersAsync(httpContext).ConfigureAwait(false);
-            if (!anyHandlerExecuted)
-            {
-                await this.ExecuteStaticFileMiddlewareAsync(httpContext).ConfigureAwait(true);
-            }
+            await this.ExecuteStaticFileMiddlewareAsync(httpContext).ConfigureAwait(true);
         }
 
         private static StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next,
@@ -57,21 +52,6 @@ namespace Rules.Framework.WebUI
             };
 
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
-        }
-
-        private async Task<bool> ExecuteHandlersAsync(HttpContext httpContext)
-        {
-            var results = this.httpRequestHandlers.Select(d => d
-                .HandleAsync(httpContext.Request, httpContext.Response, this.next));
-
-            var handle = await Task.WhenAll(results).ConfigureAwait(false);
-
-            if (handle.All(d => !d))
-            {
-                await this.next(httpContext).ConfigureAwait(false);
-                return false;
-            }
-            return true;
         }
 
         private Task ExecuteStaticFileMiddlewareAsync(HttpContext httpContext)

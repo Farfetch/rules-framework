@@ -13,6 +13,7 @@ namespace Rules.Framework.WebUI.Sample
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRulesFrameworkUI();
 
             var app = builder.Build();
 
