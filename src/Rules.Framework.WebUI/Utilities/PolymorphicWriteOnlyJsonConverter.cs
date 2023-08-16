@@ -1,4 +1,4 @@
-namespace Rules.Framework.WebUI.Utitlies
+namespace Rules.Framework.WebUI.Utilities
 {
     using System;
     using System.Text.Json;
