@@ -25,16 +25,17 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var expression = this.ParseIndexer(parseContext);
             while (parseContext.MoveNextIfNextToken(TokenType.DOT))
             {
-                if (!parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames))
+                if (!parseContext.IsMatchNextToken(Constants.AllowedUnescapedIdentifierNames))
                 {
-                    var currentToken = parseContext.GetCurrentToken();
-                    if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
+                    var currentToken = parseContext.GetNextToken();
+                    if (!currentToken.IsEscaped || !parseContext.IsMatchNextToken(Constants.AllowedEscapedIdentifierNames))
                     {
-                        parseContext.EnterPanicMode("Expected identifier after '.'.", parseContext.GetCurrentToken());
+                        parseContext.EnterPanicMode("Expected identifier after '.'.", parseContext.GetNextToken());
                         return Expression.None;
                     }
                 }
 
+                _ = parseContext.MoveNext();
                 var chainedCall = this.ParseIndexer(parseContext);
                 if (chainedCall is VariableExpression variableExpression)
                 {
