@@ -140,6 +140,10 @@ namespace Rules.Framework.Rql.Runtime.Types
         {
             return value switch
             {
+                IEnumerable<int> intArray => CreateArray(intArray),
+                IEnumerable<decimal> decimalArray => CreateArray(decimalArray),
+                IEnumerable<bool> boolArray => CreateArray(boolArray),
+                IEnumerable<string> stringArray => CreateArray(stringArray),
                 int i => new RqlInteger(i),
                 decimal d => new RqlDecimal(d),
                 bool b => new RqlBool(b),
@@ -147,6 +151,18 @@ namespace Rules.Framework.Rql.Runtime.Types
                 null => new RqlNothing(),
                 _ => throw new NotSupportedException($"Specified value is not supported for conversion to RQL type system: {value.GetType().FullName}"),
             };
+        }
+
+        private static RqlArray CreateArray<T>(IEnumerable<T> source)
+        {
+            var count = source.Count();
+            var rqlArray = new RqlArray(count);
+            for (var i = 0; i < count; i++)
+            {
+                rqlArray.SetAtIndex(i, ConvertValue(source.ElementAt(i)!));
+            }
+
+            return rqlArray;
         }
     }
 }
