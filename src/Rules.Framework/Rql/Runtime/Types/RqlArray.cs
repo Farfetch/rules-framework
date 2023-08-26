@@ -32,7 +32,7 @@ namespace Rules.Framework.Rql.Runtime.Types
             var result = new object[rqlArray.size];
             for (int i = 0; i < rqlArray.size; i++)
             {
-                result[i] = rqlArray.Value[i];
+                result[i] = rqlArray.Value[i].RuntimeValue;
             }
 
             return result;
