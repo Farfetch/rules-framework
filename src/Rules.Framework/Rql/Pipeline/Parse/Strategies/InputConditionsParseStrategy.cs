@@ -14,7 +14,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Segment Parse(ParseContext parseContext)
         {
-            if (!parseContext.MoveNextIfCurrentToken(TokenType.WITH))
+            if (!parseContext.MoveNextIfCurrentToken(TokenType.WHEN))
             {
                 throw new InvalidOperationException("Unable to handle input conditions expression.");
             }

@@ -62,7 +62,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
 
             Segment inputConditionsExpression;
-            if (parseContext.MoveNextIfNextToken(TokenType.WITH))
+            if (parseContext.MoveNextIfNextToken(TokenType.WHEN))
             {
                 inputConditionsExpression = this.ParseSegmentWith<InputConditionsParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
@@ -72,6 +72,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             }
             else
             {
+                if (!parseContext.IsMatchNextToken(TokenType.SEMICOLON))
+                {
+                    var token = parseContext.GetNextToken();
+                    parseContext.EnterPanicMode($"Unrecognized token '{token.Lexeme}'.", token);
+                    return Expression.None;
+                }
+
                 inputConditionsExpression = Segment.None;
             }
 

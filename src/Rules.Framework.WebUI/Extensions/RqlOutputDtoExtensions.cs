@@ -42,7 +42,7 @@ namespace Rules.Framework.WebUI.Extensions
                 Error = new RqlErrorDto
                 {
                     BeginPositionColumn = (int)re.BeginPosition.Column,
-                    BeginPositionLine = (int)re.BeginPosition.Column,
+                    BeginPositionLine = (int)re.BeginPosition.Line,
                     EndPositionLine = (int)re.EndPosition.Line,
                     EndPositionColumn = (int)re.EndPosition.Column,
                     Message = re.Text,
