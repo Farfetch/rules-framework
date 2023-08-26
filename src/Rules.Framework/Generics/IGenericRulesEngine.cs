@@ -30,6 +30,13 @@ namespace Rules.Framework.Generics
         IGenericRqlClient GetRqlClient();
 
         /// <summary>
+        /// Gets a new Rule Query Language client with custom options.
+        /// </summary>
+        /// <param name="genericRqlOptions">the custom RQL options.</param>
+        /// <returns></returns>
+        IGenericRqlClient GetRqlClient(GenericRqlOptions genericRqlOptions);
+
+        /// <summary>
         /// Searches the asynchronous.
         /// </summary>
         /// <param name="genericSearchArgs">The search arguments.</param>

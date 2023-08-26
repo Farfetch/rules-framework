@@ -1,6 +1,7 @@
 namespace Rules.Framework.WebUI.Handlers
 {
     using System;
+    using System.IO;
     using System.Net;
     using System.Text.Json;
     using System.Threading.Tasks;
@@ -32,10 +33,16 @@ namespace Rules.Framework.WebUI.Handlers
             var request = await JsonSerializer.DeserializeAsync<RqlInputDto>(utf8Json: httpRequest.Body).ConfigureAwait(false);
             try
             {
-                using (var genericRqlClient = this.genericRulesEngine.GetRqlClient())
+                var textWriter = new StringWriter();
+                var genericRqlOptions = new GenericRqlOptions
+                {
+                    OutputWriter = textWriter,
+                };
+
+                using (var genericRqlClient = this.genericRulesEngine.GetRqlClient(genericRqlOptions))
                 {
                     var genericRqlResult = await genericRqlClient.ExecuteAsync(request.Rql).ConfigureAwait(false);
-                    var response = genericRqlResult.ToRqlOutput(this.ruleStatusDtoAnalyzer);
+                    var response = genericRqlResult.ToRqlOutput(this.ruleStatusDtoAnalyzer, textWriter.GetStringBuilder().ToString());
                     await this.WriteResponseAsync(httpResponse, response, (int)HttpStatusCode.OK).ConfigureAwait(false);
                 }
             }

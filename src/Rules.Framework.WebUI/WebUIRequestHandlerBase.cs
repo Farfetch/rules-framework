@@ -8,7 +8,7 @@ namespace Rules.Framework.WebUI
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Rules.Framework.WebUI.Dto;
-    using Rules.Framework.WebUI.Utitlies;
+    using Rules.Framework.WebUI.Utilities;
 
     internal abstract class WebUIRequestHandlerBase : IHttpRequestHandler
     {

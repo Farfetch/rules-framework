@@ -10,18 +10,30 @@ namespace Rules.Framework.WebUI.Extensions
 
     internal static class RqlOutputDtoExtensions
     {
-        public static IEnumerable<RqlOutputDto> ToRqlOutput(
+        public static RqlOutputDto ToRqlOutput(
             this IEnumerable<IGenericRqlResult> genericRqlResult,
-            IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer) => genericRqlResult.Select(grr => grr switch
+            IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer,
+            string standardOutput)
+        {
+            var rqlStatementOutputs = genericRqlResult.Select(grr => grr switch
             {
-                GenericNothingRqlResult => new RqlOutputDto { Rql = grr.Rql, Rules = null, Value = null },
-                GenericRulesSetRqlResult grsrr => new RqlOutputDto { Rql = grsrr.Rql, Rules = grsrr.Lines.Select(l => l.Rule.ToRuleDto(ruleStatusDtoAnalyzer)), Value = null },
-                GenericValueRqlResult gvrr => new RqlOutputDto { Rql = gvrr.Rql, Rules = null, Value = GetValue(gvrr) },
+                GenericNothingRqlResult => new RqlStatementOutputDto { Rql = grr.Rql, Rules = null, Value = null },
+                GenericRulesSetRqlResult grsrr => new RqlStatementOutputDto { Rql = grsrr.Rql, Rules = grsrr.Lines.Select(l => l.Rule.ToRuleDto(ruleStatusDtoAnalyzer)), Value = null },
+                GenericValueRqlResult gvrr => new RqlStatementOutputDto { Rql = gvrr.Rql, Rules = null, Value = GetValue(gvrr) },
                 _ => throw new NotSupportedException($"The RQL result of type '{grr.GetType().FullName}' is not supported."),
             });
 
-        public static IEnumerable<RqlOutputDto> ToRqlOutput(
-            this RqlException rqlException) => rqlException.Errors.Select(re => new RqlOutputDto
+            return new RqlOutputDto
+            {
+                StandardOutput = standardOutput,
+                StatementResults = rqlStatementOutputs,
+            };
+        }
+
+        public static RqlOutputDto ToRqlOutput(
+            this RqlException rqlException)
+        {
+            var rqlStatementOutputs = rqlException.Errors.Select(re => new RqlStatementOutputDto
             {
                 IsSuccess = false,
                 Rql = re.Rql,
@@ -36,6 +48,13 @@ namespace Rules.Framework.WebUI.Extensions
                     Message = re.Text,
                 },
             });
+
+            return new RqlOutputDto
+            {
+                StandardOutput = null!,
+                StatementResults = rqlStatementOutputs,
+            };
+        }
 
         private static object GetValue(GenericValueRqlResult gvrr)
         {

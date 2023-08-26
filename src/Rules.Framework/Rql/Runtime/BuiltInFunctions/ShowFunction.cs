@@ -1,10 +1,17 @@
 namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 {
-    using System;
+    using System.IO;
     using Rules.Framework.Rql.Runtime.Types;
 
     internal class ShowFunction : BuiltInFunctionBase
     {
+        private readonly TextWriter outputWriter;
+
+        public ShowFunction(TextWriter outputWriter)
+        {
+            this.outputWriter = outputWriter;
+        }
+
         public override string Name => "Show";
 
         public override Parameter[] Parameters => new[] { new Parameter(RqlTypes.Any, "value") };
@@ -13,7 +20,7 @@ namespace Rules.Framework.Rql.Runtime.BuiltInFunctions
 
         public override IRuntimeValue Call(IRuntimeValue instance, IRuntimeValue[] arguments)
         {
-            Console.WriteLine(arguments[0].ToString());
+            this.outputWriter.WriteLine(arguments[0].ToString());
             return new RqlNothing();
         }
     }

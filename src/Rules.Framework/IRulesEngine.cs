@@ -18,6 +18,8 @@ namespace Rules.Framework
 
         IRqlClient<TContentType, TConditionType> GetRqlClient();
 
+        IRqlClient<TContentType, TConditionType> GetRqlClient(RqlOptions rqlOptions);
+
         Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
 
         Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions);

@@ -313,7 +313,7 @@
                                 <form class="row" novalidate onsubmit="return false;">
                                     <div class="row">
                                         <div class="col-md-11 rql-code-editor">
-                                            <label id="rqlInputLabel" for="rqlInput" class="col-form-label rql-label">RQL></label>
+                                            <label id="rqlInputLabel" for="rqlInput" class="col-form-label rql-label">RQL</label>
                                             <div id="rqlLineNumbers" class="rql-line-numbers">
                                                 <span></span>
                                             </div>
@@ -326,37 +326,57 @@
                                 </form>
                             </div>
                         </fieldset>
-                        <div class="row" id="rqlResultRules" style="display:none">
-                            <div class="row">
-                                <p class="lead">Output</p>
+                        <ul id="rqlOutputsTabs" class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button id="rqlResultsTab" class="nav-link active" data-bs-toggle="tab" data-bs-target="#rqlResultsTabContent"
+                                        type="button" role="tab" aria-controls="rqlResultsTabContent" aria-selected="true">Results</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button id="rqlStdOutputTab" class="nav-link" data-bs-toggle="tab" data-bs-target="#rqlStdOutputTabContent"
+                                        type="button" role="tab" aria-controls="rqlStdOutputTabContent" aria-selected="false">Standard Output</button>
+                            </li>
+                        </ul>
+                        <div id="rqlOutputsTabsContent" class="tab-content border" style="height: 100%;">
+                            <div id="rqlResultsTabContent" class="tab-pane fade show active" role="tabpanel" aria-labelledby="rqlResultsTab"
+                                 tabindex="0" style="padding: 10px;">
+                                <div class="row" id="rqlResultRules" style="display:none">
+                                    <div class="row">
+                                        <p class="lead">Output</p>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm" style="font-size: .875rem;">
+                                            <thead style="border-bottom: 2px solid currentcolor;">
+                                                <tr>
+                                                    <th scope="col" width="2%">Priority</th>
+                                                    <th scope="col" width="15%">Content Type</th>
+                                                    <th scope="col" width="20%">Name</th>
+                                                    <th scope="col" width="10%" nowrap style="text-align: center;">Date Begin</th>
+                                                    <th scope="col" width="10%" nowrap style="text-align: center;">Date End</th>
+                                                    <th scope="col" width="20%">Content</th>
+                                                    <th scope="col" width="5%" style="text-align: center;">Status</th>
+                                                    <th scope="col" width="5%" style="text-align: center;" class="conditionsAsColumnButton">Conditions</th>
+                                                    <th scope="col" width="33%" style="text-align: center; display:none;" class="conditionsAsColumnText">Conditions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="rql_rules_table">
+                                            </tbody>
+                                        </table>
+                                        <div id="rql_rules_pagination"></div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rqlResultText" style="display:none">
+                                    <div class="row">
+                                        <p class="lead">Output</p>
+                                        <p id="rql_result_text"></p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-hover table-sm" style="font-size: .875rem;">
-                                    <thead style="border-bottom: 2px solid currentcolor;">
-                                        <tr>
-                                            <th scope="col" width="2%">Priority</th>
-                                            <th scope="col" width="15%">Content Type</th>
-                                            <th scope="col" width="20%">Name</th>
-                                            <th scope="col" width="10%" nowrap style="text-align: center;">Date Begin</th>
-                                            <th scope="col" width="10%" nowrap style="text-align: center;">Date End</th>
-                                            <th scope="col" width="20%">Content</th>
-                                            <th scope="col" width="5%" style="text-align: center;">Status</th>
-                                            <th scope="col" width="5%" style="text-align: center;" class="conditionsAsColumnButton">Conditions</th>
-                                            <th scope="col" width="33%" style="text-align: center; display:none;" class="conditionsAsColumnText">Conditions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rql_rules_table">
-                                    </tbody>
-                                </table>
-                                <div id="rql_rules_pagination"></div>
+                            <div id="rqlStdOutputTabContent" class="tab-pane fade" role="tabpanel" aria-labelledby="rqlStdOutputTab"
+                                 tabindex="0" style="padding: 10px;">
+                                <p id="rqlStandardOutputText"></p>
                             </div>
                         </div>
-                        <div class="row" id="rqlResultText" style="display:none">
-                            <div class="row">
-                                <p class="lead">Output</p>
-                                <p id="rql_result_text"></p>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -953,21 +973,38 @@
                     executingSearch = false;
                     rules = [];
                     value = null;
-                    let lastIndex = response.length - 1;
-                    if (response[lastIndex].rules) {
-                        rules = response[lastIndex].rules;
+                    let lastIndex = response.statementResults.length - 1;
+                    if (response.statementResults[lastIndex].rules) {
+                        rules = response.statementResults[lastIndex].rules;
                         setRulesPagination('#rql_rules_pagination', '#rql_rules_table', rules);
                         $('#rqlResultRules').attr('style', 'display: block');
                         $('#rqlResultText').attr('style', 'display: none');
-                    } else if (response[lastIndex].value) {
-                        value = response[lastIndex].value;
+                        $('#rqlResultsTab').removeClass('disabled');
+                    } else if (response.statementResults[lastIndex].value) {
+                        value = response.statementResults[lastIndex].value;
                         $('#rql_result_text').html(escape(value.displayValue));
                         $('#rqlResultRules').attr('style', 'display: none');
                         $('#rqlResultText').attr('style', 'display: block');
+                        $('#rqlResultsTab').removeClass('disabled');
                     } else {
                         $('#rql_result_text').html("Nothing");
                         $('#rqlResultRules').attr('style', 'display: none');
                         $('#rqlResultText').attr('style', 'display: block');
+                        $('#rqlResultsTab').removeClass('disabled');
+                    }
+
+                    if (response.standardOutput) {
+                        if ($('#rqlStdOutputTab').hasClass('disabled')) {
+                            $('#rqlStdOutputTab').removeClass('disabled');
+                        }
+
+                        $('#rqlStandardOutputText').html(escape(response.standardOutput));
+                    } else {
+                        if (!$('#rqlStdOutputTab').hasClass('disabled')) {
+                            $('#rqlStdOutputTab').addClass('disabled');
+                        }
+
+                        $('#rqlStandardOutputText').html('');
                     }
 
                     $("#loading").hide();
@@ -977,7 +1014,7 @@
                     $('#loading').hide();
                     if (error.status == 400) {
                         let errors = 'Errors have occurred while executing RQL:\n<ul>';
-                        $.each(error.responseJSON, function (_, item) {
+                        $.each(error.responseJSON.statementResults, function (_, item) {
                             errors += '\n<li>' + escape(item.error.message + ' at {' + item.error.beginPositionLine + ':'
                                 + item.error.beginPositionColumn + '}-{' + + item.error.endPositionLine + ':' + item.error.endPositionColumn + '}') + '</li>';
                         });
@@ -985,6 +1022,9 @@
                         $('#rql_result_text').html(errors);
                         $('#rqlResultRules').attr('style', 'display: none');
                         $('#rqlResultText').attr('style', 'display: block');
+                        if (!$('#rqlStdOutputTab').hasClass('disabled')) {
+                            $('#rqlStdOutputTab').addClass('disabled');
+                        }
                     }
                     else {
                         $('#errorModal').modal('show');

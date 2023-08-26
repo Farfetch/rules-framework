@@ -120,6 +120,11 @@ namespace Rules.Framework
 
         public IRqlClient<TContentType, TConditionType> GetRqlClient()
         {
+            return this.GetRqlClient(RqlOptions.NewWithDefaults());
+        }
+
+        public IRqlClient<TContentType, TConditionType> GetRqlClient(RqlOptions rqlOptions)
+        {
             if (!typeof(TContentType).IsEnum)
             {
                 throw new NotSupportedException($"Rule Query Language is not supported for non-enum types of {nameof(TContentType)}.");
@@ -130,7 +135,7 @@ namespace Rules.Framework
                 throw new NotSupportedException($"Rule Query Language is not supported for non-enum types of {nameof(TConditionType)}.");
             }
 
-            var callableTable = new RqlCallableTable().Initialize();
+            var callableTable = new RqlCallableTable().Initialize(rqlOptions);
             var runtimeEnvironment = new RqlEnvironment();
             var rqlRuntime = RqlRuntime<TContentType, TConditionType>.Create(callableTable, runtimeEnvironment, this, this.rulesSource);
             var reverseRqlBuilder = new ReverseRqlBuilder();

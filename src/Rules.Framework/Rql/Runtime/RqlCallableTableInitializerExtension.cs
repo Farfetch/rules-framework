@@ -7,11 +7,11 @@ namespace Rules.Framework.Rql.Runtime
 
     internal static class RqlCallableTableInitializerExtension
     {
-        public static RqlCallableTable Initialize(this RqlCallableTable callableTable)
+        public static RqlCallableTable Initialize(this RqlCallableTable callableTable, RqlOptions rqlOptions)
         {
             var jsonToObjectFunction = new JsonToObjectFunction();
             callableTable.AddCallable(jsonToObjectFunction);
-            var showFunction = new ShowFunction();
+            var showFunction = new ShowFunction(rqlOptions.OutputWriter);
             callableTable.AddCallable(showFunction);
             var toStringParameterlessFunction = new ToStringParameterlessFunction();
             callableTable.AddCallable(RqlTypes.Array, toStringParameterlessFunction);

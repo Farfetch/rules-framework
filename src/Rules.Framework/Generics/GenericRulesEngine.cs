@@ -38,6 +38,9 @@ namespace Rules.Framework.Generics
         public IGenericRqlClient GetRqlClient()
             => new GenericRqlClient<TContentType, TConditionType>(this.rulesEngine.GetRqlClient());
 
+        public IGenericRqlClient GetRqlClient(GenericRqlOptions genericRqlOptions)
+            => new GenericRqlClient<TContentType, TConditionType>(this.rulesEngine.GetRqlClient(genericRqlOptions.ToRqlOptions()));
+
         public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
         {
             var searchArgs = genericSearchArgs.ToSearchArgs<TContentType, TConditionType>();
