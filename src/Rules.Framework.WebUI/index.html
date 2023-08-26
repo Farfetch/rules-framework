@@ -100,6 +100,7 @@
             outline: none;
             resize: none;
             width: 100%;
+            tab-size: 4;
         }
     </style>
 </head>
@@ -1040,31 +1041,34 @@
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
+                .replace(/'/g, "&#39;")
+                .replace(/\n/g, "<br />")
+                .replace(/ {4}/g, "&emsp;");
 
         }
 
-        const rqlTextarea = document.querySelector('#rqlInput')
-        const lineNumbers = document.querySelector('#rqlLineNumbers')
+        const rqlTextarea = document.querySelector('#rqlInput');
+        const lineNumbers = document.querySelector('#rqlLineNumbers');
 
         rqlTextarea.addEventListener('keyup', event => {
-            const numberOfLines = event.target.value.split('\n').length
+            const numberOfLines = event.target.value.split('\n').length;
 
             lineNumbers.innerHTML = Array(numberOfLines)
                 .fill('<span></span>')
-                .join('')
-        })
+                .join('');
+        });
 
         rqlTextarea.addEventListener('keydown', event => {
             if (event.key === 'Tab') {
-                const start = rqlTextarea.selectionStart
-                const end = rqlTextarea.selectionEnd
+                event.preventDefault();
+                const start = rqlTextarea.selectionStart;
+                const end = rqlTextarea.selectionEnd;
 
-                rqlTextarea.value = rqlTextarea.value.substring(0, start) + '\t' + rqlTextarea.value.substring(end)
-
-                event.preventDefault()
+                rqlTextarea.value = rqlTextarea.value.substring(0, start) + '\t' + rqlTextarea.value.substring(end);
+                rqlTextarea.selectionStart =
+                    rqlTextarea.selectionEnd = start + 1;
             }
-        })
+        });
        
     </script>
 
