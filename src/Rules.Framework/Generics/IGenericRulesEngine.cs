@@ -24,17 +24,17 @@ namespace Rules.Framework.Generics
         PriorityCriterias GetPriorityCriteria();
 
         /// <summary>
-        /// Gets a new Rule Query Language client.
+        /// Gets a new Rule Query Language engine.
         /// </summary>
         /// <returns></returns>
-        IGenericRqlClient GetRqlClient();
+        IGenericRqlEngine GetRqlEngine();
 
         /// <summary>
-        /// Gets a new Rule Query Language client with custom options.
+        /// Gets a new Rule Query Language engine with custom options.
         /// </summary>
         /// <param name="genericRqlOptions">the custom RQL options.</param>
         /// <returns></returns>
-        IGenericRqlClient GetRqlClient(GenericRqlOptions genericRqlOptions);
+        IGenericRqlEngine GetRqlEngine(GenericRqlOptions genericRqlOptions);
 
         /// <summary>
         /// Searches the asynchronous.

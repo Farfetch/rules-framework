@@ -35,11 +35,11 @@ namespace Rules.Framework.Generics
             return this.rulesEngine.GetPriorityCriteria();
         }
 
-        public IGenericRqlClient GetRqlClient()
-            => new GenericRqlClient<TContentType, TConditionType>(this.rulesEngine.GetRqlClient());
+        public IGenericRqlEngine GetRqlEngine()
+            => new GenericRqlEngine<TContentType, TConditionType>(this.rulesEngine.GetRqlEngine());
 
-        public IGenericRqlClient GetRqlClient(GenericRqlOptions genericRqlOptions)
-            => new GenericRqlClient<TContentType, TConditionType>(this.rulesEngine.GetRqlClient(genericRqlOptions.ToRqlOptions()));
+        public IGenericRqlEngine GetRqlEngine(GenericRqlOptions genericRqlOptions)
+            => new GenericRqlEngine<TContentType, TConditionType>(this.rulesEngine.GetRqlEngine(genericRqlOptions.ToRqlOptions()));
 
         public async Task<IEnumerable<GenericRule>> SearchAsync(SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
         {

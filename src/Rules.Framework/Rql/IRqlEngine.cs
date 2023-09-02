@@ -4,7 +4,7 @@ namespace Rules.Framework.Rql
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public interface IRqlClient<TContentType, TConditionType> : IDisposable
+    public interface IRqlEngine<TContentType, TConditionType> : IDisposable
     {
         Task<IEnumerable<IResult>> ExecuteAsync(string rql);
     }

@@ -13,8 +13,6 @@ namespace Rules.Framework
     using Rules.Framework.Extensions;
     using Rules.Framework.Management;
     using Rules.Framework.Rql;
-    using Rules.Framework.Rql.Pipeline.Interpret;
-    using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Source;
     using Rules.Framework.Validation;
 
@@ -118,12 +116,12 @@ namespace Rules.Framework
             return this.rulesEngineOptions.PriorityCriteria;
         }
 
-        public IRqlClient<TContentType, TConditionType> GetRqlClient()
+        public IRqlEngine<TContentType, TConditionType> GetRqlEngine()
         {
-            return this.GetRqlClient(RqlOptions.NewWithDefaults());
+            return this.GetRqlEngine(RqlOptions.NewWithDefaults());
         }
 
-        public IRqlClient<TContentType, TConditionType> GetRqlClient(RqlOptions rqlOptions)
+        public IRqlEngine<TContentType, TConditionType> GetRqlEngine(RqlOptions rqlOptions)
         {
             if (!typeof(TContentType).IsEnum)
             {
@@ -135,12 +133,7 @@ namespace Rules.Framework
                 throw new NotSupportedException($"Rule Query Language is not supported for non-enum types of {nameof(TConditionType)}.");
             }
 
-            var callableTable = new RqlCallableTable().Initialize(rqlOptions);
-            var runtimeEnvironment = new RqlEnvironment();
-            var rqlRuntime = RqlRuntime<TContentType, TConditionType>.Create(callableTable, runtimeEnvironment, this, this.rulesSource);
-            var reverseRqlBuilder = new ReverseRqlBuilder();
-            var interpreter = new Interpreter<TContentType, TConditionType>(rqlRuntime, reverseRqlBuilder);
-            return new RqlClient<TContentType, TConditionType>(interpreter);
+            return new RqlEngine<TContentType, TConditionType>(this, this.rulesSource, rqlOptions);
         }
 
         /// <summary>

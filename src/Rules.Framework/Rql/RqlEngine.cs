@@ -8,16 +8,31 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
+    using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.Types;
+    using Rules.Framework.Source;
 
-    internal class RqlClient<TContentType, TConditionType> : IRqlClient<TContentType, TConditionType>
+    internal class RqlEngine<TContentType, TConditionType> : IRqlEngine<TContentType, TConditionType>
     {
-        private readonly IInterpreter interpreter;
         private bool disposedValue;
+        private Interpreter<TContentType, TConditionType> interpreter;
+        private Parser parser;
+        private IRuntime<TContentType, TConditionType> runtime;
+        private Scanner scanner;
 
-        public RqlClient(IInterpreter interpreter)
+        public RqlEngine(
+            IRulesEngine<TContentType, TConditionType> rulesEngine,
+            IRulesSource<TContentType, TConditionType> rulesSource,
+            RqlOptions rqlOptions)
         {
-            this.interpreter = interpreter;
+            var callableTable = new RqlCallableTable().Initialize(rqlOptions);
+            var runtimeEnvironment = new RqlEnvironment();
+            this.runtime = RqlRuntime<TContentType, TConditionType>.Create(callableTable, runtimeEnvironment, rulesEngine, rulesSource);
+            this.scanner = new Scanner();
+            var parseStrategyProvider = new ParseStrategyPool();
+            this.parser = new Parser(parseStrategyProvider);
+            var reverseRqlBuilder = new ReverseRqlBuilder();
+            this.interpreter = new Interpreter<TContentType, TConditionType>(this.runtime, reverseRqlBuilder);
         }
 
         public void Dispose()
@@ -28,9 +43,7 @@ namespace Rules.Framework.Rql
 
         public async Task<IEnumerable<IResult>> ExecuteAsync(string rql)
         {
-            var scanner = new Scanner();
-            var scanResult = scanner.ScanTokens(rql);
-
+            var scanResult = this.scanner.ScanTokens(rql);
             if (!scanResult.Success)
             {
                 var errors = scanResult.Messages.Where(m => m.Severity == MessageSeverity.Error)
@@ -40,10 +53,7 @@ namespace Rules.Framework.Rql
             }
 
             var tokens = scanResult.Tokens;
-            var parseStrategyProvider = new ParseStrategyPool();
-            var parser = new Parser(parseStrategyProvider);
             var parserResult = parser.Parse(tokens);
-
             if (!parserResult.Success)
             {
                 var errors = parserResult.Messages.Where(m => m.Severity == MessageSeverity.Error)
@@ -53,8 +63,7 @@ namespace Rules.Framework.Rql
             }
 
             var statements = parserResult.Statements;
-            var interpretResult = (InterpretResult)await this.interpreter.InterpretAsync(statements).ConfigureAwait(false);
-
+            var interpretResult = (InterpretResult)await interpreter.InterpretAsync(statements).ConfigureAwait(false);
             if (interpretResult.Success)
             {
                 return interpretResult.Results.Select(s => ConvertResult(s));
@@ -72,7 +81,11 @@ namespace Rules.Framework.Rql
             {
                 if (disposing)
                 {
-                    this.interpreter.Dispose();
+                    this.runtime.Dispose();
+                    this.runtime = null!;
+                    this.scanner = null!;
+                    this.parser = null!;
+                    this.interpreter = null!;
                 }
 
                 disposedValue = true;

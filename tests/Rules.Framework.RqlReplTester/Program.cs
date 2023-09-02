@@ -12,11 +12,11 @@ namespace Rules.Framework.RqlReplTester
     {
         private static readonly string tab = new string(' ', 4);
 
-        private static async Task ExecuteAsync(IRqlClient<ContentTypes, ConditionTypes> rqlClient, string? input)
+        private static async Task ExecuteAsync(IRqlEngine<ContentTypes, ConditionTypes> rqlEngine, string? input)
         {
             try
             {
-                var results = await rqlClient.ExecuteAsync(input);
+                var results = await rqlEngine.ExecuteAsync(input);
                 foreach (var result in results)
                 {
                     switch (result)
@@ -141,7 +141,7 @@ namespace Rules.Framework.RqlReplTester
                 .Build();
 
                 await ScenarioLoader.LoadScenarioAsync(rulesEngine, new Scenario8Data());
-                var rqlClient = rulesEngine.GetRqlClient();
+                var rqlEngine = rulesEngine.GetRqlEngine();
 
                 var script = artifactsPathOption.Value();
                 if (string.IsNullOrEmpty(script))
@@ -160,7 +160,7 @@ namespace Rules.Framework.RqlReplTester
                             break;
                         }
 
-                        await ExecuteAsync(rqlClient, input);
+                        await ExecuteAsync(rqlEngine, input);
                     }
                 }
                 else
@@ -173,7 +173,7 @@ namespace Rules.Framework.RqlReplTester
 
                     var scriptFullPath = Path.Combine(directory.Parent!.FullName, script);
                     var scriptContent = await File.ReadAllTextAsync(scriptFullPath, ct).ConfigureAwait(false);
-                    await ExecuteAsync(rqlClient, scriptContent);
+                    await ExecuteAsync(rqlEngine, scriptContent);
                 }
             });
 

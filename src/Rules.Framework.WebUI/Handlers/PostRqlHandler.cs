@@ -39,9 +39,9 @@ namespace Rules.Framework.WebUI.Handlers
                     OutputWriter = textWriter,
                 };
 
-                using (var genericRqlClient = this.genericRulesEngine.GetRqlClient(genericRqlOptions))
+                using (var genericRqlEngine = this.genericRulesEngine.GetRqlEngine(genericRqlOptions))
                 {
-                    var genericRqlResult = await genericRqlClient.ExecuteAsync(request.Rql).ConfigureAwait(false);
+                    var genericRqlResult = await genericRqlEngine.ExecuteAsync(request.Rql).ConfigureAwait(false);
                     var response = genericRqlResult.ToRqlOutput(this.ruleStatusDtoAnalyzer, textWriter.GetStringBuilder().ToString());
                     await this.WriteResponseAsync(httpResponse, response, (int)HttpStatusCode.OK).ConfigureAwait(false);
                 }

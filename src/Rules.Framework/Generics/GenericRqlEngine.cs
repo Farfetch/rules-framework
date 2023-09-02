@@ -7,14 +7,14 @@ namespace Rules.Framework.Generics
     using Rules.Framework.Extensions;
     using Rules.Framework.Rql;
 
-    internal class GenericRqlClient<TContentType, TConditionType> : IGenericRqlClient
+    internal class GenericRqlEngine<TContentType, TConditionType> : IGenericRqlEngine
     {
-        private readonly IRqlClient<TContentType, TConditionType> rqlClient;
         private bool disposedValue;
+        private IRqlEngine<TContentType, TConditionType> rqlEngine;
 
-        public GenericRqlClient(IRqlClient<TContentType, TConditionType> rqlClient)
+        public GenericRqlEngine(IRqlEngine<TContentType, TConditionType> rqlEngine)
         {
-            this.rqlClient = rqlClient;
+            this.rqlEngine = rqlEngine;
         }
 
         public void Dispose()
@@ -25,7 +25,7 @@ namespace Rules.Framework.Generics
 
         public async Task<IEnumerable<IGenericRqlResult>> ExecuteAsync(string rql)
         {
-            var rqlResult = await this.rqlClient.ExecuteAsync(rql).ConfigureAwait(false);
+            var rqlResult = await this.rqlEngine.ExecuteAsync(rql).ConfigureAwait(false);
             return ConvertToGenericRqlResult(rqlResult);
         }
 
@@ -35,7 +35,8 @@ namespace Rules.Framework.Generics
             {
                 if (disposing)
                 {
-                    this.rqlClient.Dispose();
+                    this.rqlEngine.Dispose();
+                    this.rqlEngine = null!;
                 }
 
                 disposedValue = true;
