@@ -2,12 +2,9 @@ namespace Rules.Framework.Tests.Extensions
 {
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Evaluation;
     using Rules.Framework.Extension;
     using Rules.Framework.Generics;
-    using Rules.Framework.Source;
     using Rules.Framework.Tests.Stubs;
-    using Rules.Framework.Validation;
     using Xunit;
 
     public class RulesEngineExtensionsTests
@@ -16,13 +13,7 @@ namespace Rules.Framework.Tests.Extensions
         public void RulesEngineExtensions_ToGenericEngine_Success()
         {
             // Arrange
-            var rulesEngine = new RulesEngine<ContentType, ConditionType>(
-                Mock.Of<IConditionsEvalEngine<ConditionType>>(),
-                Mock.Of<IRulesSource<ContentType, ConditionType>>(),
-                Mock.Of<IValidatorProvider>(),
-                RulesEngineOptions.NewWithDefaults(),
-                Mock.Of<IConditionTypeExtractor<ContentType, ConditionType>>()
-                );
+            var rulesEngine = new RulesEngine<ContentType, ConditionType>(Mock.Of<RulesEngineArgs<ContentType, ConditionType>>());
 
             //Act
             var genericEngine = rulesEngine.CreateGenericEngine();

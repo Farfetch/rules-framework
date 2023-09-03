@@ -1,8 +1,10 @@
 namespace Rules.Framework.WebUI.Tests.Handlers
 {
+    using System.IO;
+    using System.Net;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Microsoft.AspNetCore.Http;
+    using RazorLight;
     using Rules.Framework.WebUI.Handlers;
     using Rules.Framework.WebUI.Tests.Utilities;
     using Xunit;
@@ -13,28 +15,43 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
         public GetIndexPageHandlerTests()
         {
-            this.handler = new GetIndexPageHandler(new WebUIOptions());
+            var razorLightEngine = new RazorLightEngineBuilder()
+                .UseEmbeddedResourcesProject(typeof(WebUIOptions))
+                .SetOperatingAssembly(typeof(WebUIOptions).Assembly)
+                .UseMemoryCachingProvider()
+                .Build();
+            this.handler = new GetIndexPageHandler(razorLightEngine, new WebUIOptions());
         }
 
         [Theory]
-        [InlineData("POST", "/rules/index.html", false)]
-        [InlineData("GET", "/rules/Rule/List", false)]
-        [InlineData("GET", "/rules/index.html", true)]
-        [InlineData("GET", "/rules", true)]
-        public async Task HandleRequestAsync_Validation(string httpMethod, string resourcePath,
-            bool expectedResult)
+        [InlineData("GET", "/rules/index.html", HttpStatusCode.OK)]
+        [InlineData("GET", "/rules", HttpStatusCode.MovedPermanently)]
+        public async Task HandleRequestAsync_Validation(string httpMethod, string resourcePath, HttpStatusCode httpStatusCode)
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
-            RequestDelegate next = (HttpContext _) => Task.CompletedTask;
 
             //Act
-            var result = await this.handler
-                .HandleAsync(httpContext.Request, httpContext.Response, next)
-                .ConfigureAwait(false);
+            await this.handler.HandleAsync(httpContext).ConfigureAwait(false);
 
             //Assert
-            result.Should().Be(expectedResult);
+            httpContext.Response.Should().NotBeNull();
+            httpContext.Response.StatusCode.Should().Be((int)httpStatusCode);
+            if (httpStatusCode == HttpStatusCode.OK)
+            {
+                httpContext.Response.ContentType.Should().Be("text/html;charset=utf-8");
+                string body = string.Empty;
+                using (var reader = new StreamReader(httpContext.Response.Body))
+                {
+                    httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+                    body = await reader.ReadToEndAsync();
+                }
+                body.Should().NotBeNullOrWhiteSpace();
+            }
+            else
+            {
+                httpContext.Response.Headers.Should().Contain("Location", new[] { "rules/index.html" });
+            }
         }
     }
 }

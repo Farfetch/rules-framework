@@ -12,7 +12,7 @@ namespace Rules.Framework.RqlReplTester
     {
         private static readonly string tab = new string(' ', 4);
 
-        private static async Task ExecuteAsync(IRqlEngine<ContentTypes, ConditionTypes> rqlEngine, string? input)
+        private static async Task ExecuteAsync(IRqlEngine rqlEngine, string? input)
         {
             try
             {

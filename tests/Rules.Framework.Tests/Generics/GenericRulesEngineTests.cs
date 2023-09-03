@@ -93,6 +93,10 @@ namespace Rules.Framework.Tests.Generics
                 new GenericRule
                 {
                     Content = new ContentContainer<ContentType>(ContentType.Type1, (_) => new object()).GetContentAs<object>(),
+                    ContentType = new GenericContentType
+                    {
+                        Identifier = "Type1",
+                    },
                     DateBegin = new DateTime(2018, 01, 01),
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Test rule",

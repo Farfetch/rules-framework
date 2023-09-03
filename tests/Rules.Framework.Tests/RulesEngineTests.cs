@@ -20,13 +20,13 @@ namespace Rules.Framework.Tests
     public class RulesEngineTests
     {
         private readonly Mock<IConditionsEvalEngine<ConditionType>> mockConditionsEvalEngine;
-        private readonly Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockCondtionTypeExtractor;
+        private readonly Mock<IConditionTypeExtractor<ContentType, ConditionType>> mockConditionTypeExtractor;
         private readonly Mock<IRulesSource<ContentType, ConditionType>> mockRulesSource;
 
         public RulesEngineTests()
         {
             this.mockRulesSource = new Mock<IRulesSource<ContentType, ConditionType>>();
-            this.mockCondtionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
+            this.mockConditionTypeExtractor = new Mock<IConditionTypeExtractor<ContentType, ConditionType>>();
             this.mockConditionsEvalEngine = new Mock<IConditionsEvalEngine<ConditionType>>();
         }
 
@@ -57,8 +57,16 @@ namespace Rules.Framework.Tests
 
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.ActivateRuleAsync(testRule).ConfigureAwait(false);
@@ -99,10 +107,18 @@ namespace Rules.Framework.Tests
 
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
             rulesEngineOptions.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.AddRuleAsync(testRule, RuleAddPriorityOption.AtBottom);
@@ -144,8 +160,16 @@ namespace Rules.Framework.Tests
 
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.DeactivateRuleAsync(testRule).ConfigureAwait(false);
@@ -165,13 +189,15 @@ namespace Rules.Framework.Tests
         public void GetPriorityCriterias_GivenRulesEngineOptionsNewWithDefaults_ReturnsTopMostRuleWins()
         {
             // Arrange
-            var rulesEngine = new RulesEngine<ContentType, ConditionType>(
-                Mock.Of<IConditionsEvalEngine<ConditionType>>(),
-                Mock.Of<IRulesSource<ContentType, ConditionType>>(),
-                Mock.Of<IValidatorProvider>(),
-                RulesEngineOptions.NewWithDefaults(),
-                Mock.Of<IConditionTypeExtractor<ContentType, ConditionType>>()
-                );
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = Mock.Of<IConditionsEvalEngine<ConditionType>>(),
+                ConditionTypeExtractor = Mock.Of<IConditionTypeExtractor<ContentType, ConditionType>>(),
+                Options = RulesEngineOptions.NewWithDefaults(),
+                RulesSource = Mock.Of<IRulesSource<ContentType, ConditionType>>(),
+                ValidatorProvider = Mock.Of<IValidatorProvider>(),
+            };
+            var rulesEngine = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             //Act
             var priorityCriterias = rulesEngine.GetPriorityCriteria();
@@ -194,27 +220,28 @@ namespace Rules.Framework.Tests
             };
 
             var expectedCondtionTypes = new List<ConditionType> { ConditionType.IsoCountryCode };
-
-            mockCondtionTypeExtractor.Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule<ContentType, ConditionType>>>()))
+            mockConditionTypeExtractor.Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule<ContentType, ConditionType>>>()))
                 .Returns(expectedCondtionTypes);
-
             this.SetupMockForConditionsEvalEngine((rootConditionNode, _, _) =>
             {
-                switch (rootConditionNode)
+                return rootConditionNode switch
                 {
-                    case ValueConditionNode<ConditionType> stringConditionNode:
-                        return stringConditionNode.Operand.ToString() == "USA";
-
-                    default:
-                        return false;
-                }
+                    ValueConditionNode<ConditionType> stringConditionNode => stringConditionNode.Operand.ToString() == "USA",
+                    _ => false,
+                };
             }, evaluationOptions);
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
-
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.GetUniqueConditionTypesAsync(ContentType.Type1, dateBegin, dateEnd);
@@ -279,17 +306,22 @@ namespace Rules.Framework.Tests
                 MatchMode = MatchModes.Exact
             };
             this.SetupMockForRulesDataSource(rules);
-
             this.SetupMockForConditionsEvalEngine((rootConditionNode, _, _) =>
             {
                 return rootConditionNode is ValueConditionNode<ConditionType> stringConditionNode && stringConditionNode.Operand.ToString() == "USA";
             }, evaluationOptions);
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
-
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.MatchManyAsync(contentType, matchDateTime, conditions).ConfigureAwait(false);
@@ -349,15 +381,21 @@ namespace Rules.Framework.Tests
             };
 
             this.SetupMockForRulesDataSource(rules);
-
             this.SetupMockForConditionsEvalEngine(true, evaluationOptions);
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
             rulesEngineOptions.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
@@ -415,13 +453,19 @@ namespace Rules.Framework.Tests
             };
 
             this.SetupMockForRulesDataSource(rules);
-
             this.SetupMockForConditionsEvalEngine(true, evaluationOptions);
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
@@ -475,13 +519,19 @@ namespace Rules.Framework.Tests
             };
 
             this.SetupMockForRulesDataSource(rules);
-
             this.SetupMockForConditionsEvalEngine(false, evaluationOptions);
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
@@ -531,21 +581,26 @@ namespace Rules.Framework.Tests
             };
 
             this.SetupMockForRulesDataSource(rules);
-
             this.SetupMockForConditionsEvalEngine(false, evaluationOptions);
-
             var validator = Mock.Of<IValidator<SearchArgs<ContentType, ConditionType>>>();
             Mock.Get(validator)
                 .Setup(x => x.ValidateAsync(It.IsAny<SearchArgs<ContentType, ConditionType>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult(new[] { new ValidationFailure("Prop1", "Sample error message") }));
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
             Mock.Get(validatorProvider)
                 .Setup(x => x.GetValidatorFor<SearchArgs<ContentType, ConditionType>>())
                 .Returns(validator);
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var argumentException = await Assert.ThrowsAsync<ArgumentException>(() => sut.SearchAsync(searchArgs)).ConfigureAwait(false);
@@ -589,14 +644,20 @@ namespace Rules.Framework.Tests
             {
                 MatchMode = MatchModes.Exact
             };
-
             this.SetupMockForRulesDataSource(rules);
-
             this.SetupMockForConditionsEvalEngine(false, evaluationOptions);
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             // Act
             var argumentNullException = await Assert.ThrowsAsync<ArgumentNullException>(() => sut.SearchAsync(searchArgs)).ConfigureAwait(false);
@@ -629,11 +690,18 @@ namespace Rules.Framework.Tests
 
             mockRulesSource.Setup(s => s.GetRulesFilteredAsync(It.IsAny<GetRulesFilteredArgs<ContentType>>()))
                 .ReturnsAsync(new List<Rule<ContentType, ConditionType>> { testRule });
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             testRule.DateEnd = new DateTime(2019, 01, 02);
             testRule.Priority = 1;
@@ -675,11 +743,18 @@ namespace Rules.Framework.Tests
 
             mockRulesSource.Setup(s => s.GetRulesFilteredAsync(It.IsAny<GetRulesFilteredArgs<ContentType>>()))
                 .ReturnsAsync(new List<Rule<ContentType, ConditionType>> { testRule });
-
             var validatorProvider = Mock.Of<IValidatorProvider>();
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
+            var rulesEngineArgs = new RulesEngineArgs<ContentType, ConditionType>
+            {
+                ConditionsEvalEngine = mockConditionsEvalEngine.Object,
+                ConditionTypeExtractor = mockConditionTypeExtractor.Object,
+                Options = rulesEngineOptions,
+                RulesSource = mockRulesSource.Object,
+                ValidatorProvider = validatorProvider,
+            };
 
-            var sut = new RulesEngine<ContentType, ConditionType>(mockConditionsEvalEngine.Object, mockRulesSource.Object, validatorProvider, rulesEngineOptions, mockCondtionTypeExtractor.Object);
+            var sut = new RulesEngine<ContentType, ConditionType>(rulesEngineArgs);
 
             testRule.DateEnd = testRule.DateBegin.AddYears(-2);
             testRule.Priority = 1;
