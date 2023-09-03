@@ -8,31 +8,20 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
-    using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.Types;
-    using Rules.Framework.Source;
 
     internal class RqlEngine<TContentType, TConditionType> : IRqlEngine<TContentType, TConditionType>
     {
         private bool disposedValue;
-        private Interpreter<TContentType, TConditionType> interpreter;
+        private IInterpreter interpreter;
         private Parser parser;
-        private IRuntime<TContentType, TConditionType> runtime;
         private Scanner scanner;
 
-        public RqlEngine(
-            IRulesEngine<TContentType, TConditionType> rulesEngine,
-            IRulesSource<TContentType, TConditionType> rulesSource,
-            RqlOptions rqlOptions)
+        public RqlEngine(RqlEngineArgs<TContentType, TConditionType> rqlEngineArgs)
         {
-            var callableTable = new RqlCallableTable().Initialize(rqlOptions);
-            var runtimeEnvironment = new RqlEnvironment();
-            this.runtime = RqlRuntime<TContentType, TConditionType>.Create(callableTable, runtimeEnvironment, rulesEngine, rulesSource);
-            this.scanner = new Scanner();
-            var parseStrategyProvider = new ParseStrategyPool();
-            this.parser = new Parser(parseStrategyProvider);
-            var reverseRqlBuilder = new ReverseRqlBuilder();
-            this.interpreter = new Interpreter<TContentType, TConditionType>(this.runtime, reverseRqlBuilder);
+            this.scanner = rqlEngineArgs.Scanner;
+            this.parser = rqlEngineArgs.Parser;
+            this.interpreter = rqlEngineArgs.Interpreter;
         }
 
         public void Dispose()
@@ -81,11 +70,10 @@ namespace Rules.Framework.Rql
             {
                 if (disposing)
                 {
-                    this.runtime.Dispose();
-                    this.runtime = null!;
+                    this.interpreter.Dispose();
+                    this.interpreter = null!;
                     this.scanner = null!;
                     this.parser = null!;
-                    this.interpreter = null!;
                 }
 
                 disposedValue = true;

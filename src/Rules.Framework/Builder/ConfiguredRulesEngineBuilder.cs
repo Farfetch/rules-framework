@@ -64,8 +64,16 @@ namespace Rules.Framework.Builder
             var orderedMiddlewares = rulesSourceMiddlewares
                 .Reverse<IRulesSourceMiddleware<TContentType, TConditionType>>();
             var rulesSource = new RulesSource<TContentType, TConditionType>(this.rulesDataSource, orderedMiddlewares);
+            var rulesEngineArgs = new RulesEngineArgs<TContentType, TConditionType>
+            {
+                ConditionsEvalEngine = conditionsEvalEngine,
+                ConditionTypeExtractor = conditionTypeExtractor,
+                Options = this.rulesEngineOptions,
+                RulesSource = rulesSource,
+                ValidatorProvider = validationProvider,
+            };
 
-            return new RulesEngine<TContentType, TConditionType>(conditionsEvalEngine, rulesSource, validationProvider, this.rulesEngineOptions, conditionTypeExtractor);
+            return new RulesEngine<TContentType, TConditionType>(rulesEngineArgs);
         }
 
         public IConfiguredRulesEngineBuilder<TContentType, TConditionType> Configure(Action<RulesEngineOptions> configurationAction)

@@ -32,18 +32,13 @@ namespace Rules.Framework
         private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
         private readonly IValidatorProvider validatorProvider;
 
-        internal RulesEngine(
-            IConditionsEvalEngine<TConditionType> conditionsEvalEngine,
-            IRulesSource<TContentType, TConditionType> rulesSource,
-            IValidatorProvider validatorProvider,
-            RulesEngineOptions rulesEngineOptions,
-            IConditionTypeExtractor<TContentType, TConditionType> conditionTypeExtractor)
+        internal RulesEngine(RulesEngineArgs<TContentType, TConditionType> rulesEngineArgs)
         {
-            this.conditionsEvalEngine = conditionsEvalEngine;
-            this.rulesSource = rulesSource;
-            this.validatorProvider = validatorProvider;
-            this.rulesEngineOptions = rulesEngineOptions;
-            this.conditionTypeExtractor = conditionTypeExtractor;
+            this.conditionsEvalEngine = rulesEngineArgs.ConditionsEvalEngine;
+            this.rulesSource = rulesEngineArgs.RulesSource;
+            this.validatorProvider = rulesEngineArgs.ValidatorProvider;
+            this.rulesEngineOptions = rulesEngineArgs.Options;
+            this.conditionTypeExtractor = rulesEngineArgs.ConditionTypeExtractor;
         }
 
         /// <summary>
@@ -133,7 +128,10 @@ namespace Rules.Framework
                 throw new NotSupportedException($"Rule Query Language is not supported for non-enum types of {nameof(TConditionType)}.");
             }
 
-            return new RqlEngine<TContentType, TConditionType>(this, this.rulesSource, rqlOptions);
+            return RqlEngineBuilder<TContentType, TConditionType>.CreateRqlEngine(this)
+                .WithOptions(rqlOptions)
+                .WithRulesSource(this.rulesSource)
+                .Build();
         }
 
         /// <summary>
