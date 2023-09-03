@@ -128,9 +128,7 @@ namespace Rules.Framework.WebUI
                     }
                 }
             });
-            app.UseMiddleware<WebUIMiddleware>(
-                new List<IHttpRequestHandler>(0),
-                webUIOptions);
+            app.UseMiddleware<WebUIMiddleware>(webUIOptions);
 
             return app;
         }
