@@ -6,7 +6,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse
     using Rules.Framework.Rql.Pipeline.Parse.Strategies;
     using Rules.Framework.Rql.Tokens;
 
-    internal class Parser
+    internal class Parser : IParser
     {
         private readonly IParseStrategyProvider parseStrategyProvider;
 

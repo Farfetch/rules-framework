@@ -10,14 +10,14 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Scan;
     using Rules.Framework.Rql.Runtime.Types;
 
-    internal class RqlEngine<TContentType, TConditionType> : IRqlEngine<TContentType, TConditionType>
+    internal class RqlEngine<TContentType, TConditionType> : IRqlEngine
     {
         private bool disposedValue;
         private IInterpreter interpreter;
-        private Parser parser;
-        private Scanner scanner;
+        private IParser parser;
+        private IScanner scanner;
 
-        public RqlEngine(RqlEngineArgs<TContentType, TConditionType> rqlEngineArgs)
+        public RqlEngine(RqlEngineArgs rqlEngineArgs)
         {
             this.scanner = rqlEngineArgs.Scanner;
             this.parser = rqlEngineArgs.Parser;

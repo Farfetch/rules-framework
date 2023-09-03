@@ -7,7 +7,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
     using Rules.Framework.Rql.Messages;
     using Rules.Framework.Rql.Tokens;
 
-    internal class Scanner
+    internal class Scanner : IScanner
     {
         private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>(StringComparer.Ordinal)
         {
