@@ -16,9 +16,9 @@ namespace Rules.Framework
 
         PriorityCriterias GetPriorityCriteria();
 
-        IRqlEngine<TContentType, TConditionType> GetRqlEngine();
+        IRqlEngine GetRqlEngine();
 
-        IRqlEngine<TContentType, TConditionType> GetRqlEngine(RqlOptions rqlOptions);
+        IRqlEngine GetRqlEngine(RqlOptions rqlOptions);
 
         Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
 

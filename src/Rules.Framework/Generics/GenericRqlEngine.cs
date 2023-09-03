@@ -10,9 +10,9 @@ namespace Rules.Framework.Generics
     internal class GenericRqlEngine<TContentType, TConditionType> : IGenericRqlEngine
     {
         private bool disposedValue;
-        private IRqlEngine<TContentType, TConditionType> rqlEngine;
+        private IRqlEngine rqlEngine;
 
-        public GenericRqlEngine(IRqlEngine<TContentType, TConditionType> rqlEngine)
+        public GenericRqlEngine(IRqlEngine rqlEngine)
         {
             this.rqlEngine = rqlEngine;
         }

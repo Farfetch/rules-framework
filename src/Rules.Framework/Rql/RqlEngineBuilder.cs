@@ -28,7 +28,7 @@ namespace Rules.Framework.Rql
             return new RqlEngineBuilder<TContentType, TConditionType>(rulesEngine);
         }
 
-        public IRqlEngine<TContentType, TConditionType> Build()
+        public IRqlEngine Build()
         {
             var callableTable = new RqlCallableTable().Initialize(this.options);
             var runtimeEnvironment = new RqlEnvironment();
@@ -38,7 +38,7 @@ namespace Rules.Framework.Rql
             var parser = new Parser(parseStrategyProvider);
             var reverseRqlBuilder = new ReverseRqlBuilder();
             var interpreter = new Interpreter<TContentType, TConditionType>(runtime, reverseRqlBuilder);
-            var args = new RqlEngineArgs<TContentType, TConditionType>
+            var args = new RqlEngineArgs
             {
                 Interpreter = interpreter,
                 Options = this.options,

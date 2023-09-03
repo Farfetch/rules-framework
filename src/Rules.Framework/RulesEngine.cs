@@ -111,12 +111,12 @@ namespace Rules.Framework
             return this.rulesEngineOptions.PriorityCriteria;
         }
 
-        public IRqlEngine<TContentType, TConditionType> GetRqlEngine()
+        public IRqlEngine GetRqlEngine()
         {
             return this.GetRqlEngine(RqlOptions.NewWithDefaults());
         }
 
-        public IRqlEngine<TContentType, TConditionType> GetRqlEngine(RqlOptions rqlOptions)
+        public IRqlEngine GetRqlEngine(RqlOptions rqlOptions)
         {
             if (!typeof(TContentType).IsEnum)
             {

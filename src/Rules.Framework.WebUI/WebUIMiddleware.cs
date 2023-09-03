@@ -1,6 +1,5 @@
 namespace Rules.Framework.WebUI
 {
-    using System.Collections.Generic;
     using System.Reflection;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
@@ -13,19 +12,14 @@ namespace Rules.Framework.WebUI
 
     internal sealed class WebUIMiddleware
     {
-        private readonly IEnumerable<IHttpRequestHandler> httpRequestHandlers;
-        private readonly RequestDelegate next;
         private readonly StaticFileMiddleware staticFileMiddlewares;
 
         public WebUIMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            IEnumerable<IHttpRequestHandler> httpRequestHandlers,
             WebUIOptions options)
         {
-            this.httpRequestHandlers = httpRequestHandlers;
-            this.next = next;
             this.staticFileMiddlewares = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options, ".node_modules");
         }
 
