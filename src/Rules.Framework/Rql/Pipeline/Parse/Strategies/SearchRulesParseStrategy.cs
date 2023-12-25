@@ -21,13 +21,13 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfCurrentToken(TokenType.RULES))
             {
-                parseContext.EnterPanicMode("Expected token 'RULES'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.RULES)}'.", parseContext.GetCurrentToken());
                 return Expression.None;
             }
 
             if (!parseContext.IsMatchCurrentToken(TokenType.FOR))
             {
-                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetCurrentToken());
+                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.FOR)}'.", parseContext.GetCurrentToken());
                 return Expression.None;
             }
 
@@ -39,7 +39,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BEGINS))
             {
-                parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetNextToken());
+                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.BEGINS)}'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
@@ -51,7 +51,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             if (!parseContext.MoveNextIfNextToken(TokenType.ENDS))
             {
-                parseContext.EnterPanicMode("Expected token 'ENDS'.", parseContext.GetNextToken());
+                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.ENDS)}'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
