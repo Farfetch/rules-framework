@@ -714,9 +714,7 @@
 
             $('.download').on('click', function () {
                 let dataSource = rules;
-
-                dataSource = applyRulesFilter(dataSource);
-
+                                
                 let filename = 'rules_as_json';
                 const contentTypeSelected = $('#contentTypesSelect').children("option:selected").val();
 
