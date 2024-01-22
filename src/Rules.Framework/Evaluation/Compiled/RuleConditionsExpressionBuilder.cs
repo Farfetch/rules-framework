@@ -167,7 +167,11 @@ namespace Rules.Framework.Evaluation.Compiled
 
                 foreach (var multiplicity in operatorMetadata.SupportedMultiplicities)
                 {
+#if NETSTANDARD2_0
+                    string multiplicityTransformed = Regex.Replace(multiplicity, "\\b\\p{Ll}", match => match.Value.ToUpperInvariant(), RegexOptions.None, TimeSpan.FromSeconds(1)).Replace("-", string.Empty);
+#else
                     string multiplicityTransformed = Regex.Replace(multiplicity, "\\b\\p{Ll}", match => match.Value.ToUpperInvariant(), RegexOptions.None, TimeSpan.FromSeconds(1)).Replace("-", string.Empty, StringComparison.Ordinal);
+#endif
                     var scopeName = new StringBuilder(builder.ScopeName)
                         .Append(valueConditionNode.ConditionType)
                         .Append(multiplicityTransformed)
