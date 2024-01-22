@@ -15,7 +15,11 @@ namespace Rules.Framework.Evaluation
             {
                 if (this.leftSupportForOneMultiplicity is null)
                 {
+#if NETSTANDARD2_0
+                    this.leftSupportForOneMultiplicity = this.SupportedMultiplicities?.Any(m => m.Contains("one-to")) ?? false;
+#else
                     this.leftSupportForOneMultiplicity = this.SupportedMultiplicities?.Any(m => m.Contains("one-to", StringComparison.Ordinal)) ?? false;
+#endif
                 }
 
                 return this.leftSupportForOneMultiplicity.GetValueOrDefault();
