@@ -32,7 +32,8 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             return new TokenCandidateScope(this);
         }
 
-        public string ExtractLexeme() => this.source[(int)this.TokenCandidate.StartOffset..((int)this.TokenCandidate.EndOffset + 1)];
+        public string ExtractLexeme()
+            => this.source.Substring((int)this.TokenCandidate.StartOffset, (int)(this.TokenCandidate.EndOffset - this.TokenCandidate.StartOffset + 1));
 
         public char GetCurrentChar()
         {

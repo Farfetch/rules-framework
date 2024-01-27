@@ -159,7 +159,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitComposedConditionSegment(ComposedConditionSegment expression)
         {
             var logicalOperatorName = (RqlString)await expression.LogicalOperator.Accept(this).ConfigureAwait(false);
-            var logicalOperator = Enum.Parse<LogicalOperators>(logicalOperatorName.Value, ignoreCase: true);
+            var logicalOperator = (LogicalOperators)Enum.Parse(typeof(LogicalOperators), logicalOperatorName.Value, ignoreCase: true);
 
             var childConditions = expression.ChildConditions;
             var length = childConditions.Length;
@@ -308,10 +308,23 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public async Task<object> VisitInputConditionSegment(InputConditionSegment inputConditionExpression)
         {
             var conditionTypeName = (RqlString)await inputConditionExpression.Left.Accept(this).ConfigureAwait(false);
-            if (!Enum.TryParse(typeof(TConditionType), conditionTypeName.Value, out var conditionType))
+            object conditionType;
+
+#if NETSTANDARD2_0
+            try
+            {
+                conditionType = Enum.Parse(typeof(TConditionType), conditionTypeName.Value);
+            }
+            catch (Exception)
             {
                 throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, inputConditionExpression);
             }
+#else
+            if (!Enum.TryParse(typeof(TConditionType), conditionTypeName.Value, out conditionType))
+            {
+                throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, inputConditionExpression);
+            }
+#endif
 
             var conditionValue = await inputConditionExpression.Right.Accept(this).ConfigureAwait(false);
             return new Condition<TConditionType>((TConditionType)conditionType, conditionValue.RuntimeValue);

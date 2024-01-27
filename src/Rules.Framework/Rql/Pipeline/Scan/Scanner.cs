@@ -145,7 +145,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
             // Trim the surrounding dollar symbols.
             var lexeme = scanContext.ExtractLexeme();
-            var value = Regex.Unescape(lexeme[1..^1]);
+            var value = Regex.Unescape(lexeme.Substring(1, lexeme.Length - 2));
             return CreateToken(scanContext, lexeme, TokenType.DATE, value);
         }
 
@@ -192,7 +192,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
         {
             ConsumeAlphaNumeric(scanContext);
             var lexeme = scanContext.ExtractLexeme();
-            var literal = lexeme[1..];
+            var literal = lexeme.Substring(1, lexeme.Length - 1);
             return CreateToken(scanContext, lexeme, TokenType.PLACEHOLDER, literal);
         }
 
@@ -218,7 +218,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
             // Trim the surrounding quotes.
             var lexeme = scanContext.ExtractLexeme();
-            var value = Regex.Unescape(lexeme[1..^1]);
+            var value = Regex.Unescape(lexeme.Substring(1, lexeme.Length - 2));
             return CreateToken(scanContext, lexeme, TokenType.STRING, value);
         }
 

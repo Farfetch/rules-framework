@@ -15,10 +15,10 @@ namespace Rules.Framework.Rql.Tokens
             var tokenTypeType = typeof(TokenType);
             var allowedEscapedIdentifierMembers = tokenTypeType.GetMembers()
                 .Where(mi => mi.GetCustomAttribute<AllowAsIdentifierAttribute>() is not null);
-            allowedEscapedIdentifierNames = allowedEscapedIdentifierMembers.Select(mi => Enum.Parse<TokenType>(mi.Name))
+            allowedEscapedIdentifierNames = allowedEscapedIdentifierMembers.Select(mi => (TokenType)Enum.Parse(typeof(TokenType), mi.Name))
                 .ToArray();
             allowedUnescapedIdentifierNames = allowedEscapedIdentifierMembers.Where(mi => !mi.GetCustomAttribute<AllowAsIdentifierAttribute>().RequireEscaping)
-                .Select(mi => Enum.Parse<TokenType>(mi.Name))
+                .Select(mi => (TokenType)Enum.Parse(typeof(TokenType), mi.Name))
                 .ToArray();
         }
 

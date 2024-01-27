@@ -60,7 +60,11 @@ namespace Rules.Framework.Rql
             for (int i = 0; i < statementsLength; i++)
             {
                 var statementRql = statements[i].Accept(this);
+#if NETSTANDARD2_0
+                statementRql = statementRql.Replace("\n", $"\n{new string(SPACE, 4)}");
+#else
                 statementRql = statementRql.Replace("\n", $"\n{new string(SPACE, 4)}", StringComparison.Ordinal);
+#endif
                 stringBuilder.AppendLine(statementRql);
             }
 

@@ -32,7 +32,7 @@ namespace Rules.Framework.Rql.Tokens
 
         public TokenType Type { get; }
 
-        public string UnescapedLexeme => this.IsEscaped ? this.Lexeme[1..] : this.Lexeme;
+        public string UnescapedLexeme => this.IsEscaped ? this.Lexeme.Substring(1, this.Lexeme.Length - 1) : this.Lexeme;
 
         public static Token Create(string lexeme, bool isEscaped, object literal, RqlSourcePosition beginPosition, RqlSourcePosition endPosition, uint length, TokenType type)
         {
