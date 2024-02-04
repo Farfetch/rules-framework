@@ -23,6 +23,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             switch (currentToken.Type)
             {
                 case TokenType.AND:
+                case TokenType.ASSIGN:
                 case TokenType.EQUAL:
                 case TokenType.GREATER_THAN:
                 case TokenType.GREATER_THAN_OR_EQUAL:

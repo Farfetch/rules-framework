@@ -18,5 +18,6 @@ namespace Rules.Framework.Rql.Runtime
         LesserThanOrEquals = 13,
         In = 14,
         NotIn = 15,
+        Assign = 16,
     }
 }

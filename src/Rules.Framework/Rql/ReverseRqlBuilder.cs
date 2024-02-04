@@ -42,7 +42,7 @@ namespace Rules.Framework.Rql
         {
             var ruleName = activationExpression.RuleName.Accept(this);
             var contentType = activationExpression.ContentType.Accept(this);
-            return $"ACTIVATE {ruleName} {contentType}";
+            return $"ACTIVATE {ruleName} FOR {contentType}";
         }
 
         public string VisitAssignExpression(AssignmentExpression expression)
@@ -168,13 +168,17 @@ namespace Rules.Framework.Rql
             return stringBuilder.ToString();
         }
 
-        public string VisitDateEndSegment(DateEndSegment dateEndSegment) => dateEndSegment.Accept(this);
+        public string VisitDateEndSegment(DateEndSegment dateEndSegment)
+        {
+            var dateEnd = dateEndSegment.DateEnd.Accept(this);
+            return $"ENDS ON {dateEnd}";
+        }
 
         public string VisitDeactivationExpression(DeactivationExpression deactivationExpression)
         {
             var ruleName = deactivationExpression.RuleName.Accept(this);
             var contentType = deactivationExpression.ContentType.Accept(this);
-            return $"DEACTIVATE {ruleName} {contentType}";
+            return $"DEACTIVATE {ruleName} FOR {contentType}";
         }
 
         public string VisitExpressionStatement(ExpressionStatement programmableStatement)

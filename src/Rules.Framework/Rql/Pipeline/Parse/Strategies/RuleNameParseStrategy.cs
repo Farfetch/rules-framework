@@ -18,6 +18,12 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle rule name expression.");
             }
 
+            var currentToken = parseContext.GetCurrentToken();
+            if (parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames) || (currentToken.IsEscaped && !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames)))
+            {
+                return this.ParseExpressionWith<IndexerParseStrategy>(parseContext);
+            }
+
             if (!parseContext.IsMatchCurrentToken(TokenType.STRING))
             {
                 parseContext.EnterPanicMode("Expected rule name.", parseContext.GetCurrentToken());

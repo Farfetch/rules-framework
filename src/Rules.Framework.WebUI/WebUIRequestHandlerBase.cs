@@ -44,7 +44,7 @@ namespace Rules.Framework.WebUI
                 error.AppendLine(exception.InnerException.Message);
             }
 
-            return this.WriteResponseAsync(httpResponse, error, (int)HttpStatusCode.InternalServerError);
+            return this.WriteResponseAsync(httpResponse, error.ToString(), (int)HttpStatusCode.InternalServerError);
         }
 
         protected virtual async Task WriteResponseAsync<T>(HttpResponse httpResponse, T responseDto, int statusCode)
