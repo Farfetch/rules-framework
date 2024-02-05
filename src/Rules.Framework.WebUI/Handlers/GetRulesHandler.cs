@@ -81,7 +81,11 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 genericRulesDto = genericRulesDto.Where(g =>
                 {
+#if NETSTANDARD2_0
+                    return JsonSerializer.Serialize(g.Value).ToUpper().Contains(rulesFilter.Content.ToUpper());
+#else
                     return JsonSerializer.Serialize(g.Value).Contains(rulesFilter.Content, StringComparison.OrdinalIgnoreCase);
+#endif
                 });
             }
 
@@ -89,7 +93,11 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 genericRulesDto = genericRulesDto.Where(g =>
                 {
+#if NETSTANDARD2_0
+                    return g.Name.ToUpper().Contains(rulesFilter.Name.ToUpper());
+#else
                     return g.Name.Contains(rulesFilter.Name, StringComparison.OrdinalIgnoreCase);
+#endif
                 });
             }
             if (rulesFilter.Status != null)
