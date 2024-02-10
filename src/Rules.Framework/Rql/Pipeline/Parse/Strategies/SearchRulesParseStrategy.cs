@@ -37,25 +37,27 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.BEGINS))
+            if (!parseContext.MoveNextIfNextToken(TokenType.SINCE))
             {
-                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.BEGINS)}'.", parseContext.GetNextToken());
+                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.SINCE)}'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
-            var dateBegin = this.ParseExpressionWith<DateBeginParseStrategy>(parseContext);
+            _ = parseContext.MoveNext();
+            var dateBegin = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.ENDS))
+            if (!parseContext.MoveNextIfNextToken(TokenType.UNTIL))
             {
-                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.ENDS)}'.", parseContext.GetNextToken());
+                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.UNTIL)}'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
-            var dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);
+            _ = parseContext.MoveNext();
+            var dateEnd = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;

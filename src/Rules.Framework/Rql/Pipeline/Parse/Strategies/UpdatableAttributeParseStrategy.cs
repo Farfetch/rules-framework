@@ -18,7 +18,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle updatable attribute expression.");
             }
 
-            if (parseContext.MoveNextIfNextToken(TokenType.ENDS))
+            if (parseContext.MoveNextIfNextToken(TokenType.UNTIL))
             {
                 var dateEnd = this.ParseSegmentWith<UpdatableDateEndParseStrategy>(parseContext);
                 if (parseContext.PanicMode)

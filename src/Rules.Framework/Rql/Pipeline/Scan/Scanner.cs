@@ -11,47 +11,46 @@ namespace Rules.Framework.Rql.Pipeline.Scan
     {
         private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>(StringComparer.Ordinal)
         {
-            { "ACTIVATE", TokenType.ACTIVATE },
-            { "ALL", TokenType.ALL },
-            { "AND", TokenType.AND },
-            { "APPLY", TokenType.APPLY },
-            { "AS", TokenType.AS },
-            { "ARRAY", TokenType.ARRAY },
-            { "BEGINS", TokenType.BEGINS },
-            { "BOTTOM", TokenType.BOTTOM },
-            { "CONTENT", TokenType.CONTENT },
-            { "CREATE", TokenType.CREATE },
-            { "DEACTIVATE", TokenType.DEACTIVATE },
-            { "ELSE", TokenType.ELSE },
-            { "ENDS", TokenType.ENDS },
+            { nameof(TokenType.ACTIVATE), TokenType.ACTIVATE },
+            { nameof(TokenType.ALL), TokenType.ALL },
+            { nameof(TokenType.AND), TokenType.AND },
+            { nameof(TokenType.APPLY), TokenType.APPLY },
+            { nameof(TokenType.AS), TokenType.AS },
+            { nameof(TokenType.ARRAY), TokenType.ARRAY },
+            { nameof(TokenType.BOTTOM), TokenType.BOTTOM },
+            { nameof(TokenType.CONTENT), TokenType.CONTENT },
+            { nameof(TokenType.CREATE), TokenType.CREATE },
+            { nameof(TokenType.DEACTIVATE), TokenType.DEACTIVATE },
+            { nameof(TokenType.ELSE), TokenType.ELSE },
             { "FALSE", TokenType.BOOL },
-            { "FOR", TokenType.FOR },
-            { "FOREACH", TokenType.FOREACH },
-            { "IF", TokenType.IF },
-            { "IN", TokenType.IN },
-            { "IS", TokenType.IS },
-            { "MATCH", TokenType.MATCH },
-            { "NAME", TokenType.NAME },
-            { "NOT", TokenType.NOT },
-            { "NOTHING", TokenType.NOTHING },
-            { "NUMBER", TokenType.NUMBER },
-            { "OBJECT", TokenType.OBJECT },
-            { "ON", TokenType.ON },
-            { "ONE", TokenType.ONE },
-            { "OR", TokenType.OR },
-            { "PRIORITY", TokenType.PRIORITY },
-            { "RANGE", TokenType.RANGE },
-            { "RULE", TokenType.RULE },
-            { "RULES", TokenType.RULES },
-            { "SEARCH", TokenType.SEARCH },
-            { "SET", TokenType.SET },
-            { "TO", TokenType.TO },
-            { "TOP", TokenType.TOP },
+            { nameof(TokenType.FOR), TokenType.FOR },
+            { nameof(TokenType.FOREACH), TokenType.FOREACH },
+            { nameof(TokenType.IF), TokenType.IF },
+            { nameof(TokenType.IN), TokenType.IN },
+            { nameof(TokenType.IS), TokenType.IS },
+            { nameof(TokenType.MATCH), TokenType.MATCH },
+            { nameof(TokenType.NAME), TokenType.NAME },
+            { nameof(TokenType.NOT), TokenType.NOT },
+            { nameof(TokenType.NOTHING), TokenType.NOTHING },
+            { nameof(TokenType.NUMBER), TokenType.NUMBER },
+            { nameof(TokenType.OBJECT), TokenType.OBJECT },
+            { nameof(TokenType.ON), TokenType.ON },
+            { nameof(TokenType.ONE), TokenType.ONE },
+            { nameof(TokenType.OR), TokenType.OR },
+            { nameof(TokenType.PRIORITY), TokenType.PRIORITY },
+            { nameof(TokenType.RULE), TokenType.RULE },
+            { nameof(TokenType.RULES), TokenType.RULES },
+            { nameof(TokenType.SEARCH), TokenType.SEARCH },
+            { nameof(TokenType.SET), TokenType.SET },
+            { nameof(TokenType.SINCE), TokenType.SINCE },
+            { nameof(TokenType.TO), TokenType.TO },
+            { nameof(TokenType.TOP), TokenType.TOP },
             { "TRUE", TokenType.BOOL },
-            { "UPDATE", TokenType.UPDATE },
-            { "VAR", TokenType.VAR },
-            { "WHEN", TokenType.WHEN },
-            { "WITH", TokenType.WITH },
+            { nameof(TokenType.UNTIL), TokenType.UNTIL },
+            { nameof(TokenType.UPDATE), TokenType.UPDATE },
+            { nameof(TokenType.VAR), TokenType.VAR },
+            { nameof(TokenType.WHEN), TokenType.WHEN },
+            { nameof(TokenType.WITH), TokenType.WITH },
         };
 
         public Scanner()
@@ -92,7 +91,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
                 using (scanContext.BeginTokenCandidate())
                 {
-                    CreateToken(scanContext, string.Empty, TokenType.EOF, literal: null);
+                    CreateToken(scanContext, string.Empty, TokenType.EOF, literal: null!);
                 }
             }
 
@@ -113,7 +112,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
         private static Token CreateToken(ScanContext scanContext, TokenType tokenType)
         {
             string lexeme = scanContext.ExtractLexeme();
-            return CreateToken(scanContext, lexeme, tokenType, literal: null);
+            return CreateToken(scanContext, lexeme, tokenType, literal: null!);
         }
 
         private static Token CreateToken(ScanContext scanContext, string lexeme, TokenType tokenType, object literal)

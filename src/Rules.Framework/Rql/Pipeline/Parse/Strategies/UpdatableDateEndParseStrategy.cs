@@ -11,7 +11,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         public override Segment Parse(ParseContext parseContext)
         {
-            var dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);
+            _ = parseContext.MoveNext();
+            var dateEnd = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Segment.None;

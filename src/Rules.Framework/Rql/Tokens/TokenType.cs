@@ -25,9 +25,6 @@ namespace Rules.Framework.Rql.Tokens
         AS,
 
         [AllowAsIdentifier]
-        BEGINS,
-
-        [AllowAsIdentifier]
         BOTTOM,
 
         [AllowAsIdentifier]
@@ -41,9 +38,6 @@ namespace Rules.Framework.Rql.Tokens
 
         [AllowAsIdentifier(RequireEscaping = true)]
         ELSE,
-
-        [AllowAsIdentifier]
-        ENDS,
 
         [AllowAsIdentifier(RequireEscaping = true)]
         FOR,
@@ -85,9 +79,6 @@ namespace Rules.Framework.Rql.Tokens
         PRIORITY,
 
         [AllowAsIdentifier]
-        RANGE,
-
-        [AllowAsIdentifier]
         RULE,
 
         [AllowAsIdentifier]
@@ -100,10 +91,16 @@ namespace Rules.Framework.Rql.Tokens
         SET,
 
         [AllowAsIdentifier]
+        SINCE,
+
+        [AllowAsIdentifier]
         TO,
 
         [AllowAsIdentifier]
         TOP,
+
+        [AllowAsIdentifier]
+        UNTIL,
 
         [AllowAsIdentifier(RequireEscaping = true)]
         UPDATE,

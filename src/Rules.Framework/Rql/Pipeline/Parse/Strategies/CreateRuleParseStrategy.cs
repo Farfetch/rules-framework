@@ -49,13 +49,14 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.BEGINS))
+            if (!parseContext.MoveNextIfNextToken(TokenType.SINCE))
             {
-                parseContext.EnterPanicMode("Expected token 'STARTS'.", parseContext.GetNextToken());
+                parseContext.EnterPanicMode($"Expected token '{nameof(TokenType.SINCE)}'.", parseContext.GetNextToken());
                 return Expression.None;
             }
 
-            var dateBegin = this.ParseExpressionWith<DateBeginParseStrategy>(parseContext);
+            _ = parseContext.MoveNext();
+            var dateBegin = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
@@ -92,9 +93,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         private (Expression, Segment, Segment) ParseOptionals(ParseContext parseContext)
         {
             Expression dateEnd = null!;
-            if (parseContext.MoveNextIfNextToken(TokenType.ENDS))
+            if (parseContext.MoveNextIfNextToken(TokenType.UNTIL))
             {
-                dateEnd = this.ParseExpressionWith<DateEndParseStrategy>(parseContext);
+                _ = parseContext.MoveNext();
+                dateEnd = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
                     return (Expression.None, Segment.None, Segment.None);
