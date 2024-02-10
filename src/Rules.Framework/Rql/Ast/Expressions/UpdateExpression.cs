@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Rules.Framework.Rql.Ast.Segments;
 
+    [ExcludeFromCodeCoverage]
     internal class UpdateExpression : Expression
     {
         public UpdateExpression(Expression ruleName, Expression contentType, Segment[] updatableAttributes)

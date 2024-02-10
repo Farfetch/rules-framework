@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Segments
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    [ExcludeFromCodeCoverage]
     internal class InputConditionsSegment : Segment
     {
         public InputConditionsSegment(Segment[] inputConditions)

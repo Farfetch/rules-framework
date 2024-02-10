@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Ast.Statements
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class ForEachStatement : Statement
     {
         public ForEachStatement(Token forEachToken, Expression variableDeclaration, Token inToken, Expression sourceExpression, Statement forEachActionStatement)

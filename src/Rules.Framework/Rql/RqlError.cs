@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     public class RqlError
     {
         public RqlError(string text, string rql, RqlSourcePosition beginPosition, RqlSourcePosition endPosition)

@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Ast.Segments;
 
+    [ExcludeFromCodeCoverage]
     internal class CreateExpression : Expression
     {
         public CreateExpression(
@@ -26,7 +28,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
             this.PriorityOption = priorityOption;
         }
 
-        public Segment Condition { get; }
+        public Segment? Condition { get; }
 
         public Expression Content { get; }
 
@@ -34,9 +36,9 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Expression DateBegin { get; }
 
-        public Expression DateEnd { get; }
+        public Expression? DateEnd { get; }
 
-        public Segment PriorityOption { get; }
+        public Segment? PriorityOption { get; }
 
         public Expression RuleName { get; }
 

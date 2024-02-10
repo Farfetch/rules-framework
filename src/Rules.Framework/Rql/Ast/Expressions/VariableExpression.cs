@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class VariableExpression : Expression
     {
         public VariableExpression(Expression identifier)

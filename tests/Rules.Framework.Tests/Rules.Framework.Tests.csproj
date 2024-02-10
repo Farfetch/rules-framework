@@ -55,4 +55,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Rql\Pipeline\Interpret\" />
+	</ItemGroup>
 </Project>

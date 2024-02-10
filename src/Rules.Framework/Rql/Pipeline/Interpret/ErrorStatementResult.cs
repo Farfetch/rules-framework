@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Pipeline.Interpret
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class ErrorStatementResult : IResult
     {
         public ErrorStatementResult(string message, string rql, RqlSourcePosition beginPosition, RqlSourcePosition endPosition)

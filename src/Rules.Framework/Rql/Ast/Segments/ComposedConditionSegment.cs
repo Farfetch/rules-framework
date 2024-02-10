@@ -2,8 +2,10 @@ using Rules.Framework.Rql.Ast.Expressions;
 
 namespace Rules.Framework.Rql.Ast.Segments
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    [ExcludeFromCodeCoverage]
     internal class ComposedConditionSegment : Segment
     {
         public ComposedConditionSegment(

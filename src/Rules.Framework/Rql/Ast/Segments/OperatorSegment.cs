@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Segments
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class OperatorSegment : Segment
     {
         public OperatorSegment(Token[] tokens)

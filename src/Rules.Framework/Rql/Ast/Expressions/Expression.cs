@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql;
 
+    [ExcludeFromCodeCoverage]
     internal abstract class Expression : IAstElement
     {
         protected Expression(RqlSourcePosition beginPosition, RqlSourcePosition endPosition)

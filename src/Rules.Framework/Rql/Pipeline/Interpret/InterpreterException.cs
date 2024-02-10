@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Pipeline.Interpret
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
 
+    [ExcludeFromCodeCoverage]
     internal class InterpreterException : Exception
     {
         public InterpreterException(

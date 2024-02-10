@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    [ExcludeFromCodeCoverage]
     internal class CallExpression : Expression
     {
         public CallExpression(Expression instance, Expression name, Expression[] arguments)

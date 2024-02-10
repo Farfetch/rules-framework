@@ -2,7 +2,9 @@ namespace Rules.Framework.Rql
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public class RqlException : Exception
     {
         public RqlException(string message, RqlError error)

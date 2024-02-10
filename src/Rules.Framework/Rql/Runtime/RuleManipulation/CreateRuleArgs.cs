@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Runtime.RuleManipulation
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Core;
     using Rules.Framework.Rql.Runtime.Types;
 
+    [ExcludeFromCodeCoverage]
     internal class CreateRuleArgs<TContentType, TConditionType>
     {
         private CreateRuleArgs(
@@ -45,6 +47,6 @@ namespace Rules.Framework.Rql.Runtime.RuleManipulation
             RqlAny dateEnd,
             IConditionNode<TConditionType> condition,
             PriorityOption priorityOption)
-            => new CreateRuleArgs<TContentType, TConditionType>(contentType, name, content, dateBegin, dateEnd, condition, priorityOption);
+            => new(contentType, name, content, dateBegin, dateEnd, condition, priorityOption);
     }
 }

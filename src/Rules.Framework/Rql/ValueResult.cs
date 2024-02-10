@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     public class ValueResult : IResult
     {
         public ValueResult(string rql, object value)

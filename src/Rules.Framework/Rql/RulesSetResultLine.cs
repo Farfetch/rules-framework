@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Runtime.Types;
 
+    [ExcludeFromCodeCoverage]
     public class RulesSetResultLine<TContentType, TConditionType>
     {
         internal RulesSetResultLine(int lineNumber, RqlRule<TContentType, TConditionType> rule)

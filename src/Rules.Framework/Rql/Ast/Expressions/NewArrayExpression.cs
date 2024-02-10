@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class NewArrayExpression : Expression
     {
         public NewArrayExpression(Token array, Token initializerBeginToken, Expression size, Expression[] values, Token initializerEndToken)

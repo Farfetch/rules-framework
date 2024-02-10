@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Ast.Segments;
 
+    [ExcludeFromCodeCoverage]
     internal class BinaryExpression : Expression
     {
         public BinaryExpression(Expression leftExpression, Segment operatorSegment, Expression rightExpression)

@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Ast.Segments
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class NoneSegment : Segment
     {
         public NoneSegment()

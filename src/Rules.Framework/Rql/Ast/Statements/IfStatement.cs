@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Ast.Statements
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class IfStatement : Statement
     {
         public IfStatement(Token ifKeyword, Expression condition, Statement thenBranch, Statement elseBranch)

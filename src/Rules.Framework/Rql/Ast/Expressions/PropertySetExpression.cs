@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class PropertySetExpression : Expression
     {
         public PropertySetExpression(Expression instance, Expression name, Token assign, Expression value)

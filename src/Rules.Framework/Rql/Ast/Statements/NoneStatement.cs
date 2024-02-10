@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Ast.Statements
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class NoneStatement : Statement
     {
         public NoneStatement()

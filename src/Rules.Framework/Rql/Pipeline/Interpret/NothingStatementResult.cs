@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Pipeline.Interpret
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class NothingStatementResult : IResult
     {
         public NothingStatementResult(string rql)

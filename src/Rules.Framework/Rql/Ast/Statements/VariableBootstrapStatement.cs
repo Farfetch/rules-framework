@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Statements
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Ast.Expressions;
 
+    [ExcludeFromCodeCoverage]
     internal class VariableBootstrapStatement : Statement
     {
         public VariableBootstrapStatement(Expression variableDeclaration, Expression assignable)

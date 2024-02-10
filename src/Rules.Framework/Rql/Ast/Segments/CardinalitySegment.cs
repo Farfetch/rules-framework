@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Segments
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Ast.Expressions;
 
+    [ExcludeFromCodeCoverage]
     internal class CardinalitySegment : Segment
     {
         public CardinalitySegment(Expression cardinalityKeyword, Expression ruleKeyword)

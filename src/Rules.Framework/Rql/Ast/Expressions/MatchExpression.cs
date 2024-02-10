@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Ast.Segments;
 
+    [ExcludeFromCodeCoverage]
     internal class MatchExpression : Expression
     {
         public MatchExpression(

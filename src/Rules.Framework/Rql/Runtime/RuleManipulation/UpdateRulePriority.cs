@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Runtime.RuleManipulation
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Runtime.Types;
 
+    [ExcludeFromCodeCoverage]
     internal class UpdateRulePriority : UpdateRuleAttribute
     {
         private UpdateRulePriority(RqlString option, RqlAny argument)

@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class PropertyGetExpression : Expression
     {
         public PropertyGetExpression(Expression instance, Expression name)

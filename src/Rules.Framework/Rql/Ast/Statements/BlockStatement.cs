@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Statements
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class BlockStatement : Statement
     {
         public BlockStatement(Token beginBrace, Statement[] statements, Token endBrace)

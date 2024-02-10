@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Statements
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql;
 
+    [ExcludeFromCodeCoverage]
     internal abstract class Statement : IAstElement
     {
         protected Statement(RqlSourcePosition beginPosition, RqlSourcePosition endPosition)

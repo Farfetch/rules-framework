@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class ActivationExpression : Expression
     {
         public ActivationExpression(Expression ruleName, Expression contentType)

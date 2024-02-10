@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class IndexerSetExpression : Expression
     {
         public IndexerSetExpression(Expression instance, Token indexLeftDelimeter, Expression index, Token indexRightDelimeter, Token assign, Expression value)

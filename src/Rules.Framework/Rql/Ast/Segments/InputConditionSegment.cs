@@ -2,8 +2,10 @@ using Rules.Framework.Rql.Ast.Expressions;
 
 namespace Rules.Framework.Rql.Ast.Segments
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class InputConditionSegment : Segment
     {
         public InputConditionSegment(Expression left, Token @operator, Expression right)

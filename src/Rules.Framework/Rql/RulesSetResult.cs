@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public class RulesSetResult<TContentType, TConditionType> : IResult
     {
         public RulesSetResult(string rql, int numberOfRules, IReadOnlyList<RulesSetResultLine<TContentType, TConditionType>> lines)

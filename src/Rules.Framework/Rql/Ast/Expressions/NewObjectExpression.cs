@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Rules.Framework.Rql.Tokens;
 
+    [ExcludeFromCodeCoverage]
     internal class NewObjectExpression : Expression
     {
         public NewObjectExpression(Token @object, Expression[] propertyAssignements)

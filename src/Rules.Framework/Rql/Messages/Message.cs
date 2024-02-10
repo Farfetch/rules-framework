@@ -1,5 +1,8 @@
 namespace Rules.Framework.Rql.Messages
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class Message
     {
         private Message(string text, RqlSourcePosition beginPosition, RqlSourcePosition endPosition, MessageSeverity severity)
@@ -19,6 +22,6 @@ namespace Rules.Framework.Rql.Messages
         public string Text { get; }
 
         public static Message Create(string text, RqlSourcePosition beginPosition, RqlSourcePosition endPosition, MessageSeverity severity)
-            => new Message(text, beginPosition, endPosition, severity);
+            => new(text, beginPosition, endPosition, severity);
     }
 }

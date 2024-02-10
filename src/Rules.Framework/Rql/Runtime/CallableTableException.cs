@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Runtime
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     internal class CallableTableException : Exception
     {
         public CallableTableException(string message, string callableSpace, string callableName, string[] callableParameterTypes)

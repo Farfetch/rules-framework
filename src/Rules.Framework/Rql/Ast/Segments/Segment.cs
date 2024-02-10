@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Ast.Segments
 {
+    using System.Diagnostics.CodeAnalysis;
     using Rules.Framework.Rql;
 
+    [ExcludeFromCodeCoverage]
     internal abstract class Segment : IAstElement
     {
         protected Segment(RqlSourcePosition beginPosition, RqlSourcePosition endPosition)
