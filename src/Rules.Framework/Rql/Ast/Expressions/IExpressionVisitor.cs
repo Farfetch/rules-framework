@@ -4,7 +4,7 @@ namespace Rules.Framework.Rql.Ast.Expressions
     {
         T VisitActivationExpression(ActivationExpression activationExpression);
 
-        T VisitAssignExpression(AssignmentExpression expression);
+        T VisitAssignmentExpression(AssignmentExpression expression);
 
         T VisitBinaryExpression(BinaryExpression binaryExpression);
 

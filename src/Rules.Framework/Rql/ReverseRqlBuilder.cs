@@ -45,7 +45,7 @@ namespace Rules.Framework.Rql
             return $"ACTIVATE {ruleName} FOR {contentType}";
         }
 
-        public string VisitAssignExpression(AssignmentExpression expression)
+        public string VisitAssignmentExpression(AssignmentExpression expression)
             => FormattableString.Invariant($"{expression.Left.Accept(this)} {expression.Assign.Lexeme} {expression.Right.Accept(this)}");
 
         public string VisitBinaryExpression(BinaryExpression binaryExpression)

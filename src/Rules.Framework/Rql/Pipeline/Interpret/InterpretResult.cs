@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Interpret
 {
+    using System;
     using System.Collections.Generic;
 
     internal class InterpretResult
@@ -18,6 +19,11 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public void AddStatementResult(IResult result)
         {
+            if (result is null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
             this.results.Add(result);
 
             this.Success &= result.Success;

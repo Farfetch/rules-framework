@@ -44,10 +44,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 try
                 {
                     var statementResult = await statement.Accept(this).ConfigureAwait(false);
-                    if (statementResult != null)
-                    {
-                        interpretResult.AddStatementResult(statementResult);
-                    }
+                    interpretResult.AddStatementResult(statementResult);
                 }
                 catch (InterpreterException ie)
                 {
@@ -74,7 +71,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             }
         }
 
-        public async Task<IRuntimeValue> VisitAssignExpression(AssignmentExpression assignmentExpression)
+        public async Task<IRuntimeValue> VisitAssignmentExpression(AssignmentExpression assignmentExpression)
         {
             try
             {
@@ -763,7 +760,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             var value = RqlTypes.Any.IsAssignableTo(rawValue.Type) ? ((RqlAny)rawValue).Unwrap() : rawValue;
             if (!RqlTypes.String.IsAssignableTo(value.Type))
             {
-                throw CreateInterpreterException($"Expected a content type value of type '{RqlTypes.String.Name}' but found '{value.Type}' instead", contentTypeExpression);
+                throw CreateInterpreterException($"Expected a content type value of type '{RqlTypes.String.Name}' but found '{value.Type.Name}' instead", contentTypeExpression);
             }
 
             try
@@ -786,7 +783,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             if (!RqlTypes.String.IsAssignableTo(ruleName.Type))
             {
-                throw CreateInterpreterException($"Expected a rule name of type '{RqlTypes.String.Name}' but found '{ruleName.Type}' instead", ruleNameExpression);
+                throw CreateInterpreterException($"Expected a rule name of type '{RqlTypes.String.Name}' but found '{ruleName.Type.Name}' instead", ruleNameExpression);
             }
 
             return (RqlString)ruleName;

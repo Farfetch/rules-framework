@@ -20,6 +20,6 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Expression Right { get; }
 
-        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitAssignExpression(this);
+        public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitAssignmentExpression(this);
     }
 }
