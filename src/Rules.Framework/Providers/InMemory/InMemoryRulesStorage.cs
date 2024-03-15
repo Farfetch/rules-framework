@@ -21,7 +21,7 @@ namespace Rules.Framework.Providers.InMemory
 
             lock (contentTypeRules)
             {
-                if (contentTypeRules.Any(r => string.Equals(r.Name, ruleDataModel.Name)))
+                if (contentTypeRules.Exists(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal)))
                 {
                     throw new InvalidOperationException($"Rule with name '{ruleDataModel.Name}' already exists.");
                 }
@@ -30,10 +30,10 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        public IEnumerable<RuleDataModel<TContentType, TConditionType>> GetAllRules()
+        public IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetAllRules()
             => this.rulesByContentType.SelectMany(kvp => kvp.Value).ToList().AsReadOnly();
 
-        public IEnumerable<RuleDataModel<TContentType, TConditionType>> GetRulesBy(TContentType contentType)
+        public IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetRulesBy(TContentType contentType)
         {
             List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(contentType);
 
@@ -46,7 +46,7 @@ namespace Rules.Framework.Providers.InMemory
 
             lock (contentTypeRules)
             {
-                RuleDataModel<TContentType, TConditionType> existent = contentTypeRules.FirstOrDefault(r => string.Equals(r.Name, ruleDataModel.Name));
+                RuleDataModel<TContentType, TConditionType> existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
                 if (existent is null)
                 {
                     throw new InvalidOperationException($"Rule with name '{ruleDataModel.Name}' does not exist, no update can be done.");

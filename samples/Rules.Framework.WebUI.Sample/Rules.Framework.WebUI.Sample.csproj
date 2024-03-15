@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rules.Framework.WebUI\Rules.Framework.WebUI.csproj" />
+    <ProjectReference Include="..\..\src\Rules.Framework\Rules.Framework.csproj" />
   </ItemGroup>
 
 </Project>

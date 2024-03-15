@@ -18,11 +18,7 @@ namespace Rules.Framework.Tests.Validation
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionType>
-                    {
-                        Type = 0,
-                        Value = 1
-                    }
+                    new Condition<ConditionType>(0, 1)
                 }
             };
 
@@ -45,15 +41,7 @@ namespace Rules.Framework.Tests.Validation
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionTypeClass>
-                    {
-                        Type = new ConditionTypeClass
-                        {
-                            Id = 1,
-                            Name = "Sample Condition Type"
-                        },
-                        Value = 1
-                    }
+                    new Condition<ConditionTypeClass>(new ConditionTypeClass{Id = 1, Name = "Sample Condition Type" }, 1)
                 }
             };
 
@@ -75,11 +63,7 @@ namespace Rules.Framework.Tests.Validation
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionTypeClass>
-                    {
-                        Type = null,
-                        Value = 1
-                    }
+                    new Condition<ConditionTypeClass>(null, 1)
                 }
             };
 
@@ -102,11 +86,7 @@ namespace Rules.Framework.Tests.Validation
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionType>
-                    {
-                        Type = ConditionType.IsoCountryCode,
-                        Value = "PT"
-                    }
+                    new Condition<ConditionType>(ConditionType.IsoCountryCode,"PT")
                 }
             };
 

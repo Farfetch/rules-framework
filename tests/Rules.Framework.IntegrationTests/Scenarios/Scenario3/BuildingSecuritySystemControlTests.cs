@@ -4,6 +4,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Xunit;
 
@@ -20,31 +21,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Online"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius,100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate,55),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus,"Online")
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<SecuritySystemActionables, SecuritySystemConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
 
             // Act
             var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
@@ -68,31 +61,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Offline"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius,100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate,55),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus,"Offline")
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<SecuritySystemActionables, SecuritySystemConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
 
             // Act
             var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
@@ -115,31 +100,23 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Shutdown"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius,100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate,55),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus,"Shutdown")
             };
 
-            var rulesDataSource = await RulesFromJsonFile.Load
-                .FromJsonFileAsync<SecuritySystemActionables, SecuritySystemConditions>(DataSourceFilePath);
+            var serviceProvider = new ServiceCollection()
+                .AddInMemoryRulesDataSource<SecuritySystemActionables, SecuritySystemConditions>(ServiceLifetime.Singleton)
+                .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
-                .SetDataSource(rulesDataSource)
+                .SetInMemoryDataSource(serviceProvider)
                 .Build();
+
+            await RulesFromJsonFile.Load
+                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
 
             // Act
             var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);

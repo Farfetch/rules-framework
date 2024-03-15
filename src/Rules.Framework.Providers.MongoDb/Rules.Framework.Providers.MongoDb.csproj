@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>10.0</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors></Authors>
     <Version></Version>
@@ -27,11 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meziantou.Analyzer" Version="1.0.756">
+    <PackageReference Include="Meziantou.Analyzer" Version="2.0.29">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -17,15 +17,15 @@ namespace Rules.Framework.Builder
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Boolean,
-                value => value != null && bool.TryParse(value.ToString(), out bool boolRes));
+                value => value != null && bool.TryParse(value.ToString(), out bool _));
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Decimal,
-                value => value != null && decimal.TryParse(value.ToString(), NumberStyles.None, CultureInfo.InvariantCulture, out decimal decimalRes));
+                value => value != null && decimal.TryParse(value.ToString(), NumberStyles.None, CultureInfo.InvariantCulture, out decimal _));
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.Integer,
-                value => value != null && int.TryParse(value.ToString(), NumberStyles.None, CultureInfo.InvariantCulture, out int intRes));
+                value => value != null && int.TryParse(value.ToString(), NumberStyles.None, CultureInfo.InvariantCulture, out int _));
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.String,
@@ -33,19 +33,19 @@ namespace Rules.Framework.Builder
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayBoolean,
-                value => value is IEnumerable<bool>);
+                value => value is bool);
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayDecimal,
-                value => value is IEnumerable<decimal>);
+                value => value is decimal);
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayInteger,
-                value => value is IEnumerable<int>);
+                value => value is int);
             ValidateDataTypeDefault(
                 rulesEngineOptions.DataTypeDefaults,
                 DataTypes.ArrayString,
-                value => value is IEnumerable<string>);
+                value => value is string);
 
         }
 

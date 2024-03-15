@@ -14,7 +14,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
     public class BuildingSecuritySystemControlTests : BaseScenarioTests
     {
-        private readonly InMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions> inMemoryRulesStorage;
+        private readonly IInMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions> inMemoryRulesStorage;
 
         public BuildingSecuritySystemControlTests()
         {
@@ -28,8 +28,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
         private static string DataSourceFilePath => $@"{Environment.CurrentDirectory}/Scenarios/Scenario3/rules-framework-tests.security-system-actionables.json";
 
-        [Fact]
-        public async Task BuildingSecuritySystem_FireScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_FireScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
@@ -37,21 +39,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
             Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Online"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Online")
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
@@ -62,6 +52,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act
@@ -78,8 +72,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .And.HaveCount(3);
         }
 
-        [Fact]
-        public async Task BuildingSecuritySystem_PowerFailureScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_PowerFailureScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
@@ -87,21 +83,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
             Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Offline"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Offline")
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
@@ -112,6 +96,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act
@@ -127,8 +115,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .And.Contain(ssa => ssa.ActionName == "CallPowerGridPicket");
         }
 
-        [Fact]
-        public async Task BuildingSecuritySystem_PowerShutdownScenario_ReturnsActionsToTrigger()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task BuildingSecuritySystem_PowerShutdownScenario_ReturnsActionsToTrigger(bool enableCompilation)
         {
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
@@ -136,21 +126,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             DateTime expectedMatchDate = new DateTime(2018, 06, 01);
             Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
             {
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.TemperatureCelsius,
-                    Value = 100.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.SmokeRate,
-                    Value = 55.0m
-                },
-                new Condition<SecuritySystemConditions>
-                {
-                    Type = SecuritySystemConditions.PowerStatus,
-                    Value = "Shutdown"
-                }
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
+                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Shutdown")
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
@@ -161,6 +139,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .WithContentType<SecuritySystemActionables>()
                 .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
+                .Configure(options =>
+                {
+                    options.EnableCompilation = enableCompilation;
+                })
                 .Build();
 
             // Act

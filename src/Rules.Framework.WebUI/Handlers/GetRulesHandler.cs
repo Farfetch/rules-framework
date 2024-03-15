@@ -1,9 +1,12 @@
 namespace Rules.Framework.WebUI.Handlers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text.Json;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.AspNetCore.Http;
     using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
@@ -11,53 +14,50 @@ namespace Rules.Framework.WebUI.Handlers
 
     internal sealed class GetRulesHandler : WebUIRequestHandlerBase
     {
-        private const string dateFormat = "dd/MM/yyyy HH:mm:ss";
         private static readonly string[] resourcePath = new[] { "/{0}/api/v1/rules" };
-        private readonly IGenericRulesEngine rulesEngine;
+        private readonly IGenericRulesEngine genericRulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetRulesHandler(IGenericRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
+        public GetRulesHandler(IGenericRulesEngine genericRulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
-            this.rulesEngine = rulesEngine;
+            this.genericRulesEngine = genericRulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
         protected override HttpMethod HttpMethod => HttpMethod.GET;
 
-        protected override async Task HandleRequestAsync(HttpRequest httpRequest, HttpResponse httpResponse, RequestDelegate next)
+        protected override async Task HandleRequestAsync(HttpRequest httpRequest,
+            HttpResponse httpResponse,
+            RequestDelegate next)
         {
-            if (!httpRequest.Query.TryGetValue("contentType", out var contentTypeName))
+            var rulesFilter = this.GetRulesFilterFromRequest(httpRequest);
+
+            if (!IsValidFilterDates(rulesFilter))
             {
-                await this.WriteResponseAsync(httpResponse, new { Message = "contentType is required" }, (int)HttpStatusCode.BadRequest)
-                    .ConfigureAwait(false);
+                await this.WriteResponseAsync(httpResponse, new { Message = "Date begin cannot be greater than after" }, (int)HttpStatusCode.BadRequest)
+                   .ConfigureAwait(false);
 
                 return;
             }
 
             try
             {
-                var genericRules = await this.rulesEngine.SearchAsync(
-                    new SearchArgs<GenericContentType, GenericConditionType>(
-                        new GenericContentType { Identifier = contentTypeName },
-                        DateTime.MinValue, DateTime.MaxValue))
-                    .ConfigureAwait(false);
+                var rules = new List<RuleDto>();
 
-                var rules = Enumerable.Empty<RuleDto>();
-
-                var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
-
-                if (genericRules != null && genericRules.Any())
+                if (rulesFilter.ContentType.Equals("all"))
                 {
-                    if (priorityCriteria == PriorityCriterias.BottommostRuleWins)
-                    {
-                        genericRules = genericRules.OrderByDescending(r => r.Priority);
-                    }
-                    else
-                    {
-                        genericRules = genericRules.OrderBy(r => r.Priority);
-                    }
+                    var contents = this.genericRulesEngine.GetContentTypes();
 
-                    rules = genericRules.Select(g => g.ToRuleDto(this.ruleStatusDtoAnalyzer));
+                    foreach (var identifier in contents.Select(c => c.Identifier))
+                    {
+                        var rulesForContentType = await this.GetRulesForContentyType(identifier, rulesFilter).ConfigureAwait(false);
+                        rules.AddRange(rulesForContentType);
+                    }
+                }
+                else
+                {
+                    var rulesForContentType = await this.GetRulesForContentyType(rulesFilter.ContentType, rulesFilter).ConfigureAwait(false);
+                    rules.AddRange(rulesForContentType);
                 }
 
                 await this.WriteResponseAsync(httpResponse, rules, (int)HttpStatusCode.OK).ConfigureAwait(false);
@@ -66,6 +66,94 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 await this.WriteExceptionResponseAsync(httpResponse, ex).ConfigureAwait(false);
             }
+        }
+
+        private static bool IsValidFilterDates(RulesFilterDto rulesFilter)
+        {
+            return (rulesFilter.DateBegin is null
+                || rulesFilter.DateEnd is null) ||
+                (rulesFilter.DateBegin <= rulesFilter.DateEnd);
+        }
+
+        private IEnumerable<RuleDto> ApplyFilters(RulesFilterDto rulesFilter, IEnumerable<RuleDto> genericRulesDto)
+        {
+            if (!string.IsNullOrWhiteSpace(rulesFilter.Content))
+            {
+                genericRulesDto = genericRulesDto.Where(g =>
+                {
+#if NETSTANDARD2_0
+                    return JsonSerializer.Serialize(g.Value).ToUpper().Contains(rulesFilter.Content.ToUpper());
+#else
+                    return JsonSerializer.Serialize(g.Value).Contains(rulesFilter.Content, StringComparison.OrdinalIgnoreCase);
+#endif
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(rulesFilter.Name))
+            {
+                genericRulesDto = genericRulesDto.Where(g =>
+                {
+#if NETSTANDARD2_0
+                    return g.Name.ToUpper().Contains(rulesFilter.Name.ToUpper());
+#else
+                    return g.Name.Contains(rulesFilter.Name, StringComparison.OrdinalIgnoreCase);
+#endif
+                });
+            }
+            if (rulesFilter.Status != null)
+            {
+                genericRulesDto = genericRulesDto.Where(g =>
+                {
+                    return g.Status.Equals(rulesFilter.Status.ToString());
+                });
+            }
+
+            return genericRulesDto;
+        }
+
+        private RulesFilterDto GetRulesFilterFromRequest(HttpRequest httpRequest)
+        {
+            var parseQueryString = HttpUtility.ParseQueryString(httpRequest.QueryString.Value);
+
+            var rulesFilterAsString = JsonSerializer.Serialize(parseQueryString.Cast<string>().ToDictionary(k => k, v => string.IsNullOrWhiteSpace(parseQueryString[v]) ? null : parseQueryString[v]));
+            var rulesFilter = JsonSerializer.Deserialize<RulesFilterDto>(rulesFilterAsString, this.SerializerOptions);
+
+            rulesFilter.ContentType = string.IsNullOrWhiteSpace(rulesFilter.ContentType) ? "all" : rulesFilter.ContentType;
+
+            rulesFilter.DateEnd ??= DateTime.MaxValue;
+
+            rulesFilter.DateBegin ??= DateTime.MinValue;
+
+            return rulesFilter;
+        }
+
+        private async Task<IEnumerable<RuleDto>> GetRulesForContentyType(string identifier, RulesFilterDto rulesFilter)
+        {
+            var genericRules = await this.genericRulesEngine.SearchAsync(
+                                       new SearchArgs<GenericContentType, GenericConditionType>(
+                                           new GenericContentType { Identifier = identifier },
+                                           rulesFilter.DateBegin.Value, rulesFilter.DateEnd.Value))
+                                       .ConfigureAwait(false);
+
+            var priorityCriteria = this.genericRulesEngine.GetPriorityCriteria();
+
+            if (genericRules != null && genericRules.Any())
+            {
+                if (priorityCriteria == PriorityCriterias.BottommostRuleWins)
+                {
+                    genericRules = genericRules.OrderByDescending(r => r.Priority);
+                }
+                else
+                {
+                    genericRules = genericRules.OrderBy(r => r.Priority);
+                }
+
+                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(identifier, this.ruleStatusDtoAnalyzer)));
+
+                return genericRulesDto;
+            }
+
+            return Enumerable.Empty<RuleDto>();
         }
     }
 }

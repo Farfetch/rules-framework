@@ -24,16 +24,8 @@ namespace Rules.Framework.Tests.Extensions
             {
                 Conditions = new List<Condition<ConditionType>>
                 {
-                    new Condition<ConditionType>
-                    {
-                        Type = ConditionType.PluviosityRate,
-                        Value = pluviosityRate
-                    },
-                    new Condition<ConditionType>
-                    {
-                        Type = ConditionType.IsoCountryCode,
-                        Value = countryCode
-                    }
+                    new Condition<ConditionType>(ConditionType.PluviosityRate, pluviosityRate),
+                    new Condition<ConditionType>(ConditionType.IsoCountryCode, countryCode)
                 },
                 ExcludeRulesWithoutSearchConditions = true
             };
@@ -46,16 +38,8 @@ namespace Rules.Framework.Tests.Extensions
             {
                 Conditions = new List<Condition<GenericConditionType>>
                 {
-                    new Condition<GenericConditionType>
-                    {
-                        Type = new GenericConditionType { Identifier = "PluviosityRate" },
-                        Value = pluviosityRate
-                    },
-                    new Condition<GenericConditionType>
-                    {
-                        Type = new GenericConditionType { Identifier = "IsoCountryCode" },
-                        Value = countryCode
-                    }
+                    new Condition<GenericConditionType>(new GenericConditionType { Identifier = "PluviosityRate" }, pluviosityRate),
+                    new Condition<GenericConditionType>(new GenericConditionType { Identifier = "IsoCountryCode" }, countryCode)
                 },
                 ExcludeRulesWithoutSearchConditions = true
             };
@@ -92,11 +76,10 @@ namespace Rules.Framework.Tests.Extensions
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2020, 12, 31);
 
-            var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd);
+            var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd, active: true);
 
             var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Identifier = contentTypeCode }, dateBegin, dateEnd
-                );
+                new GenericContentType { Identifier = contentTypeCode }, dateBegin, dateEnd, active: true);
 
             // Act
             var convertedSearchArgs = genericSearchArgs.ToSearchArgs<ContentType, ConditionType>();

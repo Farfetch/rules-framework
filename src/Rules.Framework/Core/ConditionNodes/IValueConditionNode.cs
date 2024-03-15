@@ -3,7 +3,9 @@ namespace Rules.Framework.Core.ConditionNodes
     /// <summary>
     /// Defines the interface contract for a condition node based on a value comparison.
     /// </summary>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
+    /// <typeparam name="TConditionType">
+    /// The condition type that allows to filter rules based on a set of conditions.
+    /// </typeparam>
     public interface IValueConditionNode<TConditionType> : IConditionNode<TConditionType>
     {
         /// <summary>
@@ -15,6 +17,11 @@ namespace Rules.Framework.Core.ConditionNodes
         /// Gets the condition node data type.
         /// </summary>
         DataTypes DataType { get; }
+
+        /// <summary>
+        /// Gets the condition's operand.
+        /// </summary>
+        public object Operand { get; }
 
         /// <summary>
         /// Gets the condition node operator.

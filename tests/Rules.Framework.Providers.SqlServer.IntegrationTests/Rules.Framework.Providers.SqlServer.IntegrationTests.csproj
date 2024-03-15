@@ -1,12 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>9.0</LangVersion>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <LangVersion>10.0</LangVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <LangVersion>10.0</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
     <None Remove="Database\Cleanup\Clean-database.sql" />
     <None Remove="Tests\Scenario2\rules-framework-tests-car-insurance-advisor.sql" />
   </ItemGroup>

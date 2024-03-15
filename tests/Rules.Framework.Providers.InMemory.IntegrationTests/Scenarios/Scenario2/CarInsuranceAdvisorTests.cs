@@ -6,14 +6,13 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
     using Rules.Framework;
-    using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
     using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class CarInsuranceAdvisorTests : BaseScenarioTests
     {
-        private readonly InMemoryRulesStorage<ContentTypes, ConditionTypes> inMemoryRulesStorage;
+        private readonly IInMemoryRulesStorage<ContentTypes, ConditionTypes> inMemoryRulesStorage;
 
         public CarInsuranceAdvisorTests()
         {
@@ -35,16 +34,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 0.0m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 0.0m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 0.0m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 0.0m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -79,16 +70,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -122,16 +105,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -153,9 +128,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithPriority(1)
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
+                .WithContent(ContentTypes.CarInsuranceAdvice, CarInsuranceAdvices.Pay)
                 .Build();
+
             var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>
             {
                 Name = "Car Insurance Advise on repair costs lower than franchise boundary"

@@ -12,6 +12,11 @@ namespace Rules.Framework.Core
     public class Rule<TContentType, TConditionType>
     {
         /// <summary>
+        /// Gets and sets the if the rules ia active.
+        /// </summary>
+        public bool Active { get; internal set; } = true;
+
+        /// <summary>
         /// Gets the ConditionNodeId container which contains the rule content.
         /// </summary>
         public long? ConditionNodeId { get; set; }
@@ -27,9 +32,9 @@ namespace Rules.Framework.Core
         public DateTime DateBegin { get; internal set; }
 
         /// <summary>
-        /// Gets the date from which the rule ceases to be applicable.
+        /// Gets and sets the date from which the rule ceases to be applicable.
         /// </summary>
-        public DateTime? DateEnd { get; internal set; }
+        public DateTime? DateEnd { get; set; }
 
         /// <summary>
         /// Gets the rule name.
@@ -37,7 +42,7 @@ namespace Rules.Framework.Core
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Gets the rule priority compared to other rules (preferrably it is unique).
+        /// Gets and sets the rule priority compared to other rules (preferably it is unique).
         /// </summary>
         public int Priority { get; set; }
 
@@ -58,7 +63,8 @@ namespace Rules.Framework.Core
                 DateEnd = this.DateEnd,
                 Name = this.Name,
                 Priority = this.Priority,
-                RootCondition = this.RootCondition?.Clone()
+                RootCondition = this.RootCondition?.Clone(),
+                Active = this.Active,
             };
     }
 }

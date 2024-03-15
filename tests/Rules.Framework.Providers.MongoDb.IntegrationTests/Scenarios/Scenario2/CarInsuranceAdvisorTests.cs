@@ -13,7 +13,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
     using MongoDB.Driver.Core.Events;
     using Newtonsoft.Json;
     using Rules.Framework;
-    using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario2;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
@@ -65,8 +64,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_RepairCostsNotWorthIt_ReturnsRefusePaymentPerFranchise(bool enableCompilation)
         {
             // Arrange
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
@@ -74,16 +75,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -92,6 +85,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
+                    opt.EnableCompilation = enableCompilation;
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
@@ -105,24 +99,18 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             actualContent.Should().Be(expected);
         }
 
-        [Fact]
-        public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay(bool enableCompilation)
         {
             // Arrange
             const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCosts,
-                    Value = 800.00000m
-                },
-                new Condition<ConditionTypes>
-                {
-                    Type = ConditionTypes.RepairCostsCommercialValueRate,
-                    Value = 23.45602m
-                }
+                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
+                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -131,6 +119,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
+                    opt.EnableCompilation = enableCompilation;
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
@@ -140,7 +129,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentTypes>(ContentTypes.CarInsuranceAdvice, (t) => CarInsuranceAdvices.Pay))
+                .WithContent(ContentTypes.CarInsuranceAdvice, CarInsuranceAdvices.Pay)
                 .Build();
             var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>
             {

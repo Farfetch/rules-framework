@@ -1,47 +1,58 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<LangVersion>9.0</LangVersion>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Authors></Authors>
-		<Version></Version>
-		<PackageVersion></PackageVersion>
-		<AssemblyVersion></AssemblyVersion>
-		<FileVersion></FileVersion>
-		<InformationalVersion></InformationalVersion>
-		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-		<PackageProjectUrl></PackageProjectUrl>
-		<RepositoryUrl></RepositoryUrl>
-		<RepositoryType>Git</RepositoryType>
-		<PackageTags>rules rulesframework</PackageTags>
-		<Description>A generic rules framework that allows defining and evaluating rules for complex business scenarios.</Description>
-		<Copyright></Copyright>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <LangVersion>10.0</LangVersion>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Authors></Authors>
+        <Version></Version>
+        <PackageVersion></PackageVersion>
+        <AssemblyVersion></AssemblyVersion>
+        <FileVersion></FileVersion>
+        <InformationalVersion></InformationalVersion>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageProjectUrl></PackageProjectUrl>
+        <RepositoryUrl></RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <PackageTags>rules rulesframework</PackageTags>
+        <Description>A generic rules framework that allows defining and evaluating rules for complex business scenarios.</Description>
+        <Copyright></Copyright>
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DebugType>full</DebugType>
-		<DebugSymbols>true</DebugSymbols>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<None Include="..\..\LICENSE.md" >
-			<Pack>True</Pack>
-			<PackagePath></PackagePath>
-		</None>
-	</ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\LICENSE.md">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.32" />
+        <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
+    </ItemGroup>
     
 
-	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="10.3.6" />
-		<PackageReference Include="Meziantou.Analyzer" Version="1.0.756">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="10.3.6" />
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.29">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>

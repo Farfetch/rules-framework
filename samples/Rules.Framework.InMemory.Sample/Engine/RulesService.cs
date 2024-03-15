@@ -22,7 +22,7 @@ namespace Rules.Framework.InMemory.Sample.Engine
             IDictionary<ConditionTypes, object> conditions)
         {
             var rulesConditions = (conditions is null) ? new Condition<ConditionTypes>[] { } :
-                conditions.Select(x => new Condition<ConditionTypes> { Type = x.Key, Value = x.Value })
+                conditions.Select(x => new Condition<ConditionTypes>(x.Key, x.Value))
                 .ToArray();
 
             var rulesEngine = await

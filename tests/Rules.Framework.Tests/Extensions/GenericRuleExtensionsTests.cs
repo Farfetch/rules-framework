@@ -26,6 +26,7 @@ namespace Rules.Framework.Tests.Extensions
                     {
                         ConditionTypeName = ConditionType.IsVip.ToString(),
                         DataType = DataTypes.Boolean,
+                        LogicalOperator = LogicalOperators.Eval,
                         Operand = true,
                         Operator = Operators.Equal
                     },
@@ -37,6 +38,7 @@ namespace Rules.Framework.Tests.Extensions
                             {
                                 ConditionTypeName = ConditionType.IsoCurrency.ToString(),
                                 DataType = DataTypes.String,
+                                LogicalOperator = LogicalOperators.Eval,
                                 Operand = "EUR",
                                 Operator = Operators.Equal
                             },
@@ -44,6 +46,7 @@ namespace Rules.Framework.Tests.Extensions
                             {
                                 ConditionTypeName = ConditionType.IsoCurrency.ToString(),
                                 DataType = DataTypes.String,
+                                LogicalOperator = LogicalOperators.Eval,
                                 Operand = "USD",
                                 Operator = Operators.Equal
                             }
@@ -54,33 +57,20 @@ namespace Rules.Framework.Tests.Extensions
                 LogicalOperator = LogicalOperators.And
             };
 
-            var composedCondition = new ConditionNodeBuilder<ConditionType>()
-                .AsComposed()
-                      .WithLogicalOperator(LogicalOperators.And)
-                           .AddCondition(z => z
-                               .AsValued(ConditionType.IsVip).OfDataType<bool>()
-                               .WithComparisonOperator(Operators.Equal)
-                               .SetOperand(true)
-                               .Build()
-                           )
-                           .AddCondition(sub => sub.AsComposed()
-                                .WithLogicalOperator(LogicalOperators.Or)
-                                    .AddCondition(tri => tri
-                                        .AsValued(ConditionType.IsoCurrency).OfDataType<string>()
-                                        .WithComparisonOperator(Operators.Equal)
-                                        .SetOperand("EUR").Build())
-                                    .AddCondition(tri => tri
-                                        .AsValued(ConditionType.IsoCurrency).OfDataType<string>()
-                                        .WithComparisonOperator(Operators.Equal)
-                                        .SetOperand("USD").Build())
-                                .Build())
-                      .Build();
+            var rootComposedCondition = new RootConditionNodeBuilder<ConditionType>()
+                .And(a => a
+                    .Value(ConditionType.IsVip, Operators.Equal, true)
+                    .Or(o => o
+                        .Value(ConditionType.IsoCurrency, Operators.Equal, "EUR")
+                        .Value(ConditionType.IsoCurrency, Operators.Equal, "USD")
+                    )
+                );
 
             var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Dummy Rule")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type1, (_) => expectedRuleContent))
-                .WithCondition(composedCondition)
+                .WithContent(ContentType.Type1, expectedRuleContent)
+                .WithCondition(rootComposedCondition)
                 .Build();
 
             var rule = ruleBuilderResult.Rule;
@@ -108,7 +98,7 @@ namespace Rules.Framework.Tests.Extensions
             var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Dummy Rule")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type2, (_) => expectedRuleContent))
+                .WithContent(ContentType.Type2, expectedRuleContent)
                 .Build();
 
             var rule = ruleBuilderResult.Rule;
@@ -132,7 +122,7 @@ namespace Rules.Framework.Tests.Extensions
             var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
                 .WithName("Dummy Rule")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContentContainer(new ContentContainer<ContentType>(ContentType.Type1, (_) => expectedRuleContent))
+                .WithContent(ContentType.Type1, expectedRuleContent)
                 .WithCondition(expectedRootCondition)
                 .Build();
 
@@ -150,10 +140,11 @@ namespace Rules.Framework.Tests.Extensions
             genericRule.RootCondition.Should().BeOfType<GenericValueConditionNode>();
 
             var genericValueRootCondition = genericRule.RootCondition as GenericValueConditionNode;
-            genericValueRootCondition.Should().BeEquivalentTo(expectedRootCondition, config => config
-                .Excluding(r => r.ConditionType)
-                .Excluding(r => r.LogicalOperator));
             genericValueRootCondition.ConditionTypeName.Should().Be(expectedRootCondition.ConditionType.ToString());
+            genericValueRootCondition.DataType.Should().Be(expectedRootCondition.DataType);
+            genericValueRootCondition.LogicalOperator.Should().Be(expectedRootCondition.LogicalOperator);
+            genericValueRootCondition.Operand.Should().Be(expectedRootCondition.Operand);
+            genericValueRootCondition.Operator.Should().Be(expectedRootCondition.Operator);
         }
     }
 }

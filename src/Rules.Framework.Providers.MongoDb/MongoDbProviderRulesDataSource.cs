@@ -102,6 +102,7 @@ namespace Rules.Framework.Providers.MongoDb
                 Builders<RuleDataModel>.Update.Set(r => r.DateEnd, ruleDataModel.DateEnd),
                 Builders<RuleDataModel>.Update.Set(r => r.Name, ruleDataModel.Name),
                 Builders<RuleDataModel>.Update.Set(r => r.Priority, ruleDataModel.Priority),
+                Builders<RuleDataModel>.Update.Set(r => r.Active, ruleDataModel.Active),
                 Builders<RuleDataModel>.Update.Set(r => r.RootCondition, ruleDataModel.RootCondition),
             };
 
@@ -154,7 +155,16 @@ namespace Rules.Framework.Providers.MongoDb
 
             var fetchedRules = await fetchedRulesCursor.ToListAsync().ConfigureAwait(false);
 
-            return fetchedRules.Select(r => this.ruleFactory.CreateRule(r));
+            // We won't use LINQ from this point onwards to avoid projected queries to database at a
+            // later point. This approach assures the definitive realization of the query results
+            // and does not produce side effects later on.
+            var result = new Rule<TContentType, TConditionType>[fetchedRules.Count];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = this.ruleFactory.CreateRule(fetchedRules[i]);
+            }
+
+            return result;
         }
     }
 }

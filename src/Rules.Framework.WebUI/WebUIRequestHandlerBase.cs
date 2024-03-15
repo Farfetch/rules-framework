@@ -13,14 +13,13 @@ namespace Rules.Framework.WebUI
 
     internal abstract class WebUIRequestHandlerBase : IHttpRequestHandler
     {
-        protected readonly WebUIOptions webUIOptions;
-
-        private readonly JsonSerializerOptions SerializerOptions;
+        protected readonly JsonSerializerOptions SerializerOptions;
+        protected readonly WebUIOptions WebUIOptions;
 
         protected WebUIRequestHandlerBase(string[] resourcePath, WebUIOptions webUIOptions)
         {
             this.ResourcePath = resourcePath;
-            this.webUIOptions = webUIOptions;
+            this.WebUIOptions = webUIOptions;
             this.SerializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -52,7 +51,7 @@ namespace Rules.Framework.WebUI
         {
             var resource = httpRequest.Path.ToUriComponent();
 
-            var resourcesPath = this.ResourcePath.Select(r => string.Format(r, this.webUIOptions.RoutePrefix));
+            var resourcesPath = this.ResourcePath.Select(r => string.Format(r, this.WebUIOptions.RoutePrefix));
 
             if (!resourcesPath.Contains(resource))
             {

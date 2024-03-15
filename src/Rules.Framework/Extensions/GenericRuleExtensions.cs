@@ -18,8 +18,9 @@ namespace Rules.Framework.Extensions
                 {
                     ConditionTypeName = condition.ConditionType.ToString(),
                     DataType = condition.DataType,
+                    LogicalOperator = condition.LogicalOperator,
                     Operand = condition.Operand,
-                    Operator = condition.Operator
+                    Operator = condition.Operator,
                 };
             }
 
@@ -35,7 +36,7 @@ namespace Rules.Framework.Extensions
             return new GenericComposedConditionNode
             {
                 ChildConditionNodes = conditionNodeDataModels,
-                LogicalOperator = composedConditionNode.LogicalOperator
+                LogicalOperator = composedConditionNode.LogicalOperator,
             };
         }
 
@@ -44,11 +45,12 @@ namespace Rules.Framework.Extensions
             return new GenericRule
             {
                 RootCondition = rule.RootCondition?.ToGenericConditionNode(),
-                Content = rule.ContentContainer.GetContentAs<object>(),
+                Content = rule.ContentContainer.GetContentAs<dynamic>(),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
-                Priority = rule.Priority
+                Priority = rule.Priority,
+                Active = rule.Active,
             };
         }
     }
