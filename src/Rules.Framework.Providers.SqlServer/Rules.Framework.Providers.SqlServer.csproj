@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Deploy\00-Create_Database.sql" />
+    <None Remove="Deploy\01-Create_Schema.sql" />
+    <None Remove="Deploy\02-Create_Tables.sql" />
+    <None Remove="Deploy\03-Populate_Tables.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Deploy\00-Create_Database.sql" />
+    <EmbeddedResource Include="Deploy\01-Create_Schema.sql" />
+    <EmbeddedResource Include="Deploy\02-Create_Tables.sql" />
+    <EmbeddedResource Include="Deploy\03-Populate_Tables.sql" />
+  </ItemGroup>
+
+</Project>
