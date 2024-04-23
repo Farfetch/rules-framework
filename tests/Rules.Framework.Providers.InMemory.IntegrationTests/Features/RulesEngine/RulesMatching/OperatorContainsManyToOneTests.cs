@@ -41,9 +41,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_GivenConditionType1WithArrayOfStringsContainingCat_MatchesExpectedRule(bool compiled)
         {
             // Arrange
-            var emptyConditions = new Condition<ConditionType>[]
+            var emptyConditions = new[]
             {
-                new(ConditionType.ConditionType1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", })
+                new Condition<ConditionType>(ConditionType.ConditionType1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", })
             };
             var matchDate = UtcDate("2020-01-02Z");
 
