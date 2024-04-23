@@ -3,7 +3,6 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngine;
@@ -42,28 +41,30 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             this.AddRules(this.CreateTestRules());
         }
 
-        [Fact]
-        public async Task RulesEngine_DeactivateThenActivateRule_Validations()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task RulesEngine_DeactivateThenActivateRule_Validations(bool compiled)
         {
             // Arrange
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
             var matchDate = new DateTime(2020, 01, 02);
 
             // Act 1: Deactivate the rule
-            var deactivateResult = await this.RulesEngine.DeactivateRuleAsync(rule1);
+            var deactivateResult = await this.DeactivateRuleAsync(rule1, compiled);
 
             // Assert 1: Rule 2 must be found
             Assert.True(deactivateResult.IsSuccess);
-            var actualMatch1 = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+            var actualMatch1 = await this.MatchOneAsync(matchDate, emptyConditions, compiled);
             Assert.NotNull(actualMatch1);
             Assert.Equal(rule2.Name, actualMatch1.Name);
 
             // Act 2: Activate the rule
-            var activateResult = await this.RulesEngine.ActivateRuleAsync(rule1);
+            var activateResult = await this.ActivateRuleAsync(rule1, compiled);
 
             // Assert 2: Rule 1 must be found
             Assert.True(activateResult.IsSuccess);
-            var actualMatch2 = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+            var actualMatch2 = await this.MatchOneAsync(matchDate, emptyConditions, compiled);
             Assert.NotNull(actualMatch2);
             Assert.Equal(rule1.Name, actualMatch2.Name);
         }

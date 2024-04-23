@@ -3,7 +3,6 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Builder;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngine;
     using Rules.Framework.Tests.Stubs;
@@ -28,28 +27,34 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public static IEnumerable<object[]> FailureCases =>
            new List<object[]>
            {
-                new object[] { rule1StartDate.AddMilliseconds(-1) }, // before 1st rule
-                new object[] { rule2EndDate }, // at rules end
+                new object[] { rule1StartDate.AddMilliseconds(-1), false, }, // before 1st rule
+                new object[] { rule1StartDate.AddMilliseconds(-1), true, }, // before 1st rule
+                new object[] { rule2EndDate, false, }, // at rules end
+                new object[] { rule2EndDate, true, }, // at rules end
            };
 
         public static IEnumerable<object[]> SuccessCases =>
             new List<object[]>
             {
-                new object[] { rule1StartDate, rule1Name, rule1Value }, // 1st rule
-                new object[] { ruleChangeDate.AddMilliseconds(-1), rule1Name, rule1Value }, // immediatly before change
-                new object[] { ruleChangeDate, rule2Name, rule2Value }, // 2nd rule
-                new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value }, // immediatly before rules end
+                new object[] { rule1StartDate, rule1Name, rule1Value, false }, // 1st rule
+                new object[] { rule1StartDate, rule1Name, rule1Value, true }, // 1st rule
+                new object[] { ruleChangeDate.AddMilliseconds(-1), rule1Name, rule1Value, false }, // immediatly before change
+                new object[] { ruleChangeDate.AddMilliseconds(-1), rule1Name, rule1Value, true }, // immediatly before change
+                new object[] { ruleChangeDate, rule2Name, rule2Value, false }, // 2nd rule
+                new object[] { ruleChangeDate, rule2Name, rule2Value, true }, // 2nd rule
+                new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value, false }, // immediatly before rules end
+                new object[] { rule2EndDate.AddMilliseconds(-1), rule2Name, rule2Value, true }, // immediatly before rules end
             };
 
         [Theory]
         [MemberData(nameof(FailureCases))]
-        public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate)
+        public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate, bool compiled)
         {
             // Arrange
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
 
             // Act
-            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions, compiled);
 
             // Assert
             Assert.Null(actualMatch);
@@ -57,13 +62,13 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
         [Theory]
         [MemberData(nameof(SuccessCases))]
-        public async Task RulesEngine_MatchOneAsync_WithRulesInSequence_ReturnsCorrectRule(DateTime matchDate, string expectedName, string expectedValue)
+        public async Task RulesEngine_MatchOneAsync_WithRulesInSequence_ReturnsCorrectRule(DateTime matchDate, string expectedName, string expectedValue, bool compiled)
         {
             // Arrange
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
 
             // Act
-            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions, compiled);
 
             // Assert
             Assert.Equal(expectedName, actualMatch.Name);
