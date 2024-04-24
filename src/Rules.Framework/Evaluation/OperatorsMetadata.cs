@@ -76,7 +76,7 @@ namespace Rules.Framework.Evaluation
         public static OperatorMetadata Contains => new()
         {
             Operator = Operators.Contains,
-            SupportedMultiplicities = new[] { Multiplicities.OneToOne },
+            SupportedMultiplicities = new[] { Multiplicities.OneToOne, Multiplicities.ManyToOne },
         };
 
         public static OperatorMetadata EndsWith => new()

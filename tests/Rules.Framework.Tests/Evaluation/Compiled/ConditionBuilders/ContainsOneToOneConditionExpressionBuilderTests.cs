@@ -12,6 +12,13 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
 
     public class ContainsOneToOneConditionExpressionBuilderTests
     {
+        private readonly ContainsOneToOneConditionExpressionBuilder containsOneToOneConditionExpressionBuilder;
+
+        public ContainsOneToOneConditionExpressionBuilderTests()
+        {
+            this.containsOneToOneConditionExpressionBuilder = new ContainsOneToOneConditionExpressionBuilder();
+        }
+
         [Fact]
         public void BuildConditionExpression_GivenLeftExpressionRightExpressionAndDataTypeConfigurationForInt_ReturnsConditionExpression()
         {
@@ -25,11 +32,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
 
             var builder = Mock.Of<IExpressionBlockBuilder>();
 
-            var containsOneToOneConditionExpressionBuilder
-                = new ContainsOneToOneConditionExpressionBuilder();
-
             // Act
-            var notSupportedException = Assert.Throws<NotSupportedException>(() => containsOneToOneConditionExpressionBuilder
+            var notSupportedException = Assert.Throws<NotSupportedException>(() => this.containsOneToOneConditionExpressionBuilder
                 .BuildConditionExpression(builder, args));
 
             // Assert
@@ -44,10 +48,6 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
         [Fact]
         public void BuildConditionExpression_GivenLeftExpressionRightExpressionAndDataTypeConfigurationForString_ReturnsConditionExpression()
         {
-            // Arrange
-            var containsOneToOneConditionExpressionBuilder
-                = new ContainsOneToOneConditionExpressionBuilder();
-
             // Act
             var expressionResult = ExpressionBuilder.NewExpression("TestCondition")
                 .WithParameters(p =>
@@ -63,7 +63,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
                         LeftHandOperand = builder.GetParameter("leftHand"),
                         RightHandOperand = builder.Constant("quick"),
                     };
-                    var conditionExpression = containsOneToOneConditionExpressionBuilder
+                    var conditionExpression = this.containsOneToOneConditionExpressionBuilder
                         .BuildConditionExpression(builder, args);
 
                     builder.Return(conditionExpression);
