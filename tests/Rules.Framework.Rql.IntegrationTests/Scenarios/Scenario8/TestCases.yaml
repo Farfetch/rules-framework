@@ -1,0 +1,47 @@
+matchOneTestCases:
+  - rql: match one rule for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$ when { @NumberOfKings is 1, @NumberOfQueens is 1, @NumberOfJacks is 1, @NumberOfTens is 1, @NumberOfNines is 1, @KingOfClubs is true, @QueenOfDiamonds is true, @JackOfClubs is true, @TenOfHearts is true, @NineOfSpades is true };
+    expectsRule: true
+    ruleName: Scenario 8 - Straight King, Queen, Jack, 10, 9
+  - rql: match one rule for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$;
+    expectsRule: false
+    ruleName:
+  - rql: match one rule for "TexasHoldemPokerSingleCombinations" on $2023-05-03$ when { @NumberOfClubs is 6 };
+    expectsRule: true
+    ruleName: Scenario 8 - Flush of Clubs
+  - rql: match one rule for "TexasHoldemPokerSingleCombinations" on $2023-05-03$ when { @NumberOfTreys is 3 };
+    expectsRule: true
+    ruleName: Scenario 8 - Three Of A Kind Treys
+  - rql: match one rule for "TexasHoldemPokerSingleCombinations" on $2023-05-03$ when { @NumberOfDeuces is 2, @NumberOfFours is 2, @NumberOfJacks is 3 };
+    expectsRule: true
+    ruleName: Scenario 8 - Three Of A Kind Jacks
+  - rql: match one rule for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$ when { @AceOfClubs is true, @KingOfClubs is true, @QueenOfClubs is true, @JackOfClubs is true, @TenOfClubs is true };
+    expectsRule: true
+    ruleName: "Scenario 8 - Royal flush of Clubs: Ace, King, Queen, Jack, 10"
+matchAllTestCases:
+  - rql: match all rules for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$ when { @NumberOfKings is 1, @NumberOfQueens is 1, @NumberOfJacks is 1, @NumberOfTens is 1, @NumberOfNines is 1, @KingOfClubs is true, @QueenOfDiamonds is true, @JackOfClubs is true, @TenOfHearts is true, @NineOfSpades is true };
+    expectsRules: true
+    ruleNames:
+      - Scenario 8 - Straight King, Queen, Jack, 10, 9
+      - Scenario 8 - High Card Kings
+      - Scenario 8 - High Card Queens
+      - Scenario 8 - High Card Jacks
+      - Scenario 8 - High Card Tens
+      - Scenario 8 - High Card Nines
+  - rql: match all rules for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$;
+    expectsRules: false
+    ruleNames:
+  - rql: match all rules for "TexasHoldemPokerSingleCombinations" on $2023-05-03$ when { @NumberOfDeuces is 2, @NumberOfFours is 2, @NumberOfJacks is 3 };
+    expectsRules: true
+    ruleNames:
+      - Scenario 8 - Three Of A Kind Jacks
+      - Scenario 8 - Pair Fours
+      - Scenario 8 - Pair Deuces
+searchTestCases:
+  - rql: search rules for "TexasHoldemPokerSingleCombinations" since $2023-01-01Z$ until $2023-01-31Z$ when { @NumberOfKings is 3 };
+    expectsRules: true
+    ruleNames:
+      - Scenario 8 - Straight King, Queen, Jack, 10, 9
+      - Scenario 8 - Three Of A Kind Kings
+  - rql: search rules for "TexasHoldemPokerSingleCombinations" since $2023-01-01Z$ until $2023-01-31Z$ when { @NumberOfAces is 5 };
+    expectsRules: false
+    ruleNames:

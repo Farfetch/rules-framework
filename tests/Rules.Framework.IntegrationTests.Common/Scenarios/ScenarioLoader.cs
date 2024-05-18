@@ -1,7 +1,5 @@
 namespace Rules.Framework.IntegrationTests.Common.Scenarios
 {
-    using Rules.Framework.BenchmarkTests.Tests;
-
     public static class ScenarioLoader
     {
         public static async Task LoadScenarioAsync<TRuleset, TCondition>(

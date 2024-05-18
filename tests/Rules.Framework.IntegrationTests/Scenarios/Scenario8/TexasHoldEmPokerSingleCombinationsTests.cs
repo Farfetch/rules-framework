@@ -4,8 +4,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
     using Rules.Framework.IntegrationTests.Common.Scenarios;
+    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8;
     using Xunit;
 
     public class TexasHoldEmPokerSingleCombinationsTests
