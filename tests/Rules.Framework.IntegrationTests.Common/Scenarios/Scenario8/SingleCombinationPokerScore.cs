@@ -1,4 +1,4 @@
-namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
+namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
 {
     public class SingleCombinationPokerScore
     {

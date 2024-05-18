@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="GrammarCheck\BasicLanguageChecks.yaml" />
+    <None Remove="GrammarCheck\CheckFiles\SearchExpressionChecks.yaml" />
+    <None Remove="GrammarCheck\MatchExpressionChecks.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="GrammarCheck\CheckFiles\BasicLanguageChecks.yaml" />
+    <EmbeddedResource Include="GrammarCheck\CheckFiles\MatchExpressionChecks.yaml" />
+    <EmbeddedResource Include="GrammarCheck\CheckFiles\SearchExpressionChecks.yaml" />
+    <EmbeddedResource Include="Scenarios\Scenario8\TestCases.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="YamlDotNet" Version="15.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Rules.Framework.Rql\Rules.Framework.Rql.csproj" />
+    <ProjectReference Include="..\Rules.Framework.BenchmarkTests\Rules.Framework.BenchmarkTests.csproj" />
+    <ProjectReference Include="..\Rules.Framework.IntegrationTests.Common\Rules.Framework.IntegrationTests.Common.csproj" />
+  </ItemGroup>
+
+</Project>

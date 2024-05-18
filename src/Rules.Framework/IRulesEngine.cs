@@ -5,7 +5,7 @@ namespace Rules.Framework
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal interface IRulesEngine<TContentType, TConditionType>
+    public interface IRulesEngine<TContentType, TConditionType>
     {
         Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption);
 

@@ -1,0 +1,49 @@
+var #rules = match one rule for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$ with { @NumberOfKings is 1, @NumberOfQueens is 1, @NumberOfJacks is 1, @NumberOfTens is 1, @NumberOfNines is 1, @KingOfClubs is true, @QueenOfDiamonds is true, @JackOfClubs is true, @TenOfHearts is true, @NineOfSpades is true };
+
+{
+	Show(#rules);
+	Show(#rules.Empty());
+	
+	Show(#rules.NotEmpty());
+}
+
+{
+	
+}
+
+if (#rules.NotEmpty())
+{
+	Show("Rules are not empty!");
+	Show(#rules[0]);
+}
+
+if (#rules.Empty())
+{
+	Show("Rules are empty!");
+}
+else
+{
+	Show("Found rules for you!");
+}
+
+var arr = { 1, 2, 3 };
+if (arr.Empty())
+	Show("Array is empty.");
+else
+	Show(arr);
+
+foreach (var #rule in #rules)
+{
+	Show(#rule.#Name);
+	if (#rule.#Priority >= 50)
+	{
+		Show("Big priority but not that big.");
+	}
+}
+
+foreach (var num in arr)
+{
+	Show(num);
+	var r = match one rule for "TexasHoldemPokerSingleCombinations" on $2023-01-01Z$ with { @NumberOfKings is num, @NumberOfQueens is 1, @NumberOfJacks is 1, @NumberOfTens is 1, @NumberOfNines is 1, @KingOfClubs is true, @QueenOfDiamonds is true, @JackOfClubs is true, @TenOfHearts is true, @NineOfSpades is true };
+	Show(r);
+}

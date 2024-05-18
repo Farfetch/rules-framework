@@ -1,0 +1,160 @@
+checks:
+  - rql: 3;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: -3;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: 2a;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid number '2a'.
+  - rql: -2a;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid number '2a'.
+  - rql: 6.2;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: -6.2;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: 2.a;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid number '2.a'.
+  - rql: 2a.1a;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid number '2a.1a'.
+  - rql: nothing;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: "\"some string\";"
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: "\"some string;"
+    expectsSuccess: false
+    expectedMessages:
+      - Unterminated string '"some string;'.
+  - rql: true;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: false;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: $2024-01-01$;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: $2024-01-01;
+    expectsSuccess: false
+    expectedMessages:
+      - Unterminated date '$2024-01-01;'.
+  - rql: $2024$;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid date '$2024$'.
+  - rql: $2024-AA-BB$;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid date '$2024-AA-BB$'.
+  - rql: $$;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid date '$$'.
+  - rql: $2024-03-01T20:18:56Z$;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: $2024-03-01T20:18:AAZ$;
+    expectsSuccess: false
+    expectedMessages:
+      - Invalid date '$2024-03-01T20:18:AAZ$'.
+  - rql: "{ 1, 2, 3 };"
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: "{ 1, 2, 3"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token '}'.
+  - rql: "{ 1, 2,"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected expression.
+  - rql: "{ }"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected expression.
+  - rql: "{ 1, \"some string\", false, $2024-01-01$ };"
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: array[3];
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: array
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token '['.
+  - rql: array[]
+    expectsSuccess: false
+    expectedMessages:
+      - Expected integer literal.
+  - rql: array[
+    expectsSuccess: false
+    expectedMessages:
+      - Expected integer literal.
+  - rql: array["abc"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected integer literal.
+  - rql: array[5
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token ']'.
+  - rql: object;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: object { };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected identifier for object property.
+  - rql: object { array };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected identifier for object property.
+  - rql: "object { #array };"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token '='.
+  - rql: "object { #array = match };"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected expression.
+  - rql: "object { Prop = 1"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token '}'.
+  - rql: object { Prop1 = "sample value", Prop2 = true, Prop3 = 50, Prop4 = 31.7, Prop5 = $2024-01-01$, Prop6 = nothing };
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: object { NestedObject1 = object { Prop = "Sample nested object" }, NestedObject2 = object, NestedArray1 = { 1, 2, 3 }, NestedArray2 = array[3] };
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: object { Content = "sample content" };
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: 1 + 1;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: 3 - 1;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: 3 * 2;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: 12 / 6;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: (2 + 5 - 3) * (-1 / 2);
+    expectsSuccess: false # to be supported in a future release, should be true when implemented
+    expectedMessages:
+      - Expected expression.
