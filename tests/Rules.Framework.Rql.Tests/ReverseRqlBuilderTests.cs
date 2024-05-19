@@ -275,7 +275,7 @@ namespace Rules.Framework.Rql.Tests
 
         [Theory]
         [InlineData(LiteralType.Bool, true, "TRUE")]
-        [InlineData(LiteralType.Decimal, 10.35, "10,35")]
+        [InlineData(LiteralType.Decimal, 10.35, "10.35")]
         [InlineData(LiteralType.Integer, 3, "3")]
         [InlineData(LiteralType.String, "test", "test")]
         [InlineData(LiteralType.DateTime, "2024-01-05T22:36:05Z", "$2024-01-05T22:36:05Z$")]
