@@ -7,10 +7,9 @@ namespace Rules.Framework.Rql.Runtime.Types
     using Rules.Framework.Core;
     using Rules.Framework.Core.ConditionNodes;
 
-    public readonly struct RqlRule<TContentType, TConditionType> : IRuntimeValue
+    public readonly struct RqlRule<TContentType, TConditionType> : IRuntimeValue, IEquatable<RqlRule<TContentType, TConditionType>>
     {
         private static readonly Type runtimeType = typeof(Rule<TContentType, TConditionType>);
-        private static readonly RqlType type = RqlTypes.Rule;
         private readonly Dictionary<string, RqlAny> properties;
 
         internal RqlRule(Rule<TContentType, TConditionType> rule)
@@ -31,14 +30,16 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public object RuntimeValue => this.Value;
 
-        public RqlType Type => type;
+        public RqlType Type => RqlTypes.Rule;
 
         public readonly Rule<TContentType, TConditionType> Value { get; }
 
         public static implicit operator RqlAny(RqlRule<TContentType, TConditionType> rqlRule) => new RqlAny(rqlRule);
 
+        public bool Equals(RqlRule<TContentType, TConditionType> other) => this.Value.Equals(other.Value);
+
         public override string ToString()
-            => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
+                    => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
 
         internal string ToString(int indent)
         {

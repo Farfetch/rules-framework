@@ -4,7 +4,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System.Collections.Generic;
     using System.Text;
 
-    public readonly struct RqlReadOnlyObject : IRuntimeValue
+    public readonly struct RqlReadOnlyObject : IRuntimeValue, IEquatable<RqlReadOnlyObject>
     {
         private static readonly Type runtimeType = typeof(object);
         private static readonly RqlType type = RqlTypes.ReadOnlyObject;
@@ -25,8 +25,10 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public static implicit operator RqlAny(RqlReadOnlyObject rqlReadOnlyObject) => new RqlAny(rqlReadOnlyObject);
 
+        public bool Equals(RqlReadOnlyObject other) => this.properties.Equals(other.properties);
+
         public override string ToString()
-            => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
+                    => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
 
         internal string ToString(int indent)
         {

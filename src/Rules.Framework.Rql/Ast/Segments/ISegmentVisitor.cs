@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Ast.Segments
 {
-    internal interface ISegmentVisitor<T>
+    internal interface ISegmentVisitor<out T>
     {
         T VisitCardinalitySegment(CardinalitySegment cardinalitySegment);
 

@@ -3,7 +3,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System;
     using System.Collections.Generic;
 
-    public readonly struct RqlType
+    public readonly struct RqlType : IEquatable<RqlType>
     {
         private readonly IDictionary<string, RqlType> assignableTypes;
 
@@ -25,6 +25,8 @@ namespace Rules.Framework.Rql.Runtime.Types
         public static bool operator !=(RqlType left, RqlType right) => !(left == right);
 
         public static bool operator ==(RqlType left, RqlType right) => string.Equals(left.Name, right.Name, StringComparison.Ordinal);
+
+        public bool Equals(RqlType other) => string.Equals(this.Name, other.Name, StringComparison.Ordinal);
 
         public bool IsAssignableTo(RqlType rqlType)
         {

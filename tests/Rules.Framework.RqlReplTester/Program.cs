@@ -8,7 +8,7 @@ namespace Rules.Framework.RqlReplTester
     using Rules.Framework.Rql;
     using Rules.Framework.Rql.Runtime.Types;
 
-    internal class Program
+    internal static class Program
     {
         private static readonly ConsoleColor originalConsoleForegroundColor = Console.ForegroundColor;
         private static readonly string tab = new string(' ', 4);

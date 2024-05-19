@@ -5,7 +5,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System.Text;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlObject : IRuntimeValue, IPropertySet
+    public readonly struct RqlObject : IRuntimeValue, IPropertySet, IEquatable<RqlObject>
     {
         private static readonly Type runtimeType = typeof(object);
         private static readonly RqlType type = RqlTypes.Object;
@@ -25,6 +25,9 @@ namespace Rules.Framework.Rql.Runtime.Types
         public object Value => ConvertToDictionary(this);
 
         public static implicit operator RqlAny(RqlObject rqlObject) => new RqlAny(rqlObject);
+
+        public bool Equals(RqlObject other)
+            => this.properties.Equals(other.properties);
 
         public RqlAny SetPropertyValue(RqlString name, RqlAny value) => this.properties[name.Value] = value;
 

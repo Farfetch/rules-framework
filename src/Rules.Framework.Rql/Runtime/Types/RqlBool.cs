@@ -3,7 +3,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlBool : IRuntimeValue
+    public readonly struct RqlBool : IRuntimeValue, IEquatable<RqlBool>
     {
         private static readonly Type runtimeType = typeof(bool);
         private static readonly RqlType type = RqlTypes.Bool;
@@ -27,7 +27,9 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public static implicit operator RqlBool(bool value) => new RqlBool(value);
 
+        public bool Equals(RqlBool other) => this.Value == other.Value;
+
         public override string ToString()
-            => $"<{Type.Name}> {this.Value}";
+                    => $"<{Type.Name}> {this.Value}";
     }
 }

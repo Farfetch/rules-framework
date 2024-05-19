@@ -3,7 +3,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlDate : IRuntimeValue
+    public readonly struct RqlDate : IRuntimeValue, IEquatable<RqlDate>
     {
         private static readonly Type runtimeType = typeof(DateTime);
         private static readonly RqlType type = RqlTypes.Date;
@@ -27,7 +27,9 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public static implicit operator RqlDate(DateTime value) => new RqlDate(value);
 
+        public bool Equals(RqlDate other) => this.Value == other.Value;
+
         public override string ToString()
-            => $"<{Type.Name}> {this.Value:g}";
+                    => $"<{Type.Name}> {this.Value:g}";
     }
 }

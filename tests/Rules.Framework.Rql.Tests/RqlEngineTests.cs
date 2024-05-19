@@ -19,10 +19,10 @@ namespace Rules.Framework.Rql.Tests
 
     public class RqlEngineTests
     {
-        private IInterpreter interpreter;
-        private IParser parser;
-        private RqlEngine<ContentType, ConditionType> rqlEngine;
-        private IScanner scanner;
+        private readonly IInterpreter interpreter;
+        private readonly IParser parser;
+        private readonly RqlEngine<ContentType, ConditionType> rqlEngine;
+        private readonly IScanner scanner;
 
         public RqlEngineTests()
         {

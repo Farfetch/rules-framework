@@ -16,8 +16,8 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<IRuntimeValue>>, ISegmentVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
     {
         private readonly IReverseRqlBuilder reverseRqlBuilder;
+        private readonly IRuntime<TContentType, TConditionType> runtime;
         private bool disposedValue;
-        private IRuntime<TContentType, TConditionType> runtime;
 
         public Interpreter(
             IRuntime<TContentType, TConditionType> runtime,
@@ -258,15 +258,24 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
                 case TokenType.STAR:
                     resultOperator = RqlOperators.Star;
                     break;
+
+                default:
+                    ThrowNotSupportedException();
+                    break;
             }
 
             if (resultOperator == RqlOperators.None)
             {
-                var tokenTypes = operatorExpression.Tokens.Select(t => $"'{t.Type}'").Aggregate((t1, t2) => $"{t1}, {t2}");
-                throw new NotSupportedException($"The tokens with types [{tokenTypes}] are not supported as a valid operator.");
+                ThrowNotSupportedException();
             }
 
             return Task.FromResult<object>(resultOperator);
+
+            void ThrowNotSupportedException()
+            {
+                var tokenTypes = operatorExpression.Tokens.Select(t => $"'{t.Type}'").Aggregate((t1, t2) => $"{t1}, {t2}");
+                throw new NotSupportedException($"The tokens with types [{tokenTypes}] are not supported as a valid operator.");
+            }
         }
 
         public Task<IRuntimeValue> VisitPlaceholderExpression(PlaceholderExpression placeholderExpression)
@@ -300,11 +309,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             try
             {
-                var @operator = unaryExpression.Operator.Lexeme switch
-                {
-                    "-" => RqlOperators.Minus,
-                    _ => RqlOperators.None,
-                };
+                var @operator = unaryExpression.Operator.Lexeme is "-" ? RqlOperators.Minus : RqlOperators.None;
                 var right = await unaryExpression.Right.Accept(this).ConfigureAwait(false);
                 return this.runtime.ApplyUnary(right, @operator);
             }
