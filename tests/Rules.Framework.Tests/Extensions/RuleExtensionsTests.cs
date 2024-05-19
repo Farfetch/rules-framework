@@ -9,7 +9,7 @@ namespace Rules.Framework.Tests.Extensions
     using Rules.Framework.Tests.Stubs;
     using Xunit;
 
-    public class GenericRuleExtensionsTests
+    public class RuleExtensionsTests
     {
         [Fact]
         public void GenericRuleExtensions_ToGenericRule_WithComposedCondition_Success()

@@ -4,6 +4,7 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
     using FluentAssertions;
     using Moq;
     using Rules.Framework.Rql;
+    using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
@@ -26,7 +27,7 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
             Mock.Get(reverseRqlBuilder)
-                .Setup(x => x.BuildRql(It.IsIn(inputConditionSegment)))
+                .Setup(x => x.BuildRql(It.IsAny<Expression>()))
                 .Returns(expectedRql);
 
             var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
