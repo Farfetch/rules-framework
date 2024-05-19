@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Ast.Statements
 {
-    internal interface IStatementVisitor<T>
+    internal interface IStatementVisitor<out T>
     {
         T VisitExpressionStatement(ExpressionStatement expressionStatement);
 

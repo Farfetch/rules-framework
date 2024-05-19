@@ -3,7 +3,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlAny : IRuntimeValue
+    public readonly struct RqlAny : IRuntimeValue, IEquatable<RqlAny>
     {
         private static readonly RqlType type = RqlTypes.Any;
 
@@ -16,13 +16,13 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         internal RqlAny(IRuntimeValue value)
         {
-            var underlyingRuntimeValue = value;
-            while (underlyingRuntimeValue is RqlAny rqlAny)
+            var runtimeValue = value;
+            while (runtimeValue is RqlAny rqlAny)
             {
-                underlyingRuntimeValue = rqlAny.Unwrap();
+                runtimeValue = rqlAny.Unwrap();
             }
 
-            this.underlyingRuntimeValue = underlyingRuntimeValue;
+            this.underlyingRuntimeValue = runtimeValue;
         }
 
         public Type RuntimeType => this.underlyingRuntimeValue.RuntimeType;
@@ -34,6 +34,8 @@ namespace Rules.Framework.Rql.Runtime.Types
         public RqlType UnderlyingType => this.underlyingRuntimeValue.Type;
 
         public object Value => this.underlyingRuntimeValue.RuntimeValue;
+
+        public bool Equals(RqlAny other) => this.underlyingRuntimeValue == other.underlyingRuntimeValue;
 
         public override string ToString()
             => $"<{this.Type.Name}> ({this.underlyingRuntimeValue.ToString()})";

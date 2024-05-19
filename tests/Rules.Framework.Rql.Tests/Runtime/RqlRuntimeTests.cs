@@ -244,7 +244,6 @@ namespace Rules.Framework.Rql.Tests.Runtime
                 MatchDate = matchDate,
             };
 
-            var expectedRule = BuildRule("Rule 1", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), contentType);
             var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
             Mock.Get(rulesEngine)
                 .Setup(x => x.MatchOneAsync(contentType, matchDate.Value, It.Is<IEnumerable<Condition<ConditionType>>>(c => c.SequenceEqual(conditions))))

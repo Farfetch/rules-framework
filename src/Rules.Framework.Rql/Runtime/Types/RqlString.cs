@@ -4,7 +4,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System.Collections.Generic;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlString : IRuntimeValue
+    public readonly struct RqlString : IRuntimeValue, IEquatable<RqlString>
     {
         private static readonly Type runtimeType = typeof(string);
         private static readonly RqlType type = RqlTypes.String;
@@ -28,7 +28,9 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public static implicit operator string(RqlString rqlString) => rqlString.Value;
 
+        public bool Equals(RqlString other) => this.Value == other.Value;
+
         public override string ToString()
-                    => @$"<{Type.Name}> ""{this.Value}""";
+                            => @$"<{Type.Name}> ""{this.Value}""";
     }
 }

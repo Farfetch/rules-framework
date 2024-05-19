@@ -55,10 +55,6 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             { nameof(TokenType.WITH), TokenType.WITH },
         };
 
-        public Scanner()
-        {
-        }
-
         public ScanResult ScanTokens(string source)
         {
             if (source is null)
@@ -108,7 +104,10 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
         private static void ConsumeAlphaNumeric(ScanContext scanContext)
         {
-            while (IsAlphaNumeric(scanContext.GetNextChar()) && scanContext.MoveNext()) { }
+            while (IsAlphaNumeric(scanContext.GetNextChar()) && scanContext.MoveNext())
+            {
+                continue;
+            }
         }
 
         private static Token CreateToken(ScanContext scanContext, TokenType tokenType)
@@ -135,6 +134,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             string lexeme;
             while (scanContext.GetNextChar() != '$' && scanContext.MoveNext())
             {
+                continue;
             }
 
             if (scanContext.IsEof())
@@ -200,7 +200,10 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
             static void ConsumeDigits(ScanContext scanContext)
             {
-                while (IsNumeric(scanContext.GetNextChar()) && scanContext.MoveNext()) { }
+                while (IsNumeric(scanContext.GetNextChar()) && scanContext.MoveNext())
+                {
+                    continue;
+                }
             }
 
             static bool ConsumeRemainingTokenCharacters(ScanContext scanContext)

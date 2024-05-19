@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Ast.Expressions
 {
-    internal interface IExpressionVisitor<T>
+    internal interface IExpressionVisitor<out T>
     {
         T VisitAssignmentExpression(AssignmentExpression assignmentExpression);
 

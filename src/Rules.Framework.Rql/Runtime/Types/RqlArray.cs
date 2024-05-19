@@ -5,7 +5,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System.Text;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlArray : IRuntimeValue
+    public readonly struct RqlArray : IRuntimeValue, IEquatable<RqlArray>
     {
         private static readonly Type runtimeType = typeof(object[]);
         private static readonly RqlType type = RqlTypes.Array;
@@ -55,6 +55,24 @@ namespace Rules.Framework.Rql.Runtime.Types
         }
 
         public static implicit operator RqlAny(RqlArray rqlArray) => new RqlAny(rqlArray);
+
+        public bool Equals(RqlArray other)
+        {
+            if (this.Size != other.Size)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.size; i++)
+            {
+                if (!this.Value[i].Equals(other.Value[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         public RqlNothing SetAtIndex(RqlInteger index, RqlAny value)
         {

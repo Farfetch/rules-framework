@@ -3,7 +3,7 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System;
     using Rules.Framework.Rql.Runtime;
 
-    public readonly struct RqlDecimal : IRuntimeValue
+    public readonly struct RqlDecimal : IRuntimeValue, IEquatable<RqlDecimal>
     {
         private static readonly Type runtimeType = typeof(decimal);
         private static readonly RqlType type = RqlTypes.Decimal;
@@ -27,7 +27,9 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public static implicit operator RqlDecimal(decimal value) => new RqlDecimal(value);
 
+        public bool Equals(RqlDecimal other) => this.Value == other.Value;
+
         public override string ToString()
-            => $"<{Type.Name}> {this.Value}";
+                    => $"<{Type.Name}> {this.Value}";
     }
 }

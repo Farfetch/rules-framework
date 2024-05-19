@@ -1,9 +1,10 @@
 namespace Rules.Framework.Rql
 {
+    using System;
     using System.Runtime.InteropServices;
 
     [StructLayout(LayoutKind.Sequential)]
-    public readonly struct RqlSourcePosition
+    public readonly struct RqlSourcePosition : IEquatable<RqlSourcePosition>
     {
         private RqlSourcePosition(uint line, uint column)
         {
@@ -20,5 +21,8 @@ namespace Rules.Framework.Rql
         public static RqlSourcePosition From(uint line, uint column) => new RqlSourcePosition(line, column);
 
         public override string ToString() => $"{{{this.Line}:{this.Column}}}";
+
+        public bool Equals(RqlSourcePosition other)
+            => this.Line == other.Line && this.Column == other.Column;
     }
 }

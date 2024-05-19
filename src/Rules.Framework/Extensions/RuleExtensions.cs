@@ -52,7 +52,7 @@ namespace Rules.Framework.Extensions
                 RootCondition = rule.RootCondition?.ToConcreteConditionNode<TConditionType>()!,
                 ContentContainer = new ContentContainer<TContentType>(
                     rule.ContentContainer.ContentType.ToConcreteContentType<TContentType>(),
-                    (t) => rule.ContentContainer.GetContentAs<dynamic>()),
+                    (_) => rule.ContentContainer.GetContentAs<dynamic>()),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
@@ -94,7 +94,7 @@ namespace Rules.Framework.Extensions
                 RootCondition = rule.RootCondition?.ToGenericConditionNode()!,
                 ContentContainer = new ContentContainer<string>(
                     rule.ContentContainer.ContentType!.ToString(),
-                    (t) => rule.ContentContainer.GetContentAs<dynamic>()),
+                    (_) => rule.ContentContainer.GetContentAs<dynamic>()),
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,

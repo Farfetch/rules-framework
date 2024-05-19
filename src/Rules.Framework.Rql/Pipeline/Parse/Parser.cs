@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql.Pipeline.Parse
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Rules.Framework.Rql.Ast.Statements;
     using Rules.Framework.Rql.Messages;
     using Rules.Framework.Rql.Pipeline.Parse.Strategies;
@@ -8,6 +9,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse
 
     internal class Parser : IParser
     {
+        private static readonly TokenType[] synchronizableTokens = new[] { TokenType.SEMICOLON, TokenType.EOF };
         private readonly IParseStrategyProvider parseStrategyProvider;
 
         public Parser(IParseStrategyProvider parseStrategyProvider)
@@ -53,14 +55,9 @@ namespace Rules.Framework.Rql.Pipeline.Parse
         {
             while (parseContext.MoveNext())
             {
-                switch (parseContext.GetCurrentToken().Type)
+                if (synchronizableTokens.Contains(parseContext.GetCurrentToken().Type))
                 {
-                    case TokenType.SEMICOLON:
-                    case TokenType.EOF:
-                        return;
-
-                    default:
-                        break;
+                    return;
                 }
             }
         }
