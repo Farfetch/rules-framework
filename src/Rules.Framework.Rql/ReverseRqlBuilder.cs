@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using Rules.Framework.Rql.Ast;
@@ -91,7 +92,7 @@ namespace Rules.Framework.Rql
         {
             LiteralType.String or LiteralType.Undefined => literalExpression.Token.Lexeme,
             LiteralType.Bool => literalExpression.Value.ToString().ToUpperInvariant(),
-            LiteralType.Decimal or LiteralType.Integer => literalExpression.Value.ToString(),
+            LiteralType.Decimal or LiteralType.Integer => Convert.ToString(literalExpression.Value, CultureInfo.InvariantCulture),
             LiteralType.DateTime => $"${literalExpression.Value:yyyy-MM-ddTHH:mm:ssZ}$",
             _ => throw new NotSupportedException($"The literal type '{literalExpression.Type}' is not supported."),
         };
