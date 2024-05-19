@@ -4,11 +4,10 @@ namespace Rules.Framework.Tests.Extensions
     using System.Collections.Generic;
     using FluentAssertions;
     using Rules.Framework.Extensions;
-    using Rules.Framework.Generics;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
 
-    public class GenericSearchArgsExtensionsTests
+    public class SearchArgsExtensionsTests
     {
         [Fact]
         public void GenericSearchArgsExtensions_ToSearchArgs_WithConditions_Success()
@@ -24,28 +23,26 @@ namespace Rules.Framework.Tests.Extensions
             {
                 Conditions = new List<Condition<ConditionType>>
                 {
-                    new Condition<ConditionType>(ConditionType.PluviosityRate, pluviosityRate),
-                    new Condition<ConditionType>(ConditionType.IsoCountryCode, countryCode)
+                    new(ConditionType.PluviosityRate, pluviosityRate),
+                    new(ConditionType.IsoCountryCode, countryCode)
                 },
                 ExcludeRulesWithoutSearchConditions = true
             };
 
             var contentTypeCode = "Type1";
 
-            var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Identifier = contentTypeCode }, dateBegin, dateEnd
-                )
+            var genericSearchArgs = new SearchArgs<string, string>(contentTypeCode, dateBegin, dateEnd)
             {
-                Conditions = new List<Condition<GenericConditionType>>
+                Conditions = new List<Condition<string>>
                 {
-                    new Condition<GenericConditionType>(new GenericConditionType { Identifier = "PluviosityRate" }, pluviosityRate),
-                    new Condition<GenericConditionType>(new GenericConditionType { Identifier = "IsoCountryCode" }, countryCode)
+                    new("PluviosityRate", pluviosityRate),
+                    new("IsoCountryCode", countryCode)
                 },
                 ExcludeRulesWithoutSearchConditions = true
             };
 
             // Act
-            var convertedSearchArgs = genericSearchArgs.ToSearchArgs<ContentType, ConditionType>();
+            var convertedSearchArgs = genericSearchArgs.ToGenericSearchArgs<ContentType, ConditionType>();
 
             // Assert
             convertedSearchArgs.Should().BeEquivalentTo(expectedSearchArgs);
@@ -59,12 +56,10 @@ namespace Rules.Framework.Tests.Extensions
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2020, 12, 31);
 
-            var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Identifier = contentTypeCode }, dateBegin, dateEnd
-                );
+            var genericSearchArgs = new SearchArgs<string, string>(contentTypeCode, dateBegin, dateEnd);
 
             // Act and Assert
-            Assert.Throws<ArgumentException>(() => genericSearchArgs.ToSearchArgs<ContentTypeClass, ConditionType>());
+            Assert.Throws<ArgumentException>(() => genericSearchArgs.ToGenericSearchArgs<ContentTypeClass, ConditionType>());
         }
 
         [Fact]
@@ -78,11 +73,10 @@ namespace Rules.Framework.Tests.Extensions
 
             var expectedSearchArgs = new SearchArgs<ContentType, ConditionType>(contentType, dateBegin, dateEnd, active: true);
 
-            var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(
-                new GenericContentType { Identifier = contentTypeCode }, dateBegin, dateEnd, active: true);
+            var genericSearchArgs = new SearchArgs<string, string>(contentTypeCode, dateBegin, dateEnd, active: true);
 
             // Act
-            var convertedSearchArgs = genericSearchArgs.ToSearchArgs<ContentType, ConditionType>();
+            var convertedSearchArgs = genericSearchArgs.ToGenericSearchArgs<ContentType, ConditionType>();
 
             // Assert
             convertedSearchArgs.Should().BeEquivalentTo(expectedSearchArgs);

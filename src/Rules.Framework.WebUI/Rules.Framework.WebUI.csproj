@@ -37,6 +37,7 @@
   </ItemGroup>	
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Rules.Framework.Rql\Rules.Framework.Rql.csproj" />
 	  <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
 	</ItemGroup>
 

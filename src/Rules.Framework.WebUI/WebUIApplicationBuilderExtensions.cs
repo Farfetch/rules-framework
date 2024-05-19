@@ -93,7 +93,8 @@ namespace Rules.Framework.WebUI
                     new GetIndexPageHandler(webUIOptions),
                     new GetConfigurationsHandler(genericRulesEngine, webUIOptions),
                     new GetContentTypeHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
-                    new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions)
+                    new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
+                    new PostRqlHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
                 },
                 webUIOptions);
 

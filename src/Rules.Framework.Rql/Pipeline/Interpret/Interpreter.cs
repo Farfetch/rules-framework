@@ -82,27 +82,9 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public async Task<object> VisitInputConditionSegment(InputConditionSegment inputConditionExpression)
         {
-            var conditionTypeName = (RqlString)await inputConditionExpression.Left.Accept(this).ConfigureAwait(false);
-            object conditionType;
-
-#if NETSTANDARD2_0
-            try
-            {
-                conditionType = Enum.Parse(typeof(TConditionType), conditionTypeName.Value);
-            }
-            catch (Exception)
-            {
-                throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, inputConditionExpression);
-            }
-#else
-            if (!Enum.TryParse(typeof(TConditionType), conditionTypeName.Value, out conditionType))
-            {
-                throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, inputConditionExpression);
-            }
-#endif
-
+            var conditionType = await this.HandleConditionTypeAsync(inputConditionExpression.Left).ConfigureAwait(false);
             var conditionValue = await inputConditionExpression.Right.Accept(this).ConfigureAwait(false);
-            return new Condition<TConditionType>((TConditionType)conditionType, conditionValue.RuntimeValue);
+            return new Condition<TConditionType>(conditionType, conditionValue.RuntimeValue);
         }
 
         public async Task<object> VisitInputConditionsSegment(InputConditionsSegment inputConditionsExpression)
@@ -349,6 +331,38 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return CreateInterpreterException(new[] { error }, astElement);
         }
 
+        private async Task<TConditionType> HandleConditionTypeAsync(Expression conditionTypeExpression)
+        {
+            var conditionTypeName = (RqlString)await conditionTypeExpression.Accept(this).ConfigureAwait(false);
+            object conditionType;
+            var type = typeof(TConditionType);
+
+            if (type == typeof(string))
+            {
+                conditionType = conditionTypeName.Value;
+            }
+            else
+            {
+#if NETSTANDARD2_0
+                try
+                {
+                    conditionType = Enum.Parse(type, conditionTypeName.Value);
+                }
+                catch (Exception)
+                {
+                    throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, conditionTypeExpression);
+                }
+#else
+                if (!Enum.TryParse(type, conditionTypeName.Value, out conditionType))
+                {
+                    throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, conditionTypeExpression);
+                }
+#endif
+            }
+
+            return (TConditionType)conditionType;
+        }
+
         private async Task<TContentType> HandleContentTypeAsync(Expression contentTypeExpression)
         {
             var rawValue = await contentTypeExpression.Accept(this).ConfigureAwait(false);
@@ -360,7 +374,13 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
             try
             {
-                return (TContentType)Enum.Parse(typeof(TContentType), ((RqlString)value).Value, ignoreCase: true);
+                var type = typeof(TContentType);
+                if (type == typeof(string))
+                {
+                    return (TContentType)((RqlString)value).RuntimeValue;
+                }
+
+                return (TContentType)Enum.Parse(type, ((RqlString)value).Value, ignoreCase: true);
             }
             catch (Exception)
             {

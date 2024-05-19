@@ -46,11 +46,11 @@ namespace Rules.Framework.WebUI.Handlers
 
                 if (rulesFilter.ContentType.Equals("all"))
                 {
-                    var contents = this.genericRulesEngine.GetContentTypes();
+                    var contentTypes = this.genericRulesEngine.GetContentTypes();
 
-                    foreach (var identifier in contents.Select(c => c.Identifier))
+                    foreach (var contentType in contentTypes)
                     {
-                        var rulesForContentType = await this.GetRulesForContentyType(identifier, rulesFilter).ConfigureAwait(false);
+                        var rulesForContentType = await this.GetRulesForContentyType(contentType, rulesFilter).ConfigureAwait(false);
                         rules.AddRange(rulesForContentType);
                     }
                 }
@@ -130,8 +130,8 @@ namespace Rules.Framework.WebUI.Handlers
         private async Task<IEnumerable<RuleDto>> GetRulesForContentyType(string identifier, RulesFilterDto rulesFilter)
         {
             var genericRules = await this.genericRulesEngine.SearchAsync(
-                                       new SearchArgs<GenericContentType, GenericConditionType>(
-                                           new GenericContentType { Identifier = identifier },
+                                       new SearchArgs<string, string>(
+                                           identifier,
                                            rulesFilter.DateBegin.Value, rulesFilter.DateEnd.Value))
                                        .ConfigureAwait(false);
 
@@ -148,7 +148,7 @@ namespace Rules.Framework.WebUI.Handlers
                     genericRules = genericRules.OrderBy(r => r.Priority);
                 }
 
-                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(identifier, this.ruleStatusDtoAnalyzer)));
+                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(this.ruleStatusDtoAnalyzer)));
 
                 return genericRulesDto;
             }

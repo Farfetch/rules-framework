@@ -4,17 +4,17 @@ namespace Rules.Framework.Extensions
     using System.Linq;
     using Rules.Framework.Generics;
 
-    internal static class GenericSearchArgsExtensions
+    internal static class SearchArgsExtensions
     {
-        public static SearchArgs<TContentType, TConditionType> ToSearchArgs<TContentType, TConditionType>(
-            this SearchArgs<GenericContentType, GenericConditionType> genericSearchArgs)
+        public static SearchArgs<TContentType, TConditionType> ToGenericSearchArgs<TContentType, TConditionType>(
+            this SearchArgs<string, string> genericSearchArgs)
         {
             if (!typeof(TContentType).IsEnum)
             {
                 throw new ArgumentException("Only TContentType of type enum are currently supported.");
             }
 
-            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType.Identifier);
+            var contentType = (TContentType)Enum.Parse(typeof(TContentType), genericSearchArgs.ContentType);
 
             if (genericSearchArgs.Active.HasValue)
             {
@@ -22,7 +22,7 @@ namespace Rules.Framework.Extensions
                 {
                     Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
                     (
-                        (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Identifier),
+                        (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type),
                         condition.Value
                     )).ToList(),
                     ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
@@ -33,7 +33,7 @@ namespace Rules.Framework.Extensions
             {
                 Conditions = genericSearchArgs.Conditions.Select(condition => new Condition<TConditionType>
                     (
-                        (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type.Identifier),
+                        (TConditionType)Enum.Parse(typeof(TConditionType), condition.Type),
                         condition.Value
                     )).ToList(),
                 ExcludeRulesWithoutSearchConditions = genericSearchArgs.ExcludeRulesWithoutSearchConditions
