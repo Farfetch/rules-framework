@@ -104,9 +104,12 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
         private static void ConsumeAlphaNumeric(ScanContext scanContext)
         {
-            while (IsAlphaNumeric(scanContext.GetNextChar()) && scanContext.MoveNext())
+            while (IsAlphaNumeric(scanContext.GetNextChar()))
             {
-                continue;
+                if (!scanContext.MoveNext())
+                {
+                    break;
+                }
             }
         }
 
