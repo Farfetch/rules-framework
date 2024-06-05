@@ -135,9 +135,12 @@ namespace Rules.Framework.Rql.Pipeline.Scan
         private static Token HandleDate(ScanContext scanContext)
         {
             string lexeme;
-            while (scanContext.GetNextChar() != '$' && scanContext.MoveNext())
+            while (scanContext.GetNextChar() != '$')
             {
-                continue;
+                if (!scanContext.MoveNext())
+                {
+                    break;
+                }
             }
 
             if (scanContext.IsEof())
@@ -205,7 +208,10 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             {
                 while (IsNumeric(scanContext.GetNextChar()) && scanContext.MoveNext())
                 {
-                    continue;
+                    if (!scanContext.MoveNext())
+                    {
+                        break;
+                    }
                 }
             }
 
