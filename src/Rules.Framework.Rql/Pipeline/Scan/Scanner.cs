@@ -206,7 +206,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
             static void ConsumeDigits(ScanContext scanContext)
             {
-                while (IsNumeric(scanContext.GetNextChar()) && scanContext.MoveNext())
+                while (IsNumeric(scanContext.GetNextChar()))
                 {
                     if (!scanContext.MoveNext())
                     {
