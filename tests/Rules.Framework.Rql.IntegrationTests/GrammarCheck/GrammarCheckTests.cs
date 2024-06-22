@@ -20,12 +20,12 @@ namespace Rules.Framework.Rql.IntegrationTests.GrammarCheck
         ];
 
         private readonly IParser parser;
-        private readonly IScanner scanner;
         private readonly ITestOutputHelper testOutputHelper;
+        private readonly ITokenScanner tokenScanner;
 
         public GrammarCheckTests(ITestOutputHelper testOutputHelper)
         {
-            this.scanner = new Scanner();
+            this.tokenScanner = new TokenScanner();
             this.parser = new Parser(new ParseStrategyPool());
             this.testOutputHelper = testOutputHelper;
         }
@@ -111,7 +111,7 @@ namespace Rules.Framework.Rql.IntegrationTests.GrammarCheck
 
         private bool TryScanAndParse(string rqlSource, out IEnumerable<string> errorMessages)
         {
-            var scanResult = this.scanner.ScanTokens(rqlSource);
+            var scanResult = this.tokenScanner.ScanTokens(rqlSource);
             if (!scanResult.Success)
             {
                 errorMessages = scanResult.Messages.Select(x => x.Text).ToArray();

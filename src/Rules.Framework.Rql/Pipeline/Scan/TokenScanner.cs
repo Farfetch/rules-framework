@@ -7,7 +7,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
     using Rules.Framework.Rql.Messages;
     using Rules.Framework.Rql.Tokens;
 
-    internal class Scanner : IScanner
+    internal class TokenScanner : ITokenScanner
     {
         private const char DecimalSeparator = '.';
 

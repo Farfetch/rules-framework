@@ -14,6 +14,6 @@ namespace Rules.Framework.Rql
 
         public IParser Parser { get; set; }
 
-        public IScanner Scanner { get; set; }
+        public ITokenScanner TokenScanner { get; set; }
     }
 }
