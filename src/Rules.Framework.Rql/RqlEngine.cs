@@ -17,11 +17,11 @@ namespace Rules.Framework.Rql
         private bool disposedValue;
         private IInterpreter interpreter;
         private IParser parser;
-        private IScanner scanner;
+        private ITokenScanner tokenScanner;
 
         public RqlEngine(RqlEngineArgs rqlEngineArgs)
         {
-            this.scanner = rqlEngineArgs.Scanner;
+            this.tokenScanner = rqlEngineArgs.TokenScanner;
             this.parser = rqlEngineArgs.Parser;
             this.interpreter = rqlEngineArgs.Interpreter;
         }
@@ -34,7 +34,7 @@ namespace Rules.Framework.Rql
 
         public async Task<IEnumerable<IResult>> ExecuteAsync(string rql)
         {
-            var scanResult = this.scanner.ScanTokens(rql);
+            var scanResult = this.tokenScanner.ScanTokens(rql);
             if (!scanResult.Success)
             {
                 var errors = scanResult.Messages.Where(m => m.Severity == MessageSeverity.Error)
@@ -73,7 +73,7 @@ namespace Rules.Framework.Rql
                 if (disposing)
                 {
                     this.interpreter = null!;
-                    this.scanner = null!;
+                    this.tokenScanner = null!;
                     this.parser = null!;
                 }
 

@@ -22,18 +22,18 @@ namespace Rules.Framework.Rql.Tests
         private readonly IInterpreter interpreter;
         private readonly IParser parser;
         private readonly RqlEngine<ContentType, ConditionType> rqlEngine;
-        private readonly IScanner scanner;
+        private readonly ITokenScanner tokenScanner;
 
         public RqlEngineTests()
         {
-            this.scanner = Mock.Of<IScanner>();
+            this.tokenScanner = Mock.Of<ITokenScanner>();
             this.parser = Mock.Of<IParser>();
             this.interpreter = Mock.Of<IInterpreter>();
             var rqlEngineArgs = new RqlEngineArgs
             {
                 Interpreter = interpreter,
                 Parser = parser,
-                Scanner = scanner,
+                TokenScanner = tokenScanner,
             };
 
             this.rqlEngine = new RqlEngine<ContentType, ConditionType>(rqlEngineArgs);
@@ -103,7 +103,7 @@ namespace Rules.Framework.Rql.Tests
             interpretResult.AddStatementResult(new NothingStatementResult("MATCH ONE RULE FOR \"Test\" ON $2023-01-01Z$;"));
             interpretResult.AddStatementResult(new ExpressionStatementResult("MATCH ONE RULE FOR \"Other\\nTest\" ON $2024-01-01Z$;", rqlArray));
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
             Mock.Get(this.parser)
@@ -118,7 +118,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner),
+                Mock.Get(this.tokenScanner),
                 Mock.Get(this.parser),
                 Mock.Get(this.interpreter));
 
@@ -172,7 +172,7 @@ namespace Rules.Framework.Rql.Tests
             var interpretResult = new InterpretResult();
             interpretResult.AddStatementResult(new ExpressionStatementResult(rql, rqlArray));
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
             Mock.Get(this.parser)
@@ -187,7 +187,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner),
+                Mock.Get(this.tokenScanner),
                 Mock.Get(this.parser),
                 Mock.Get(this.interpreter));
 
@@ -237,7 +237,7 @@ namespace Rules.Framework.Rql.Tests
             var interpretResult = new InterpretResult();
             interpretResult.AddStatementResult(new ExpressionStatementResult(rql, rqlArray));
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
             Mock.Get(this.parser)
@@ -252,7 +252,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner),
+                Mock.Get(this.tokenScanner),
                 Mock.Get(this.parser),
                 Mock.Get(this.interpreter));
 
@@ -294,7 +294,7 @@ namespace Rules.Framework.Rql.Tests
             var interpretResult = new InterpretResult();
             interpretResult.AddStatementResult(new ExpressionStatementResult(rql, rqlString));
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
             Mock.Get(this.parser)
@@ -309,7 +309,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner),
+                Mock.Get(this.tokenScanner),
                 Mock.Get(this.parser),
                 Mock.Get(this.interpreter));
 
@@ -340,7 +340,7 @@ namespace Rules.Framework.Rql.Tests
             };
             var scanResult = ScanResult.CreateError(messages);
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
 
@@ -349,7 +349,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner));
+                Mock.Get(this.tokenScanner));
 
             rqlException.Message.Should().Be("Errors have occurred processing provided RQL source - Sample scan error for source <unavailable> @{1:1}-{1:10}");
             rqlException.Errors.Should().HaveCount(1);
@@ -380,7 +380,7 @@ namespace Rules.Framework.Rql.Tests
             };
             var parseResult = ParseResult.CreateError(messages);
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
             Mock.Get(this.parser)
@@ -392,7 +392,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner),
+                Mock.Get(this.tokenScanner),
                 Mock.Get(this.parser));
 
             rqlException.Message.Should().Be("Errors have occurred processing provided RQL source - Sample parse error for source <unavailable> @{1:1}-{1:10}");
@@ -427,7 +427,7 @@ namespace Rules.Framework.Rql.Tests
             var interpretResult = new InterpretResult();
             interpretResult.AddStatementResult(new ErrorStatementResult("Sample interpret error", rql, RqlSourcePosition.From(1, 1), RqlSourcePosition.From(1, 10)));
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
             Mock.Get(this.parser)
@@ -442,7 +442,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner),
+                Mock.Get(this.tokenScanner),
                 Mock.Get(this.parser),
                 Mock.Get(this.interpreter));
 
@@ -478,7 +478,7 @@ namespace Rules.Framework.Rql.Tests
             var interpretResult = new InterpretResult();
             interpretResult.AddStatementResult(new StubResult());
 
-            Mock.Get(this.scanner)
+            Mock.Get(this.tokenScanner)
                 .Setup(x => x.ScanTokens(It.Is(rql, StringComparer.Ordinal)))
                 .Returns(scanResult);
             Mock.Get(this.parser)
@@ -493,7 +493,7 @@ namespace Rules.Framework.Rql.Tests
 
             // Assert
             Mock.VerifyAll(
-                Mock.Get(this.scanner),
+                Mock.Get(this.tokenScanner),
                 Mock.Get(this.parser),
                 Mock.Get(this.interpreter));
 

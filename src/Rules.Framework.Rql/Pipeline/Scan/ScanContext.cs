@@ -86,11 +86,11 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             this.TokenCandidate = null;
         }
 
-        private bool Move(int toOffset)
+        private bool Move(int offset)
         {
-            if (toOffset >= 0 && toOffset < this.source.Length)
+            if (offset >= 0 && offset < this.source.Length)
             {
-                var toChar = this.source[toOffset];
+                var toChar = this.source[offset];
                 if (toChar == '\n')
                 {
                     this.NextLine();
@@ -100,7 +100,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                     this.NextColumn();
                 }
 
-                this.Offset = toOffset;
+                this.Offset = offset;
                 return true;
             }
 

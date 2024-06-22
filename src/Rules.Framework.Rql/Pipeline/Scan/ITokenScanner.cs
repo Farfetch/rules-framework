@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Scan
 {
-    internal interface IScanner
+    internal interface ITokenScanner
     {
         ScanResult ScanTokens(string source);
     }

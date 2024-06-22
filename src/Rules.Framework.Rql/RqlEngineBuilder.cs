@@ -30,7 +30,7 @@ namespace Rules.Framework.Rql
         public IRqlEngine Build()
         {
             var runtime = RqlRuntime<TContentType, TConditionType>.Create(this.rulesEngine);
-            var scanner = new Scanner();
+            var tokenScanner = new TokenScanner();
             var parseStrategyProvider = new ParseStrategyPool();
             var parser = new Parser(parseStrategyProvider);
             var reverseRqlBuilder = new ReverseRqlBuilder();
@@ -40,7 +40,7 @@ namespace Rules.Framework.Rql
                 Interpreter = interpreter,
                 Options = this.options,
                 Parser = parser,
-                Scanner = scanner,
+                TokenScanner = tokenScanner,
             };
 
             return new RqlEngine<TContentType, TConditionType>(args);
