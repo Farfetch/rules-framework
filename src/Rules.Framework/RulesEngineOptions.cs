@@ -42,16 +42,6 @@ namespace Rules.Framework
         public PriorityCriterias PriorityCriteria { get; set; }
 
         /// <summary>
-        /// Gets or sets the priority criteria to untie when multiples rules are matched.
-        /// </summary>
-        [Obsolete("This property has a typo and has been replaced by PriorityCriteria.")]
-        public PriorityCriterias PriotityCriteria
-        {
-            get { return this.PriorityCriteria; }
-            set { this.PriorityCriteria = value; }
-        }
-
-        /// <summary>
         /// Creates a new set of rules engine options with framework-configured defaults.
         /// </summary>
         /// <remarks>
@@ -81,7 +71,6 @@ namespace Rules.Framework
                         [DataTypes.ArrayString] = string.Empty,
                     },
             };
-
 
             return rulesEngineOptions;
         }

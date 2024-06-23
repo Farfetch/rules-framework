@@ -3,7 +3,6 @@ namespace Rules.Framework.WebUI.Sample.Engine
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using global::Rules.Framework.Providers.InMemory;
     using global::Rules.Framework.WebUI.Sample.Enums;
 
     internal class RulesEngineProvider
@@ -19,7 +18,7 @@ namespace Rules.Framework.WebUI.Sample.Engine
                     .WithContentType<ContentTypes>()
                     .WithConditionType<ConditionTypes>()
                     .SetInMemoryDataSource()
-                    .Configure(c => c.PriotityCriteria = PriorityCriterias.TopmostRuleWins)
+                    .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
                     .Build();
 
                 await rulesBuilder.BuildAsync(rulesEngine).ConfigureAwait(false);

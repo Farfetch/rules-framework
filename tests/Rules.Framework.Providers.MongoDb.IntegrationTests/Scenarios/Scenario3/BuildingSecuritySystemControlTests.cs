@@ -92,11 +92,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                     ActionId = new Guid("ef0d65ae-ec76-492a-84db-5cb9090c3eaa"),
                     ActionName = "ActivateVentilationSystem"
                 })
-                .WithCondition(b => b.AsValued(SecuritySystemConditions.SmokeRate)
-                    .OfDataType<decimal>()
-                    .WithComparisonOperator(Core.Operators.GreaterThanOrEqual)
-                    .SetOperand(30.0m)
-                    .Build())
+                .WithCondition(b => b.Value(SecuritySystemConditions.SmokeRate, Core.Operators.GreaterThanOrEqual, 30.0m))
                 .Build();
             var newRule = newRuleResult.Rule;
 

@@ -22,7 +22,7 @@ namespace Rules.Framework.Builder
                 throw new System.ArgumentNullException(nameof(errors));
             }
 
-            return new RuleBuilderResult<TContentType, TConditionType>(false, null, errors);
+            return new RuleBuilderResult<TContentType, TConditionType>(isSuccess: false, null!, errors);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Rules.Framework.Builder
                 throw new System.ArgumentNullException(nameof(rule));
             }
 
-            return new RuleBuilderResult<TContentType, TConditionType>(true, rule, Enumerable.Empty<string>());
+            return new RuleBuilderResult<TContentType, TConditionType>(isSuccess: true, rule, Enumerable.Empty<string>());
         }
     }
 
@@ -50,7 +50,8 @@ namespace Rules.Framework.Builder
     public class RuleBuilderResult<TContentType, TConditionType>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RuleBuilderResult{TContentType, TConditionType}"/> class.
+        /// Initializes a new instance of the <see cref="RuleBuilderResult{TContentType,
+        /// TConditionType}"/> class.
         /// </summary>
         internal RuleBuilderResult(bool isSuccess, Rule<TContentType, TConditionType> rule, IEnumerable<string> errors)
         {
@@ -62,25 +63,19 @@ namespace Rules.Framework.Builder
         /// <summary>
         /// Gets the errors.
         /// </summary>
-        /// <value>
-        /// The errors.
-        /// </value>
+        /// <value>The errors.</value>
         public IEnumerable<string> Errors { get; }
 
         /// <summary>
         /// Gets a value indicating whether rule was built successfuly without validation errors.
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if rule was built; otherwise, <c>false</c>.
-        /// </value>
+        /// <value><c>true</c> if rule was built; otherwise, <c>false</c>.</value>
         public bool IsSuccess { get; }
 
         /// <summary>
         /// Gets the rule.
         /// </summary>
-        /// <value>
-        /// The rule.
-        /// </value>
+        /// <value>The rule.</value>
         public Rule<TContentType, TConditionType> Rule { get; }
     }
 }

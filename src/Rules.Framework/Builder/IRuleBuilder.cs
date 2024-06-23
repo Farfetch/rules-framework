@@ -25,16 +25,6 @@ namespace Rules.Framework.Builder
         IRuleBuilder<TContentType, TConditionType> WithActive(bool active);
 
         /// <summary>
-        /// Sets the new rule with the specified condition.
-        /// </summary>
-        /// <param name="conditionFunc">
-        /// The function with specific logic to create the condition for the rule.
-        /// </param>
-        /// <returns></returns>
-        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload instead.")]
-        IRuleBuilder<TContentType, TConditionType> WithCondition(Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
-
-        /// <summary>
         /// Sets the new rule with the specified root condition.
         /// </summary>
         /// <param name="condition">The condition.</param>
@@ -66,14 +56,6 @@ namespace Rules.Framework.Builder
         /// <param name="content">The content.</param>
         /// <returns></returns>
         IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content);
-
-        /// <summary>
-        /// Sets the new rule with the specified content container.
-        /// </summary>
-        /// <param name="contentContainer">The content container.</param>
-        /// <returns></returns>
-        [Obsolete("This way of building the content is being deprecated. Please use WithContent().")]
-        IRuleBuilder<TContentType, TConditionType> WithContentContainer(ContentContainer<TContentType> contentContainer);
 
         /// <summary>
         /// Sets the new rule with the specified date begin.

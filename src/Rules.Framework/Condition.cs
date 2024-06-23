@@ -22,14 +22,6 @@ namespace Rules.Framework
         }
 
         /// <summary>
-        /// Creates a Condition.
-        /// </summary>
-        [Obsolete("Please use the constructor with parameters instead.")]
-        public Condition()
-        {
-        }
-
-        /// <summary>
         /// Gets or sets the condition type.
         /// </summary>
         public TConditionType Type { get; set; }

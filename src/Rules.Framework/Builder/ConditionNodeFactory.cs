@@ -1,7 +1,9 @@
 namespace Rules.Framework.Builder
 {
     using System;
+    using System.Collections.Generic;
     using Rules.Framework.Core;
+    using Rules.Framework.Core.ConditionNodes;
 
     /// <summary>
     /// Factory for creating condition nodes.
@@ -39,8 +41,35 @@ namespace Rules.Framework.Builder
         public static IConditionNode<TConditionType> CreateValueNode<TConditionType, TDataType>(
             TConditionType conditionType, Operators condOperator, TDataType operand)
         {
-            return new ValueConditionNodeBuilder<TConditionType, TDataType>(conditionType, condOperator, operand)
-                .Build();
+            switch (operand)
+            {
+                case decimal _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Decimal, conditionType, condOperator, operand);
+
+                case IEnumerable<decimal> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayDecimal, conditionType, condOperator, operand);
+
+                case int _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Integer, conditionType, condOperator, operand);
+
+                case IEnumerable<int> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayInteger, conditionType, condOperator, operand);
+
+                case bool _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.Boolean, conditionType, condOperator, operand);
+
+                case IEnumerable<bool> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayBoolean, conditionType, condOperator, operand);
+
+                case string _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.String, conditionType, condOperator, operand);
+
+                case IEnumerable<string> _:
+                    return new ValueConditionNode<TConditionType>(DataTypes.ArrayString, conditionType, condOperator, operand);
+
+                default:
+                    throw new NotSupportedException($"The data type is not supported: {typeof(TDataType).FullName}.");
+            }
         }
     }
 }

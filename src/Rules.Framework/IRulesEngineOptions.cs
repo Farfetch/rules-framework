@@ -23,12 +23,6 @@ namespace Rules.Framework
         /// <summary>
         /// Gets the priority criteria to untie when multiples rules are matched.
         /// </summary>
-        [Obsolete("This property has a typo and has been replaced by PriorityCriteria.")]
-        public PriorityCriterias PriotityCriteria { get; }
-
-        /// <summary>
-        /// Gets the priority criteria to untie when multiples rules are matched.
-        /// </summary>
         public PriorityCriterias PriorityCriteria { get; }
     }
 }
