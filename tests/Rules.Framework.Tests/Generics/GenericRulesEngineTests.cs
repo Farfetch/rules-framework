@@ -24,11 +24,7 @@ namespace Rules.Framework.Tests.Generics
         public void GenericRulesEngine_GetContentTypes_Success()
         {
             // Arrange
-            var expectedGenericContentTypes = new List<GenericContentType>
-            {
-                new GenericContentType { Identifier = "Type1" },
-                new GenericContentType { Identifier = "Type2" },
-            };
+            var expectedGenericContentTypes = new List<string> { "Type1", "Type2" };
 
             var genericRulesEngine = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
@@ -88,37 +84,29 @@ namespace Rules.Framework.Tests.Generics
         public async Task GenericRulesEngine_SearchAsync_Success()
         {
             // Arrange
-            var expectedGenericRules = new List<GenericRule>
+            var expectedGenericRules = new List<Rule<string, string>>
             {
-                new GenericRule
+                new Rule<string, string>
                 {
-                    Content = new ContentContainer<ContentType>(ContentType.Type1, (_) => new object()).GetContentAs<object>(),
+                    ContentContainer = new ContentContainer<string>("Type1", (_) => new object()),
                     DateBegin = new DateTime(2018, 01, 01),
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Test rule",
                     Priority = 3,
                     Active = true,
-                    RootCondition = new GenericValueConditionNode
-                    {
-                        ConditionTypeName =  ConditionType.IsoCountryCode.ToString(),
-                        DataType = DataTypes.String,
-                        LogicalOperator = LogicalOperators.Eval,
-                        Operator = Operators.Equal,
-                        Operand = "USA"
-                    }
+                    RootCondition = new ValueConditionNode<string>(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
                 }
             };
 
             var dateBegin = new DateTime(2022, 01, 01);
             var dateEnd = new DateTime(2022, 12, 01);
-            var genericContentType = new GenericContentType { Identifier = "Type1" };
+            var genericContentType = "Type1";
 
-            var genericSearchArgs = new SearchArgs<GenericContentType, GenericConditionType>(genericContentType, dateBegin, dateEnd);
+            var genericSearchArgs = new SearchArgs<string, string>(genericContentType, dateBegin, dateEnd);
 
             var testRules = new List<Rule<ContentType, ConditionType>>
             {
-                new Rule<ContentType, ConditionType>
-                {
+                new() {
                     ContentContainer = new ContentContainer<ContentType>(ContentType.Type1, (_) => new object()),
                     DateBegin = new DateTime(2018, 01, 01),
                     DateEnd = new DateTime(2019, 01, 01),
@@ -135,7 +123,7 @@ namespace Rules.Framework.Tests.Generics
             var genericRulesEngine = new GenericRulesEngine<ContentType, ConditionType>(this.mockRulesEngine.Object);
 
             // Act
-            var genericRules = await genericRulesEngine.SearchAsync(genericSearchArgs).ConfigureAwait(false);
+            var genericRules = await genericRulesEngine.SearchAsync(genericSearchArgs);
 
             // Assert
             genericRules.Should().BeEquivalentTo(expectedGenericRules);

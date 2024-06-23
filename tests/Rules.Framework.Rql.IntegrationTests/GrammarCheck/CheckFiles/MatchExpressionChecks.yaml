@@ -1,0 +1,113 @@
+checks:
+  - rql: "MATCH"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected tokens 'ONE' or 'ALL'.
+  - rql: "MATCH ONE"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'RULE'.
+  - rql: "MATCH ALL"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'RULES'.
+  - rql: "MATCH ALL RULES"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'FOR'.
+  - rql: "MATCH ONE RULE FOR"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected content type name.
+  - rql: MATCH ONE RULE FOR "Test Content"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'ON'.
+  - rql: MATCH ONE RULE FOR "Test Content" ON
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token ';'.
+  - rql: MATCH ONE RULE FOR "Test Content" ON "Test not a date"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: MATCH ONE RULE FOR "Test Content" ON 123
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: MATCH ONE RULE FOR "Test Content" ON 16.8
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: MATCH ONE RULE FOR "Test Content" ON false
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: MATCH ONE RULE FOR "Test Content" ON nothing
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: MATCH ONE RULE FOR 123 ON $2020-01-01$;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: MATCH ONE RULE FOR true ON $2020-01-01$;
+    expectsSuccess: false
+    expectedMessages:
+      - Literal 'TRUE' is not allowed as a valid content type. Only literals of types [Integer, String] are allowed.
+  - rql: MATCH ONE RULE FOR 13.1 ON $2020-01-01$;
+    expectsSuccess: false
+    expectedMessages:
+      - Literal '13.1' is not allowed as a valid content type. Only literals of types [Integer, String] are allowed.
+  - rql: MATCH ONE RULE FOR NOTHING ON $2020-01-01$;
+    expectsSuccess: false
+    expectedMessages:
+      - Literal 'NOTHING' is not allowed as a valid content type. Only literals of types [Integer, String] are allowed.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is true };
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is true }
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token ';'.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN;
+    expectsSuccess: false
+    expectedMessages:
+      - Expected '{' after WITH.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN {};
+    expectsSuccess: false
+    expectedMessages:
+      - Expected placeholder (@<placeholder name>) for condition.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'IS'.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal for condition.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is $2024-01-01$ };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal for condition.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is nothing };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal for condition.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is true, };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected placeholder (@<placeholder name>) for condition.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is true
+    expectsSuccess: false
+    expectedMessages:
+      - Expected ',' or '}' after input condition.
+  - rql: MATCH ONE RULE FOR "Test Content" ON $2020-01-01$ WHEN { @SomeCondition is true, @OtherCondition is 123, @AnotherCondition is 123.45, @YetAnotherCondition is "Test" };
+    expectsSuccess: true
+    expectedMessages: []

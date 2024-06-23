@@ -40,6 +40,9 @@ jobs:
     - name: Pack Rules.Framework.Providers.MongoDb
       run: dotnet pack src/Rules.Framework.Providers.MongoDb/Rules.Framework.Providers.MongoDb.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
       
+    - name: Pack Rules.Framework.Rql
+      run: dotnet pack src/Rules.Framework.Rql/Rules.Framework.Rql.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
+      
     - name: Pack Rules.Framework.WebUI
       run: dotnet pack src/Rules.Framework.WebUI/Rules.Framework.WebUI.csproj --include-symbols -c Release /p:Version=$BUILD_VERSION
         

@@ -1,4 +1,4 @@
-namespace Rules.Framework.BenchmarkTests.Tests
+namespace Rules.Framework.IntegrationTests.Common.Scenarios
 {
     using System;
     using System.Collections.Generic;

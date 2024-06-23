@@ -1,0 +1,121 @@
+checks:
+  - rql: SEARCH
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'RULES'.
+  - rql: SEARCH RULE
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'RULES'.
+  - rql: SEARCH RULES
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'FOR'.
+  - rql: SEARCH RULES FOR
+    expectsSuccess: false
+    expectedMessages:
+      - Expected content type name.
+  - rql: SEARCH RULES FOR "Test Content"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'SINCE'.
+  - rql: SEARCH RULES FOR "Test Content" SINCE
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$;
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'UNTIL'.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: SEARCH RULES FOR "Test Content" SINCE "Test not a date"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL "Test not a date"
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR "Test Content" SINCE 123
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR "Test Content" SINCE 16.8
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR "Test Content" SINCE false
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR "Test Content" SINCE nothing
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal of type date.
+  - rql: SEARCH RULES FOR 123 SINCE $2020-01-01$ UNTIL $2021-01-01$;
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: SEARCH RULES FOR true SINCE $2020-01-01$ UNTIL $2021-01-01$;
+    expectsSuccess: false
+    expectedMessages:
+      - Literal 'TRUE' is not allowed as a valid content type. Only literals of types [Integer, String] are allowed.
+  - rql: SEARCH RULES FOR 13.1 SINCE $2020-01-01$ UNTIL $2021-01-01$;
+    expectsSuccess: false
+    expectedMessages:
+      - Literal '13.1' is not allowed as a valid content type. Only literals of types [Integer, String] are allowed.
+  - rql: SEARCH RULES FOR NOTHING SINCE $2020-01-01$ UNTIL $2021-01-01$;
+    expectsSuccess: false
+    expectedMessages:
+      - Literal 'NOTHING' is not allowed as a valid content type. Only literals of types [Integer, String] are allowed.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is true };
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is true }
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token ';'.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN;
+    expectsSuccess: false
+    expectedMessages:
+      - Expected '{' after WITH.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN {};
+    expectsSuccess: false
+    expectedMessages:
+      - Expected placeholder (@<placeholder name>) for condition.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected token 'IS'.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal for condition.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is $2024-01-01$ };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal for condition.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is nothing };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected literal for condition.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is true, };
+    expectsSuccess: false
+    expectedMessages:
+      - Expected placeholder (@<placeholder name>) for condition.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is true
+    expectsSuccess: false
+    expectedMessages:
+      - Expected ',' or '}' after input condition.
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ WHEN { @SomeCondition is true, @OtherCondition is 123, @AnotherCondition is 123.45, @YetAnotherCondition is "Test" };
+    expectsSuccess: true
+    expectedMessages: []
+  - rql: SEARCH RULES FOR "Test Content" SINCE $2020-01-01$ UNTIL $2021-01-01$ test;
+    expectsSuccess: false
+    expectedMessages:
+      - Unrecognized token 'test'.

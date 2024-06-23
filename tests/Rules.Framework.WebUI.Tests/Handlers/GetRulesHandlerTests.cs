@@ -8,6 +8,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using Moq;
+    using Rules.Framework.Core;
     using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Handlers;
@@ -36,7 +37,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
-            var genericRule = new List<GenericRule>();
+            var genericRule = new List<Rule<string, string>>();
             var verifySearchAsync = false;
 
             if (statusCode == HttpStatusCode.OK || statusCode == HttpStatusCode.InternalServerError)
@@ -47,13 +48,13 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
                 if (statusCode == HttpStatusCode.OK)
                 {
-                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()))
+                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<string, string>>()))
                         .ReturnsAsync(genericRule);
                 }
 
                 if (statusCode == HttpStatusCode.InternalServerError)
                 {
-                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()))
+                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<string, string>>()))
                         .Throws(new Exception("message", new Exception("inner")));
                 }
             }
@@ -65,8 +66,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
             //Act
             var result = await this.handler
-                .HandleAsync(httpContext.Request, httpContext.Response, next)
-                .ConfigureAwait(false);
+                .HandleAsync(httpContext.Request, httpContext.Response, next);
 
             //Assert
             result.Should().Be(expectedResult);
@@ -88,12 +88,12 @@ namespace Rules.Framework.WebUI.Tests.Handlers
             if (verifySearchAsync)
             {
                 this.rulesEngine
-                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()), Times.Once);
+                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<string, string>>()), Times.Once);
             }
             else
             {
                 this.rulesEngine
-                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()), Times.Never);
+                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<string, string>>()), Times.Never);
             }
         }
     }

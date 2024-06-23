@@ -6,6 +6,7 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using Rules.Framework.Core;
     using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
 
@@ -30,31 +31,29 @@ namespace Rules.Framework.WebUI.Handlers
         {
             try
             {
-                var contents = this.genericRulesEngine.GetContentTypes();
+                var contentTypes = this.genericRulesEngine.GetContentTypes();
 
-                var contentTypes = new List<ContentTypeDto>();
+                var contentTypeDtos = new List<ContentTypeDto>();
                 var index = 0;
-                foreach (var identifier in contents.Select(c => c.Identifier))
+                foreach (var contentType in contentTypes)
                 {
-                    var genericContentType = new GenericContentType { Identifier = identifier };
-
                     var genericRules = await this.genericRulesEngine
-                        .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericContentType,
+                        .SearchAsync(new SearchArgs<string, string>(contentType,
                             DateTime.MinValue,
                             DateTime.MaxValue))
                         .ConfigureAwait(false);
 
-                    contentTypes.Add(new ContentTypeDto
+                    contentTypeDtos.Add(new ContentTypeDto
                     {
                         Index = index,
-                        Name = identifier,
+                        Name = contentType,
                         ActiveRulesCount = genericRules.Count(IsActive),
                         RulesCount = genericRules.Count()
                     });
                     index++;
                 }
 
-                await this.WriteResponseAsync(httpResponse, contentTypes, (int)HttpStatusCode.OK).ConfigureAwait(false);
+                await this.WriteResponseAsync(httpResponse, contentTypeDtos, (int)HttpStatusCode.OK).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -62,7 +61,7 @@ namespace Rules.Framework.WebUI.Handlers
             }
         }
 
-        private bool IsActive(GenericRule genericRule)
+        private bool IsActive(Rule<string, string> genericRule)
         {
             return this.ruleStatusDtoAnalyzer.Analyze(genericRule.DateBegin, genericRule.DateEnd) == RuleStatusDto.Active;
         }

@@ -1,5 +1,6 @@
 namespace Rules.Framework.Extension
 {
+    using System;
     using Rules.Framework.Generics;
 
     /// <summary>
@@ -16,6 +17,11 @@ namespace Rules.Framework.Extension
         /// <returns>A new instance of generic engine</returns>
         public static IGenericRulesEngine CreateGenericEngine<TContentType, TConditionType>(this RulesEngine<TContentType, TConditionType> rulesEngine)
         {
+            if (!typeof(TContentType).IsEnum)
+            {
+                throw new NotSupportedException($"Generic rules engine is only supported for enum types of {nameof(TContentType)}.");
+            }
+
             return new GenericRulesEngine<TContentType, TConditionType>(rulesEngine);
         }
     }

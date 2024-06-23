@@ -1,8 +1,7 @@
-namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
+namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
 
     public partial class Scenario8Data : IScenarioData<ContentTypes, ConditionTypes>
@@ -12,79 +11,79 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
             return new[]
             {
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Deuces")
+                    .WithName("Scenario 8 - Three Of A Kind Deuces")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfDeuces, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Treys")
+                    .WithName("Scenario 8 - Three Of A Kind Treys")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfTreys, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Fours")
+                    .WithName("Scenario 8 - Three Of A Kind Fours")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
-                    .WithCondition(ConditionTypes.NumberOfDeuces, Operators.Equal, 3)
+                    .WithCondition(ConditionTypes.NumberOfFours, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Fives")
+                    .WithName("Scenario 8 - Three Of A Kind Fives")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfFives, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Sixes")
+                    .WithName("Scenario 8 - Three Of A Kind Sixes")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfSixes, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Sevens")
+                    .WithName("Scenario 8 - Three Of A Kind Sevens")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfSevens, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Eights")
+                    .WithName("Scenario 8 - Three Of A Kind Eights")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfEigths, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Nines")
+                    .WithName("Scenario 8 - Three Of A Kind Nines")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfNines, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Tens")
+                    .WithName("Scenario 8 - Three Of A Kind Tens")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfTens, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Jacks")
+                    .WithName("Scenario 8 - Three Of A Kind Jacks")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfJacks, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Queens")
+                    .WithName("Scenario 8 - Three Of A Kind Queens")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfQueens, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Kings")
+                    .WithName("Scenario 8 - Three Of A Kind Kings")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfKings, Operators.Equal, 3)
                     .Build().Rule,
                 RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Three Of A Kind Aces")
+                    .WithName("Scenario 8 - Three Of A Kind Aces")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Three Of A Kind" })
                     .WithCondition(ConditionTypes.NumberOfAces, Operators.Equal, 3)
