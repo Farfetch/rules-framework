@@ -2,9 +2,9 @@ namespace Rules.Framework.Source
 {
     using System;
 
-    internal sealed class GetRulesArgs<TContentType>
+    internal sealed class GetRulesArgs
     {
-        public TContentType ContentType { get; set; }
+        public string ContentType { get; set; }
 
         public DateTime DateBegin { get; set; }
 

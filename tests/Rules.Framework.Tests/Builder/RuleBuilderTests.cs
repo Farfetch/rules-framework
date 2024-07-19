@@ -5,9 +5,8 @@ namespace Rules.Framework.Tests.Builder
     using FluentAssertions;
     using Moq;
     using Rules.Framework;
-    using Rules.Framework.Builder;
     using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.Generic.ConditionNodes;
     using Rules.Framework.Serialization;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
@@ -18,13 +17,13 @@ namespace Rules.Framework.Tests.Builder
         public void NewRule_GivenRuleWithComposedCondition_BuildsAndReturnsRule()
         {
             // Arrange
-            string ruleName = "Rule 1";
+            var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
             var contentType = ContentType.Type1;
-            string content = "Content";
+            var content = "Content";
 
             // Act
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
+            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
                 .WithContent(contentType, content)
@@ -90,14 +89,14 @@ namespace Rules.Framework.Tests.Builder
             var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
             var contentType = ContentType.Type1;
-            string content = "Content";
+            var content = "Content";
             const ConditionType conditionType = ConditionType.NumberOfSales;
             const int conditionValue = 40;
             var conditionOperator = containsOperator;
             const DataTypes dataType = DataTypes.Integer;
 
             // Act
-            RuleBuilderResult<ContentType, ConditionType> ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
+            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
                 .WithContent(contentType, content)
@@ -119,10 +118,10 @@ namespace Rules.Framework.Tests.Builder
         public void NewRule_GivenRuleWithStringConditionTypeAndContainsOperator_BuildsAndReturnsRule(Operators containsOperator)
         {
             // Arrange
-            string ruleName = "Rule 1";
+            var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
             var contentType = ContentType.Type1;
-            string content = "Content";
+            var content = "Content";
             const ConditionType conditionType = ConditionType.IsoCountryCode;
             const string conditionValue = "PT";
             var conditionOperator = containsOperator;
@@ -130,7 +129,7 @@ namespace Rules.Framework.Tests.Builder
             const DataTypes dataType = DataTypes.String;
 
             // Act
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
+            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
                 .WithContent(contentType, content)
@@ -142,7 +141,7 @@ namespace Rules.Framework.Tests.Builder
             ruleBuilderResult.IsSuccess.Should().BeTrue();
             ruleBuilderResult.Rule.Should().NotBeNull();
 
-            Rule<ContentType, ConditionType> rule = ruleBuilderResult.Rule;
+            var rule = ruleBuilderResult.Rule;
 
             rule.Name.Should().Be(ruleName);
             rule.DateBegin.Should().Be(dateBegin);
@@ -164,8 +163,8 @@ namespace Rules.Framework.Tests.Builder
         public void NewRule_WithSerializedContent_GivenNullContentSerializationProvider_ThrowsArgumentNullException()
         {
             // Arrange
-            var ruleBuilder = RuleBuilder.NewRule<ContentType, ConditionType>();
-            IContentSerializationProvider<ContentType> contentSerializationProvider = null;
+            var ruleBuilder = Rule.New<ContentType, ConditionType>();
+            IContentSerializationProvider contentSerializationProvider = null;
 
             // Act
             var argumentNullException = Assert
@@ -180,23 +179,23 @@ namespace Rules.Framework.Tests.Builder
         public void NewRule_WithSerializedContent_SetsContentAsSerializedContent()
         {
             // Arrange
-            string ruleName = "Rule 1";
+            var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
             var contentType = ContentType.Type1;
-            string content = "TEST";
+            var content = "TEST";
 
             var contentSerializer = Mock.Of<IContentSerializer>();
             Mock.Get(contentSerializer)
                 .Setup(x => x.Deserialize(It.IsAny<object>(), It.IsAny<Type>()))
                 .Returns(content);
 
-            var contentSerializationProvider = Mock.Of<IContentSerializationProvider<ContentType>>();
+            var contentSerializationProvider = Mock.Of<IContentSerializationProvider>();
             Mock.Get(contentSerializationProvider)
-                .Setup(x => x.GetContentSerializer(contentType))
+                .Setup(x => x.GetContentSerializer(contentType.ToString()))
                 .Returns(contentSerializer);
 
             // Act
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
+            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
                 .WithName(ruleName)
                 .WithDateBegin(dateBegin)
                 .WithSerializedContent(contentType, content, contentSerializationProvider)
@@ -204,8 +203,7 @@ namespace Rules.Framework.Tests.Builder
 
             // Assert
             var ruleContent = ruleBuilderResult.Rule.ContentContainer;
-            ruleContent.Should().NotBeNull();
-            ruleContent.Should().NotBeNull().And.BeOfType<SerializedContentContainer<ContentType>>();
+            ruleContent.Should().NotBeNull().And.BeOfType<ContentContainer<ContentType>>();
             ruleContent.ContentType.Should().Be(contentType);
             ruleContent.GetContentAs<string>().Should().Be(content);
         }

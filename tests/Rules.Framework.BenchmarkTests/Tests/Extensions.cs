@@ -2,15 +2,14 @@ namespace Rules.Framework.BenchmarkTests.Tests
 {
     using MongoDB.Driver;
     using Rules.Framework.Builder;
-    using Rules.Framework.Providers.InMemory;
     using Rules.Framework.Providers.MongoDb;
 
     internal static class Extensions
     {
         private const string DatabaseName = "benchmarks-database";
 
-        public static IConfiguredRulesEngineBuilder<TContentType, TConditionType> SetDataSourceForBenchmark<TContentType, TConditionType>(
-            this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector,
+        public static IConfiguredRulesEngineBuilder SetDataSourceForBenchmark(
+            this IRulesDataSourceSelector rulesDataSourceSelector,
             string dataSourceName, string benchmarkName)
         {
             return dataSourceName switch

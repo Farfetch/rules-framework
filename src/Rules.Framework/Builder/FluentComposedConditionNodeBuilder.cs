@@ -1,23 +1,24 @@
-namespace Rules.Framework.Builder
+namespace Rules.Framework.Builder.Generic
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework;
+    using Rules.Framework.ConditionNodes;
+    using Rules.Framework.Generic;
 
-    internal sealed class FluentComposedConditionNodeBuilder<TConditionType> : IFluentComposedConditionNodeBuilder<TConditionType>
+    internal sealed class FluentComposedConditionNodeBuilder : IFluentComposedConditionNodeBuilder
     {
-        private readonly List<IConditionNode<TConditionType>> conditions;
+        private readonly List<IConditionNode> conditions;
         private readonly LogicalOperators logicalOperator;
 
         public FluentComposedConditionNodeBuilder(LogicalOperators logicalOperator)
         {
             this.logicalOperator = logicalOperator;
-            this.conditions = new List<IConditionNode<TConditionType>>(2); // Most probable number of conditions, so that collection is initialized with right size most times.
+            this.conditions = new List<IConditionNode>(2); // Most probable number of conditions, so that collection is initialized with right size most times.
         }
 
-        public IFluentComposedConditionNodeBuilder<TConditionType> And(
-            Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
+        public IFluentComposedConditionNodeBuilder And(
+            Func<IFluentComposedConditionNodeBuilder, IFluentComposedConditionNodeBuilder> conditionFunc)
         {
             var composedConditionNode = ConditionNodeFactory.CreateComposedNode(LogicalOperators.And, conditionFunc);
 
@@ -26,20 +27,20 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        public IConditionNode<TConditionType> Build()
+        public IConditionNode Build()
         {
-            return new ComposedConditionNode<TConditionType>(this.logicalOperator, this.conditions);
+            return new ComposedConditionNode(this.logicalOperator, this.conditions);
         }
 
-        public IFluentComposedConditionNodeBuilder<TConditionType> Condition(IConditionNode<TConditionType> conditionNode)
+        public IFluentComposedConditionNodeBuilder Condition(IConditionNode conditionNode)
         {
             this.conditions.Add(conditionNode);
 
             return this;
         }
 
-        public IFluentComposedConditionNodeBuilder<TConditionType> Or(
-                    Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
+        public IFluentComposedConditionNodeBuilder Or(
+                    Func<IFluentComposedConditionNodeBuilder, IFluentComposedConditionNodeBuilder> conditionFunc)
         {
             var composedConditionNode = ConditionNodeFactory.CreateComposedNode(LogicalOperators.Or, conditionFunc);
 
@@ -48,9 +49,10 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        public IFluentComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand)
+        public IFluentComposedConditionNodeBuilder Value<TDataType>(string conditionType, Operators condOperator, TDataType operand)
         {
-            var valueConditionNode = ConditionNodeFactory.CreateValueNode(conditionType, condOperator, operand);
+            var conditionTypeAsString = GenericConversions.Convert(conditionType);
+            var valueConditionNode = ConditionNodeFactory.CreateValueNode(conditionTypeAsString, condOperator, operand);
 
             this.conditions.Add(valueConditionNode);
 

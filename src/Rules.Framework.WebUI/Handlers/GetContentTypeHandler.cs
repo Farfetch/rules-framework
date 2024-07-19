@@ -6,21 +6,20 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
 
     internal sealed class GetContentTypeHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/{0}/api/v1/contentTypes" };
 
-        private readonly IGenericRulesEngine genericRulesEngine;
+        private readonly IRulesEngine rulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetContentTypeHandler(IGenericRulesEngine genericRulesEngine,
+        public GetContentTypeHandler(IRulesEngine rulesEngine,
             IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer,
             WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
-            this.genericRulesEngine = genericRulesEngine;
+            this.rulesEngine = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
@@ -30,16 +29,14 @@ namespace Rules.Framework.WebUI.Handlers
         {
             try
             {
-                var contents = this.genericRulesEngine.GetContentTypes();
+                var contents = await this.rulesEngine.GetContentTypesAsync().ConfigureAwait(false);
 
                 var contentTypes = new List<ContentTypeDto>();
                 var index = 0;
-                foreach (var identifier in contents.Select(c => c.Identifier))
+                foreach (var identifier in contents)
                 {
-                    var genericContentType = new GenericContentType { Identifier = identifier };
-
-                    var genericRules = await this.genericRulesEngine
-                        .SearchAsync(new SearchArgs<GenericContentType, GenericConditionType>(genericContentType,
+                    var genericRules = await this.rulesEngine
+                        .SearchAsync(new SearchArgs<string, string>(identifier,
                             DateTime.MinValue,
                             DateTime.MaxValue))
                         .ConfigureAwait(false);
@@ -62,9 +59,9 @@ namespace Rules.Framework.WebUI.Handlers
             }
         }
 
-        private bool IsActive(GenericRule genericRule)
+        private bool IsActive(Rule rule)
         {
-            return this.ruleStatusDtoAnalyzer.Analyze(genericRule.DateBegin, genericRule.DateEnd) == RuleStatusDto.Active;
+            return this.ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd) == RuleStatusDto.Active;
         }
     }
 }

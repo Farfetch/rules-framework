@@ -5,31 +5,31 @@ namespace Rules.Framework.Evaluation.Compiled
     using Rules.Framework.Core;
     using Rules.Framework.Source;
 
-    internal sealed class CompilationRulesSourceMiddleware<TContentType, TConditionType> : IRulesSourceMiddleware<TContentType, TConditionType>
+    internal sealed class CompilationRulesSourceMiddleware : IRulesSourceMiddleware
     {
-        private readonly IRuleConditionsExpressionBuilder<TConditionType> ruleConditionsExpressionBuilder;
-        private readonly IRulesDataSource<TContentType, TConditionType> rulesDataSource;
+        private readonly IRuleConditionsExpressionBuilder ruleConditionsExpressionBuilder;
+        private readonly IRulesDataSource rulesDataSource;
 
         public CompilationRulesSourceMiddleware(
-            IRuleConditionsExpressionBuilder<TConditionType> ruleConditionsExpressionBuilder,
-            IRulesDataSource<TContentType, TConditionType> rulesDataSource)
+            IRuleConditionsExpressionBuilder ruleConditionsExpressionBuilder,
+            IRulesDataSource rulesDataSource)
         {
             this.ruleConditionsExpressionBuilder = ruleConditionsExpressionBuilder;
             this.rulesDataSource = rulesDataSource;
         }
 
         public async Task HandleAddRuleAsync(
-            AddRuleArgs<TContentType, TConditionType> args,
-            AddRuleDelegate<TContentType, TConditionType> next)
+            AddRuleArgs args,
+            AddRuleDelegate next)
         {
             this.TryCompile(args.Rule);
 
             await next.Invoke(args).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesAsync(
-            GetRulesArgs<TContentType> args,
-            GetRulesDelegate<TContentType, TConditionType> next)
+        public async Task<IEnumerable<Rule>> HandleGetRulesAsync(
+            GetRulesArgs args,
+            GetRulesDelegate next)
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
@@ -47,9 +47,9 @@ namespace Rules.Framework.Evaluation.Compiled
             return rules;
         }
 
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesFilteredAsync(
-            GetRulesFilteredArgs<TContentType> args,
-            GetRulesFilteredDelegate<TContentType, TConditionType> next)
+        public async Task<IEnumerable<Rule>> HandleGetRulesFilteredAsync(
+            GetRulesFilteredArgs args,
+            GetRulesFilteredDelegate next)
         {
             var rules = await next.Invoke(args).ConfigureAwait(false);
 
@@ -68,15 +68,15 @@ namespace Rules.Framework.Evaluation.Compiled
         }
 
         public async Task HandleUpdateRuleAsync(
-            UpdateRuleArgs<TContentType, TConditionType> args,
-            UpdateRuleDelegate<TContentType, TConditionType> next)
+            UpdateRuleArgs args,
+            UpdateRuleDelegate next)
         {
             this.TryCompile(args.Rule);
 
             await next.Invoke(args).ConfigureAwait(false);
         }
 
-        private bool TryCompile(Rule<TContentType, TConditionType> rule)
+        private bool TryCompile(Rule rule)
         {
             var conditionNode = rule.RootCondition;
 

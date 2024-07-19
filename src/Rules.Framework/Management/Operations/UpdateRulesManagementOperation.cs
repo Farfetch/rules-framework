@@ -2,23 +2,22 @@ namespace Rules.Framework.Management.Operations
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
     using Rules.Framework.Source;
 
-    internal sealed class UpdateRulesManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class UpdateRulesManagementOperation : IManagementOperation
     {
-        private readonly IRulesSource<TContentType, TConditionType> rulesSource;
+        private readonly IRulesSource rulesSource;
 
-        public UpdateRulesManagementOperation(IRulesSource<TContentType, TConditionType> rulesSource)
+        public UpdateRulesManagementOperation(IRulesSource rulesSource)
         {
             this.rulesSource = rulesSource;
         }
 
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> ApplyAsync(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        public async Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules)
         {
-            foreach (Rule<TContentType, TConditionType> existentRule in rules)
+            foreach (Rule existentRule in rules)
             {
-                UpdateRuleArgs<TContentType, TConditionType> updateRuleArgs = new()
+                var updateRuleArgs = new UpdateRuleArgs()
                 {
                     Rule = existentRule,
                 };

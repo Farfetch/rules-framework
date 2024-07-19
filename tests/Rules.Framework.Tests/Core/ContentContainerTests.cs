@@ -2,6 +2,7 @@ namespace Rules.Framework.Tests.Core
 {
     using System;
     using FluentAssertions;
+    using Rules.Framework;
     using Rules.Framework.Core;
     using Rules.Framework.Tests.Stubs;
     using Xunit;

@@ -3,7 +3,7 @@ namespace Rules.Framework.BenchmarkTests.Tests
     using System;
     using System.Collections.Generic;
     using Rules.Framework;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
 
     public interface IScenarioData<TContentType, TConditionType>
     {

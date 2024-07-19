@@ -2,7 +2,6 @@ namespace Rules.Framework
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Core;
 
     /// <summary>
     /// The set of rules engine options that influence rules engine rules matching.

@@ -7,22 +7,21 @@ namespace Rules.Framework.Evaluation.Compiled
     using System.Reflection;
     using System.Text;
     using System.Text.RegularExpressions;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework;
+    using Rules.Framework.ConditionNodes;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
 
-    internal sealed class RuleConditionsExpressionBuilder<TConditionType> : RuleConditionsExpressionBuilderBase, IRuleConditionsExpressionBuilder<TConditionType>
+    internal sealed class RuleConditionsExpressionBuilder : RuleConditionsExpressionBuilderBase, IRuleConditionsExpressionBuilder
     {
-        private static readonly MethodInfo conditionsGetterMethod = typeof(EvaluationContext<TConditionType>)
+        private static readonly MethodInfo conditionsGetterMethod = typeof(EvaluationContext)
             .GetProperty("Conditions")
             .GetGetMethod();
 
-        private static readonly MethodInfo evaluationContextMatchModeGetterMethod = typeof(EvaluationContext<TConditionType>).GetProperty("MatchMode").GetGetMethod();
-        private static readonly MethodInfo evaluationContextMissingConditionsBehaviorGetterMethod = typeof(EvaluationContext<TConditionType>).GetProperty("MissingConditionBehavior").GetGetMethod();
+        private static readonly MethodInfo evaluationContextMatchModeGetterMethod = typeof(EvaluationContext).GetProperty("MatchMode").GetGetMethod();
+        private static readonly MethodInfo evaluationContextMissingConditionsBehaviorGetterMethod = typeof(EvaluationContext).GetProperty("MissingConditionBehavior").GetGetMethod();
 
         private static readonly MethodInfo getValueOrDefaultMethod = typeof(ConditionsValueLookupExtension)
-            .GetMethod(nameof(ConditionsValueLookupExtension.GetValueOrDefault))
-            .MakeGenericMethod(typeof(TConditionType));
+            .GetMethod(nameof(ConditionsValueLookupExtension.GetValueOrDefault));
 
         private readonly IDataTypesConfigurationProvider dataTypesConfigurationProvider;
         private readonly IValueConditionNodeExpressionBuilderProvider valueConditionNodeExpressionBuilderProvider;
@@ -35,12 +34,12 @@ namespace Rules.Framework.Evaluation.Compiled
             this.dataTypesConfigurationProvider = dataTypesConfigurationProvider;
         }
 
-        public Expression<Func<EvaluationContext<TConditionType>, bool>> BuildExpression(IConditionNode<TConditionType> rootConditionNode)
+        public Expression<Func<EvaluationContext, bool>> BuildExpression(IConditionNode rootConditionNode)
         {
             var expressionResult = ExpressionBuilder.NewExpression("EvaluateConditions")
                 .WithParameters(p =>
                 {
-                    p.CreateParameter<EvaluationContext<TConditionType>>("evaluationContext");
+                    p.CreateParameter<EvaluationContext>("evaluationContext");
                 })
                 .HavingReturn<bool>(defaultValue: false)
                 .SetImplementation(x =>
@@ -53,7 +52,7 @@ namespace Rules.Framework.Evaluation.Compiled
                 })
                 .Build();
 
-            return Expression.Lambda<Func<EvaluationContext<TConditionType>, bool>>(
+            return Expression.Lambda<Func<EvaluationContext, bool>>(
                 body: expressionResult.Implementation,
                 parameters: expressionResult.Parameters);
         }
@@ -86,11 +85,11 @@ namespace Rules.Framework.Evaluation.Compiled
                 }));
         }
 
-        private void BuildExpression(IConditionNode<TConditionType> conditionNode, IExpressionBlockBuilder builder)
+        private void BuildExpression(IConditionNode conditionNode, IExpressionBlockBuilder builder)
         {
             switch (conditionNode)
             {
-                case ComposedConditionNode<TConditionType> composedConditionNode:
+                case ComposedConditionNode composedConditionNode:
                     var conditionExpressions = new List<Expression>(composedConditionNode.ChildConditionNodes.Count());
                     var counter = 0;
                     foreach (var childConditionNode in composedConditionNode.ChildConditionNodes)
@@ -118,7 +117,7 @@ namespace Rules.Framework.Evaluation.Compiled
                     builder.Assign(composedResultVariableExpression, conditionExpression);
                     break;
 
-                case ValueConditionNode<TConditionType> valueConditionNode:
+                case ValueConditionNode valueConditionNode:
                     // Variables, constants, and labels.
                     var leftOperandVariableExpression = builder.CreateVariable<object>("LeftOperand");
                     var rightOperandVariableExpression = builder.CreateVariable<object>("RightOperand");
@@ -147,7 +146,7 @@ namespace Rules.Framework.Evaluation.Compiled
 
         private void BuildFetchAndSwitchOverMultiplicity(
             IExpressionBlockBuilder builder,
-            ValueConditionNode<TConditionType> valueConditionNode)
+            ValueConditionNode valueConditionNode)
         {
             var operatorConstantExpression = builder.Constant(valueConditionNode.Operator);
             var multiplicityVariableExpression = builder.CreateVariable("Multiplicity", typeof(string));

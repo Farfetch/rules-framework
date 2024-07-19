@@ -3,22 +3,31 @@ namespace Rules.Framework
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
 
-    internal interface IRulesEngine<TContentType, TConditionType>
+    public interface IRulesEngine
     {
-        Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption);
+        IRulesEngineOptions Options { get; }
 
-        PriorityCriterias GetPriorityCriteria();
+        Task<RuleOperationResult> ActivateRuleAsync(Rule rule);
 
-        Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
+        Task<RuleOperationResult> AddRuleAsync(Rule rule, RuleAddPriorityOption ruleAddPriorityOption);
 
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions);
+        Task<RuleOperationResult> DeactivateRuleAsync(Rule rule);
 
-        Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions);
+        /// <summary>
+        /// Gets the content types.
+        /// </summary>
+        /// <returns>List of content types</returns>
+        Task<IEnumerable<string>> GetContentTypesAsync();
 
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> SearchAsync(SearchArgs<TContentType, TConditionType> searchArgs);
+        Task<IEnumerable<string>> GetUniqueConditionTypesAsync(string contentType, DateTime dateBegin, DateTime dateEnd);
 
-        Task<RuleOperationResult> UpdateRuleAsync(Rule<TContentType, TConditionType> rule);
+        Task<IEnumerable<Rule>> MatchManyAsync(string contentType, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
+
+        Task<Rule> MatchOneAsync(string contentType, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
+
+        Task<IEnumerable<Rule>> SearchAsync(SearchArgs<string, string> searchArgs);
+
+        Task<RuleOperationResult> UpdateRuleAsync(Rule rule);
     }
 }

@@ -8,7 +8,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     using ExpressionDebugger;
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;

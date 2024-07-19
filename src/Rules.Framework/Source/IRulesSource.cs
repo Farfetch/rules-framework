@@ -1,17 +1,18 @@
 namespace Rules.Framework.Source
 {
-    using Rules.Framework.Core;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    internal interface IRulesSource<TContentType, TConditionType>
+    internal interface IRulesSource
     {
-        Task AddRuleAsync(AddRuleArgs<TContentType, TConditionType> args);
+        Task AddRuleAsync(AddRuleArgs args);
 
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(GetRulesArgs<TContentType> args);
+        Task<IEnumerable<string>> GetContentTypesAsync();
 
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesFilteredAsync(GetRulesFilteredArgs<TContentType> args);
+        Task<IEnumerable<Rule>> GetRulesAsync(GetRulesArgs args);
 
-        Task UpdateRuleAsync(UpdateRuleArgs<TContentType, TConditionType> args);
+        Task<IEnumerable<Rule>> GetRulesFilteredAsync(GetRulesFilteredArgs args);
+
+        Task UpdateRuleAsync(UpdateRuleArgs args);
     }
 }

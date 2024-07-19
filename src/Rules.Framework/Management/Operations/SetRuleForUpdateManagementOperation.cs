@@ -6,18 +6,18 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal sealed class SetRuleForUpdateManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class SetRuleForUpdateManagementOperation : IManagementOperation
     {
-        private readonly Rule<TContentType, TConditionType> updatedRule;
+        private readonly Rule updatedRule;
 
-        public SetRuleForUpdateManagementOperation(Rule<TContentType, TConditionType> updatedRule)
+        public SetRuleForUpdateManagementOperation(Rule updatedRule)
         {
             this.updatedRule = updatedRule;
         }
 
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> ApplyAsync(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        public Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules)
         {
-            List<Rule<TContentType, TConditionType>> result = new List<Rule<TContentType, TConditionType>>(rules);
+            var result = new List<Rule>(rules);
 
             result.RemoveAll(r => string.Equals(r.Name, this.updatedRule.Name, StringComparison.InvariantCultureIgnoreCase));
             result.Add(this.updatedRule);

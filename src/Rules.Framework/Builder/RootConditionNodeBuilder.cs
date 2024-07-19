@@ -1,31 +1,33 @@
 namespace Rules.Framework.Builder
 {
     using System;
-    using Rules.Framework.Core;
+    using Rules.Framework;
+    using Rules.Framework.Generic;
 
-    internal sealed class RootConditionNodeBuilder<TConditionType> : IRootConditionNodeBuilder<TConditionType>
+    internal sealed class RootConditionNodeBuilder : IRootConditionNodeBuilder
     {
-        public IConditionNode<TConditionType> And(
-            Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
+        public IConditionNode And(
+            Func<IFluentComposedConditionNodeBuilder, IFluentComposedConditionNodeBuilder> conditionFunc)
         {
             return ConditionNodeFactory.CreateComposedNode(LogicalOperators.And, conditionFunc);
         }
 
-        public IConditionNode<TConditionType> Condition(IConditionNode<TConditionType> conditionNode)
+        public IConditionNode Condition(IConditionNode conditionNode)
         {
             return conditionNode;
         }
 
-        public IConditionNode<TConditionType> Or(
-                    Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
+        public IConditionNode Or(
+                    Func<IFluentComposedConditionNodeBuilder, IFluentComposedConditionNodeBuilder> conditionFunc)
         {
             return ConditionNodeFactory.CreateComposedNode(LogicalOperators.Or, conditionFunc);
         }
 
-        public IConditionNode<TConditionType> Value<TDataType>(
-            TConditionType conditionType, Operators condOperator, TDataType operand)
+        public IConditionNode Value<TDataType>(
+            string conditionType, Operators condOperator, TDataType operand)
         {
-            return ConditionNodeFactory.CreateValueNode(conditionType, condOperator, operand);
+            var conditionTypeAsString = GenericConversions.Convert(conditionType);
+            return ConditionNodeFactory.CreateValueNode(conditionTypeAsString, condOperator, operand);
         }
     }
 }

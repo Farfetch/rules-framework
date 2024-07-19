@@ -1,12 +1,11 @@
 namespace Rules.Framework.Providers.MongoDb
 {
-    using Rules.Framework.Core;
     using Rules.Framework.Providers.MongoDb.DataModel;
 
-    internal interface IRuleFactory<TContentType, TConditionType>
+    internal interface IRuleFactory
     {
-        Rule<TContentType, TConditionType> CreateRule(RuleDataModel ruleDataModel);
+        Rule CreateRule(RuleDataModel ruleDataModel);
 
-        RuleDataModel CreateRule(Rule<TContentType, TConditionType> rule);
+        RuleDataModel CreateRule(Rule rule);
     }
 }

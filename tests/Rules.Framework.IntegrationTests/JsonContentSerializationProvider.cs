@@ -2,9 +2,9 @@ namespace Rules.Framework.IntegrationTests
 {
     using Rules.Framework.Serialization;
 
-    internal class JsonContentSerializationProvider<TContentType> : IContentSerializationProvider<TContentType>
+    internal class JsonContentSerializationProvider : IContentSerializationProvider
     {
-        public IContentSerializer GetContentSerializer(TContentType contentType)
+        public IContentSerializer GetContentSerializer(string contentType)
         {
             return new JsonContentSerializer();
         }

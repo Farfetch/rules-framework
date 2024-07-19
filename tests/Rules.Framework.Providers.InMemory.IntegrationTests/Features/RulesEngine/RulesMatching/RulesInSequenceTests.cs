@@ -80,9 +80,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         {
             var ruleSpecs = new List<RuleSpecification>();
 
-            var rule1 =
-                RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            var rule1 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule1Name)
                 .WithContent(TestContentType, rule1Value)
                 .WithDatesInterval(rule1StartDate, ruleChangeDate)
@@ -90,9 +88,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
             ruleSpecs.Add(new RuleSpecification(rule1.Rule, RuleAddPriorityOption.ByPriorityNumber(1)));
 
-            var rule2 =
-                RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            var rule2 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule2Name)
                 .WithContent(TestContentType, rule2Value)
                 .WithDatesInterval(ruleChangeDate, rule2EndDate)

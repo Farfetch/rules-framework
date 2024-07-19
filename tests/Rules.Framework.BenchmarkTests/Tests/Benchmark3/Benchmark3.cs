@@ -2,12 +2,13 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
     using System.Threading.Tasks;
     using BenchmarkDotNet.Attributes;
+    using Rules.Framework.Generic;
 
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark3 : IBenchmark
     {
         private readonly Scenario8Data benchmarkData = new Scenario8Data();
-        private RulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
+        private IRulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
@@ -24,9 +25,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         [GlobalSetup]
         public async Task SetUpAsync()
         {
-            this.rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .SetDataSourceForBenchmark(this.Provider!, nameof(Benchmark3))
                 .Configure(options =>
                 {
@@ -36,8 +35,10 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 
             foreach (var rule in this.benchmarkData.Rules)
             {
-                await this.rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+                await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
             }
+
+            this.rulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
         }
 
         [GlobalCleanup]

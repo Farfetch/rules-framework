@@ -8,17 +8,15 @@ namespace Rules.Framework.Providers.InMemory
     /// <summary>
     /// The rules data source implementation for usage backed with a in-memory database.
     /// </summary>
-    /// <typeparam name="TContentType">The type of the content type.</typeparam>
-    /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    /// <seealso cref="Rules.Framework.IRulesDataSource{TContentType, TConditionType}"/>
-    public class InMemoryProviderRulesDataSource<TContentType, TConditionType> : IRulesDataSource<TContentType, TConditionType>
+    /// <seealso cref="Rules.Framework.IRulesDataSource"/>
+    public class InMemoryProviderRulesDataSource : IRulesDataSource
     {
-        private readonly IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage;
-        private readonly IRuleFactory<TContentType, TConditionType> ruleFactory;
+        private readonly IInMemoryRulesStorage inMemoryRulesStorage;
+        private readonly IRuleFactory ruleFactory;
 
         internal InMemoryProviderRulesDataSource(
-            IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage,
-            IRuleFactory<TContentType, TConditionType> ruleFactory)
+            IInMemoryRulesStorage inMemoryRulesStorage,
+            IRuleFactory ruleFactory)
         {
             this.inMemoryRulesStorage = inMemoryRulesStorage ?? throw new ArgumentNullException(nameof(inMemoryRulesStorage));
             this.ruleFactory = ruleFactory ?? throw new ArgumentNullException(nameof(ruleFactory));
@@ -30,7 +28,7 @@ namespace Rules.Framework.Providers.InMemory
         /// <param name="rule">The rule.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">rule</exception>
-        public Task AddRuleAsync(Rule<TContentType, TConditionType> rule)
+        public Task AddRuleAsync(Rule rule)
         {
             if (rule is null)
             {
@@ -44,6 +42,9 @@ namespace Rules.Framework.Providers.InMemory
             return Task.CompletedTask;
         }
 
+        public Task<IEnumerable<string>> GetContentTypesAsync()
+            => Task.FromResult<IEnumerable<string>>(this.inMemoryRulesStorage.GetContentTypes());
+
         /// <summary>
         /// Gets the rules categorized with specified <paramref name="contentType"/> between
         /// <paramref name="dateBegin"/> and <paramref name="dateEnd"/>.
@@ -52,11 +53,11 @@ namespace Rules.Framework.Providers.InMemory
         /// <param name="dateBegin">the filtering begin date.</param>
         /// <param name="dateEnd">the filtering end date.</param>
         /// <returns></returns>
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
+        public Task<IEnumerable<Rule>> GetRulesAsync(string contentType, DateTime dateBegin, DateTime dateEnd)
         {
             var filteredByContent = this.inMemoryRulesStorage.GetRulesBy(contentType);
 
-            var filteredRules = new Rule<TContentType, TConditionType>[filteredByContent.Count];
+            var filteredRules = new Rule[filteredByContent.Count];
             var i = 0;
             foreach (var ruleDataModel in filteredByContent)
             {
@@ -72,7 +73,7 @@ namespace Rules.Framework.Providers.InMemory
                 Array.Resize(ref filteredRules, i);
             }
 
-            return Task.FromResult<IEnumerable<Rule<TContentType, TConditionType>>>(filteredRules);
+            return Task.FromResult<IEnumerable<Rule>>(filteredRules);
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace Rules.Framework.Providers.InMemory
         /// <param name="rulesFilterArgs">The rules filter arguments.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">rulesFilterArgs</exception>
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> GetRulesByAsync(RulesFilterArgs<TContentType> rulesFilterArgs)
+        public Task<IEnumerable<Rule>> GetRulesByAsync(RulesFilterArgs rulesFilterArgs)
         {
             if (rulesFilterArgs is null)
             {
@@ -90,11 +91,11 @@ namespace Rules.Framework.Providers.InMemory
 
             var ruleDataModels = this.inMemoryRulesStorage.GetAllRules();
 
-            var filteredRules = new Rule<TContentType, TConditionType>[ruleDataModels.Count];
+            var filteredRules = new Rule[ruleDataModels.Count];
             var i = 0;
             foreach (var ruleDataModel in ruleDataModels)
             {
-                if (!object.Equals(rulesFilterArgs.ContentType, default(TContentType))
+                if (!object.Equals(rulesFilterArgs.ContentType, default(string))
                     && !object.Equals(ruleDataModel.ContentType, rulesFilterArgs.ContentType))
                 {
                     continue;
@@ -121,7 +122,7 @@ namespace Rules.Framework.Providers.InMemory
                 Array.Resize(ref filteredRules, i);
             }
 
-            return Task.FromResult<IEnumerable<Rule<TContentType, TConditionType>>>(filteredRules);
+            return Task.FromResult<IEnumerable<Rule>>(filteredRules);
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace Rules.Framework.Providers.InMemory
         /// <param name="rule">The rule.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">rule</exception>
-        public Task UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
+        public Task UpdateRuleAsync(Rule rule)
         {
             if (rule is null)
             {

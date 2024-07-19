@@ -4,7 +4,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
 
@@ -16,10 +16,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         {
             this.TestContentType = testContentType;
 
-            this.CompiledRulesEngine = RulesEngineBuilder
+            var compiledRulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
-                .WithContentType<ContentType>()
-                .WithConditionType<ConditionType>()
                 .SetInMemoryDataSource()
                 .Configure(c =>
                 {
@@ -27,19 +25,20 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                     c.PriorityCriteria = PriorityCriterias.TopmostRuleWins;
                 })
                 .Build();
+            this.CompiledRulesEngine = compiledRulesEngine.MakeGeneric<ContentType, ConditionType>();
 
-            this.InterpretedRulesEngine = RulesEngineBuilder
+            var interpretedRulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
-                .WithContentType<ContentType>()
-                .WithConditionType<ConditionType>()
                 .SetInMemoryDataSource()
                 .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
                 .Build();
+
+            this.InterpretedRulesEngine = interpretedRulesEngine.MakeGeneric<ContentType, ConditionType>();
         }
 
-        protected RulesEngine<ContentType, ConditionType> CompiledRulesEngine { get; }
+        protected IRulesEngine<ContentType, ConditionType> CompiledRulesEngine { get; }
 
-        protected RulesEngine<ContentType, ConditionType> InterpretedRulesEngine { get; }
+        protected IRulesEngine<ContentType, ConditionType> InterpretedRulesEngine { get; }
 
         protected async Task<RuleOperationResult> ActivateRuleAsync(Rule<ContentType, ConditionType> rule, bool compiled)
         {

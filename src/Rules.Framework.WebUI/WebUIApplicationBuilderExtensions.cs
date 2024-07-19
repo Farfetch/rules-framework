@@ -5,7 +5,6 @@ namespace Rules.Framework.WebUI
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
-    using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Handlers;
 
@@ -22,7 +21,7 @@ namespace Rules.Framework.WebUI
         /// <param name="webUIOptionsAction">The web UI options action.</param>
         /// <returns></returns>
         public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            Func<IServiceProvider, IGenericRulesEngine> genericRulesEngineFactory,
+            Func<IServiceProvider, IRulesEngine> genericRulesEngineFactory,
             Action<WebUIOptions> webUIOptionsAction)
         {
             var genericRulesEngine = genericRulesEngineFactory.Invoke(app.ApplicationServices);
@@ -36,7 +35,7 @@ namespace Rules.Framework.WebUI
         /// <param name="genericRulesEngineFactory">The generic rules engine factory.</param>
         /// <returns></returns>
         public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            Func<IServiceProvider, IGenericRulesEngine> genericRulesEngineFactory)
+            Func<IServiceProvider, IRulesEngine> genericRulesEngineFactory)
         {
             return app.UseRulesFrameworkWebUI(genericRulesEngineFactory, null);
         }
@@ -48,7 +47,7 @@ namespace Rules.Framework.WebUI
         /// <param name="genericRulesEngine">The generic rules engine.</param>
         /// <returns></returns>
         public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            IGenericRulesEngine genericRulesEngine)
+            IRulesEngine genericRulesEngine)
         {
             return app.UseRulesFrameworkWebUI(genericRulesEngine, new WebUIOptions());
         }
@@ -61,7 +60,7 @@ namespace Rules.Framework.WebUI
         /// <param name="webUIOptionsAction">The web UI options action.</param>
         /// <returns></returns>
         public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            IGenericRulesEngine genericRulesEngine,
+            IRulesEngine genericRulesEngine,
             Action<WebUIOptions> webUIOptionsAction)
         {
             WebUIOptions webUIOptions;
@@ -82,7 +81,7 @@ namespace Rules.Framework.WebUI
         /// <param name="genericRulesEngine">The generic rules engine.</param>
         /// <param name="webUIOptions">The web UI options.</param>
         /// <returns></returns>
-        private static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app, IGenericRulesEngine genericRulesEngine,
+        private static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app, IRulesEngine genericRulesEngine,
             WebUIOptions webUIOptions)
         {
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();

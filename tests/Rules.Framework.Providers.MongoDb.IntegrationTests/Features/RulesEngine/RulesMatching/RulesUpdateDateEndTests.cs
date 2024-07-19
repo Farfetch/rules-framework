@@ -3,8 +3,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Builder;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
@@ -23,16 +22,13 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
 
         public RulesUpdateDateEndTests() : base(TestContentType)
         {
-            rule1 = RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            rule1 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule1Name)
                 .WithContent(TestContentType, rule1Value)
                 .WithDatesInterval(ruleStartDate, ruleEndDate)
                 .Build().Rule;
 
-            rule2 =
-                RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            rule2 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule2Name)
                 .WithContent(TestContentType, rule2Value)
                 .WithDatesInterval(ruleStartDate, ruleEndDate)
@@ -64,7 +60,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             Assert.Equal(success, updateResult.IsSuccess);
             if (success)
             {
-                var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+                var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions);
                 Assert.NotNull(actualMatch);
                 Assert.Equal(rule2.Name, actualMatch.Name);
             }

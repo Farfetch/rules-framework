@@ -11,7 +11,7 @@ namespace Rules.Framework
         /// <summary>
         /// Starts building a rules engine.
         /// </summary>
-        /// <returns>a content type selector.</returns>
-        public static IContentTypeSelector CreateRulesEngine() => new ContentTypeSelector();
+        /// <returns>the rules data source selector.</returns>
+        public static IRulesDataSourceSelector CreateRulesEngine() => new RulesDataSourceSelector();
     }
 }

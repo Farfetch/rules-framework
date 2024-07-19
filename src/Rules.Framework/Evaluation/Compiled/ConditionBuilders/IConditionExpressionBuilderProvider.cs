@@ -1,6 +1,6 @@
 namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
 {
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal interface IConditionExpressionBuilderProvider
     {

@@ -1,21 +1,21 @@
 namespace Rules.Framework.Builder.Validation
 {
     using FluentValidation;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework;
+    using Rules.Framework.ConditionNodes;
 
-    internal sealed class ComposedConditionNodeValidator<TConditionType> : AbstractValidator<ComposedConditionNode<TConditionType>>
+    internal sealed class ComposedConditionNodeValidator : AbstractValidator<ComposedConditionNode>
     {
-        private readonly ValueConditionNodeValidator<TConditionType> valueConditionNodeValidator;
+        private readonly ValueConditionNodeValidator valueConditionNodeValidator;
 
         public ComposedConditionNodeValidator()
         {
-            this.valueConditionNodeValidator = new ValueConditionNodeValidator<TConditionType>();
+            this.valueConditionNodeValidator = new ValueConditionNodeValidator();
 
-            this.RuleFor(c => c.LogicalOperator).IsContainedOn(LogicalOperators.And, LogicalOperators.Or);            
+            this.RuleFor(c => c.LogicalOperator).IsContainedOn(LogicalOperators.And, LogicalOperators.Or);
             this.RuleForEach(c => c.ChildConditionNodes)
                 .NotNull()
-                .Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType, ComposedConditionNode<TConditionType>>
+                .Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<ComposedConditionNode>
                 {
                     ComposedConditionNodeValidator = this,
                     ValidationContext = cc,

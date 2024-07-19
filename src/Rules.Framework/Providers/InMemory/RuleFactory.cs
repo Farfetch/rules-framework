@@ -3,22 +3,23 @@ namespace Rules.Framework.Providers.InMemory
     using System;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using Rules.Framework;
+    using Rules.Framework.ConditionNodes;
     using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
     using Rules.Framework.Providers.InMemory.DataModel;
 
-    internal sealed class RuleFactory<TContentType, TConditionType> : IRuleFactory<TContentType, TConditionType>
+    internal sealed class RuleFactory : IRuleFactory
     {
-        public Rule<TContentType, TConditionType> CreateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
+        public Rule CreateRule(RuleDataModel ruleDataModel)
         {
             if (ruleDataModel is null)
             {
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
-            var contentContainer = new ContentContainer<TContentType>(ruleDataModel.ContentType, (_) => ruleDataModel.Content);
+            var contentContainer = new ContentContainer(ruleDataModel.ContentType, (_) => ruleDataModel.Content);
 
-            var rule = new Rule<TContentType, TConditionType>
+            var rule = new Rule
             {
                 Active = ruleDataModel.Active,
                 ContentContainer = contentContainer,
@@ -32,7 +33,7 @@ namespace Rules.Framework.Providers.InMemory
             return rule;
         }
 
-        public RuleDataModel<TContentType, TConditionType> CreateRule(Rule<TContentType, TConditionType> rule)
+        public RuleDataModel CreateRule(Rule rule)
         {
             if (rule is null)
             {
@@ -41,7 +42,7 @@ namespace Rules.Framework.Providers.InMemory
 
             var content = rule.ContentContainer.GetContentAs<dynamic>();
 
-            var ruleDataModel = new RuleDataModel<TContentType, TConditionType>
+            var ruleDataModel = new RuleDataModel
             {
                 Content = content,
                 ContentType = rule.ContentContainer.ContentType,
@@ -56,17 +57,17 @@ namespace Rules.Framework.Providers.InMemory
             return ruleDataModel;
         }
 
-        private static IConditionNode<TConditionType> ConvertConditionNode(ConditionNodeDataModel<TConditionType> conditionNodeDataModel)
+        private static IConditionNode ConvertConditionNode(ConditionNodeDataModel conditionNodeDataModel)
         {
             if (conditionNodeDataModel.LogicalOperator == LogicalOperators.Eval)
             {
-                return CreateValueConditionNode((ValueConditionNodeDataModel<TConditionType>)conditionNodeDataModel);
+                return CreateValueConditionNode((ValueConditionNodeDataModel)conditionNodeDataModel);
             }
 
-            var composedConditionNodeDataModel = (ComposedConditionNodeDataModel<TConditionType>)conditionNodeDataModel;
+            var composedConditionNodeDataModel = (ComposedConditionNodeDataModel)conditionNodeDataModel;
             var count = composedConditionNodeDataModel.ChildConditionNodes.Length;
             var childConditionNodeDataModels = composedConditionNodeDataModel.ChildConditionNodes;
-            var childConditionNodes = new IConditionNode<TConditionType>[count];
+            var childConditionNodes = new IConditionNode[count];
             var i = -1;
 
             while (++i < count)
@@ -74,16 +75,16 @@ namespace Rules.Framework.Providers.InMemory
                 childConditionNodes[i] = ConvertConditionNode(childConditionNodeDataModels[i]);
             }
 
-            return new ComposedConditionNode<TConditionType>(
+            return new ComposedConditionNode(
                 composedConditionNodeDataModel.LogicalOperator,
                 childConditionNodes,
                 new PropertiesDictionary(conditionNodeDataModel.Properties));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ValueConditionNodeDataModel<TConditionType> ConvertValueConditionNode(ValueConditionNode<TConditionType> valueConditionNode)
+        private static ValueConditionNodeDataModel ConvertValueConditionNode(ValueConditionNode valueConditionNode)
         {
-            return new ValueConditionNodeDataModel<TConditionType>
+            return new ValueConditionNodeDataModel
             {
                 ConditionType = valueConditionNode.ConditionType,
                 LogicalOperator = LogicalOperators.Eval,
@@ -95,9 +96,9 @@ namespace Rules.Framework.Providers.InMemory
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IConditionNode<TConditionType> CreateValueConditionNode(ValueConditionNodeDataModel<TConditionType> conditionNodeDataModel)
+        private static IConditionNode CreateValueConditionNode(ValueConditionNodeDataModel conditionNodeDataModel)
         {
-            return new ValueConditionNode<TConditionType>(
+            return new ValueConditionNode(
                 conditionNodeDataModel.DataType,
                 conditionNodeDataModel.ConditionType,
                 conditionNodeDataModel.Operator,
@@ -106,17 +107,17 @@ namespace Rules.Framework.Providers.InMemory
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private ConditionNodeDataModel<TConditionType> ConvertComposedConditionNode(ComposedConditionNode<TConditionType> composedConditionNode)
+        private ConditionNodeDataModel ConvertComposedConditionNode(ComposedConditionNode composedConditionNode)
         {
-            var conditionNodeDataModels = new ConditionNodeDataModel<TConditionType>[composedConditionNode.ChildConditionNodes.Count()];
+            var conditionNodeDataModels = new ConditionNodeDataModel[composedConditionNode.ChildConditionNodes.Count()];
             var i = 0;
 
-            foreach (IConditionNode<TConditionType> child in composedConditionNode.ChildConditionNodes)
+            foreach (IConditionNode child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels[i++] = ConvertConditionNode(child);
             }
 
-            return new ComposedConditionNodeDataModel<TConditionType>
+            return new ComposedConditionNodeDataModel
             {
                 ChildConditionNodes = conditionNodeDataModels,
                 LogicalOperator = composedConditionNode.LogicalOperator,
@@ -124,14 +125,14 @@ namespace Rules.Framework.Providers.InMemory
             };
         }
 
-        private ConditionNodeDataModel<TConditionType> ConvertConditionNode(IConditionNode<TConditionType> conditionNode)
+        private ConditionNodeDataModel ConvertConditionNode(IConditionNode conditionNode)
         {
             if (conditionNode.LogicalOperator == LogicalOperators.Eval)
             {
-                return ConvertValueConditionNode((ValueConditionNode<TConditionType>)conditionNode);
+                return ConvertValueConditionNode((ValueConditionNode)conditionNode);
             }
 
-            return ConvertComposedConditionNode((ComposedConditionNode<TConditionType>)conditionNode);
+            return ConvertComposedConditionNode((ComposedConditionNode)conditionNode);
         }
     }
 }

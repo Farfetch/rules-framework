@@ -3,7 +3,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
     using System;
     using System.Collections.Generic;
     using Rules.Framework;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
 
     public class Scenario7Data : IScenarioData<ContentTypes, ConditionTypes>
     {
@@ -20,7 +20,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
 
         private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetRules()
         {
-            var rule1Result = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var rule1Result = Rule.New<ContentTypes, ConditionTypes>()
                 .WithName("Benchmark 2 - Bohemian Rapsody")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.Songs, "Bohemian Rapsody")
@@ -34,7 +34,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
                 )
                 .Build();
 
-            var rule2Result = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var rule2Result = Rule.New<ContentTypes, ConditionTypes>()
                 .WithName("Benchmark 2 - Stairway to Heaven")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.Songs, "Stairway to Heaven")

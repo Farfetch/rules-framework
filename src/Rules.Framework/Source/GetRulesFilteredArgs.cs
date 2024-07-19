@@ -1,8 +1,8 @@
 namespace Rules.Framework.Source
 {
-    internal sealed class GetRulesFilteredArgs<TContentType>
+    internal sealed class GetRulesFilteredArgs
     {
-        public TContentType ContentType { get; set; }
+        public string ContentType { get; set; }
 
         public string Name { get; set; }
 

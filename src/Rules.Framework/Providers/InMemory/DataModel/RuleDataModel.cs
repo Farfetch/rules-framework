@@ -2,13 +2,13 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 {
     using System;
 
-    internal sealed class RuleDataModel<TContentType, TConditionType>
+    internal sealed class RuleDataModel
     {
         public bool Active { get; set; } = true;
 
         public dynamic Content { get; set; }
 
-        public TContentType ContentType { get; set; }
+        public string ContentType { get; set; }
 
         public DateTime DateBegin { get; set; }
 
@@ -18,6 +18,6 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 
         public int Priority { get; set; }
 
-        public ConditionNodeDataModel<TConditionType> RootCondition { get; set; }
+        public ConditionNodeDataModel RootCondition { get; set; }
     }
 }

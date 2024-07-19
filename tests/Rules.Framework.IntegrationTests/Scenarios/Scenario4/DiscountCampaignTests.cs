@@ -6,7 +6,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
     using System.Threading.Tasks;
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario4;
     using Xunit;
 
@@ -26,22 +26,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<DiscountConfigurations>()
-                .WithConditionType<DiscountConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = RuleBuilder
-                .NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
                 .WithName("Discounts Weekend MAY2021")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(DiscountConfigurations.DiscountCampaigns, 15m)
@@ -60,7 +58,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             // Act 2 - Add new rule with "in" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -74,7 +72,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 new Condition<DiscountConditions>(DiscountConditions.ProductRecommendedRetailPrice,1249.90m)
             };
 
-            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -88,21 +86,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<DiscountConfigurations>()
-                .WithConditionType<DiscountConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = RuleBuilder.NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
                 .WithName("Discounts Weekend MAY2021 - Tiered discount")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(DiscountConfigurations.DiscountCampaigns, 15m)
@@ -121,7 +118,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             // Act 2 - Add new rule with "in" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -136,7 +133,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 new Condition<DiscountConditions>(DiscountConditions.ProductRecommendedRetailPrice, 1249.90m)
             };
 
-            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -150,23 +147,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<DiscountConfigurations>()
-                .WithConditionType<DiscountConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "not contains" operator
-            var ruleBuilderResult =
-                RuleBuilder
-                    .NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
                     .WithName("Not a staff discount")
                     .WithContent(DiscountConfigurations.DiscountCampaigns, 5m)
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
@@ -182,7 +176,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             // Act 2 - Add new rule with "not contains" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -195,7 +189,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 new Condition<DiscountConditions>(DiscountConditions.CustomerEmail, "user12345@somewhere.com")
             };
 
-            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -209,23 +203,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<DiscountConfigurations>()
-                .WithConditionType<DiscountConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "equal" operator
-            var ruleBuilderResult =
-                RuleBuilder
-                    .NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
                     .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
@@ -241,7 +232,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             // Act 2 - Add new rule with "in" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -254,7 +245,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 new Condition<DiscountConditions>(DiscountConditions.ProductColor, ProductColor.Blue.ToString())
             };
 
-            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
 
             // Assert 3
             actual.Should().NotBeNull();
@@ -268,23 +259,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<DiscountConfigurations>()
-                .WithConditionType<DiscountConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "equal" operator
-            var ruleBuilderResult =
-                RuleBuilder
-                    .NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
                     .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
@@ -300,7 +288,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             // Act 2 - Add new rule with "in" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -310,7 +298,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
             var conditions = new List<Condition<DiscountConditions>>();
 
-            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
 
             // Assert 3
             actual.Should().BeNull();
@@ -323,23 +311,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<DiscountConfigurations, DiscountConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<DiscountConfigurations>()
-                .WithConditionType<DiscountConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "equal" operator
-            var ruleBuilderResult =
-                RuleBuilder
-                    .NewRule<DiscountConfigurations, DiscountConditions>()
+            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
                     .WithName("Blue Product")
                     .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
                     .WithDateBegin(DateTime.Parse("2021-05-29Z"))
@@ -355,7 +340,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
             // Act 2 - Add new rule with "in" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -368,7 +353,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 new Condition<DiscountConditions>(DiscountConditions.ProductColor, ProductColor.White.ToString())
             };
 
-            var actual = await rulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
 
             // Assert 3
             actual.Should().BeNull();

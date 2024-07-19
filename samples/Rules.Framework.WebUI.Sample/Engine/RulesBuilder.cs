@@ -2,7 +2,6 @@ namespace Rules.Framework.WebUI.Sample.Engine
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using global::Rules.Framework.WebUI.Sample.Enums;
     using global::Rules.Framework.WebUI.Sample.Exceptions;
 
     internal class RulesBuilder
@@ -11,7 +10,7 @@ namespace Rules.Framework.WebUI.Sample.Engine
 
         public RulesBuilder(IEnumerable<IContentTypes> contentTypes) => this.contentTypes = contentTypes;
 
-        public async Task BuildAsync(RulesEngine<ContentTypes, ConditionTypes> rulesEngine)
+        public async Task BuildAsync(IRulesEngine rulesEngine)
         {
             foreach (var contentType in contentTypes)
             {

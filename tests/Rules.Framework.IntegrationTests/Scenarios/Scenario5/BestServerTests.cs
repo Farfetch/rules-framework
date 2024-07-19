@@ -5,7 +5,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
     using System.Threading.Tasks;
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario5;
     using Xunit;
 
@@ -16,17 +16,16 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<BestServerConfigurations, BestServerConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                 .WithContentType<BestServerConfigurations>()
-                 .WithConditionType<BestServerConditions>()
                  .SetInMemoryDataSource(serviceProvider)
                  .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
+            var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Top5")
                 .WithDatesInterval(DateTime.Parse("2021-05-29T11:00:00Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(BestServerConfigurations.BestServerEvaluation, "Top5")
@@ -49,15 +48,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
             // Act 2 - Add new rule with "in" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Create rule default
-            var ruleBuilderResultDefault = RuleBuilder
-                .NewRule<BestServerConfigurations, BestServerConditions>()
+            var ruleBuilderResultDefault = Rule.New<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Default")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(BestServerConfigurations.BestServerEvaluation, "Default")
@@ -70,7 +68,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 4 - Add new default rule
-            addRuleResult = await rulesEngine.AddRuleAsync(ruleBuilderResultDefault.Rule, RuleAddPriorityOption.AtBottom).ConfigureAwait(false);
+            addRuleResult = await genericRulesEngine.AddRuleAsync(ruleBuilderResultDefault.Rule, RuleAddPriorityOption.AtBottom);
 
             // Assert 4 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -86,21 +84,21 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
                 new Condition<BestServerConditions>(BestServerConditions.Brand, "AMD")
             };
 
-            var actual = await rulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions);
 
             // Assert 5
             actual.Should().NotBeNull();
             actual.Should().BeEquivalentTo(rule);
 
             // Act 6 - Update Best Server Top5 rule deactivate
-            var updateRuleResult = await rulesEngine.DeactivateRuleAsync(rule).ConfigureAwait(false);
+            var updateRuleResult = await genericRulesEngine.DeactivateRuleAsync(rule);
 
             // Assert 6
             updateRuleResult.Should().NotBeNull();
             updateRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 7 - Evaluate rule should be default now
-            actual = await rulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions).ConfigureAwait(false);
+            actual = await genericRulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions);
 
             // Assert 7
             actual.Should().NotBeNull();
@@ -112,17 +110,16 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
         {
             // Arrange
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<BestServerConfigurations, BestServerConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                 .WithContentType<BestServerConfigurations>()
-                 .WithConditionType<BestServerConditions>()
                  .SetInMemoryDataSource(serviceProvider)
                  .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
+            var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Top5")
                 .WithDatesInterval(DateTime.Parse("2021-05-29T11:00:00Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(BestServerConfigurations.BestServerEvaluation, "Top5")
@@ -145,14 +142,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
             // Act 2 - Add new rule with "in" operator
             var rule = ruleBuilderResult.Rule;
 
-            var addRuleResult = await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+            var addRuleResult = await genericRulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
 
             // Assert 2 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
             addRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 3 - Create rule default
-            var ruleBuilderResultDefault = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
+            var ruleBuilderResultDefault = Rule.New<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Default")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(BestServerConfigurations.BestServerEvaluation, "Default")
@@ -165,7 +162,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
             // Act 4 - Add new default rule
-            addRuleResult = await rulesEngine.AddRuleAsync(ruleBuilderResultDefault.Rule, RuleAddPriorityOption.AtBottom).ConfigureAwait(false);
+            addRuleResult = await genericRulesEngine.AddRuleAsync(ruleBuilderResultDefault.Rule, RuleAddPriorityOption.AtBottom);
 
             // Assert 4 - Verify if rule was added
             addRuleResult.Should().NotBeNull();
@@ -181,7 +178,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
                 new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
             };
 
-            var actual = await rulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions);
 
             // Assert 5
             actual.Should().NotBeNull();
@@ -189,14 +186,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
 
             // Act 6 - Update Best Server Top5 date end
             rule.DateEnd = DateTime.Parse("2021-05-29T12:10:00Z");
-            var updateRuleResult = await rulesEngine.UpdateRuleAsync(rule).ConfigureAwait(false);
+            var updateRuleResult = await genericRulesEngine.UpdateRuleAsync(rule);
 
             // Assert 6
             updateRuleResult.Should().NotBeNull();
             updateRuleResult.IsSuccess.Should().BeTrue();
 
             // Act 7 - Evaluate rule should be default now
-            actual = await rulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions).ConfigureAwait(false);
+            actual = await genericRulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions);
 
             // Assert 7
             actual.Should().NotBeNull();

@@ -1,11 +1,11 @@
 [
-  {
-    "Content": "{\"Description\":\"Body Mass Index default formula\",\"Value\":\"weight / (height ^ 2)\"}",
-    "ContentTypeCode": 1,
-    "DateBegin": "2018-01-01",
-    "DateEnd": null,
-    "Name": "Body Mass Index default",
-    "Priority": 1,
-    "RootCondition": null
-  }
+    {
+        "Content": "{\"Description\":\"Body Mass Index default formula\",\"Value\":\"weight / (height ^ 2)\"}",
+        "ContentTypeCode": "BodyMassIndexFormula",
+        "DateBegin": "2018-01-01",
+        "DateEnd": null,
+        "Name": "Body Mass Index default",
+        "Priority": 1,
+        "RootCondition": null
+    }
 ]

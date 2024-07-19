@@ -5,30 +5,27 @@ namespace Rules.Framework.Management.Operations
     using Rules.Framework.Core;
     using Rules.Framework.Source;
 
-    internal sealed class AddRuleManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class AddRuleManagementOperation : IManagementOperation
     {
-        private readonly Rule<TContentType, TConditionType> rule;
-        private readonly IRulesSource<TContentType, TConditionType> rulesDataSource;
+        private readonly Rule rule;
+        private readonly IRulesSource rulesDataSource;
 
-        public AddRuleManagementOperation(IRulesSource<TContentType, TConditionType> rulesDataSource, Rule<TContentType, TConditionType> rule)
+        public AddRuleManagementOperation(IRulesSource rulesDataSource, Rule rule)
         {
             this.rulesDataSource = rulesDataSource;
             this.rule = rule;
         }
 
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> ApplyAsync(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        public async Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules)
         {
-            AddRuleArgs<TContentType, TConditionType> addRuleArgs = new()
+            var addRuleArgs = new AddRuleArgs()
             {
                 Rule = this.rule,
             };
 
             await this.rulesDataSource.AddRuleAsync(addRuleArgs).ConfigureAwait(false);
 
-            List<Rule<TContentType, TConditionType>> rulesResult = new List<Rule<TContentType, TConditionType>>(rules)
-            {
-                this.rule
-            };
+            var rulesResult = new List<Rule>(rules) { this.rule };
 
             return rulesResult;
         }

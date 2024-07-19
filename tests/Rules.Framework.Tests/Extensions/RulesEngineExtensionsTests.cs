@@ -3,8 +3,7 @@ namespace Rules.Framework.Tests.Extensions
     using FluentAssertions;
     using Moq;
     using Rules.Framework.Evaluation;
-    using Rules.Framework.Extension;
-    using Rules.Framework.Generics;
+    using Rules.Framework.Generic;
     using Rules.Framework.Source;
     using Rules.Framework.Tests.Stubs;
     using Rules.Framework.Validation;
@@ -13,23 +12,22 @@ namespace Rules.Framework.Tests.Extensions
     public class RulesEngineExtensionsTests
     {
         [Fact]
-        public void RulesEngineExtensions_ToGenericEngine_Success()
+        public void RulesEngineExtensions_MakeGeneric_ReturnsGenericRulesEngine()
         {
             // Arrange
-            var rulesEngine = new RulesEngine<ContentType, ConditionType>(
-                Mock.Of<IConditionsEvalEngine<ConditionType>>(),
-                Mock.Of<IRulesSource<ContentType, ConditionType>>(),
+            var rulesEngine = new RulesEngine(
+                Mock.Of<IConditionsEvalEngine>(),
+                Mock.Of<IRulesSource>(),
                 Mock.Of<IValidatorProvider>(),
                 RulesEngineOptions.NewWithDefaults(),
-                Mock.Of<IConditionTypeExtractor<ContentType, ConditionType>>()
-                );
+                Mock.Of<IConditionTypeExtractor>());
 
-            //Act
-            var genericEngine = rulesEngine.CreateGenericEngine();
+            // Act
+            var genericEngine = rulesEngine.MakeGeneric<ContentType, ConditionType>();
 
-            //Arrange
+            // Assert
             genericEngine.Should().NotBeNull();
-            genericEngine.GetType().Should().Be(typeof(GenericRulesEngine<ContentType, ConditionType>));
+            genericEngine.GetType().Should().Be(typeof(RulesEngine<ContentType, ConditionType>));
         }
     }
 }

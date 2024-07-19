@@ -1,8 +1,8 @@
 namespace Rules.Framework.Tests.Builder
 {
     using FluentAssertions;
+    using Rules.Framework;
     using Rules.Framework.Builder;
-    using Rules.Framework.Core;
     using Xunit;
 
     public class RuleEngineOptionsValidatorTests

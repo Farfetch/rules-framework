@@ -6,8 +6,10 @@ namespace Rules.Framework.IntegrationTests
     using System.IO;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Rules.Framework;
     using Rules.Framework.Builder;
-    using Rules.Framework.Core;
+    using Rules.Framework.Builder.Generic;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.DataSource;
 
     internal class RulesFromJsonFile
@@ -16,7 +18,7 @@ namespace Rules.Framework.IntegrationTests
 
         public static RulesFromJsonFile Load => instance;
 
-        public async Task FromJsonFileAsync<TContentType, TConditionType>(RulesEngine<TContentType, TConditionType> rulesEngine, string filePath, Type contentRuntimeType, bool serializedContent = true)
+        public async Task FromJsonFileAsync<TContentType, TConditionType>(IRulesEngine<TContentType, TConditionType> rulesEngine, string filePath, Type contentRuntimeType, bool serializedContent = true)
             where TContentType : new()
         {
             using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -29,7 +31,7 @@ namespace Rules.Framework.IntegrationTests
                 {
                     var contentType = GetContentType<TContentType>(ruleDataModel.ContentTypeCode);
 
-                    var ruleBuilder = RuleBuilder.NewRule<TContentType, TConditionType>()
+                    var ruleBuilder = Rule.New<TContentType, TConditionType>()
                         .WithName(ruleDataModel.Name)
                         .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd);
 
@@ -101,7 +103,7 @@ namespace Rules.Framework.IntegrationTests
             }
         }
 
-        private static IConditionNode<TConditionType> CreateValueConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private static IConditionNode CreateValueConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
             var integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
@@ -138,8 +140,8 @@ namespace Rules.Framework.IntegrationTests
             }
         }
 
-        private static TContentType GetContentType<TContentType>(short contentTypeCode) where TContentType : new()
-                    => RulesFromJsonFile.Parse<TContentType>(contentTypeCode.ToString());
+        private static TContentType GetContentType<TContentType>(string contentTypeCode) where TContentType : new()
+                    => RulesFromJsonFile.Parse<TContentType>(contentTypeCode);
 
         private static T Parse<T>(string value)
             => (T)Parse(value, typeof(T));
@@ -147,7 +149,7 @@ namespace Rules.Framework.IntegrationTests
         private static object Parse(string value, Type type)
             => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
-        private IConditionNode<TConditionType> ConvertConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private IConditionNode ConvertConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
 

@@ -7,7 +7,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
     using MongoDB.Bson;
     using MongoDB.Driver;
     using MongoDB.Driver.Core.Events;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
 
@@ -23,16 +23,16 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             this.mongoDbProviderSettings = CreateProviderSettings();
             this.TestContentType = testContentType;
 
-            this.RulesEngine = RulesEngineBuilder
+            var rulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
-                .WithContentType<ContentType>()
-                .WithConditionType<ConditionType>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
                 .Build();
+
+            this.RulesEngine = rulesEngine.MakeGeneric<ContentType, ConditionType>();
         }
 
-        protected RulesEngine<ContentType, ConditionType> RulesEngine { get; }
+        protected IRulesEngine<ContentType, ConditionType> RulesEngine { get; }
 
         public void Dispose()
         {
@@ -47,7 +47,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
                 this.RulesEngine.AddRuleAsync(
                     ruleSpecification.Rule,
                     ruleSpecification.RuleAddPriorityOption)
-                    .ConfigureAwait(false)
                     .GetAwaiter()
                     .GetResult();
             }
@@ -58,12 +57,11 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             Condition<ConditionType>[] conditions) => await RulesEngine.MatchOneAsync(
                 TestContentType,
                 matchDate,
-                conditions)
-            .ConfigureAwait(false);
+                conditions);
 
         private static MongoClient CreateMongoClient()
         {
-            MongoClientSettings settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
+            var settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
             settings.ClusterConfigurator = (cb) =>
             {
                 cb.Subscribe<CommandStartedEvent>(e =>

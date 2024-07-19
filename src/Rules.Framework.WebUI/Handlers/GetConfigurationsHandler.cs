@@ -5,15 +5,14 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Rules.Framework.Generics;
 
     internal sealed class GetConfigurationsHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/{0}/api/v1/configurations" };
 
-        private readonly IGenericRulesEngine rulesEngine;
+        private readonly IRulesEngine rulesEngine;
 
-        public GetConfigurationsHandler(IGenericRulesEngine rulesEngine, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
+        public GetConfigurationsHandler(IRulesEngine rulesEngine, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
             this.rulesEngine = rulesEngine;
         }
@@ -24,11 +23,24 @@ namespace Rules.Framework.WebUI.Handlers
         {
             try
             {
-                var priorityCriteria = this.rulesEngine.GetPriorityCriteria();
-
-                var configurations = new Dictionary<string, string>
+                var configurations = new Dictionary<string, object>
                 {
-                    { "PriorityCriteria", priorityCriteria.ToString() }
+                    { "PriorityCriteria", this.rulesEngine.Options.PriorityCriteria.ToString() },
+                    { "MissingConditionBehavior", this.rulesEngine.Options.MissingConditionBehavior.ToString() },
+                    {
+                        "DataTypeDefaults",
+                        new Dictionary<string, string>
+                        {
+                            { "ArrayBoolean", this.rulesEngine.Options.DataTypeDefaults[DataTypes.ArrayBoolean].ToString() },
+                            { "ArrayDecimal", this.rulesEngine.Options.DataTypeDefaults[DataTypes.ArrayDecimal].ToString() },
+                            { "ArrayInteger", this.rulesEngine.Options.DataTypeDefaults[DataTypes.ArrayInteger].ToString() },
+                            { "ArrayString", this.rulesEngine.Options.DataTypeDefaults[DataTypes.ArrayString].ToString() },
+                            { "Boolean", this.rulesEngine.Options.DataTypeDefaults[DataTypes.Boolean].ToString() },
+                            { "Decimal", this.rulesEngine.Options.DataTypeDefaults[DataTypes.Decimal].ToString() },
+                            { "Integer", this.rulesEngine.Options.DataTypeDefaults[DataTypes.Integer].ToString() },
+                            { "String", this.rulesEngine.Options.DataTypeDefaults[DataTypes.String].ToString() },
+                        }
+                    }
                 };
 
                 return this.WriteResponseAsync(httpResponse, configurations, (int)HttpStatusCode.OK);

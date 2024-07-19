@@ -8,7 +8,6 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using Moq;
-    using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Handlers;
     using Rules.Framework.WebUI.Tests.Utilities;
@@ -17,11 +16,13 @@ namespace Rules.Framework.WebUI.Tests.Handlers
     public class GetRulesHandlerTests
     {
         private readonly GetRulesHandler handler;
-        private readonly Mock<IGenericRulesEngine> rulesEngine;
+        private readonly Mock<IRulesEngine> rulesEngine;
 
         public GetRulesHandlerTests()
         {
-            this.rulesEngine = new Mock<IGenericRulesEngine>();
+            this.rulesEngine = new Mock<IRulesEngine>();
+            this.rulesEngine.SetupGet(x => x.Options)
+                .Returns(RulesEngineOptions.NewWithDefaults());
             var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
             this.handler = new GetRulesHandler(rulesEngine.Object, ruleStatusDtoAnalyzer, new WebUIOptions());
         }
@@ -36,7 +37,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
         {
             //Arrange
             var httpContext = HttpContextHelper.CreateHttpContext(httpMethod, resourcePath);
-            var genericRule = new List<GenericRule>();
+            var genericRule = new List<Rule>();
             var verifySearchAsync = false;
 
             if (statusCode == HttpStatusCode.OK || statusCode == HttpStatusCode.InternalServerError)
@@ -47,13 +48,13 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
                 if (statusCode == HttpStatusCode.OK)
                 {
-                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()))
+                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<string, string>>()))
                         .ReturnsAsync(genericRule);
                 }
 
                 if (statusCode == HttpStatusCode.InternalServerError)
                 {
-                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()))
+                    this.rulesEngine.Setup(d => d.SearchAsync(It.IsAny<SearchArgs<string, string>>()))
                         .Throws(new Exception("message", new Exception("inner")));
                 }
             }
@@ -64,9 +65,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
             RequestDelegate next = (HttpContext _) => Task.CompletedTask;
 
             //Act
-            var result = await this.handler
-                .HandleAsync(httpContext.Request, httpContext.Response, next)
-                .ConfigureAwait(false);
+            var result = await this.handler.HandleAsync(httpContext.Request, httpContext.Response, next);
 
             //Assert
             result.Should().Be(expectedResult);
@@ -75,7 +74,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
                 httpContext.Response.Should().NotBeNull();
                 httpContext.Response.StatusCode.Should().Be((int)statusCode);
                 httpContext.Response.ContentType.Should().Be("application/json");
-                string body = string.Empty;
+                var body = string.Empty;
                 using (var reader = new StreamReader(httpContext.Response.Body))
                 {
                     httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
@@ -88,12 +87,12 @@ namespace Rules.Framework.WebUI.Tests.Handlers
             if (verifySearchAsync)
             {
                 this.rulesEngine
-                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()), Times.Once);
+                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<string, string>>()), Times.Once);
             }
             else
             {
                 this.rulesEngine
-                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<GenericContentType, GenericConditionType>>()), Times.Never);
+                    .Verify(s => s.SearchAsync(It.IsAny<SearchArgs<string, string>>()), Times.Never);
             }
         }
     }

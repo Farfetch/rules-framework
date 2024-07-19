@@ -1,7 +1,7 @@
 namespace Rules.Framework.Providers.InMemory.DataModel
 {
-    internal sealed class ComposedConditionNodeDataModel<TConditionType> : ConditionNodeDataModel<TConditionType>
+    internal sealed class ComposedConditionNodeDataModel : ConditionNodeDataModel
     {
-        public ConditionNodeDataModel<TConditionType>[] ChildConditionNodes { get; set; }
+        public ConditionNodeDataModel[] ChildConditionNodes { get; set; }
     }
 }

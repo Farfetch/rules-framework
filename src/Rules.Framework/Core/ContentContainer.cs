@@ -14,7 +14,9 @@ namespace Rules.Framework.Core
         /// Creates a new <see cref="ContentContainer{TContentType}"/>.
         /// </summary>
         /// <param name="contentType">the content type.</param>
-        /// <param name="getContentFunc">the function used to fetch content casted to provided type.</param>
+        /// <param name="getContentFunc">
+        /// the function used to fetch content casted to provided type.
+        /// </param>
         public ContentContainer(TContentType contentType, Func<Type, object> getContentFunc)
         {
             this.ContentType = contentType;
@@ -25,6 +27,8 @@ namespace Rules.Framework.Core
         /// Gets the content type.
         /// </summary>
         public TContentType ContentType { get; }
+
+        internal Func<Type, object> ContentFunc => this.getContentFunc;
 
         /// <summary>
         /// Gets the content from container casted/converted to specified <typeparamref name="TContent"/>.

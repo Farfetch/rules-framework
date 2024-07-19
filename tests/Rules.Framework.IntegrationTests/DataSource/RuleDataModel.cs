@@ -5,7 +5,7 @@ namespace Rules.Framework.IntegrationTests.DataSource
     internal class RuleDataModel
     {
         public string Content { get; set; }
-        public short ContentTypeCode { get; set; }
+        public string ContentTypeCode { get; set; }
 
         public DateTime DateBegin { get; set; }
 

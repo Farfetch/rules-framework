@@ -10,16 +10,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Adds the in memory rules data source with specified service lifetime.
         /// </summary>
-        /// <typeparam name="TContentType">The type of the content type.</typeparam>
-        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
         /// <param name="serviceDescriptors">The service descriptors.</param>
         /// <param name="serviceLifetime">The service lifetime.</param>
         /// <returns></returns>
-        public static IServiceCollection AddInMemoryRulesDataSource<TContentType, TConditionType>(this IServiceCollection serviceDescriptors, ServiceLifetime serviceLifetime)
+        public static IServiceCollection AddInMemoryRulesDataSource(this IServiceCollection serviceDescriptors, ServiceLifetime serviceLifetime)
         {
             ServiceDescriptor item = ServiceDescriptor.Describe(
-                typeof(IInMemoryRulesStorage<TContentType, TConditionType>),
-                (sp) => new InMemoryRulesStorage<TContentType, TConditionType>(),
+                typeof(IInMemoryRulesStorage),
+                (sp) => new InMemoryRulesStorage(),
                 serviceLifetime);
             serviceDescriptors.Add(item);
 

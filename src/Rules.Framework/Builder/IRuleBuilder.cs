@@ -1,35 +1,32 @@
 namespace Rules.Framework.Builder
 {
     using System;
-    using Rules.Framework.Core;
     using Rules.Framework.Serialization;
 
     /// <summary>
     /// Builder to create a new rule.
     /// </summary>
-    /// <typeparam name="TContentType">The type of the content type.</typeparam>
-    /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    public interface IRuleBuilder<TContentType, TConditionType>
+    public interface IRuleBuilder
     {
         /// <summary>
         /// Builds the new rule.
         /// </summary>
         /// <returns></returns>
-        RuleBuilderResult<TContentType, TConditionType> Build();
+        RuleBuilderResult Build();
 
         /// <summary>
         /// Sets the new rule with the specified active status.
         /// </summary>
         /// <param name="active">The active status.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithActive(bool active);
+        IRuleBuilder WithActive(bool active);
 
         /// <summary>
         /// Sets the new rule with the specified root condition.
         /// </summary>
         /// <param name="condition">The condition.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition);
+        IRuleBuilder WithCondition(IConditionNode condition);
 
         /// <summary>
         /// Sets the new rule with a value condition with the specified parameters.
@@ -39,15 +36,15 @@ namespace Rules.Framework.Builder
         /// <param name="condOperator">The operator.</param>
         /// <param name="operand">The operand.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithCondition<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
+        IRuleBuilder WithCondition<TDataType>(string conditionType, Operators condOperator, TDataType operand);
 
         /// <summary>
         /// Sets the new rule with the specified root condition.
         /// </summary>
         /// <param name="conditionFunc">The condition func.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithCondition(
-            Func<IRootConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc);
+        IRuleBuilder WithCondition(
+            Func<IRootConditionNodeBuilder, IConditionNode> conditionFunc);
 
         /// <summary>
         /// Sets the new rule with the specified content.
@@ -55,14 +52,14 @@ namespace Rules.Framework.Builder
         /// <param name="contentType">The content type.</param>
         /// <param name="content">The content.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content);
+        IRuleBuilder WithContent(string contentType, object content);
 
         /// <summary>
         /// Sets the new rule with the specified date begin.
         /// </summary>
         /// <param name="dateBegin">The date begin.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithDateBegin(DateTime dateBegin);
+        IRuleBuilder WithDateBegin(DateTime dateBegin);
 
         /// <summary>
         /// Sets the new rule with the specified dates interval.
@@ -70,14 +67,14 @@ namespace Rules.Framework.Builder
         /// <param name="dateBegin">The date begin.</param>
         /// <param name="dateEnd">The date end.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithDatesInterval(DateTime dateBegin, DateTime? dateEnd);
+        IRuleBuilder WithDatesInterval(DateTime dateBegin, DateTime? dateEnd);
 
         /// <summary>
         ///Sets the new rule with the specified name.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns></returns>
-        IRuleBuilder<TContentType, TConditionType> WithName(string name);
+        IRuleBuilder WithName(string name);
 
         /// <summary>
         /// Sets the new rule with the specified serialized content.
@@ -87,9 +84,9 @@ namespace Rules.Framework.Builder
         /// <param name="contentSerializationProvider">The content serialization provider.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">ruleBuilder or contentSerializationProvider</exception>
-        IRuleBuilder<TContentType, TConditionType> WithSerializedContent(
-            TContentType contentType,
+        IRuleBuilder WithSerializedContent(
+            string contentType,
             object serializedContent,
-            IContentSerializationProvider<TContentType> contentSerializationProvider);
+            IContentSerializationProvider contentSerializationProvider);
     }
 }
