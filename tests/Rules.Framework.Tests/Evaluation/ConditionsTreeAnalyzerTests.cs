@@ -15,9 +15,9 @@ namespace Rules.Framework.Tests.Evaluation
         public void AreAllSearchConditionsPresent_GivenComposedConditionNodeWithAllConditionsOnDictionary_ReturnsTrue()
         {
             // Arrange
-            var condition1 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.In, new[] { "US", "CA" });
-            var condition2 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
-            var condition3 = new ValueConditionNode(DataTypes.Boolean, ConditionType.IsVip.ToString(), Operators.Equal, false);
+            var condition1 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.In, new[] { "US", "CA" });
+            var condition2 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
+            var condition3 = new ValueConditionNode(DataTypes.Boolean, ConditionNames.IsVip.ToString(), Operators.Equal, false);
 
             var composedConditionNode = new ComposedConditionNode(
                 LogicalOperators.Or,
@@ -26,11 +26,11 @@ namespace Rules.Framework.Tests.Evaluation
             var conditions = new Dictionary<string, object>
             {
                 {
-                    ConditionType.IsoCurrency.ToString(),
+                    ConditionNames.IsoCurrency.ToString(),
                     "SGD"
                 },
                 {
-                    ConditionType.IsoCountryCode.ToString(),
+                    ConditionNames.IsoCountryCode.ToString(),
                     "PT"
                 }
             };
@@ -49,7 +49,7 @@ namespace Rules.Framework.Tests.Evaluation
         {
             // Arrange
             var condition1 = new StubConditionNode();
-            var condition2 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
+            var condition2 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
 
             var composedConditionNode = new ComposedConditionNode(
                 LogicalOperators.Or,
@@ -58,11 +58,11 @@ namespace Rules.Framework.Tests.Evaluation
             var conditions = new Dictionary<string, object>
             {
                 {
-                    ConditionType.IsoCurrency.ToString(),
+                    ConditionNames.IsoCurrency.ToString(),
                     "SGD"
                 },
                 {
-                    ConditionType.IsoCountryCode.ToString(),
+                    ConditionNames.IsoCountryCode.ToString(),
                     "PT"
                 }
             };
@@ -81,8 +81,8 @@ namespace Rules.Framework.Tests.Evaluation
         public void AreAllSearchConditionsPresent_GivenComposedConditionNodeWithMissingConditionOnDictionary_ReturnsFalse()
         {
             // Arrange
-            var condition1 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.In, new[] { "US", "CA" });
-            var condition3 = new ValueConditionNode(DataTypes.Boolean, ConditionType.IsVip.ToString(), Operators.Equal, false);
+            var condition1 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.In, new[] { "US", "CA" });
+            var condition3 = new ValueConditionNode(DataTypes.Boolean, ConditionNames.IsVip.ToString(), Operators.Equal, false);
 
             var composedConditionNode = new ComposedConditionNode(
                 LogicalOperators.Or,
@@ -91,11 +91,11 @@ namespace Rules.Framework.Tests.Evaluation
             var conditions = new Dictionary<string, object>
             {
                 {
-                    ConditionType.IsoCurrency.ToString(),
+                    ConditionNames.IsoCurrency.ToString(),
                     "SGD"
                 },
                 {
-                    ConditionType.IsoCountryCode.ToString(),
+                    ConditionNames.IsoCountryCode.ToString(),
                     "PT"
                 }
             };

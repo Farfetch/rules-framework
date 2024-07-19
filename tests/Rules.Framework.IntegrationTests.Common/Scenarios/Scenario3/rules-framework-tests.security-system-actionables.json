@@ -1,7 +1,7 @@
 [
     {
         "Content": "{\"ActionId\":\"7367d5d8-bac1-48bb-9b88-28cfe534aed2\",\"ActionName\":\"ActivateSprinklers\"}",
-        "ContentTypeCode": "FireSystem",
+        "Ruleset": "FireSystem",
         "DateBegin": "2018-01-01",
         "DateEnd": null,
         "Name": "Sprinkler system activation rule",
@@ -10,14 +10,14 @@
             "LogicalOperator": "Or",
             "ChildConditionNodes": [
                 {
-                    "ConditionType": "TemperatureCelsius",
+                    "Condition": "TemperatureCelsius",
                     "DataType": "Decimal",
                     "LogicalOperator": "Eval",
                     "Operator": "GreaterThanOrEqual",
                     "Operand": "50"
                 },
                 {
-                    "ConditionType": "SmokeRate",
+                    "Condition": "SmokeRate",
                     "DataType": "Decimal",
                     "LogicalOperator": "Eval",
                     "Operator": "GreaterThan",
@@ -28,7 +28,7 @@
     },
     {
         "Content": "{\"ActionId\":\"96cce7f0-f8ba-4e8a-a3ce-b0d200d49ab2\",\"ActionName\":\"CallFireBrigade\"}",
-        "ContentTypeCode": "FireSystem",
+        "Ruleset": "FireSystem",
         "DateBegin": "2018-01-01",
         "DateEnd": null,
         "Name": "Fire brigade call rule",
@@ -37,14 +37,14 @@
             "LogicalOperator": "Or",
             "ChildConditionNodes": [
                 {
-                    "ConditionType": "TemperatureCelsius",
+                    "Condition": "TemperatureCelsius",
                     "DataType": "Decimal",
                     "LogicalOperator": "Eval",
                     "Operator": "GreaterThanOrEqual",
                     "Operand": "70"
                 },
                 {
-                    "ConditionType": "SmokeRate",
+                    "Condition": "SmokeRate",
                     "DataType": "Decimal",
                     "LogicalOperator": "Eval",
                     "Operator": "GreaterThanOrEqual",
@@ -55,7 +55,7 @@
     },
     {
         "Content": "{\"ActionId\":\"4f771d96-43c7-4939-a8a8-aabd9ad0eee5\",\"ActionName\":\"CallPolice\"}",
-        "ContentTypeCode": "FireSystem",
+        "Ruleset": "FireSystem",
         "DateBegin": "2018-01-01",
         "DateEnd": null,
         "Name": "Police call rule",
@@ -64,14 +64,14 @@
             "LogicalOperator": "Or",
             "ChildConditionNodes": [
                 {
-                    "ConditionType": "TemperatureCelsius",
+                    "Condition": "TemperatureCelsius",
                     "DataType": "Decimal",
                     "LogicalOperator": "Eval",
                     "Operator": "GreaterThanOrEqual",
                     "Operand": "70"
                 },
                 {
-                    "ConditionType": "SmokeRate",
+                    "Condition": "SmokeRate",
                     "DataType": "Decimal",
                     "LogicalOperator": "Eval",
                     "Operator": "GreaterThanOrEqual",
@@ -82,13 +82,13 @@
     },
     {
         "Content": "{\"ActionId\":\"39958de2-1201-4904-9555-65f97e8a1d1d\",\"ActionName\":\"EnableEmergencyPower\"}",
-        "ContentTypeCode": "PowerSystem",
+        "Ruleset": "PowerSystem",
         "DateBegin": "2018-01-01",
         "DateEnd": null,
         "Name": "Emergency power activation rule",
         "Priority": 4,
         "RootCondition": {
-            "ConditionType": "PowerStatus",
+            "Condition": "PowerStatus",
             "DataType": "String",
             "LogicalOperator": "Eval",
             "Operator": "Equal",
@@ -97,7 +97,7 @@
     },
     {
         "Content": "{\"ActionId\":\"5f1c1e0c-6f49-448d-b9ce-7b154436fe5c\",\"ActionName\":\"EnableEmergencyLights\"}",
-        "ContentTypeCode": "PowerSystem",
+        "Ruleset": "PowerSystem",
         "DateBegin": "2018-01-01",
         "DateEnd": null,
         "Name": "Enable emergency lights rule",
@@ -106,14 +106,14 @@
             "LogicalOperator": "Or",
             "ChildConditionNodes": [
                 {
-                    "ConditionType": "PowerStatus",
+                    "Condition": "PowerStatus",
                     "DataType": "String",
                     "LogicalOperator": "Eval",
                     "Operator": "Equal",
                     "Operand": "Offline"
                 },
                 {
-                    "ConditionType": "PowerStatus",
+                    "Condition": "PowerStatus",
                     "DataType": "String",
                     "LogicalOperator": "Eval",
                     "Operator": "Equal",
@@ -124,13 +124,13 @@
     },
     {
         "Content": "{\"ActionId\":\"3dd3eadc-15c2-4f66-9e01-4cdf106fd9d6\",\"ActionName\":\"CallPowerGridPicket\"}",
-        "ContentTypeCode": "PowerSystem",
+        "Ruleset": "PowerSystem",
         "DateBegin": "2018-01-01",
         "DateEnd": null,
         "Name": "Call power grid picket rule",
         "Priority": 6,
         "RootCondition": {
-            "ConditionType": "PowerStatus",
+            "Condition": "PowerStatus",
             "DataType": "String",
             "LogicalOperator": "Eval",
             "Operator": "Equal",

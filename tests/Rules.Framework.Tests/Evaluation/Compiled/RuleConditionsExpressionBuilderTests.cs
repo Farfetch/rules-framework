@@ -26,7 +26,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
                     },
                     MatchModes.Exact,
                     MissingConditionBehaviors.Discard),
@@ -37,8 +37,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
-                        { ConditionType.IsoCountryCode.ToString(), "PT" },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.IsoCountryCode.ToString(), "PT" },
                     },
                     MatchModes.Exact,
                     MissingConditionBehaviors.Discard),
@@ -49,8 +49,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
-                        { ConditionType.IsoCountryCode.ToString(), "PT" },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.IsoCountryCode.ToString(), "PT" },
                     },
                     MatchModes.Exact,
                     MissingConditionBehaviors.UseDataTypeDefault),
@@ -61,8 +61,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
-                        { ConditionType.IsoCountryCode.ToString(), "PT" },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.IsoCountryCode.ToString(), "PT" },
                     },
                     MatchModes.Search,
                     MissingConditionBehaviors.UseDataTypeDefault),
@@ -73,7 +73,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
                     },
                     MatchModes.Search,
                     MissingConditionBehaviors.UseDataTypeDefault),
@@ -88,7 +88,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
                     },
                     MatchModes.Exact,
                     MissingConditionBehaviors.Discard),
@@ -99,8 +99,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
-                        { ConditionType.IsoCountryCode.ToString(), "PT" },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.IsoCountryCode.ToString(), "PT" },
                     },
                     MatchModes.Exact,
                     MissingConditionBehaviors.Discard),
@@ -111,8 +111,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
-                        { ConditionType.IsoCountryCode.ToString(), "PT" },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.IsoCountryCode.ToString(), "PT" },
                     },
                     MatchModes.Exact,
                     MissingConditionBehaviors.UseDataTypeDefault),
@@ -123,8 +123,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
-                        { ConditionType.IsoCountryCode.ToString(), "PT" },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.IsoCountryCode.ToString(), "PT" },
                     },
                     MatchModes.Search,
                     MissingConditionBehaviors.UseDataTypeDefault),
@@ -135,7 +135,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 new EvaluationContext(
                     new Dictionary<string, object>
                     {
-                        { ConditionType.NumberOfSales.ToString(), 500 },
+                        { ConditionNames.NumberOfSales.ToString(), 500 },
                     },
                     MatchModes.Search,
                     MissingConditionBehaviors.UseDataTypeDefault),
@@ -154,9 +154,9 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 expectedScript = streamReader.ReadToEnd();
             }
             var valueConditionNode1
-                = new ValueConditionNode(DataTypes.Integer, ConditionType.NumberOfSales.ToString(), Operators.Equal, 100);
+                = new ValueConditionNode(DataTypes.Integer, ConditionNames.NumberOfSales.ToString(), Operators.Equal, 100);
             var valueConditionNode2
-                = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "GB");
+                = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "GB");
 
             var composedConditionNode
                 = new ComposedConditionNode(LogicalOperators.And, new[] { valueConditionNode1, valueConditionNode2 });
@@ -224,9 +224,9 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 expectedScript = streamReader.ReadToEnd();
             }
             var valueConditionNode1
-                = new ValueConditionNode(DataTypes.Integer, ConditionType.NumberOfSales.ToString(), Operators.Equal, 100);
+                = new ValueConditionNode(DataTypes.Integer, ConditionNames.NumberOfSales.ToString(), Operators.Equal, 100);
             var valueConditionNode2
-                = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "GB");
+                = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "GB");
 
             var composedConditionNode
                 = new ComposedConditionNode(LogicalOperators.Or, new[] { valueConditionNode1, valueConditionNode2 });

@@ -43,55 +43,48 @@ namespace Rules.Framework.Providers.InMemory
         }
 
         /// <summary>
-        /// Creates a new content type on the data source.
+        /// Creates a new ruleset on the data source.
         /// </summary>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="ruleset">the ruleset name.</param>
         /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">contentType</exception>
+        /// <exception cref="System.ArgumentNullException">ruleset</exception>
         /// <exception cref="System.InvalidOperationException">
-        /// The content type '{contentType}' already exists.
+        /// The ruleset '{ruleset}' already exists.
         /// </exception>
-        public Task CreateContentTypeAsync(string contentType)
+        public Task CreateRulesetAsync(string ruleset)
         {
-            if (string.IsNullOrWhiteSpace(contentType))
+            if (string.IsNullOrWhiteSpace(ruleset))
             {
-                throw new ArgumentNullException(nameof(contentType));
+                throw new ArgumentNullException(nameof(ruleset));
             }
 
-            var contentTypes = this.inMemoryRulesStorage.GetContentTypes();
+            var rulesets = this.inMemoryRulesStorage.GetRulesets();
 
-            if (contentTypes.Contains(contentType, StringComparer.Ordinal))
+            if (rulesets.Any(rs => string.Equals(rs.Name, ruleset, StringComparison.Ordinal)))
             {
-                throw new InvalidOperationException($"The content type '{contentType}' already exists.");
+                throw new InvalidOperationException($"The ruleset '{ruleset}' already exists.");
             }
 
-            this.inMemoryRulesStorage.CreateContentType(contentType);
+            this.inMemoryRulesStorage.CreateRuleset(ruleset);
 
             return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Gets the content types from the data source.
+        /// Gets the rules categorized with specified <paramref name="ruleset"/> between <paramref
+        /// name="dateBegin"/> and <paramref name="dateEnd"/>.
         /// </summary>
-        /// <returns></returns>
-        public Task<IEnumerable<string>> GetContentTypesAsync()
-            => Task.FromResult<IEnumerable<string>>(this.inMemoryRulesStorage.GetContentTypes());
-
-        /// <summary>
-        /// Gets the rules categorized with specified <paramref name="contentType"/> between
-        /// <paramref name="dateBegin"/> and <paramref name="dateEnd"/>.
-        /// </summary>
-        /// <param name="contentType">the content type categorization.</param>
+        /// <param name="ruleset">the ruleset.</param>
         /// <param name="dateBegin">the filtering begin date.</param>
         /// <param name="dateEnd">the filtering end date.</param>
         /// <returns></returns>
-        public Task<IEnumerable<Rule>> GetRulesAsync(string contentType, DateTime dateBegin, DateTime dateEnd)
+        public Task<IEnumerable<Rule>> GetRulesAsync(string ruleset, DateTime dateBegin, DateTime dateEnd)
         {
-            var filteredByContent = this.inMemoryRulesStorage.GetRulesBy(contentType);
+            var filteredByRuleset = this.inMemoryRulesStorage.GetRulesBy(ruleset);
 
-            var filteredRules = new Rule[filteredByContent.Count];
+            var filteredRules = new Rule[filteredByRuleset.Count];
             var i = 0;
-            foreach (var ruleDataModel in filteredByContent)
+            foreach (var ruleDataModel in filteredByRuleset)
             {
                 if (ruleDataModel.DateBegin <= dateEnd && (ruleDataModel.DateEnd is null || ruleDataModel.DateEnd > dateBegin))
                 {
@@ -127,8 +120,8 @@ namespace Rules.Framework.Providers.InMemory
             var i = 0;
             foreach (var ruleDataModel in ruleDataModels)
             {
-                if (!object.Equals(rulesFilterArgs.ContentType, default(string))
-                    && !object.Equals(ruleDataModel.ContentType, rulesFilterArgs.ContentType))
+                if (!object.Equals(rulesFilterArgs.Ruleset, default(string))
+                    && !object.Equals(ruleDataModel.Ruleset, rulesFilterArgs.Ruleset))
                 {
                     continue;
                 }
@@ -155,6 +148,23 @@ namespace Rules.Framework.Providers.InMemory
             }
 
             return Task.FromResult<IEnumerable<Rule>>(filteredRules);
+        }
+
+        /// <summary>
+        /// Gets the rulesets from the data source.
+        /// </summary>
+        /// <returns></returns>
+        public Task<IEnumerable<Ruleset>> GetRulesetsAsync()
+        {
+            var rulesetDataModels = this.inMemoryRulesStorage.GetRulesets();
+            var rulesets = new Ruleset[rulesetDataModels.Count];
+            var i = 0;
+            foreach (var rulesetDataModel in rulesetDataModels)
+            {
+                rulesets[i++] = new Ruleset(rulesetDataModel.Name, rulesetDataModel.Creation);
+            }
+
+            return Task.FromResult<IEnumerable<Ruleset>>(rulesets);
         }
 
         /// <summary>

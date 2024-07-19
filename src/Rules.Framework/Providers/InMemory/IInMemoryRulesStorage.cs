@@ -7,13 +7,13 @@ namespace Rules.Framework.Providers.InMemory
     {
         void AddRule(RuleDataModel ruleDataModel);
 
-        void CreateContentType(string contentType);
+        void CreateRuleset(string contentType);
 
         IReadOnlyCollection<RuleDataModel> GetAllRules();
 
-        IReadOnlyCollection<string> GetContentTypes();
+        IReadOnlyCollection<RuleDataModel> GetRulesBy(string ruleset);
 
-        IReadOnlyCollection<RuleDataModel> GetRulesBy(string contentType);
+        IReadOnlyCollection<RulesetDataModel> GetRulesets();
 
         void UpdateRule(RuleDataModel ruleDataModel);
     }

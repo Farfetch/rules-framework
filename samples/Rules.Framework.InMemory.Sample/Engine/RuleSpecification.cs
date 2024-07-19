@@ -8,6 +8,6 @@ namespace Rules.Framework.InMemory.Sample.Engine
     {
         public RuleAddPriorityOption RuleAddPriorityOption { get; set; }
 
-        public RuleBuilderResult<ContentTypes, ConditionTypes> RuleBuilderResult { get; set; }
+        public RuleBuilderResult<RulesetNames, ConditionNames> RuleBuilderResult { get; set; }
     }
 }

@@ -5,83 +5,66 @@ namespace Rules.Framework.ConditionNodes
     using System.Diagnostics;
     using Rules.Framework;
     using Rules.Framework.Core;
-    using Rules.Framework.Generic.ConditionNodes;
 
     /// <summary>
     /// A generic implementation for a valued condition node.
     /// </summary>
-    /// <seealso cref="Generic.ConditionNodes.IValueConditionNode{TConditionType}"/>
-    [DebuggerDisplay("{DataType.ToString(),nq} condition: <{ConditionType,nq}> {Operator} {Operand}")]
+    /// <seealso cref="IValueConditionNode"/>
+    [DebuggerDisplay("{DataType.ToString(),nq} condition: <{Condition,nq}> {Operator} {Operand}")]
     public class ValueConditionNode : IValueConditionNode
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueConditionNode{TConditionType}"/> class.
+        /// Initializes a new instance of the <see cref="ValueConditionNode"/> class.
         /// </summary>
         /// <param name="dataType">Type of the data.</param>
-        /// <param name="conditionType">Type of the condition.</param>
+        /// <param name="condition">The condition name.</param>
         /// <param name="operator">The operator.</param>
         /// <param name="operand">The operand.</param>
-        public ValueConditionNode(DataTypes dataType, string conditionType, Operators @operator, object operand)
-            : this(dataType, conditionType, @operator, operand, new PropertiesDictionary(Constants.DefaultPropertiesDictionarySize))
+        public ValueConditionNode(DataTypes dataType, string condition, Operators @operator, object operand)
+            : this(dataType, condition, @operator, operand, new PropertiesDictionary(Constants.DefaultPropertiesDictionarySize))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueConditionNode{TConditionType}"/> class.
+        /// Initializes a new instance of the <see cref="ValueConditionNode"/> class.
         /// </summary>
         /// <param name="dataType">Type of the data.</param>
-        /// <param name="conditionType">Type of the condition.</param>
+        /// <param name="condition">The condition name.</param>
         /// <param name="operator">The operator.</param>
         /// <param name="operand">The operand.</param>
         /// <param name="properties">The properties.</param>
-        public ValueConditionNode(DataTypes dataType, string conditionType, Operators @operator, object operand, IDictionary<string, object> properties)
+        public ValueConditionNode(DataTypes dataType, string condition, Operators @operator, object operand, IDictionary<string, object> properties)
         {
-            this.ConditionType = conditionType;
+            this.Condition = condition;
             this.DataType = dataType;
             this.Operand = operand;
             this.Operator = @operator;
             this.Properties = properties;
         }
 
-        /// <summary>
-        /// Gets the condition node type.
-        /// </summary>
-        public string ConditionType { get; }
+        /// <inheritdoc/>
+        public string Condition { get; }
 
-        /// <summary>
-        /// Gets the condition node data type.
-        /// </summary>
+        /// <inheritdoc/>
         public DataTypes DataType { get; }
 
-        /// <summary>
-        /// Gets the logical operator to apply to condition node.
-        /// </summary>
+        /// <inheritdoc/>
         public LogicalOperators LogicalOperator => LogicalOperators.Eval;
 
-        /// <summary>
-        /// Gets the condition's operand.
-        /// </summary>
-        /// <value>The operand.</value>
+        /// <inheritdoc/>
         public object Operand { get; }
 
-        /// <summary>
-        /// Gets the condition node operator.
-        /// </summary>
+        /// <inheritdoc/>
         public Operators Operator { get; }
 
-        /// <summary>
-        /// Gets the condition node properties.
-        /// </summary>
+        /// <inheritdoc/>
         public IDictionary<string, object> Properties { get; }
 
-        /// <summary>
-        /// Clones the condition node into a different instance.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public IConditionNode Clone()
             => new ValueConditionNode(
                 this.DataType,
-                this.ConditionType,
+                this.Condition,
                 this.Operator,
                 this.Operand,
                 new PropertiesDictionary(this.Properties));
@@ -94,7 +77,7 @@ namespace Rules.Framework.ConditionNodes
         /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance;
         /// otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj) => obj is ValueConditionNode node && StringComparer.Ordinal.Equals(this.ConditionType, node.ConditionType) && this.DataType == node.DataType && this.LogicalOperator == node.LogicalOperator && EqualityComparer<object>.Default.Equals(this.Operand, node.Operand) && this.Operator == node.Operator && EqualityComparer<IDictionary<string, object>>.Default.Equals(this.Properties, node.Properties);
+        public override bool Equals(object obj) => obj is ValueConditionNode node && StringComparer.Ordinal.Equals(this.Condition, node.Condition) && this.DataType == node.DataType && this.LogicalOperator == node.LogicalOperator && EqualityComparer<object>.Default.Equals(this.Operand, node.Operand) && this.Operator == node.Operator && EqualityComparer<IDictionary<string, object>>.Default.Equals(this.Properties, node.Properties);
 
         /// <summary>
         /// Returns a hash code for this instance.
@@ -104,6 +87,6 @@ namespace Rules.Framework.ConditionNodes
         /// structures like a hash table.
         /// </returns>
         public override int GetHashCode()
-            => HashCode.Combine(this.ConditionType, this.DataType, this.LogicalOperator, this.Operand, this.Operator, this.Properties);
+            => HashCode.Combine(this.Condition, this.DataType, this.LogicalOperator, this.Operand, this.Operator, this.Properties);
     }
 }

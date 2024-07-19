@@ -38,15 +38,15 @@ namespace Rules.Framework
         Task<OperationResult> AddRuleAsync(Rule rule, RuleAddPriorityOption ruleAddPriorityOption);
 
         /// <summary>
-        /// Creates a content type.
+        /// Creates a ruleset.
         /// </summary>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="ruleset">the ruleset name.</param>
         /// <returns>
         /// the operation result, containing success/failure indication and messages associated to
         /// errors occurred during the operation.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">contentType</exception>
-        Task<OperationResult> CreateContentTypeAsync(string contentType);
+        /// <exception cref="System.ArgumentNullException">ruleset</exception>
+        Task<OperationResult> CreateRulesetAsync(string ruleset);
 
         /// <summary>
         /// Sets an existent active rule as inactive.
@@ -59,32 +59,33 @@ namespace Rules.Framework
         Task<OperationResult> DeactivateRuleAsync(Rule rule);
 
         /// <summary>
-        /// Gets the content types.
+        /// Gets the rulesets.
         /// </summary>
-        /// <returns>List of content types</returns>
-        Task<IEnumerable<string>> GetContentTypesAsync();
+        /// <returns>a collection of all rulesets, including respective metadata.</returns>
+        Task<IEnumerable<Ruleset>> GetRulesetsAsync();
 
         /// <summary>
-        /// Get the unique condition types associated with rules of a specific content type.
+        /// Get the unique conditions associated with rules of a specific ruleset.
         /// </summary>
-        /// <param name="contentType"></param>
+        /// <param name="ruleset"></param>
         /// <param name="dateBegin"></param>
         /// <param name="dateEnd"></param>
         /// <remarks>
         /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
+        /// A set of rules is requested to rules data source and all conditions are fetched and a
+        /// distinct collection of all conditions is returned.
         /// </para>
-        /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
-        /// <returns>the matched rule; otherwise, empty.</returns>
-        Task<IEnumerable<string>> GetUniqueConditionTypesAsync(string contentType, DateTime dateBegin, DateTime dateEnd);
+        /// <returns>
+        /// the distinct collection of all conditions present on the rules of the provided ruleset.
+        /// </returns>
+        Task<IEnumerable<string>> GetUniqueConditionsAsync(string ruleset, DateTime dateBegin, DateTime dateEnd);
 
         /// <summary>
-        /// Provides all rule matches (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// Provides all rule matches (if any) to the given <paramref name="ruleset"/> at the
+        /// specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>
-        /// <param name="contentType"></param>
+        /// <param name="ruleset"></param>
         /// <param name="matchDateTime"></param>
         /// <param name="conditions"></param>
         /// <remarks>
@@ -95,13 +96,13 @@ namespace Rules.Framework
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<IEnumerable<Rule>> MatchManyAsync(string contentType, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
+        Task<IEnumerable<Rule>> MatchManyAsync(string ruleset, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
 
         /// <summary>
-        /// Provides a rule match (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// Provides a rule match (if any) to the given <paramref name="ruleset"/> at the specified
+        /// <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>
-        /// <param name="contentType"></param>
+        /// <param name="ruleset"></param>
         /// <param name="matchDateTime"></param>
         /// <param name="conditions"></param>
         /// <remarks>
@@ -115,16 +116,16 @@ namespace Rules.Framework
         /// </para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<Rule> MatchOneAsync(string contentType, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
+        Task<Rule> MatchOneAsync(string ruleset, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
 
         /// <summary>
-        /// Searches for rules on given content type that match on supplied <paramref name="searchArgs"/>.
+        /// Searches for rules that match on supplied <paramref name="searchArgs"/>.
         /// </summary>
         /// <param name="searchArgs"></param>
         /// <remarks>
         /// <para>
-        /// Only the condition types supplied on input conditions are evaluated, the remaining
-        /// conditions are ignored.
+        /// Only the conditions supplied on input conditions are evaluated, the remaining conditions
+        /// are ignored.
         /// </para>
         /// </remarks>
         /// <returns>the set of rules matching the conditions.</returns>

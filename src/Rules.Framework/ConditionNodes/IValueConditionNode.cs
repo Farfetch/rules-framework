@@ -8,9 +8,9 @@ namespace Rules.Framework.ConditionNodes
     public interface IValueConditionNode : IConditionNode
     {
         /// <summary>
-        /// Gets the condition node type.
+        /// Gets the condition name.
         /// </summary>
-        string ConditionType { get; }
+        string Condition { get; }
 
         /// <summary>
         /// Gets the condition node data type.
@@ -20,7 +20,7 @@ namespace Rules.Framework.ConditionNodes
         /// <summary>
         /// Gets the condition's operand.
         /// </summary>
-        public object Operand { get; }
+        object Operand { get; }
 
         /// <summary>
         /// Gets the condition node operator.

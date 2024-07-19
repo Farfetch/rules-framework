@@ -25,7 +25,7 @@ namespace Rules.Framework.Evaluation.Interpreted
         {
             var rightOperand = valueConditionNode.Operand;
 
-            conditions.TryGetValue(valueConditionNode.ConditionType, out var leftOperand);
+            conditions.TryGetValue(valueConditionNode.Condition, out var leftOperand);
 
             if (leftOperand is null)
             {

@@ -3,17 +3,17 @@ namespace Rules.Framework.Validation
     using System;
     using FluentValidation;
 
-    internal sealed class SearchArgsValidator<TContentType, TConditionType> : AbstractValidator<SearchArgs<TContentType, TConditionType>>
+    internal sealed class SearchArgsValidator<TRuleset, TCondition> : AbstractValidator<SearchArgs<TRuleset, TCondition>>
     {
         private readonly Type conditionTypeRuntimeType;
         private readonly Type contentTypeRuntimeType;
 
         public SearchArgsValidator()
         {
-            this.conditionTypeRuntimeType = typeof(TConditionType);
-            this.contentTypeRuntimeType = typeof(TContentType);
+            this.conditionTypeRuntimeType = typeof(TCondition);
+            this.contentTypeRuntimeType = typeof(TRuleset);
 
-            this.RuleFor(searchArgs => searchArgs.ContentType).Must(ct =>
+            this.RuleFor(searchArgs => searchArgs.Ruleset).Must(ct =>
             {
                 if (this.contentTypeRuntimeType.IsClass && ct is null)
                 {

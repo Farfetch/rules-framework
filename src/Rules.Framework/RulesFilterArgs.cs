@@ -9,21 +9,21 @@ namespace Rules.Framework
     public class RulesFilterArgs
     {
         /// <summary>
-        /// Gets or sets the content type to filter.
-        /// </summary>
-        /// <value>The type of the content.</value>
-        public string ContentType { get; set; }
-
-        /// <summary>
         /// Gets or sets the name to filter.
         /// </summary>
         /// <value>The name.</value>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the priority to filter.
         /// </summary>
         /// <value>The priority.</value>
         public int? Priority { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ruleset to filter.
+        /// </summary>
+        /// <value>The ruleset name.</value>
+        public string? Ruleset { get; set; }
     }
 }

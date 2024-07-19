@@ -9,17 +9,17 @@ namespace Rules.Framework.Source
             AddRuleArgs args,
             AddRuleDelegate next);
 
-        Task HandleCreateContentTypeAsync(
-            CreateContentTypeArgs args,
-            CreateContentTypeDelegate next);
-
-        Task<IEnumerable<string>> HandleGetContentTypesAsync(
-            GetContentTypesArgs args,
-            GetContentTypesDelegate next);
+        Task HandleCreateRulesetAsync(
+            CreateRulesetArgs args,
+            CreateRulesetDelegate next);
 
         Task<IEnumerable<Rule>> HandleGetRulesAsync(
             GetRulesArgs args,
             GetRulesDelegate next);
+
+        Task<IEnumerable<Ruleset>> HandleGetRulesetsAsync(
+            GetRulesetsArgs args,
+            GetRulesetsDelegate next);
 
         Task<IEnumerable<Rule>> HandleGetRulesFilteredAsync(
             GetRulesFilteredArgs args,

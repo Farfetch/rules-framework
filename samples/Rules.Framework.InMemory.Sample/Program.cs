@@ -3,6 +3,7 @@ namespace Rules.Framework.InMemory.Sample
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Threading.Tasks;
     using global::Rules.Framework.InMemory.Sample.Engine;
     using global::Rules.Framework.InMemory.Sample.Enums;
     using global::Rules.Framework.InMemory.Sample.Helper;
@@ -10,9 +11,9 @@ namespace Rules.Framework.InMemory.Sample
 
     internal class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            var rulesService = new RulesService(new List<IContentTypes>()
+            var rulesService = new RulesService(new List<IRuleSpecificationsRegistrar>()
             {
                 new TestNumberRules()
             });
@@ -31,18 +32,15 @@ namespace Rules.Framework.InMemory.Sample
                         break;
                     }
 
-                    var conditions = new Dictionary<ConditionTypes, object> {
-                        { ConditionTypes.IsPrimeNumber, value.IsPrime() },
-                        { ConditionTypes.CanNumberBeDividedBy3, value.CanNumberBeDividedBy3() },
-                        { ConditionTypes.SumAll, value.SumAll() },
-                        { ConditionTypes.RoyalNumber, value }
+                    var conditions = new Dictionary<ConditionNames, object> {
+                        { ConditionNames.IsPrimeNumber, value.IsPrime() },
+                        { ConditionNames.CanNumberBeDividedBy3, value.CanNumberBeDividedBy3() },
+                        { ConditionNames.SumAll, value.SumAll() },
+                        { ConditionNames.RoyalNumber, value }
                     };
 
-                    var result = rulesService
-                        .MatchOneAsync<string>(ContentTypes.TestNumber, targetDate, conditions)
-                        .ConfigureAwait(false)
-                        .GetAwaiter()
-                        .GetResult();
+                    var result = await rulesService
+                        .MatchOneAsync<string>(RulesetNames.TestNumber, targetDate, conditions);
 
                     Console.WriteLine($"The result is: {result}");
                 }

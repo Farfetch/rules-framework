@@ -58,7 +58,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var integerConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = ConditionType.SampleIntegerCondition.ToString(),
+                Condition = ConditionNames.SampleIntegerCondition.ToString(),
                 DataType = DataTypes.Integer,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = 20,
@@ -68,7 +68,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var stringConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = ConditionType.SampleStringCondition.ToString(),
+                Condition = ConditionNames.SampleStringCondition.ToString(),
                 DataType = DataTypes.String,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = "TEST",
@@ -78,7 +78,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var decimalConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = ConditionType.SampleDecimalCondition.ToString(),
+                Condition = ConditionNames.SampleDecimalCondition.ToString(),
                 DataType = DataTypes.Decimal,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = 50.3m,
@@ -88,7 +88,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var booleanConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = ConditionType.SampleBooleanCondition.ToString(),
+                Condition = ConditionNames.SampleBooleanCondition.ToString(),
                 DataType = DataTypes.Boolean,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = true,
@@ -99,7 +99,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
             var ruleDataModel = new RuleDataModel
             {
                 Content = content,
-                ContentType = ContentType.ContentTypeSample.ToString(),
+                Ruleset = RulesetNames.ContentTypeSample.ToString(),
                 DateBegin = new System.DateTime(2020, 1, 1),
                 DateEnd = null,
                 Name = "My rule used for testing purposes",
@@ -131,6 +131,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
             rule.DateEnd.Should().BeNull();
             rule.Name.Should().Be(ruleDataModel.Name);
             rule.Priority.Should().Be(ruleDataModel.Priority);
+            rule.Ruleset.Should().Be(ruleDataModel.Ruleset);
             rule.RootCondition.Should().BeOfType<ComposedConditionNode>();
 
             var composedConditionNode = rule.RootCondition.As<ComposedConditionNode>();
@@ -141,7 +142,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
             valueConditionNodes.Should().HaveCount(4);
             var integerConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Integer);
             integerConditionNode.Should().NotBeNull();
-            integerConditionNode.ConditionType.Should().Match(x => x == integerConditionNodeDataModel.ConditionType);
+            integerConditionNode.Condition.Should().Match(x => x == integerConditionNodeDataModel.Condition);
             integerConditionNode.DataType.Should().Be(integerConditionNodeDataModel.DataType);
             integerConditionNode.LogicalOperator.Should().Be(integerConditionNodeDataModel.LogicalOperator);
             integerConditionNode.Operand.Should().Match(x => object.Equals(x, integerConditionNodeDataModel.Operand));
@@ -149,7 +150,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var stringConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.String);
             stringConditionNode.Should().NotBeNull();
-            stringConditionNode.ConditionType.Should().Match(x => x == stringConditionNodeDataModel.ConditionType);
+            stringConditionNode.Condition.Should().Match(x => x == stringConditionNodeDataModel.Condition);
             stringConditionNode.DataType.Should().Be(stringConditionNodeDataModel.DataType);
             stringConditionNode.LogicalOperator.Should().Be(stringConditionNodeDataModel.LogicalOperator);
             stringConditionNode.Operand.Should().Match(x => object.Equals(x, stringConditionNodeDataModel.Operand));
@@ -157,7 +158,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var decimalConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Decimal);
             decimalConditionNode.Should().NotBeNull();
-            decimalConditionNode.ConditionType.Should().Match(x => x == decimalConditionNodeDataModel.ConditionType);
+            decimalConditionNode.Condition.Should().Match(x => x == decimalConditionNodeDataModel.Condition);
             decimalConditionNode.DataType.Should().Be(decimalConditionNodeDataModel.DataType);
             decimalConditionNode.LogicalOperator.Should().Be(decimalConditionNodeDataModel.LogicalOperator);
             decimalConditionNode.Operand.Should().Match(x => object.Equals(x, decimalConditionNodeDataModel.Operand));
@@ -165,7 +166,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var booleanConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Boolean);
             booleanConditionNode.Should().NotBeNull();
-            booleanConditionNode.ConditionType.Should().Match(x => x == booleanConditionNodeDataModel.ConditionType);
+            booleanConditionNode.Condition.Should().Match(x => x == booleanConditionNodeDataModel.Condition);
             booleanConditionNode.DataType.Should().Be(booleanConditionNodeDataModel.DataType);
             booleanConditionNode.LogicalOperator.Should().Be(booleanConditionNodeDataModel.LogicalOperator);
             booleanConditionNode.Operand.Should().Be(Convert.ToBoolean(booleanConditionNodeDataModel.Operand));
@@ -182,25 +183,26 @@ namespace Rules.Framework.Tests.Providers.InMemory
             content.Prop3 = 500.34m;
 
             var booleanConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleBooleanCondition.ToString(), Operators.NotEqual, true) as ValueConditionNode;
+                .CreateValueNode(ConditionNames.SampleBooleanCondition.ToString(), Operators.NotEqual, true) as ValueConditionNode;
             var decimalConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleDecimalCondition.ToString(), Operators.LesserThanOrEqual, 50.3m) as ValueConditionNode;
+                .CreateValueNode(ConditionNames.SampleDecimalCondition.ToString(), Operators.LesserThanOrEqual, 50.3m) as ValueConditionNode;
             var integerConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleIntegerCondition.ToString(), Operators.GreaterThan, 20) as ValueConditionNode;
+                .CreateValueNode(ConditionNames.SampleIntegerCondition.ToString(), Operators.GreaterThan, 20) as ValueConditionNode;
             var stringConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleStringCondition.ToString(), Operators.Equal, "TEST") as ValueConditionNode;
+                .CreateValueNode(ConditionNames.SampleStringCondition.ToString(), Operators.Equal, "TEST") as ValueConditionNode;
 
-            var rule1 = Rule.New<ContentType, ConditionType>()
-                .WithName("My rule used for testing purposes")
-                .WithDateBegin(new DateTime(2020, 1, 1))
-                .WithContent(ContentType.ContentTypeSample, (object)content)
-                .WithCondition(c => c
+            var rule1 = Rule.Create<RulesetNames, ConditionNames>("My rule used for testing purposes")
+                .OnRuleset(RulesetNames.ContentTypeSample)
+                .SetContent((object)content)
+                .Since(new DateTime(2020, 1, 1))
+                .ApplyWhen(c => c
                     .And(a => a
                         .Condition(booleanConditionNode)
                         .Condition(decimalConditionNode)
                         .Condition(integerConditionNode)
                         .Condition(stringConditionNode)
-                    ))
+                    )
+                )
                 .Build().Rule;
 
             var ruleFactory = new RuleFactory();
@@ -217,6 +219,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
             rule.DateEnd.Should().BeNull();
             rule.Name.Should().Be(rule.Name);
             rule.Priority.Should().Be(rule.Priority);
+            rule.Ruleset.Should().Be(rule.Ruleset);
             rule.RootCondition.Should().BeOfType<ComposedConditionNodeDataModel>();
 
             var composedConditionNodeDataModel = rule.RootCondition.As<ComposedConditionNodeDataModel>();
@@ -227,7 +230,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
             valueConditionNodeDataModels.Should().HaveCount(4);
             var integerConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Integer);
             integerConditionNodeDataModel.Should().NotBeNull();
-            integerConditionNodeDataModel.ConditionType.Should().Match(x => integerConditionNode.ConditionType == x);
+            integerConditionNodeDataModel.Condition.Should().Match(x => integerConditionNode.Condition == x);
             integerConditionNodeDataModel.DataType.Should().Be(integerConditionNode.DataType);
             integerConditionNodeDataModel.LogicalOperator.Should().Be(integerConditionNode.LogicalOperator);
             integerConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, integerConditionNode.Operand));
@@ -235,7 +238,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var stringConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.String);
             stringConditionNodeDataModel.Should().NotBeNull();
-            stringConditionNodeDataModel.ConditionType.Should().Match(x => stringConditionNode.ConditionType == x);
+            stringConditionNodeDataModel.Condition.Should().Match(x => stringConditionNode.Condition == x);
             stringConditionNodeDataModel.DataType.Should().Be(stringConditionNode.DataType);
             stringConditionNodeDataModel.LogicalOperator.Should().Be(stringConditionNode.LogicalOperator);
             stringConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, stringConditionNode.Operand));
@@ -243,7 +246,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var decimalConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Decimal);
             decimalConditionNodeDataModel.Should().NotBeNull();
-            decimalConditionNodeDataModel.ConditionType.Should().Match(x => decimalConditionNode.ConditionType == x);
+            decimalConditionNodeDataModel.Condition.Should().Match(x => decimalConditionNode.Condition == x);
             decimalConditionNodeDataModel.DataType.Should().Be(decimalConditionNode.DataType);
             decimalConditionNodeDataModel.LogicalOperator.Should().Be(decimalConditionNode.LogicalOperator);
             decimalConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, decimalConditionNode.Operand));
@@ -251,7 +254,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
 
             var booleanConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Boolean);
             booleanConditionNodeDataModel.Should().NotBeNull();
-            booleanConditionNodeDataModel.ConditionType.Should().Match(x => booleanConditionNode.ConditionType == x);
+            booleanConditionNodeDataModel.Condition.Should().Match(x => booleanConditionNode.Condition == x);
             booleanConditionNodeDataModel.DataType.Should().Be(booleanConditionNode.DataType);
             booleanConditionNodeDataModel.LogicalOperator.Should().Be(booleanConditionNode.LogicalOperator);
             booleanConditionNodeDataModel.Operand.Should().Be(Convert.ToBoolean(booleanConditionNode.Operand));

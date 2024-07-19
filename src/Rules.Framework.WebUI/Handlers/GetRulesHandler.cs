@@ -43,20 +43,20 @@ namespace Rules.Framework.WebUI.Handlers
             {
                 var rules = new List<RuleDto>();
 
-                if (rulesFilter.ContentType.Equals("all"))
+                if (rulesFilter.Ruleset.Equals("all"))
                 {
-                    var contents = await this.rulesEngine.GetContentTypesAsync();
+                    var rulesets = await this.rulesEngine.GetRulesetsAsync();
 
-                    foreach (var identifier in contents)
+                    foreach (var ruleset in rulesets)
                     {
-                        var rulesForContentType = await this.GetRulesForContentyType(identifier, rulesFilter).ConfigureAwait(false);
-                        rules.AddRange(rulesForContentType);
+                        var rulesForRuleset = await this.GetRulesForRuleset(ruleset.Name, rulesFilter).ConfigureAwait(false);
+                        rules.AddRange(rulesForRuleset);
                     }
                 }
                 else
                 {
-                    var rulesForContentType = await this.GetRulesForContentyType(rulesFilter.ContentType, rulesFilter).ConfigureAwait(false);
-                    rules.AddRange(rulesForContentType);
+                    var rulesForRuleset = await this.GetRulesForRuleset(rulesFilter.Ruleset, rulesFilter).ConfigureAwait(false);
+                    rules.AddRange(rulesForRuleset);
                 }
 
                 await this.WriteResponseAsync(httpResponse, rules, (int)HttpStatusCode.OK).ConfigureAwait(false);
@@ -117,7 +117,7 @@ namespace Rules.Framework.WebUI.Handlers
             var rulesFilterAsString = JsonSerializer.Serialize(parseQueryString.Cast<string>().ToDictionary(k => k, v => string.IsNullOrWhiteSpace(parseQueryString[v]) ? null : parseQueryString[v]));
             var rulesFilter = JsonSerializer.Deserialize<RulesFilterDto>(rulesFilterAsString, this.SerializerOptions);
 
-            rulesFilter.ContentType = string.IsNullOrWhiteSpace(rulesFilter.ContentType) ? "all" : rulesFilter.ContentType;
+            rulesFilter.Ruleset = string.IsNullOrWhiteSpace(rulesFilter.Ruleset) ? "all" : rulesFilter.Ruleset;
 
             rulesFilter.DateEnd ??= DateTime.MaxValue;
 
@@ -126,11 +126,11 @@ namespace Rules.Framework.WebUI.Handlers
             return rulesFilter;
         }
 
-        private async Task<IEnumerable<RuleDto>> GetRulesForContentyType(string identifier, RulesFilterDto rulesFilter)
+        private async Task<IEnumerable<RuleDto>> GetRulesForRuleset(string ruleset, RulesFilterDto rulesFilter)
         {
             var genericRules = await this.rulesEngine.SearchAsync(
                                        new SearchArgs<string, string>(
-                                           identifier,
+                                           ruleset,
                                            rulesFilter.DateBegin.Value,
                                            rulesFilter.DateEnd.Value))
                                        .ConfigureAwait(false);
@@ -148,7 +148,7 @@ namespace Rules.Framework.WebUI.Handlers
                     genericRules = genericRules.OrderBy(r => r.Priority);
                 }
 
-                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(identifier, this.ruleStatusDtoAnalyzer)));
+                var genericRulesDto = this.ApplyFilters(rulesFilter, genericRules.Select(g => g.ToRuleDto(this.ruleStatusDtoAnalyzer)));
 
                 return genericRulesDto;
             }

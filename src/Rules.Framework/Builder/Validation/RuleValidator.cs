@@ -23,6 +23,7 @@ namespace Rules.Framework.Builder.Validation
                 ValidationContext = cc,
                 ValueConditionNodeValidator = this.valueConditionNodeValidator,
             }));
+            this.RuleFor(r => r.Ruleset).NotEmpty();
         }
 
         public static RuleValidator Instance { get; } = new RuleValidator();

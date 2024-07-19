@@ -15,9 +15,9 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             const string expected = "EUR";
             var conditions = new Dictionary<string, object>
             {
-                { ConditionType.IsoCurrency.ToString(), expected }
+                { ConditionNames.IsoCurrency.ToString(), expected }
             };
-            var conditionType = ConditionType.IsoCurrency.ToString();
+            var conditionType = ConditionNames.IsoCurrency.ToString();
 
             // Act
             var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, conditionType);
@@ -31,7 +31,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         {
             // Arrange
             var conditions = new Dictionary<string, object>();
-            var conditionType = ConditionType.IsoCurrency.ToString();
+            var conditionType = ConditionNames.IsoCurrency.ToString();
 
             // Act
             var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, conditionType);

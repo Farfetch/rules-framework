@@ -26,7 +26,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
         [Theory]
         [InlineData("POST", "/rules/api/v1/configurations", false)]
-        [InlineData("GET", "/rules/api/v1/contentTypes", false)]
+        [InlineData("GET", "/rules/api/v1/rulesets", false)]
         [InlineData("GET", "/rules/api/v1/configurations", true)]
         public async Task HandleRequestAsync_Validation(string httpMethod, string resourcePath,
             bool expectedResult)

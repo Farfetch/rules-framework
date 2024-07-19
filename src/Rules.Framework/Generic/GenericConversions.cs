@@ -1,9 +1,7 @@
 namespace Rules.Framework.Generic
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Text;
 
     internal static class GenericConversions
     {

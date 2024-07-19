@@ -27,9 +27,7 @@ namespace Rules.Framework.Evaluation.Compiled
             await next.Invoke(args).ConfigureAwait(false);
         }
 
-        public Task HandleCreateContentTypeAsync(CreateContentTypeArgs args, CreateContentTypeDelegate next) => next.Invoke(args);
-
-        public Task<IEnumerable<string>> HandleGetContentTypesAsync(GetContentTypesArgs args, GetContentTypesDelegate next) => next.Invoke(args);
+        public Task HandleCreateRulesetAsync(CreateRulesetArgs args, CreateRulesetDelegate next) => next.Invoke(args);
 
         public async Task<IEnumerable<Rule>> HandleGetRulesAsync(
             GetRulesArgs args,
@@ -50,6 +48,8 @@ namespace Rules.Framework.Evaluation.Compiled
 
             return rules;
         }
+
+        public Task<IEnumerable<Ruleset>> HandleGetRulesetsAsync(GetRulesetsArgs args, GetRulesetsDelegate next) => next.Invoke(args);
 
         public async Task<IEnumerable<Rule>> HandleGetRulesFilteredAsync(
             GetRulesFilteredArgs args,

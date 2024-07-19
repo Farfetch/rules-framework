@@ -6,15 +6,13 @@ namespace Rules.Framework.Generic.ConditionNodes
     /// <summary>
     /// Defines the interface contract for a condition node based on a value comparison.
     /// </summary>
-    /// <typeparam name="TConditionType">
-    /// The condition type that allows to filter rules based on a set of conditions.
-    /// </typeparam>
-    public interface IValueConditionNode<TConditionType> : IConditionNode<TConditionType>
+    /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
+    public interface IValueConditionNode<TCondition> : IConditionNode<TCondition>
     {
         /// <summary>
-        /// Gets the condition node type.
+        /// Gets the condition name.
         /// </summary>
-        TConditionType ConditionType { get; }
+        TCondition Condition { get; }
 
         /// <summary>
         /// Gets the condition node data type.

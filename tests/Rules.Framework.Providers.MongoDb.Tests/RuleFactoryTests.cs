@@ -62,7 +62,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var integerConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = "SampleIntegerCondition",
+                Condition = "SampleIntegerCondition",
                 DataType = DataTypes.Integer,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = 20,
@@ -71,7 +71,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var stringConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = "SampleStringCondition",
+                Condition = "SampleStringCondition",
                 DataType = DataTypes.String,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = "TEST",
@@ -80,7 +80,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var decimalConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = "SampleDecimalCondition",
+                Condition = "SampleDecimalCondition",
                 DataType = DataTypes.Decimal,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = 50.3m,
@@ -89,7 +89,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var booleanConditionNodeDataModel = new ValueConditionNodeDataModel
             {
-                ConditionType = "SampleBooleanCondition",
+                Condition = "SampleBooleanCondition",
                 DataType = DataTypes.Boolean,
                 LogicalOperator = LogicalOperators.Eval,
                 Operand = true,
@@ -99,7 +99,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             var ruleDataModel = new RuleDataModel
             {
                 Content = content,
-                ContentType = "ContentTypeSample",
+                Ruleset = "ContentTypeSample",
                 DateBegin = new System.DateTime(2020, 1, 1),
                 DateEnd = null,
                 Name = "My rule used for testing purposes",
@@ -131,6 +131,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             rule.DateEnd.Should().BeNull();
             rule.Name.Should().Be(ruleDataModel.Name);
             rule.Priority.Should().Be(ruleDataModel.Priority);
+            rule.Ruleset.Should().Be(ruleDataModel.Ruleset);
             rule.RootCondition.Should().BeOfType<ComposedConditionNode>();
 
             var composedConditionNode = rule.RootCondition.As<ComposedConditionNode>();
@@ -142,7 +143,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var integerConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Integer);
             integerConditionNode.Should().NotBeNull();
-            integerConditionNode.ConditionType.Should().Be(integerConditionNodeDataModel.ConditionType);
+            integerConditionNode.Condition.Should().Be(integerConditionNodeDataModel.Condition);
             integerConditionNode.DataType.Should().Be(integerConditionNodeDataModel.DataType);
             integerConditionNode.LogicalOperator.Should().Be(integerConditionNodeDataModel.LogicalOperator);
             integerConditionNode.Operand.Should().Match(x => object.Equals(x, integerConditionNodeDataModel.Operand));
@@ -150,7 +151,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var stringConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.String);
             stringConditionNode.Should().NotBeNull();
-            stringConditionNode.ConditionType.Should().Be(stringConditionNodeDataModel.ConditionType);
+            stringConditionNode.Condition.Should().Be(stringConditionNodeDataModel.Condition);
             stringConditionNode.DataType.Should().Be(stringConditionNodeDataModel.DataType);
             stringConditionNode.LogicalOperator.Should().Be(stringConditionNodeDataModel.LogicalOperator);
             stringConditionNode.Operand.Should().Match(x => object.Equals(x, stringConditionNodeDataModel.Operand));
@@ -158,7 +159,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var decimalConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Decimal);
             decimalConditionNode.Should().NotBeNull();
-            decimalConditionNode.ConditionType.Should().Be(decimalConditionNodeDataModel.ConditionType);
+            decimalConditionNode.Condition.Should().Be(decimalConditionNodeDataModel.Condition);
             decimalConditionNode.DataType.Should().Be(decimalConditionNodeDataModel.DataType);
             decimalConditionNode.LogicalOperator.Should().Be(decimalConditionNodeDataModel.LogicalOperator);
             decimalConditionNode.Operand.Should().Match(x => object.Equals(x, decimalConditionNodeDataModel.Operand));
@@ -166,7 +167,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var booleanConditionNode = valueConditionNodes.First(x => x.DataType == DataTypes.Boolean);
             booleanConditionNode.Should().NotBeNull();
-            booleanConditionNode.ConditionType.Should().Be(booleanConditionNodeDataModel.ConditionType);
+            booleanConditionNode.Condition.Should().Be(booleanConditionNodeDataModel.Condition);
             booleanConditionNode.DataType.Should().Be(booleanConditionNodeDataModel.DataType);
             booleanConditionNode.LogicalOperator.Should().Be(booleanConditionNodeDataModel.LogicalOperator);
             booleanConditionNode.Operand.Should().Be(Convert.ToBoolean(booleanConditionNodeDataModel.Operand));
@@ -192,23 +193,23 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var contentSerializationProvider = Mock.Of<IContentSerializationProvider>();
             Mock.Get(contentSerializationProvider)
-                .Setup(x => x.GetContentSerializer(ContentType.ContentTypeSample.ToString()))
+                .Setup(x => x.GetContentSerializer(RulesetNames.RulesetSample.ToString()))
                 .Returns(contentSerializer);
 
             var booleanConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleBooleanCondition.ToString(), Operators.NotEqual, true);
+                .CreateValueNode(ConditionNames.SampleBooleanCondition.ToString(), Operators.NotEqual, true);
             var decimalConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleDecimalCondition.ToString(), Operators.LesserThanOrEqual, 50.3m);
+                .CreateValueNode(ConditionNames.SampleDecimalCondition.ToString(), Operators.LesserThanOrEqual, 50.3m);
             var integerConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleIntegerCondition.ToString(), Operators.GreaterThan, 20);
+                .CreateValueNode(ConditionNames.SampleIntegerCondition.ToString(), Operators.GreaterThan, 20);
             var stringConditionNode = ConditionNodeFactory
-                .CreateValueNode(ConditionType.SampleStringCondition.ToString(), Operators.Equal, "TEST");
+                .CreateValueNode(ConditionNames.SampleStringCondition.ToString(), Operators.Equal, "TEST");
 
-            var rule = Rule.New<ContentType, ConditionType>()
-                .WithName("My rule used for testing purposes")
-                .WithDateBegin(new DateTime(2020, 1, 1))
-                .WithContent(ContentType.ContentTypeSample, (object)content)
-                .WithCondition(c => c
+            var rule = Rule.Create<RulesetNames, ConditionNames>("My rule used for testing purposes")
+                .OnRuleset(RulesetNames.RulesetSample)
+                .SetContent((object)content)
+                .Since(new DateTime(2020, 1, 1))
+                .ApplyWhen(c => c
                     .And(a => a
                         .Condition(booleanConditionNode)
                         .Condition(decimalConditionNode)
@@ -224,12 +225,13 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             // Assert
             ruleDataModel.Should().NotBeNull();
-            object ruleDataModelContent = ruleDataModel.Content;
+            var ruleDataModelContent = rule.ContentContainer.GetContentAs<object>();
             ruleDataModelContent.Should().NotBeNull().And.BeSameAs(content);
-            ruleDataModel.DateBegin.Should().Be(ruleDataModel.DateBegin);
+            ruleDataModel.DateBegin.Should().Be(rule.DateBegin);
             ruleDataModel.DateEnd.Should().BeNull();
-            ruleDataModel.Name.Should().Be(ruleDataModel.Name);
-            ruleDataModel.Priority.Should().Be(ruleDataModel.Priority);
+            ruleDataModel.Name.Should().Be(rule.Name);
+            ruleDataModel.Priority.Should().Be(rule.Priority);
+            ruleDataModel.Ruleset.Should().Be(rule.Ruleset.ToString());
             ruleDataModel.RootCondition.Should().BeOfType<ComposedConditionNodeDataModel>();
 
             var composedConditionNodeDataModel = ruleDataModel.RootCondition.As<ComposedConditionNodeDataModel>();
@@ -241,7 +243,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var integerConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Integer);
             integerConditionNodeDataModel.Should().NotBeNull();
-            integerConditionNodeDataModel.ConditionType.Should().Be(integerConditionNode.ConditionType);
+            integerConditionNodeDataModel.Condition.Should().Be(integerConditionNode.Condition);
             integerConditionNodeDataModel.DataType.Should().Be(integerConditionNode.DataType);
             integerConditionNodeDataModel.LogicalOperator.Should().Be(integerConditionNode.LogicalOperator);
             integerConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, integerConditionNode.Operand));
@@ -249,7 +251,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var stringConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.String);
             stringConditionNodeDataModel.Should().NotBeNull();
-            stringConditionNodeDataModel.ConditionType.Should().Be(stringConditionNode.ConditionType);
+            stringConditionNodeDataModel.Condition.Should().Be(stringConditionNode.Condition);
             stringConditionNodeDataModel.DataType.Should().Be(stringConditionNode.DataType);
             stringConditionNodeDataModel.LogicalOperator.Should().Be(stringConditionNode.LogicalOperator);
             stringConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, stringConditionNode.Operand));
@@ -257,7 +259,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var decimalConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Decimal);
             decimalConditionNodeDataModel.Should().NotBeNull();
-            decimalConditionNodeDataModel.ConditionType.Should().Be(decimalConditionNode.ConditionType);
+            decimalConditionNodeDataModel.Condition.Should().Be(decimalConditionNode.Condition);
             decimalConditionNodeDataModel.DataType.Should().Be(decimalConditionNode.DataType);
             decimalConditionNodeDataModel.LogicalOperator.Should().Be(decimalConditionNode.LogicalOperator);
             decimalConditionNodeDataModel.Operand.Should().Match(x => object.Equals(x, decimalConditionNode.Operand));
@@ -265,7 +267,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
             var booleanConditionNodeDataModel = valueConditionNodeDataModels.First(v => v.DataType == DataTypes.Boolean);
             booleanConditionNodeDataModel.Should().NotBeNull();
-            booleanConditionNodeDataModel.ConditionType.Should().Be(booleanConditionNode.ConditionType);
+            booleanConditionNodeDataModel.Condition.Should().Be(booleanConditionNode.Condition);
             booleanConditionNodeDataModel.DataType.Should().Be(booleanConditionNode.DataType);
             booleanConditionNodeDataModel.LogicalOperator.Should().Be(booleanConditionNode.LogicalOperator);
             booleanConditionNodeDataModel.Operand.Should().Be(Convert.ToBoolean(booleanConditionNode.Operand));

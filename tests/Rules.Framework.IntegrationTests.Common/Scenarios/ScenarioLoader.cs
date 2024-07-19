@@ -4,14 +4,14 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios
 
     public static class ScenarioLoader
     {
-        public static async Task LoadScenarioAsync<TContentType, TConditionType>(
+        public static async Task LoadScenarioAsync<TRuleset, TCondition>(
             IRulesEngine rulesEngine,
-            IScenarioData<TContentType, TConditionType> scenarioData)
+            IScenarioData<TRuleset, TCondition> scenarioData)
         {
-            var contentTypes = scenarioData.Rules.Select(r => ((Rule)r).ContentType).Distinct().ToArray();
-            foreach (var contentType in contentTypes)
+            var rulesets = scenarioData.Rules.Select(r => ((Rule)r).Ruleset).Distinct().ToArray();
+            foreach (var ruleset in rulesets)
             {
-                await rulesEngine.CreateContentTypeAsync(contentType).ConfigureAwait(false);
+                await rulesEngine.CreateRulesetAsync(ruleset).ConfigureAwait(false);
             }
 
             foreach (var rule in scenarioData.Rules)

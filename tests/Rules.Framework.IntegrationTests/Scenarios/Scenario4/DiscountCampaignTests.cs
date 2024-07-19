@@ -33,21 +33,24 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
-                    options.AutoCreateContentTypes = true;
+                    options.AutoCreateRulesets = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
-                .WithName("Discounts Weekend MAY2021")
-                .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContent(DiscountConfigurations.DiscountCampaigns, 15m)
-                .WithCondition(c => c
+            var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Discounts Weekend MAY2021")
+                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .SetContent(15m)
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .Until(DateTime.Parse("2021-05-31Z"))
+                .ApplyWhen(c => c
                     .And(a => a
                         .Value(DiscountConditions.ProductRecommendedRetailPrice, Operators.GreaterThanOrEqual, 1000)
-                        .Value(DiscountConditions.ProductBrand, Operators.In, new[] { "ASUS", "HP", "Dell", "Toshiba", "Acer" })))
+                        .Value(DiscountConditions.ProductBrand, Operators.In, new[] { "ASUS", "HP", "Dell", "Toshiba", "Acer" })
+                    )
+                )
                 .Build();
 
             // Assert 1
@@ -94,21 +97,24 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
-                    options.AutoCreateContentTypes = true;
+                    options.AutoCreateRulesets = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
-                .WithName("Discounts Weekend MAY2021 - Tiered discount")
-                .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContent(DiscountConfigurations.DiscountCampaigns, 15m)
-                .WithCondition(c => c
+            var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Discounts Weekend MAY2021 - Tiered discount")
+                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .SetContent(15m)
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .Until(DateTime.Parse("2021-05-31Z"))
+                .ApplyWhen(c => c
                     .And(a => a
                         .Value(DiscountConditions.ProductRecommendedRetailPrice, Operators.GreaterThanOrEqual, 1000)
-                        .Value(DiscountConditions.ProductTier, Operators.In, new[] { 1, 3 })))
+                        .Value(DiscountConditions.ProductTier, Operators.In, new[] { 1, 3 })
+                    )
+                )
                 .Build();
 
             // Assert 1
@@ -156,19 +162,19 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
-                    options.AutoCreateContentTypes = true;
+                    options.AutoCreateRulesets = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "not contains" operator
-            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
-                    .WithName("Not a staff discount")
-                    .WithContent(DiscountConfigurations.DiscountCampaigns, 5m)
-                    .WithDateBegin(DateTime.Parse("2021-05-29Z"))
-                    .WithCondition(DiscountConditions.CustomerEmail, Operators.NotContains, "@staff.com")
-                    .Build();
+            var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Not a staff discount")
+                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .SetContent(5m)
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .ApplyWhen(DiscountConditions.CustomerEmail, Operators.NotContains, "@staff.com")
+                .Build();
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
@@ -213,19 +219,19 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
-                    options.AutoCreateContentTypes = true;
+                    options.AutoCreateRulesets = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "equal" operator
-            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
-                    .WithName("Blue Product")
-                    .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
-                    .WithDateBegin(DateTime.Parse("2021-05-29Z"))
-                    .WithCondition(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
-                    .Build();
+            var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Blue Product")
+                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .SetContent(ProductColor.Blue.ToString())
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .ApplyWhen(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
+                .Build();
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
@@ -270,19 +276,19 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
-                    options.AutoCreateContentTypes = true;
+                    options.AutoCreateRulesets = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "equal" operator
-            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
-                    .WithName("Blue Product")
-                    .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
-                    .WithDateBegin(DateTime.Parse("2021-05-29Z"))
-                    .WithCondition(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
-                    .Build();
+            var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Blue Product")
+                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .SetContent(ProductColor.Blue.ToString())
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .ApplyWhen(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
+                .Build();
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
@@ -323,19 +329,19 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
-                    options.AutoCreateContentTypes = true;
+                    options.AutoCreateRulesets = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<DiscountConfigurations, DiscountConditions>();
 
             // Act 1 - Create rule with "equal" operator
-            var ruleBuilderResult = Rule.New<DiscountConfigurations, DiscountConditions>()
-                    .WithName("Blue Product")
-                    .WithContent(DiscountConfigurations.DiscountCampaigns, ProductColor.Blue.ToString())
-                    .WithDateBegin(DateTime.Parse("2021-05-29Z"))
-                    .WithCondition(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
-                    .Build();
+            var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Blue Product")
+                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .SetContent(ProductColor.Blue.ToString())
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .ApplyWhen(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
+                .Build();
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();

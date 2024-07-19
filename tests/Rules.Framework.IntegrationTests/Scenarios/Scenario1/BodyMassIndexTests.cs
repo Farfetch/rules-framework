@@ -30,32 +30,32 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<Scenario1RulesetNames, Scenario1ConditionNames>();
 
-            await genericRulesEngine.CreateContentTypeAsync(ContentTypes.BodyMassIndexFormula);
+            await genericRulesEngine.CreateRulesetAsync(Scenario1RulesetNames.BodyMassIndexFormula);
 
-            var newRuleResult1 = Rule.New<ContentTypes, ConditionTypes>()
-                .WithName("Body Mass Index up to 18 years formula")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
+            var newRuleResult1 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Body Mass Index up to 18 years formula")
+                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .SetContent(new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
                     Value = "weight / ((height + 1) ^ 2)" // Not real, for the sake of the test.
                 })
-                .WithCondition(ConditionTypes.Age, Operators.LesserThanOrEqual, 18)
+                .Since(DateTime.Parse("2018-01-01"))
+                .ApplyWhen(Scenario1ConditionNames.Age, Operators.LesserThanOrEqual, 18)
                 .Build();
 
             var newRule1 = newRuleResult1.Rule;
             var ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
 
-            var ruleBuilderResult2 = Rule.New<ContentTypes, ConditionTypes>()
-                .WithName("Sample rule")
-                .WithDateBegin(DateTime.Parse("2021-01-01"))
-                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
+            var ruleBuilderResult2 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Sample rule")
+                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .SetContent(new Formula
                 {
                     Description = "Sample formula",
                     Value = "0"
                 })
+                .Since(DateTime.Parse("2021-01-01"))
                 .Build();
 
             var newRule2 = ruleBuilderResult2.Rule;
@@ -98,33 +98,33 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<Scenario1RulesetNames, Scenario1ConditionNames>();
 
             await RulesFromJsonFile.Load
                 .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(Formula));
 
-            var newRuleResult1 = Rule.New<ContentTypes, ConditionTypes>()
-                .WithName("Body Mass Index up to 18 years formula")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
+            var newRuleResult1 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Body Mass Index up to 18 years formula")
+                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .SetContent(new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
-                    Value = "weight / ((height + 1) ^ 2)" // Not real, for the sake of the test.
+                    Value = "weight / ((height + 1) ^ 2)",
                 })
-                .WithCondition(ConditionTypes.Age, Operators.LesserThanOrEqual, 18)
+                .Since(DateTime.Parse("2018-01-01"))
+                .ApplyWhen(Scenario1ConditionNames.Age, Operators.LesserThanOrEqual, 18)
                 .Build();
 
             var newRule1 = newRuleResult1.Rule;
             var ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
 
-            var ruleBuilderResult2 = Rule.New<ContentTypes, ConditionTypes>()
-                .WithName("Sample rule")
-                .WithDateBegin(DateTime.Parse("2021-01-01"))
-                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
+            var ruleBuilderResult2 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Sample rule")
+                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .SetContent(new Formula
                 {
                     Description = "Sample formula",
-                    Value = "0"
+                    Value = "0",
                 })
+                .Since(DateTime.Parse("2021-01-01"))
                 .Build();
 
             var newRule2 = ruleBuilderResult2.Rule;
@@ -167,20 +167,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<Scenario1RulesetNames, Scenario1ConditionNames>();
 
             await RulesFromJsonFile.Load
                 .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(Formula));
 
-            var newRuleResult = Rule.New<ContentTypes, ConditionTypes>()
-                .WithName("Body Mass Index up to 18 years formula")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentTypes.BodyMassIndexFormula, new Formula
+            var newRuleResult = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Body Mass Index up to 18 years formula")
+                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .SetContent(new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
-                    Value = "weight / ((height + 1) ^ 2)" // Not real, for the sake of the test.
+                    Value = "weight / ((height + 1) ^ 2)",
                 })
-                .WithCondition(ConditionTypes.Age, Operators.LesserThanOrEqual, 18)
+                .Since(DateTime.Parse("2018-01-01"))
+                .ApplyWhen(Scenario1ConditionNames.Age, Operators.LesserThanOrEqual, 18)
                 .Build();
 
             var newRule = newRuleResult.Rule;
@@ -212,9 +212,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             // Arrange
             var expectedFormulaDescription = "Body Mass Index default formula";
             var expectedFormulaValue = "weight / (height ^ 2)";
-            const ContentTypes expectedContent = ContentTypes.BodyMassIndexFormula;
+            const Scenario1RulesetNames expectedContent = Scenario1RulesetNames.BodyMassIndexFormula;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<ConditionTypes>[0];
+            var expectedConditions = Array.Empty<Condition<Scenario1ConditionNames>>();
 
             var serviceProvider = new ServiceCollection()
                 .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
@@ -227,7 +227,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<Scenario1RulesetNames, Scenario1ConditionNames>();
 
             await RulesFromJsonFile.Load
                 .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(Formula));

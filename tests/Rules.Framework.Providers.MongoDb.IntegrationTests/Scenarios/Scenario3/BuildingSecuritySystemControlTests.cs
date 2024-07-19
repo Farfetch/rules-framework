@@ -39,7 +39,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                     TypeNameHandling = TypeNameHandling.All
                 });
 
-                rules = array.Select(t =>
+                rules = array!.Select(t =>
                 {
                     SecuritySystemAction securitySystemAction = t.Content.ToObject<SecuritySystemAction>();
                     dynamic dynamicContent = new ExpandoObject();
@@ -52,19 +52,19 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             }
 
             var contentTypes = rules
-                .Select(r => new ContentTypeDataModel
+                .Select(r => new RulesetDataModel
                 {
                     Creation = DateTime.UtcNow,
                     Id = Guid.NewGuid(),
-                    Name = r.ContentType,
+                    Name = r.Ruleset,
                 })
                 .Distinct()
                 .ToArray();
 
             var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
 
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.ContentTypesCollectionName);
-            var contentTypesMongoCollection = mongoDatabase.GetCollection<ContentTypeDataModel>(this.mongoDbProviderSettings.ContentTypesCollectionName);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesetsCollectionName);
+            var contentTypesMongoCollection = mongoDatabase.GetCollection<RulesetDataModel>(this.mongoDbProviderSettings.RulesetsCollectionName);
             contentTypesMongoCollection.InsertMany(contentTypes);
 
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
@@ -98,15 +98,15 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            var newRuleResult = Rule.New<SecuritySystemActionables, SecuritySystemConditions>()
-                .WithName("Activate ventilation system rule")
-                .WithDateBegin(new DateTime(2018, 01, 01))
-                .WithContent(SecuritySystemActionables.FireSystem, new SecuritySystemAction
+            var newRuleResult = Rule.Create<SecuritySystemActionables, SecuritySystemConditions>("Activate ventilation system rule")
+                .OnRuleset(SecuritySystemActionables.FireSystem)
+                .SetContent(new SecuritySystemAction
                 {
                     ActionId = new Guid("ef0d65ae-ec76-492a-84db-5cb9090c3eaa"),
                     ActionName = "ActivateVentilationSystem"
                 })
-                .WithCondition(b => b.Value(SecuritySystemConditions.SmokeRate, Operators.GreaterThanOrEqual, 30.0m))
+                .Since(new DateTime(2018, 01, 01))
+                .ApplyWhen(b => b.Value(SecuritySystemConditions.SmokeRate, Operators.GreaterThanOrEqual, 30.0m))
                 .Build();
             var newRule = newRuleResult.Rule;
 
@@ -205,10 +205,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
         {
             var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.ContentTypesCollectionName);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesetsCollectionName);
         }
 
-        private static MongoClient CreateMongoClient() => new MongoClient($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
+        private static MongoClient CreateMongoClient() => new($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
 
         private static MongoDbProviderSettings CreateProviderSettings() => new()
         {

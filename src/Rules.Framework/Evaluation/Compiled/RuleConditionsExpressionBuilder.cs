@@ -127,7 +127,7 @@ namespace Rules.Framework.Evaluation.Compiled
                     // Line 1.
                     var getConditionsCallExpression = builder.Call(parameterExpression, conditionsGetterMethod);
                     var getConditionValueCallExpression = builder
-                        .Call(instance: null!, getValueOrDefaultMethod, new Expression[] { getConditionsCallExpression, builder.Constant(valueConditionNode.ConditionType) });
+                        .Call(instance: null!, getValueOrDefaultMethod, new Expression[] { getConditionsCallExpression, builder.Constant(valueConditionNode.Condition) });
                     builder.Assign(leftOperandVariableExpression, getConditionValueCallExpression);
                     // Line 2.
                     builder.Assign(rightOperandVariableExpression, builder.Constant(valueConditionNode.Operand));
@@ -172,7 +172,7 @@ namespace Rules.Framework.Evaluation.Compiled
                     string multiplicityTransformed = Regex.Replace(multiplicity, "\\b\\p{Ll}", match => match.Value.ToUpperInvariant(), RegexOptions.None, TimeSpan.FromSeconds(1)).Replace("-", string.Empty, StringComparison.Ordinal);
 #endif
                     var scopeName = new StringBuilder(builder.ScopeName)
-                        .Append(valueConditionNode.ConditionType)
+                        .Append(valueConditionNode.Condition)
                         .Append(multiplicityTransformed)
                         .ToString();
                     @switch.Case(

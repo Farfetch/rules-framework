@@ -13,7 +13,7 @@ namespace Rules.Framework.Tests.Serialization
         public void Init_GivenSerializedContent_DeserializesAndReturnsWhenFetchingContent()
         {
             // Arrange
-            var expectedContentType = ContentType.Type1.ToString();
+            var expectedContentType = RulesetNames.Type1.ToString();
             var serializedContent = new object();
             object expected = 19m;
 

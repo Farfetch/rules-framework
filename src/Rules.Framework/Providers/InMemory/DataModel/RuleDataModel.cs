@@ -8,8 +8,6 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 
         public dynamic Content { get; set; }
 
-        public string ContentType { get; set; }
-
         public DateTime DateBegin { get; set; }
 
         public DateTime? DateEnd { get; set; }
@@ -19,5 +17,7 @@ namespace Rules.Framework.Providers.InMemory.DataModel
         public int Priority { get; set; }
 
         public ConditionNodeDataModel RootCondition { get; set; }
+
+        public string Ruleset { get; set; }
     }
 }

@@ -50,14 +50,13 @@ namespace Rules.Framework.WebUI.Sample
                 return;
             }
 
-            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
+            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IRuleSpecificationsRegistrar>()
             {
                 new RulesRandomFactory()
             }));
 
             var rulesEngine = rulesProvider
                 .GetRulesEngineAsync()
-                .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
 

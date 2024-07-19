@@ -5,12 +5,12 @@ namespace Rules.Framework.BenchmarkTests.Tests
     using Rules.Framework;
     using Rules.Framework.Generic;
 
-    public interface IScenarioData<TContentType, TConditionType>
+    public interface IScenarioData<TRuleset, TCondition>
     {
-        IEnumerable<Condition<TConditionType>> Conditions { get; }
+        IEnumerable<Condition<TCondition>> Conditions { get; }
 
         DateTime MatchDate { get; }
 
-        IEnumerable<Rule<TContentType, TConditionType>> Rules { get; }
+        IEnumerable<Rule<TRuleset, TCondition>> Rules { get; }
     }
 }

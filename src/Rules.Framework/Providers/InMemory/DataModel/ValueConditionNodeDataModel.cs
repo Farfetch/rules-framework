@@ -4,7 +4,7 @@ namespace Rules.Framework.Providers.InMemory.DataModel
 
     internal sealed class ValueConditionNodeDataModel : ConditionNodeDataModel
     {
-        public string ConditionType { get; set; }
+        public string Condition { get; set; }
 
         public DataTypes DataType { get; set; }
 

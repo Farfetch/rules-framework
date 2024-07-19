@@ -23,7 +23,7 @@ namespace Rules.Framework.Providers.InMemory
             {
                 Active = ruleDataModel.Active,
                 ContentContainer = contentContainer,
-                ContentType = ruleDataModel.ContentType,
+                Ruleset = ruleDataModel.Ruleset,
                 DateBegin = ruleDataModel.DateBegin,
                 DateEnd = ruleDataModel.DateEnd,
                 Name = ruleDataModel.Name,
@@ -46,7 +46,7 @@ namespace Rules.Framework.Providers.InMemory
             var ruleDataModel = new RuleDataModel
             {
                 Content = content,
-                ContentType = rule.ContentType,
+                Ruleset = rule.Ruleset,
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
@@ -87,7 +87,7 @@ namespace Rules.Framework.Providers.InMemory
         {
             return new ValueConditionNodeDataModel
             {
-                ConditionType = valueConditionNode.ConditionType,
+                Condition = valueConditionNode.Condition,
                 LogicalOperator = LogicalOperators.Eval,
                 DataType = valueConditionNode.DataType,
                 Operand = valueConditionNode.Operand,
@@ -101,7 +101,7 @@ namespace Rules.Framework.Providers.InMemory
         {
             return new ValueConditionNode(
                 conditionNodeDataModel.DataType,
-                conditionNodeDataModel.ConditionType,
+                conditionNodeDataModel.Condition,
                 conditionNodeDataModel.Operator,
                 conditionNodeDataModel.Operand,
                 new PropertiesDictionary(conditionNodeDataModel.Properties));

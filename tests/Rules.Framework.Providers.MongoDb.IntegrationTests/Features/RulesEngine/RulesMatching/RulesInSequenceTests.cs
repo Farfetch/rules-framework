@@ -16,11 +16,11 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         private static readonly string rule2Name = "DummyRule2";
         private static readonly string rule2Value = "DummyRule2 Value";
         private static readonly DateTime ruleChangeDate = new DateTime(2020, 07, 01, 14, 30, 00);
-        private static readonly ContentType TestContentType = ContentType.ContentType1;
+        private static readonly RulesetNames testRuleset = RulesetNames.Sample1;
 
-        public RulesInSequenceTests() : base(TestContentType)
+        public RulesInSequenceTests() : base(testRuleset)
         {
-            this.AddRules(this.CreateTestRules());
+            this.AddRules(CreateTestRules());
         }
 
         public static IEnumerable<object[]> FailureCases =>
@@ -44,7 +44,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionType>>();
+            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
 
             // Act
             var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions);
@@ -58,33 +58,35 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         public async Task RulesEngine_MatchOneAsync_WithRulesInSequence_ReturnsCorrectRule(DateTime matchDate, string expectedName, string expectedValue)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionType>>();
+            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
 
             // Act
             var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions);
 
             // Assert
             Assert.Equal(expectedName, actualMatch.Name);
-            Assert.Equal(TestContentType, actualMatch.ContentType);
+            Assert.Equal(testRuleset, actualMatch.Ruleset);
             Assert.Equal(expectedValue, actualMatch.ContentContainer.GetContentAs<string>());
         }
 
-        private IEnumerable<RuleSpecification> CreateTestRules()
+        private static List<RuleSpecification> CreateTestRules()
         {
             var ruleSpecs = new List<RuleSpecification>();
 
-            var rule1 = Rule.New<ContentType, ConditionType>()
-                .WithName(rule1Name)
-                .WithContent(TestContentType, rule1Value)
-                .WithDatesInterval(rule1StartDate, ruleChangeDate)
+            var rule1 = Rule.Create<RulesetNames, ConditionNames>(rule1Name)
+                .OnRuleset(testRuleset)
+                .SetContent(rule1Value)
+                .Since(rule1StartDate)
+                .Until(ruleChangeDate)
                 .Build();
 
             ruleSpecs.Add(new RuleSpecification(rule1.Rule, RuleAddPriorityOption.ByPriorityNumber(1)));
 
-            var rule2 = Rule.New<ContentType, ConditionType>()
-                .WithName(rule2Name)
-                .WithContent(TestContentType, rule2Value)
-                .WithDatesInterval(ruleChangeDate, rule2EndDate)
+            var rule2 = Rule.Create<RulesetNames, ConditionNames>(rule2Name)
+                .OnRuleset(testRuleset)
+                .SetContent(rule2Value)
+                .Since(ruleChangeDate)
+                .Until(rule2EndDate)
                 .Build();
 
             ruleSpecs.Add(new RuleSpecification(rule2.Rule, RuleAddPriorityOption.ByPriorityNumber(2)));

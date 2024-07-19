@@ -29,7 +29,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
 
         [Theory]
         [InlineData("POST", "/rules/api/v1/rules", false, null)]
-        [InlineData("GET", "/rules/api/v1/contentTypes", false, null)]
+        [InlineData("GET", "/rules/api/v1/rulesets", false, null)]
         [InlineData("GET", "/rules/api/v1/rules", true, HttpStatusCode.OK)]
         [InlineData("GET", "/rules/api/v1/rules", true, HttpStatusCode.InternalServerError)]
         public async Task HandleRequestAsync_Validation(string httpMethod, string resourcePath,
@@ -44,7 +44,7 @@ namespace Rules.Framework.WebUI.Tests.Handlers
             {
                 verifySearchAsync = true;
 
-                httpContext.Request.QueryString = new QueryString("?contentType=1");
+                httpContext.Request.QueryString = new QueryString("?ruleset=1");
 
                 if (statusCode == HttpStatusCode.OK)
                 {

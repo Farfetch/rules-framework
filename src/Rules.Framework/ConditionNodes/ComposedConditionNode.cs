@@ -6,7 +6,6 @@ namespace Rules.Framework.ConditionNodes
     using System.Linq;
     using Rules.Framework;
     using Rules.Framework.Core;
-    using Rules.Framework.Generic.ConditionNodes;
 
     /// <summary>
     /// A composed condition node which aggregates a set of child condition nodes and defines a
@@ -16,7 +15,7 @@ namespace Rules.Framework.ConditionNodes
     public class ComposedConditionNode : IConditionNode
     {
         /// <summary>
-        /// Creates a new <see cref="ComposedConditionNode{TConditionNode}"/>.
+        /// Creates a new <see cref="ComposedConditionNode"/>.
         /// </summary>
         /// <param name="logicalOperator">the logical operator.</param>
         /// <param name="childConditionNodes">the set of child condition nodes.</param>
@@ -28,7 +27,7 @@ namespace Rules.Framework.ConditionNodes
         }
 
         /// <summary>
-        /// Creates a new <see cref="ComposedConditionNode{TConditionNode}"/>.
+        /// Creates a new <see cref="ComposedConditionNode"/>.
         /// </summary>
         /// <param name="logicalOperator">the logical operator.</param>
         /// <param name="childConditionNodes">the set of child condition nodes.</param>
@@ -43,25 +42,16 @@ namespace Rules.Framework.ConditionNodes
             this.Properties = properties;
         }
 
-        /// <summary>
-        /// Gets the child condition nodes.
-        /// </summary>
+        /// <inheritdoc/>
         public IEnumerable<IConditionNode> ChildConditionNodes { get; }
 
-        /// <summary>
-        /// Gets the logical operator to apply between child condition nodes.
-        /// </summary>
+        /// <inheritdoc/>
         public LogicalOperators LogicalOperator { get; }
 
-        /// <summary>
-        /// Gets the condition node properties.
-        /// </summary>
+        /// <inheritdoc/>
         public IDictionary<string, object> Properties { get; }
 
-        /// <summary>
-        /// Clones the condition node into a different instance.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public IConditionNode Clone()
             => new ComposedConditionNode(
                 this.LogicalOperator,

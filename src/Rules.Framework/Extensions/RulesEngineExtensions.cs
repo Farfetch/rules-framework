@@ -10,13 +10,13 @@ namespace Rules.Framework
         /// <summary>
         /// Creates a generic rules engine.
         /// </summary>
-        /// <typeparam name="TContentType">The type of the content type.</typeparam>
-        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
+        /// <typeparam name="TRuleset">The ruleset type that strongly types rulesets.</typeparam>
+        /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
         /// <param name="rulesEngine">The rules engine.</param>
         /// <returns>A new instance of generic engine</returns>
-        public static IRulesEngine<TContentType, TConditionType> MakeGeneric<TContentType, TConditionType>(this IRulesEngine rulesEngine)
+        public static IRulesEngine<TRuleset, TCondition> MakeGeneric<TRuleset, TCondition>(this IRulesEngine rulesEngine)
         {
-            return new RulesEngine<TContentType, TConditionType>(rulesEngine);
+            return new RulesEngine<TRuleset, TCondition>(rulesEngine);
         }
     }
 }

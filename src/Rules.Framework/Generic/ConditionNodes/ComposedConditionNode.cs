@@ -1,6 +1,5 @@
 namespace Rules.Framework.Generic.ConditionNodes
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -12,17 +11,15 @@ namespace Rules.Framework.Generic.ConditionNodes
     /// A composed condition node which aggregates a set of child condition nodes and defines a
     /// logical operator to apply to them.
     /// </summary>
-    /// <typeparam name="TConditionNode">
-    /// The condition type that allows to filter rules based on a set of conditions.
-    /// </typeparam>
+    /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
     [DebuggerDisplay("Composed condition: apply {LogicalOperator.ToString(),nq} operator for {System.Linq.Enumerable.Count(ChildConditionNodes),nq} nodes")]
-    public class ComposedConditionNode<TConditionNode> : IConditionNode<TConditionNode>
+    public class ComposedConditionNode<TCondition> : IConditionNode<TCondition>
     {
         private readonly ComposedConditionNode composedConditionNode;
-        private List<IConditionNode<TConditionNode>>? children;
+        private List<IConditionNode<TCondition>>? children;
 
         /// <summary>
-        /// Creates a new <see cref="ComposedConditionNode{TConditionNode}"/>.
+        /// Creates a new <see cref="ComposedConditionNode{TCondition}"/>.
         /// </summary>
         /// <param name="composedConditionNode">The composed condition node.</param>
         public ComposedConditionNode(ComposedConditionNode composedConditionNode)
@@ -33,12 +30,12 @@ namespace Rules.Framework.Generic.ConditionNodes
         /// <summary>
         /// Gets the child condition nodes.
         /// </summary>
-        public IEnumerable<IConditionNode<TConditionNode>> ChildConditionNodes
+        public IEnumerable<IConditionNode<TCondition>> ChildConditionNodes
         {
             get
             {
                 this.children ??= this.composedConditionNode.ChildConditionNodes
-                    .Select(cn => cn.ToGenericConditionNode<TConditionNode>())
+                    .Select(cn => cn.ToGenericConditionNode<TCondition>())
                     .ToList();
 
                 return this.children;
@@ -59,8 +56,8 @@ namespace Rules.Framework.Generic.ConditionNodes
         /// Clones the condition node into a different instance.
         /// </summary>
         /// <returns></returns>
-        public IConditionNode<TConditionNode> Clone()
-            => new ComposedConditionNode<TConditionNode>((ComposedConditionNode)this.composedConditionNode.Clone());
+        public IConditionNode<TCondition> Clone()
+            => new ComposedConditionNode<TCondition>((ComposedConditionNode)this.composedConditionNode.Clone());
 
         /// <summary>
         /// Determines whether the specified <see cref="object"/>, is equal to this instance.
@@ -69,7 +66,7 @@ namespace Rules.Framework.Generic.ConditionNodes
         /// <returns>
         /// <c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj) => obj is ComposedConditionNode<TConditionNode> node && EqualityComparer<ComposedConditionNode>.Default.Equals(this.composedConditionNode, node.composedConditionNode);
+        public override bool Equals(object obj) => obj is ComposedConditionNode<TCondition> node && EqualityComparer<ComposedConditionNode>.Default.Equals(this.composedConditionNode, node.composedConditionNode);
 
         /// <summary>
         /// Returns a hash code for this instance.

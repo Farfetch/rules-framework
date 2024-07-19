@@ -11,25 +11,25 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
     public class OperatorContainsManyToOneTests : RulesEngineTestsBase
     {
-        private static readonly ContentType testContentType = ContentType.ContentType1;
-        private readonly Rule<ContentType, ConditionType> expectedMatchRule;
-        private readonly Rule<ContentType, ConditionType> otherRule;
+        private static readonly RulesetNames testContentType = RulesetNames.Sample1;
+        private readonly Rule<RulesetNames, ConditionNames> expectedMatchRule;
+        private readonly Rule<RulesetNames, ConditionNames> otherRule;
 
         public OperatorContainsManyToOneTests()
             : base(testContentType)
         {
-            this.expectedMatchRule = Rule.New<ContentType, ConditionType>()
-                .WithName("Expected rule")
-                .WithDateBegin(UtcDate("2020-01-01Z"))
-                .WithContent(testContentType, "Just as expected!")
-                .WithCondition(ConditionType.ConditionType1, Operators.Contains, "Cat")
+            this.expectedMatchRule = Rule.Create<RulesetNames, ConditionNames>("Expected rule")
+                .OnRuleset(testContentType)
+                .SetContent("Just as expected!")
+                .Since(UtcDate("2020-01-01Z"))
+                .ApplyWhen(ConditionNames.Condition1, Operators.Contains, "Cat")
                 .Build()
                 .Rule;
 
-            this.otherRule = Rule.New<ContentType, ConditionType>()
-                .WithName("Other rule")
-                .WithDateBegin(UtcDate("2020-01-01Z"))
-                .WithContent(testContentType, "Oops! Not expected to be matched.")
+            this.otherRule = Rule.Create<RulesetNames, ConditionNames>("Other rule")
+                .OnRuleset(testContentType)
+                .SetContent("Oops! Not expected to be matched.")
+                .Since(UtcDate("2020-01-01Z"))
                 .Build()
                 .Rule;
 
@@ -44,7 +44,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             // Arrange
             var emptyConditions = new[]
             {
-                new Condition<ConditionType>(ConditionType.ConditionType1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", })
+                new Condition<ConditionNames>(ConditionNames.Condition1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", })
             };
             var matchDate = UtcDate("2020-01-02Z");
 
@@ -63,7 +63,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             // Arrange
             var emptyConditions = new[]
             {
-                new Condition<ConditionType>(ConditionType.ConditionType1, new[]{ "Dog", "Fish", "Bat", "Spider", "Mockingbird", })
+                new Condition<ConditionNames>(ConditionNames.Condition1, new[]{ "Dog", "Fish", "Bat", "Spider", "Mockingbird", })
             };
             var matchDate = UtcDate("2020-01-02Z");
 

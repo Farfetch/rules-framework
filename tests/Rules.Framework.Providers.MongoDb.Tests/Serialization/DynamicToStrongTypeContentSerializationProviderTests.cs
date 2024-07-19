@@ -14,7 +14,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests.Serialization
             var dynamicToStrongTypeContentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider();
 
             // Act
-            var contentSerializer = dynamicToStrongTypeContentSerializationProvider.GetContentSerializer(ContentType.ContentTypeSample.ToString());
+            var contentSerializer = dynamicToStrongTypeContentSerializationProvider.GetContentSerializer(RulesetNames.RulesetSample.ToString());
 
             // Assert
             contentSerializer.Should().NotBeNull()

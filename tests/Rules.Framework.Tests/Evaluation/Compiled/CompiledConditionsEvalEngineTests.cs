@@ -131,11 +131,11 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .Which.ParamName.Should().Be("conditionNode");
         }
 
-        private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule() => Rule.New<ContentType, ConditionType>()
-            .WithName("Test rule")
-            .WithDateBegin(DateTime.UtcNow)
-            .WithContent(ContentType.Type1, "Test content")
-            .WithCondition(ConditionType.IsoCurrency, Operators.Equal, "EUR")
+        private static RuleBuilderResult<RulesetNames, ConditionNames> CreateTestRule() => Rule.Create<RulesetNames, ConditionNames>("Test rule")
+            .OnRuleset(RulesetNames.Type1)
+            .SetContent("Test content")
+            .Since(DateTime.UtcNow)
+            .ApplyWhen(ConditionNames.IsoCurrency, Operators.Equal, "EUR")
             .Build();
     }
 }

@@ -5,35 +5,35 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     using Rules.Framework;
     using Rules.Framework.Generic;
 
-    public partial class Scenario8Data : IScenarioData<ContentTypes, ConditionTypes>
+    public partial class Scenario8Data : IScenarioData<PokerRulesets, PokerConditions>
     {
-        private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetFlushRules()
+        private IEnumerable<Rule<PokerRulesets, PokerConditions>> GetFlushRules()
         {
             return new[]
             {
-                Rule.New < ContentTypes, ConditionTypes >()
-                    .WithName("Benchmark 3 - Flush of Clubs")
-                    .WithDateBegin(DateTime.Parse("2000-01-01"))
-                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(ConditionTypes.NumberOfClubs, Operators.GreaterThanOrEqual, 5)
+                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Flush of Clubs")
+                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .SetContent(new SingleCombinationPokerScore { Combination = "Flush" })
+                    .Since(DateTime.Parse("2000-01-01"))
+                    .ApplyWhen(PokerConditions.NumberOfClubs, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
-                Rule.New < ContentTypes, ConditionTypes >()
-                    .WithName("Benchmark 3 - Flush of Diamonds")
-                    .WithDateBegin(DateTime.Parse("2000-01-01"))
-                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(ConditionTypes.NumberOfDiamonds, Operators.GreaterThanOrEqual, 5)
+                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Flush of Diamonds")
+                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .SetContent(new SingleCombinationPokerScore { Combination = "Flush" })
+                    .Since(DateTime.Parse("2000-01-01"))
+                    .ApplyWhen(PokerConditions.NumberOfDiamonds, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
-                Rule.New < ContentTypes, ConditionTypes >()
-                    .WithName("Benchmark 3 - Flush of Hearts")
-                    .WithDateBegin(DateTime.Parse("2000-01-01"))
-                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(ConditionTypes.NumberOfHearts, Operators.GreaterThanOrEqual, 5)
+                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Flush of Hearts")
+                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .SetContent(new SingleCombinationPokerScore { Combination = "Flush" })
+                    .Since(DateTime.Parse("2000-01-01"))
+                    .ApplyWhen(PokerConditions.NumberOfHearts, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
-                Rule.New<ContentTypes, ConditionTypes>()
-                    .WithName("Benchmark 3 - Flush of Spades")
-                    .WithDateBegin(DateTime.Parse("2000-01-01"))
-                    .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Flush" })
-                    .WithCondition(ConditionTypes.NumberOfSpades, Operators.GreaterThanOrEqual, 5)
+                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Flush of Spades")
+                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .SetContent(new SingleCombinationPokerScore { Combination = "Flush" })
+                    .Since(DateTime.Parse("2000-01-01"))
+                    .ApplyWhen(PokerConditions.NumberOfSpades, Operators.GreaterThanOrEqual, 5)
                     .Build().Rule,
             };
         }

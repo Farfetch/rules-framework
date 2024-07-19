@@ -51,21 +51,21 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 }).ToList();
             }
 
-            var contentTypes = rules
-                .Select(r => new ContentTypeDataModel
+            var rulesets = rules
+                .Select(r => new RulesetDataModel
                 {
                     Creation = DateTime.UtcNow,
                     Id = Guid.NewGuid(),
-                    Name = r.ContentType,
+                    Name = r.Ruleset,
                 })
                 .Distinct()
                 .ToArray();
 
             var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
 
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.ContentTypesCollectionName);
-            var contentTypesMongoCollection = mongoDatabase.GetCollection<ContentTypeDataModel>(this.mongoDbProviderSettings.ContentTypesCollectionName);
-            contentTypesMongoCollection.InsertMany(contentTypes);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesetsCollectionName);
+            var contentTypesMongoCollection = mongoDatabase.GetCollection<RulesetDataModel>(this.mongoDbProviderSettings.RulesetsCollectionName);
+            contentTypesMongoCollection.InsertMany(rulesets);
 
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
             var rulesMongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
@@ -85,12 +85,12 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
         {
             // Arrange
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
-                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -101,10 +101,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<CarInsuranceRulesetNames, CarInsuranceConditionNames>();
 
             // Act
-            var actual = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchOneAsync(expectedRuleset, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -118,12 +118,12 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
         public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay(bool enableCompilation)
         {
             // Arrange
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            const CarInsuranceRulesetNames expectedContent = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
-                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -134,14 +134,14 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<CarInsuranceRulesetNames, CarInsuranceConditionNames>();
 
             var rulesDataSource = CreateRulesDataSourceTest(this.mongoClient, this.mongoDbProviderSettings);
 
-            var ruleBuilderResult = Rule.New<ContentTypes, ConditionTypes>()
-                .WithName("Car Insurance Advise on self damage coverage")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentTypes.CarInsuranceAdvice, CarInsuranceAdvices.Pay)
+            var ruleBuilderResult = Rule.Create<CarInsuranceRulesetNames, CarInsuranceConditionNames>("Car Insurance Advise on self damage coverage")
+                .OnRuleset(CarInsuranceRulesetNames.CarInsuranceAdvice)
+                .SetContent(CarInsuranceAdvices.Pay)
+                .Since(DateTime.Parse("2018-01-01"))
                 .Build();
             var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs
             {

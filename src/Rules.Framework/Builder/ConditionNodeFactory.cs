@@ -3,7 +3,8 @@ namespace Rules.Framework.Builder
     using System;
     using System.Collections.Generic;
     using Rules.Framework;
-    using Rules.Framework.Builder.Generic;
+    using Rules.Framework.Builder.Generic.RulesBuilder;
+    using Rules.Framework.Builder.RulesBuilder;
     using Rules.Framework.ConditionNodes;
 
     /// <summary>
@@ -21,9 +22,9 @@ namespace Rules.Framework.Builder
         /// <returns></returns>
         public static IConditionNode CreateComposedNode(
             LogicalOperators logicalOperator,
-            Func<IFluentComposedConditionNodeBuilder, IFluentComposedConditionNodeBuilder> conditionFunc)
+            Func<IFluentConditionNodeBuilder, IFluentConditionNodeBuilder> conditionFunc)
         {
-            var composedConditionNodeBuilder = new FluentComposedConditionNodeBuilder(logicalOperator);
+            var composedConditionNodeBuilder = new FluentConditionNodeBuilder(logicalOperator);
 
             var composedConditionNode = conditionFunc
                 .Invoke(composedConditionNodeBuilder)
@@ -35,16 +36,17 @@ namespace Rules.Framework.Builder
         /// <summary>
         /// Creates a composed condition node.
         /// </summary>
+        /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
         /// <param name="logicalOperator">The logical operator.</param>
         /// <param name="conditionFunc">
         /// The function containing the logic for the composed condition node.
         /// </param>
         /// <returns></returns>
-        public static IConditionNode CreateComposedNode<TConditionType>(
+        public static IConditionNode CreateComposedNode<TCondition>(
             LogicalOperators logicalOperator,
-            Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc)
+            Func<IFluentConditionNodeBuilder<TCondition>, IFluentConditionNodeBuilder<TCondition>> conditionFunc)
         {
-            var composedConditionNodeBuilder = new FluentComposedConditionNodeBuilder<TConditionType>(logicalOperator);
+            var composedConditionNodeBuilder = new FluentConditionNodeBuilder<TCondition>(logicalOperator);
 
             var composedConditionNode = conditionFunc
                 .Invoke(composedConditionNodeBuilder)
@@ -56,41 +58,45 @@ namespace Rules.Framework.Builder
         /// <summary>
         /// Creates a value condition node.
         /// </summary>
-        /// <param name="conditionType">The condition type.</param>
+        /// <typeparam name="T">the operand type.</typeparam>
+        /// <param name="condition">The condition name.</param>
         /// <param name="condOperator">The condition operator.</param>
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
-        public static IValueConditionNode CreateValueNode<TDataType>(
-            string conditionType, Operators condOperator, TDataType operand)
+        /// <exception cref="System.NotSupportedException">
+        /// The data type is not supported: {typeof(T).FullName}.
+        /// </exception>
+        public static IValueConditionNode CreateValueNode<T>(
+            string condition, Operators condOperator, T operand)
         {
             switch (operand)
             {
                 case decimal _:
-                    return new ValueConditionNode(DataTypes.Decimal, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.Decimal, condition, condOperator, operand);
 
                 case IEnumerable<decimal> _:
-                    return new ValueConditionNode(DataTypes.ArrayDecimal, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.ArrayDecimal, condition, condOperator, operand);
 
                 case int _:
-                    return new ValueConditionNode(DataTypes.Integer, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.Integer, condition, condOperator, operand);
 
                 case IEnumerable<int> _:
-                    return new ValueConditionNode(DataTypes.ArrayInteger, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.ArrayInteger, condition, condOperator, operand);
 
                 case bool _:
-                    return new ValueConditionNode(DataTypes.Boolean, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.Boolean, condition, condOperator, operand);
 
                 case IEnumerable<bool> _:
-                    return new ValueConditionNode(DataTypes.ArrayBoolean, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.ArrayBoolean, condition, condOperator, operand);
 
                 case string _:
-                    return new ValueConditionNode(DataTypes.String, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.String, condition, condOperator, operand);
 
                 case IEnumerable<string> _:
-                    return new ValueConditionNode(DataTypes.ArrayString, conditionType, condOperator, operand);
+                    return new ValueConditionNode(DataTypes.ArrayString, condition, condOperator, operand);
 
                 default:
-                    throw new NotSupportedException($"The data type is not supported: {typeof(TDataType).FullName}.");
+                    throw new NotSupportedException($"The data type is not supported: {typeof(T).FullName}.");
             }
         }
     }

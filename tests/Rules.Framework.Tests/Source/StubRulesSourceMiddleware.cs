@@ -15,9 +15,9 @@ namespace Rules.Framework.Tests.Source
         }
 
         public int AddRuleCalls { get; private set; }
-        public int CreateContentTypeCalls { get; private set; }
-        public int GetContentTypesCalls { get; private set; }
+        public int CreateRulesetCalls { get; private set; }
         public int GetRulesCalls { get; private set; }
+        public int GetRulesetsCalls { get; private set; }
         public int GetRulesFilteredCalls { get; private set; }
         public string Name { get; }
         public int UpdateRulesCalls { get; private set; }
@@ -32,23 +32,14 @@ namespace Rules.Framework.Tests.Source
             this.middlewareMessages.Add($"Exit {this.Name}.");
         }
 
-        public async Task HandleCreateContentTypeAsync(
-            CreateContentTypeArgs args,
-            CreateContentTypeDelegate next)
+        public async Task HandleCreateRulesetAsync(
+            CreateRulesetArgs args,
+            CreateRulesetDelegate next)
         {
-            this.CreateContentTypeCalls++;
+            this.CreateRulesetCalls++;
             this.middlewareMessages.Add($"Enter {this.Name}.");
             await next.Invoke(args).ConfigureAwait(false);
             this.middlewareMessages.Add($"Exit {this.Name}.");
-        }
-
-        public async Task<IEnumerable<string>> HandleGetContentTypesAsync(GetContentTypesArgs args, GetContentTypesDelegate next)
-        {
-            this.GetContentTypesCalls++;
-            this.middlewareMessages.Add($"Enter {this.Name}.");
-            var contentTypes = await next.Invoke(args).ConfigureAwait(false);
-            this.middlewareMessages.Add($"Exit {this.Name}.");
-            return contentTypes;
         }
 
         public async Task<IEnumerable<Rule>> HandleGetRulesAsync(
@@ -60,6 +51,15 @@ namespace Rules.Framework.Tests.Source
             var rules = await next.Invoke(args).ConfigureAwait(false);
             this.middlewareMessages.Add($"Exit {this.Name}.");
             return rules;
+        }
+
+        public async Task<IEnumerable<Ruleset>> HandleGetRulesetsAsync(GetRulesetsArgs args, GetRulesetsDelegate next)
+        {
+            this.GetRulesetsCalls++;
+            this.middlewareMessages.Add($"Enter {this.Name}.");
+            var contentTypes = await next.Invoke(args).ConfigureAwait(false);
+            this.middlewareMessages.Add($"Exit {this.Name}.");
+            return contentTypes;
         }
 
         public async Task<IEnumerable<Rule>> HandleGetRulesFilteredAsync(

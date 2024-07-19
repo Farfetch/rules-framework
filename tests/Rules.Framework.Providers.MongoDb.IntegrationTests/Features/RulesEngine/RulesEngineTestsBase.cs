@@ -15,13 +15,13 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
     {
         private readonly IMongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
-        private readonly ContentType TestContentType;
+        private readonly RulesetNames TestRuleset;
 
-        protected RulesEngineTestsBase(ContentType testContentType)
+        protected RulesEngineTestsBase(RulesetNames testRuleset)
         {
             this.mongoClient = CreateMongoClient();
             this.mongoDbProviderSettings = CreateProviderSettings();
-            this.TestContentType = testContentType;
+            this.TestRuleset = testRuleset;
 
             var rulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
@@ -29,11 +29,11 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
                 .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
                 .Build();
 
-            this.RulesEngine = rulesEngine.MakeGeneric<ContentType, ConditionType>();
-            this.RulesEngine.CreateContentTypeAsync(testContentType).GetAwaiter().GetResult();
+            this.RulesEngine = rulesEngine.MakeGeneric<RulesetNames, ConditionNames>();
+            this.RulesEngine.CreateRulesetAsync(testRuleset).GetAwaiter().GetResult();
         }
 
-        protected IRulesEngine<ContentType, ConditionType> RulesEngine { get; }
+        protected IRulesEngine<RulesetNames, ConditionNames> RulesEngine { get; }
 
         public void Dispose()
         {
@@ -53,10 +53,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             }
         }
 
-        protected async Task<Rule<ContentType, ConditionType>> MatchOneAsync(
+        protected async Task<Rule<RulesetNames, ConditionNames>> MatchOneAsync(
             DateTime matchDate,
-            Condition<ConditionType>[] conditions) => await RulesEngine.MatchOneAsync(
-                TestContentType,
+            Condition<ConditionNames>[] conditions) => await RulesEngine.MatchOneAsync(
+                TestRuleset,
                 matchDate,
                 conditions);
 
@@ -73,7 +73,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             return new MongoClient(settings);
         }
 
-        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        private static MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
         {
             DatabaseName = "rules-framework-tests",
             RulesCollectionName = "features-tests"

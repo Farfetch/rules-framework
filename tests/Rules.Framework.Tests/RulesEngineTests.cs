@@ -21,14 +21,14 @@ namespace Rules.Framework.Tests
     public class RulesEngineTests
     {
         private readonly IConditionsEvalEngine conditionsEvalEngineMock;
-        private readonly IConditionTypeExtractor conditionTypeExtractorMock;
+        private readonly IRuleConditionsExtractor conditionTypeExtractorMock;
         private readonly IRulesSource rulesSourceMock;
         private readonly IValidatorProvider validatorProviderMock;
 
         public RulesEngineTests()
         {
             this.rulesSourceMock = Mock.Of<IRulesSource>();
-            this.conditionTypeExtractorMock = Mock.Of<IConditionTypeExtractor>();
+            this.conditionTypeExtractorMock = Mock.Of<IRuleConditionsExtractor>();
             this.conditionsEvalEngineMock = Mock.Of<IConditionsEvalEngine>();
             this.validatorProviderMock = Mock.Of<IValidatorProvider>();
         }
@@ -37,6 +37,8 @@ namespace Rules.Framework.Tests
         public async Task ActivateRuleAsync_GivenEmptyRuleDataSource_ActivatesRuleSuccessfully()
         {
             // Arrange
+            var ruleset = nameof(RulesetNames.Type1);
+
             var testRule = new Rule
             {
                 ContentContainer = new ContentContainer(_ => new object()),
@@ -45,7 +47,8 @@ namespace Rules.Framework.Tests
                 Name = "Update test rule",
                 Priority = 3,
                 Active = false,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA"),
+                Ruleset = ruleset,
             };
 
             Mock.Get(rulesSourceMock)
@@ -69,25 +72,25 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public async Task AddRuleAsync_GivenEmptyRuleDataSourceAndExistentContentType_AddsRuleSuccessfully()
+        public async Task AddRuleAsync_GivenEmptyRuleDataSourceAndExistentRuleset_AddsRuleSuccessfully()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
+            var ruleset = new Ruleset(RulesetNames.Type1.ToString(), DateTime.UtcNow);
 
             var testRule = new Rule
             {
-                ContentType = contentType,
+                Ruleset = ruleset.Name,
                 ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Test rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             Mock.Get(rulesSourceMock)
-                .Setup(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()))
-                .ReturnsAsync(new[] { contentType });
+                .Setup(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()))
+                .ReturnsAsync(new[] { ruleset });
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -107,25 +110,25 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public async Task AddRuleAsync_GivenEmptyRuleDataSourceAndNonExistentContentTypeAndAutoCreateContentTypeDisabled_DoesNotAddRuleAndReportsError()
+        public async Task AddRuleAsync_GivenEmptyRuleDataSourceAndNonExistentRulesetAndAutoCreateRulesetDisabled_DoesNotAddRuleAndReportsError()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
+            var ruleset = new Ruleset(RulesetNames.Type1.ToString(), DateTime.UtcNow);
 
             var testRule = new Rule
             {
-                ContentType = contentType,
+                Ruleset = ruleset.Name,
                 ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Test rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             Mock.Get(rulesSourceMock)
-                .Setup(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()))
-                .ReturnsAsync(Array.Empty<string>());
+                .Setup(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()))
+                .ReturnsAsync(Array.Empty<Ruleset>());
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -145,32 +148,32 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public async Task AddRuleAsync_GivenEmptyRuleDataSourceAndNonExistentContentTypeAndAutoCreateContentTypeEnabled_CreatesContentTypeAndAddsRuleSuccessfully()
+        public async Task AddRuleAsync_GivenEmptyRuleDataSourceAndNonExistentRulesetAndAutoCreateRulesetEnabled_CreatesRulesetAndAddsRuleSuccessfully()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
+            var ruleset = new Ruleset(RulesetNames.Type1.ToString(), DateTime.UtcNow);
 
             var testRule = new Rule
             {
-                ContentType = contentType,
+                Ruleset = ruleset.Name,
                 ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Test rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             Mock.Get(this.rulesSourceMock)
-                .Setup(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()))
-                .ReturnsAsync(Array.Empty<string>());
+                .Setup(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()))
+                .ReturnsAsync(Array.Empty<Ruleset>());
             Mock.Get(this.rulesSourceMock)
-                .Setup(x => x.CreateContentTypeAsync(It.IsAny<CreateContentTypeArgs>()))
+                .Setup(x => x.CreateRulesetAsync(It.IsAny<CreateRulesetArgs>()))
                 .Returns(Task.CompletedTask);
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
             rulesEngineOptions.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
-            rulesEngineOptions.AutoCreateContentTypes = true;
+            rulesEngineOptions.AutoCreateRulesets = true;
 
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProviderMock, rulesEngineOptions, conditionTypeExtractorMock);
 
@@ -181,21 +184,21 @@ namespace Rules.Framework.Tests
             actual.IsSuccess.Should().BeTrue();
             actual.Errors.Should().BeEmpty();
 
-            Mock.Get(rulesSourceMock).Verify(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()), Times.Once());
-            Mock.Get(rulesSourceMock).Verify(x => x.CreateContentTypeAsync(It.IsAny<CreateContentTypeArgs>()), Times.Once());
+            Mock.Get(rulesSourceMock).Verify(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()), Times.Once());
+            Mock.Get(rulesSourceMock).Verify(x => x.CreateRulesetAsync(It.IsAny<CreateRulesetArgs>()), Times.Once());
             Mock.Get(rulesSourceMock).Verify(x => x.GetRulesFilteredAsync(It.IsAny<GetRulesFilteredArgs>()), Times.Once());
             Mock.Get(conditionsEvalEngineMock).VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task CreateContentTypeAsync_GivenExistentContentTypeName_DoesNotAddContentTypeToRulesSource()
+        public async Task CreateRulesetAsync_GivenExistentRulesetName_DoesNotAddRulesetToRulesSource()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
+            var contentType = RulesetNames.Type1.ToString();
 
             Mock.Get(this.rulesSourceMock)
-                .Setup(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()))
-                .ReturnsAsync(new[] { nameof(ContentType.Type1), });
+                .Setup(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()))
+                .ReturnsAsync(new[] { new Ruleset(nameof(RulesetNames.Type1), DateTime.UtcNow), });
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
@@ -204,7 +207,7 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProviderMock, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var operationResult = await sut.CreateContentTypeAsync(contentType);
+            var operationResult = await sut.CreateRulesetAsync(contentType);
 
             // Assert
             operationResult.Should().NotBeNull();
@@ -212,22 +215,22 @@ namespace Rules.Framework.Tests
             operationResult.Errors.Should().NotBeNull()
                 .And.HaveCount(1);
 
-            Mock.Get(rulesSourceMock).Verify(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()), Times.Once());
-            Mock.Get(rulesSourceMock).Verify(x => x.CreateContentTypeAsync(It.Is<CreateContentTypeArgs>(x => string.Equals(x.Name, contentType))), Times.Never());
+            Mock.Get(rulesSourceMock).Verify(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()), Times.Once());
+            Mock.Get(rulesSourceMock).Verify(x => x.CreateRulesetAsync(It.Is<CreateRulesetArgs>(x => string.Equals(x.Name, contentType))), Times.Never());
             Mock.Get(conditionsEvalEngineMock).VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task CreateContentTypeAsync_GivenNonExistentContentTypeName_AddsContentTypeToRulesSource()
+        public async Task CreateRulesetAsync_GivenNonExistentRulesetName_AddsRulesetToRulesSource()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
+            var contentType = RulesetNames.Type1.ToString();
 
             Mock.Get(this.rulesSourceMock)
-                .Setup(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()))
-                .ReturnsAsync(Array.Empty<string>());
+                .Setup(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()))
+                .ReturnsAsync(Array.Empty<Ruleset>());
             Mock.Get(rulesSourceMock)
-                .Setup(x => x.CreateContentTypeAsync(It.Is<CreateContentTypeArgs>(x => string.Equals(x.Name, contentType))))
+                .Setup(x => x.CreateRulesetAsync(It.Is<CreateRulesetArgs>(x => string.Equals(x.Name, contentType))))
                 .Returns(Task.CompletedTask);
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
@@ -237,7 +240,7 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProviderMock, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var operationResult = await sut.CreateContentTypeAsync(contentType);
+            var operationResult = await sut.CreateRulesetAsync(contentType);
 
             // Assert
             operationResult.Should().NotBeNull();
@@ -245,8 +248,8 @@ namespace Rules.Framework.Tests
             operationResult.Errors.Should().NotBeNull()
                 .And.BeEmpty();
 
-            Mock.Get(rulesSourceMock).Verify(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()), Times.Once());
-            Mock.Get(rulesSourceMock).Verify(x => x.CreateContentTypeAsync(It.Is<CreateContentTypeArgs>(x => string.Equals(x.Name, contentType))), Times.Once());
+            Mock.Get(rulesSourceMock).Verify(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()), Times.Once());
+            Mock.Get(rulesSourceMock).Verify(x => x.CreateRulesetAsync(It.Is<CreateRulesetArgs>(x => string.Equals(x.Name, contentType))), Times.Once());
             Mock.Get(conditionsEvalEngineMock).VerifyNoOtherCalls();
         }
 
@@ -254,6 +257,8 @@ namespace Rules.Framework.Tests
         public async Task DeactivateRuleAsync_GivenEmptyRuleDataSource_DeactivatesRuleSuccessfully()
         {
             // Arrange
+            var ruleset = nameof(RulesetNames.Type1);
+
             var testRule = new Rule
             {
                 ContentContainer = new ContentContainer(_ => new object()),
@@ -261,7 +266,8 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Update test rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA"),
+                Ruleset = ruleset,
             };
 
             var evaluationOptions = new EvaluationOptions
@@ -292,12 +298,12 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public async Task GetContentTypesAsync_NoConditionsGiven_ReturnsContentTypesFromRulesSource()
+        public async Task GetRulesetsAsync_NoConditionsGiven_ReturnsRulesetsFromRulesSource()
         {
             // Arrange
             Mock.Get(this.rulesSourceMock)
-                .Setup(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()))
-                .ReturnsAsync(new[] { nameof(ContentType.Type1), nameof(ContentType.Type2), });
+                .Setup(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()))
+                .ReturnsAsync(new[] { new Ruleset(nameof(RulesetNames.Type1), DateTime.UtcNow), new Ruleset(nameof(RulesetNames.Type2), DateTime.UtcNow), });
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
             rulesEngineOptions.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
@@ -305,20 +311,20 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProviderMock, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var contentTypes = await sut.GetContentTypesAsync();
+            var contentTypes = await sut.GetRulesetsAsync();
 
             // Assert
             contentTypes.Should().NotBeNull()
                 .And.HaveCount(2)
-                .And.Contain(nameof(ContentType.Type1))
-                .And.Contain(nameof(ContentType.Type2));
+                .And.Contain(r => string.Equals(r.Name, nameof(RulesetNames.Type1), StringComparison.Ordinal))
+                .And.Contain(r => string.Equals(r.Name, nameof(RulesetNames.Type2), StringComparison.Ordinal));
 
-            Mock.Get(rulesSourceMock).Verify(x => x.GetContentTypesAsync(It.IsAny<GetContentTypesArgs>()), Times.Once());
+            Mock.Get(rulesSourceMock).Verify(x => x.GetRulesetsAsync(It.IsAny<GetRulesetsArgs>()), Times.Once());
             Mock.Get(conditionsEvalEngineMock).VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetUniqueConditionTypesAsync_GivenThereAreRulesInDataSource_ReturnsAllRequiredConditionTypes()
+        public async Task GetUniqueConditionsAsync_GivenThereAreRulesInDataSource_ReturnsAllRequiredConditions()
         {
             // Arrange
 
@@ -330,11 +336,11 @@ namespace Rules.Framework.Tests
                 MatchMode = MatchModes.Exact
             };
 
-            var expectedCondtionTypes = new List<string> { ConditionType.IsoCountryCode.ToString() };
+            var expectedConditions = new List<string> { ConditionNames.IsoCountryCode.ToString() };
 
             Mock.Get(conditionTypeExtractorMock)
-                .Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule>>()))
-                .Returns(expectedCondtionTypes);
+                .Setup(x => x.GetConditions(It.IsAny<IEnumerable<Rule>>()))
+                .Returns(expectedConditions);
 
             this.SetupMockForConditionsEvalEngine(
                 (rootConditionNode, _, _) => rootConditionNode is ValueConditionNode stringConditionNode && stringConditionNode.Operand.ToString() == "USA",
@@ -347,24 +353,24 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProvider, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var actual = await sut.GetUniqueConditionTypesAsync(ContentType.Type1.ToString(), dateBegin, dateEnd);
+            var actual = await sut.GetUniqueConditionsAsync(RulesetNames.Type1.ToString(), dateBegin, dateEnd);
 
             // Assert
             actual.Should().NotBeNull();
             actual.ToList().Count.Should().Be(1);
-            actual.Should().BeEquivalentTo(expectedCondtionTypes);
+            actual.Should().BeEquivalentTo(expectedConditions);
         }
 
         [Fact]
-        public async Task MatchManyAsync_GivenContentTypeDateAndConditions_FetchesRulesForDayEvalsAndReturnsAllMatches()
+        public async Task MatchManyAsync_GivenRulesetDateAndConditions_FetchesRulesForDayEvalsAndReturnsAllMatches()
         {
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
-            var contentType = ContentType.Type1.ToString();
+            var ruleset = RulesetNames.Type1.ToString();
             var conditions = new[]
             {
-                new Condition<string>(ConditionType.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionType.IsoCurrency.ToString(), "USD")
+                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
+                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
             };
 
             var expected1 = new Rule
@@ -374,7 +380,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule 1",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             var expected2 = new Rule
@@ -384,7 +390,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule 2",
                 Priority = 200,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             var notExpected = new Rule
@@ -394,7 +400,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Not expected rule",
                 Priority = 1, // Topmost rule, should be the one that wins if options are set to topmost wins.
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "CHE")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "CHE")
             };
 
             var rules = new[]
@@ -422,7 +428,7 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProvider, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var actual = await sut.MatchManyAsync(contentType, matchDateTime, conditions);
+            var actual = await sut.MatchManyAsync(ruleset, matchDateTime, conditions);
 
             // Assert
             actual.Should().Contain(expected1)
@@ -436,15 +442,15 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public async Task MatchOneAsync_GivenContentTypeDateAndConditions_FetchesRulesForDayEvalsAndReturnsTheBottommostPriorityOne()
+        public async Task MatchOneAsync_GivenRulesetDateAndConditions_FetchesRulesForDayEvalsAndReturnsTheBottommostPriorityOne()
         {
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
-            var contentType = ContentType.Type1.ToString();
+            var ruleset = RulesetNames.Type1.ToString();
             var conditions = new[]
             {
-                new Condition<string>(ConditionType.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionType.IsoCurrency.ToString(), "USD")
+                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
+                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
             };
 
             var other = new Rule
@@ -454,7 +460,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             var expected = new Rule
@@ -464,7 +470,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule",
                 Priority = 200,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             var rules = new[]
@@ -490,7 +496,7 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProvider, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
+            var actual = await sut.MatchOneAsync(ruleset, matchDateTime, conditions);
 
             // Assert
             actual.Should().BeSameAs(expected);
@@ -502,15 +508,15 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public async Task MatchOneAsync_GivenContentTypeDateAndConditions_FetchesRulesForDayEvalsAndReturnsTheTopmostPriorityOne()
+        public async Task MatchOneAsync_GivenRulesetDateAndConditions_FetchesRulesForDayEvalsAndReturnsTheTopmostPriorityOne()
         {
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
-            var contentType = ContentType.Type1.ToString();
+            var ruleset = RulesetNames.Type1.ToString();
             var conditions = new[]
             {
-                new Condition<string>(ConditionType.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionType.IsoCurrency.ToString(), "USD")
+                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
+                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
             };
 
             var expected = new Rule
@@ -520,7 +526,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             var other = new Rule
@@ -530,7 +536,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule",
                 Priority = 200,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             var rules = new[]
@@ -554,7 +560,7 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProvider, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
+            var actual = await sut.MatchOneAsync(ruleset, matchDateTime, conditions);
 
             // Assert
             actual.Should().BeSameAs(expected);
@@ -566,15 +572,15 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public async Task MatchOneAsync_GivenContentTypeDateAndConditions_FetchesRulesForDayFailsEvalsAndReturnsNull()
+        public async Task MatchOneAsync_GivenRulesetDateAndConditions_FetchesRulesForDayFailsEvalsAndReturnsNull()
         {
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
-            var contentType = ContentType.Type1.ToString();
+            var ruleset = RulesetNames.Type1.ToString();
             var conditions = new[]
             {
-                new Condition<string>(ConditionType.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionType.IsoCurrency.ToString(), "USD")
+                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
+                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
             };
 
             var rules = new[]
@@ -586,7 +592,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Expected rule",
                     Priority = 3,
-                    RootCondition = new ValueConditionNode(DataTypes.String,ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode(DataTypes.String,ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
                 },
                 new Rule
                 {
@@ -595,7 +601,7 @@ namespace Rules.Framework.Tests
                     DateEnd = new DateTime(2021, 01, 01),
                     Name = "Expected rule",
                     Priority = 200,
-                    RootCondition = new ValueConditionNode(DataTypes.String,ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                    RootCondition = new ValueConditionNode(DataTypes.String,ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
                 }
             };
 
@@ -614,7 +620,7 @@ namespace Rules.Framework.Tests
             var sut = new RulesEngine(conditionsEvalEngineMock, rulesSourceMock, validatorProvider, rulesEngineOptions, conditionTypeExtractorMock);
 
             // Act
-            var actual = await sut.MatchOneAsync(contentType, matchDateTime, conditions);
+            var actual = await sut.MatchOneAsync(ruleset, matchDateTime, conditions);
 
             // Assert
             actual.Should().BeNull();
@@ -628,7 +634,9 @@ namespace Rules.Framework.Tests
         [Fact]
         public async Task UpdateRuleAsync_GivenEmptyRuleDataSource_UpdatesRuleSuccesfully()
         {
-            // Arrange«
+            // Arrange
+            var ruleset = nameof(RulesetNames.Type1);
+
             var testRule = new Rule
             {
                 ContentContainer = new ContentContainer(_ => new object()),
@@ -636,7 +644,8 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Update test rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA"),
+                Ruleset = ruleset,
             };
 
             var evaluationOptions = new EvaluationOptions
@@ -680,7 +689,7 @@ namespace Rules.Framework.Tests
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Update test rule",
                 Priority = 3,
-                RootCondition = new ValueConditionNode(DataTypes.String, ConditionType.IsoCountryCode.ToString(), Operators.Equal, "USA")
+                RootCondition = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCountryCode.ToString(), Operators.Equal, "USA")
             };
 
             var evaluationOptions = new EvaluationOptions
@@ -717,11 +726,11 @@ namespace Rules.Framework.Tests
         [InlineData(nameof(RulesEngine.ActivateRuleAsync), "rule", typeof(ArgumentNullException))]
         [InlineData(nameof(RulesEngine.AddRuleAsync), "rule", typeof(ArgumentNullException))]
         [InlineData(nameof(RulesEngine.AddRuleAsync), "ruleAddPriorityOption", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine.CreateContentTypeAsync), "contentType", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine.CreateRulesetAsync), "ruleset", typeof(ArgumentNullException))]
         [InlineData(nameof(RulesEngine.DeactivateRuleAsync), "rule", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine.GetUniqueConditionTypesAsync), "contentType", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine.MatchManyAsync), "contentType", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine.MatchOneAsync), "contentType", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine.GetUniqueConditionsAsync), "ruleset", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine.MatchManyAsync), "ruleset", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine.MatchOneAsync), "ruleset", typeof(ArgumentNullException))]
         [InlineData(nameof(RulesEngine.SearchAsync), "searchArgs", typeof(ArgumentNullException))]
         [InlineData(nameof(RulesEngine.SearchAsync), "searchArgs", typeof(ArgumentException))]
         [InlineData(nameof(RulesEngine.UpdateRuleAsync), "rule", typeof(ArgumentNullException))]
@@ -771,16 +780,16 @@ namespace Rules.Framework.Tests
                         }
                         break;
 
-                    case nameof(RulesEngine.CreateContentTypeAsync):
-                        await sut.CreateContentTypeAsync(null);
+                    case nameof(RulesEngine.CreateRulesetAsync):
+                        await sut.CreateRulesetAsync(null);
                         break;
 
                     case nameof(RulesEngine.DeactivateRuleAsync):
                         _ = await sut.DeactivateRuleAsync(null);
                         break;
 
-                    case nameof(RulesEngine.GetUniqueConditionTypesAsync):
-                        _ = await sut.GetUniqueConditionTypesAsync(null, DateTime.MinValue, DateTime.MaxValue);
+                    case nameof(RulesEngine.GetUniqueConditionsAsync):
+                        _ = await sut.GetUniqueConditionsAsync(null, DateTime.MinValue, DateTime.MaxValue);
                         break;
 
                     case nameof(RulesEngine.MatchManyAsync):
@@ -829,10 +838,10 @@ namespace Rules.Framework.Tests
         }
 
         private static Rule CreateTestStubRule()
-            => Rule.New()
-                .WithName("Test stub")
-                .WithDateBegin(DateTime.Parse("2024-08-17", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal))
-                .WithContent("Test content type", new object())
+            => Rule.Create("Test stub")
+                .OnRuleset("Test content type")
+                .SetContent(new object())
+                .Since(DateTime.Parse("2024-08-17", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal))
                 .Build()
                 .Rule;
 

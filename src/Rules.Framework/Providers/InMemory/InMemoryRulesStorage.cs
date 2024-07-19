@@ -8,16 +8,16 @@ namespace Rules.Framework.Providers.InMemory
 
     internal sealed class InMemoryRulesStorage : IInMemoryRulesStorage
     {
-        private readonly ConcurrentDictionary<string, List<RuleDataModel>> rulesByContentType;
+        private readonly ConcurrentDictionary<string, RulesetDataModel> rulesets;
 
         public InMemoryRulesStorage()
         {
-            this.rulesByContentType = new ConcurrentDictionary<string, List<RuleDataModel>>(StringComparer.Ordinal);
+            this.rulesets = new ConcurrentDictionary<string, RulesetDataModel>(StringComparer.Ordinal);
         }
 
         public void AddRule(RuleDataModel ruleDataModel)
         {
-            var contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var contentTypeRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
 
             lock (contentTypeRules)
             {
@@ -30,27 +30,32 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        public void CreateContentType(string contentType)
+        public void CreateRuleset(string ruleset)
         {
-            _ = this.rulesByContentType.TryAdd(contentType, new List<RuleDataModel>());
+            _ = this.rulesets.TryAdd(ruleset, new RulesetDataModel
+            {
+                Creation = DateTime.UtcNow,
+                Name = ruleset,
+                Rules = new List<RuleDataModel>(),
+            });
         }
 
         public IReadOnlyCollection<RuleDataModel> GetAllRules()
-            => this.rulesByContentType.SelectMany(kvp => kvp.Value).ToList().AsReadOnly();
-
-        public IReadOnlyCollection<string> GetContentTypes()
-            => this.rulesByContentType.Keys.ToList().AsReadOnly();
+            => this.rulesets.SelectMany(kvp => kvp.Value.Rules).ToList().AsReadOnly();
 
         public IReadOnlyCollection<RuleDataModel> GetRulesBy(string contentType)
         {
-            var contentTypeRules = GetRulesCollectionByContentType(contentType);
+            var rules = this.GetRulesCollectionByRuleset(contentType);
 
-            return contentTypeRules.AsReadOnly();
+            return rules.AsReadOnly();
         }
+
+        public IReadOnlyCollection<RulesetDataModel> GetRulesets()
+            => this.rulesets.Values.ToList().AsReadOnly();
 
         public void UpdateRule(RuleDataModel ruleDataModel)
         {
-            var contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var contentTypeRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
 
             lock (contentTypeRules)
             {
@@ -65,7 +70,14 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        private List<RuleDataModel> GetRulesCollectionByContentType(string contentType) => this.rulesByContentType
-                                .GetOrAdd(contentType, _ => new List<RuleDataModel>());
+        private List<RuleDataModel> GetRulesCollectionByRuleset(string ruleset)
+        {
+            if (this.rulesets.TryGetValue(ruleset, out var rulesetDataModel))
+            {
+                return rulesetDataModel.Rules;
+            }
+
+            throw new InvalidOperationException($"A ruleset with name '{ruleset}' does not exist.");
+        }
     }
 }

@@ -3,7 +3,6 @@ namespace Rules.Framework.Tests.Validation
     using System;
     using System.Linq;
     using FluentAssertions;
-    using FluentValidation.Results;
     using Rules.Framework.Tests.Stubs;
     using Rules.Framework.Validation;
     using Xunit;
@@ -14,18 +13,18 @@ namespace Rules.Framework.Tests.Validation
         public void Validate_GivenConditionWithTypeAsAsEnumTypeAndUndefinedValue_ReturnsFailedValidation()
         {
             // Arrange
-            SearchArgs<ContentType, ConditionType> searchArgs = new SearchArgs<ContentType, ConditionType>(ContentType.Type1, DateTime.MinValue, DateTime.MaxValue)
+            var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionType>(0, 1)
+                    new Condition<ConditionNames>(0, 1)
                 }
             };
 
-            SearchArgsValidator<ContentType, ConditionType> validator = new SearchArgsValidator<ContentType, ConditionType>();
+            var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeFalse();
@@ -37,18 +36,18 @@ namespace Rules.Framework.Tests.Validation
         public void Validate_GivenConditionWithTypeAsClassTypeAndNotNullValue_ReturnsSuccessValidation()
         {
             // Arrange
-            SearchArgs<ContentType, ConditionTypeClass> searchArgs = new SearchArgs<ContentType, ConditionTypeClass>(ContentType.Type1, DateTime.MinValue, DateTime.MaxValue)
+            var searchArgs = new SearchArgs<RulesetNames, ConditionClass>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionTypeClass>(new ConditionTypeClass{Id = 1, Name = "Sample Condition Type" }, 1)
+                    new Condition<ConditionClass>(new ConditionClass{Id = 1, Name = "Sample Condition Type" }, 1)
                 }
             };
 
-            SearchArgsValidator<ContentType, ConditionTypeClass> validator = new SearchArgsValidator<ContentType, ConditionTypeClass>();
+            var validator = new SearchArgsValidator<RulesetNames, ConditionClass>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeTrue();
@@ -59,18 +58,18 @@ namespace Rules.Framework.Tests.Validation
         public void Validate_GivenConditionWithTypeAsClassTypeAndNullValue_ReturnsFailedValidation()
         {
             // Arrange
-            SearchArgs<ContentType, ConditionTypeClass> searchArgs = new SearchArgs<ContentType, ConditionTypeClass>(ContentType.Type1, DateTime.MinValue, DateTime.MaxValue)
+            var searchArgs = new SearchArgs<RulesetNames, ConditionClass>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionTypeClass>(null, 1)
+                    new Condition<ConditionClass>(null, 1)
                 }
             };
 
-            SearchArgsValidator<ContentType, ConditionTypeClass> validator = new SearchArgsValidator<ContentType, ConditionTypeClass>();
+            var validator = new SearchArgsValidator<RulesetNames, ConditionClass>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeFalse();
@@ -82,18 +81,18 @@ namespace Rules.Framework.Tests.Validation
         public void Validate_GivenConditionWithTypeAsEnumTypeAndDefinedValue_ReturnsSuccessValidation()
         {
             // Arrange
-            SearchArgs<ContentType, ConditionType> searchArgs = new SearchArgs<ContentType, ConditionType>(ContentType.Type1, DateTime.MinValue, DateTime.MaxValue)
+            var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
             {
                 Conditions = new[]
                 {
-                    new Condition<ConditionType>(ConditionType.IsoCountryCode,"PT")
+                    new Condition<ConditionNames>(ConditionNames.IsoCountryCode,"PT")
                 }
             };
 
-            SearchArgsValidator<ContentType, ConditionType> validator = new SearchArgsValidator<ContentType, ConditionType>();
+            var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeTrue();
@@ -104,17 +103,17 @@ namespace Rules.Framework.Tests.Validation
         public void Validate_GivenContentTypeAsClassTypeAndNotNullValue_ReturnsSuccessValidation()
         {
             // Arrange
-            ContentTypeClass contentType = new ContentTypeClass
+            var contentType = new RulesetClass
             {
                 Id = 1,
                 Name = "Sample"
             };
-            SearchArgs<ContentTypeClass, ConditionType> searchArgs = new SearchArgs<ContentTypeClass, ConditionType>(contentType, DateTime.MinValue, DateTime.MaxValue);
+            var searchArgs = new SearchArgs<RulesetClass, ConditionNames>(contentType, DateTime.MinValue, DateTime.MaxValue);
 
-            SearchArgsValidator<ContentTypeClass, ConditionType> validator = new SearchArgsValidator<ContentTypeClass, ConditionType>();
+            var validator = new SearchArgsValidator<RulesetClass, ConditionNames>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeTrue();
@@ -125,29 +124,29 @@ namespace Rules.Framework.Tests.Validation
         public void Validate_GivenContentTypeAsClassTypeAndNullValue_ReturnsFailedValidation()
         {
             // Arrange
-            SearchArgs<ContentTypeClass, ConditionType> searchArgs = new SearchArgs<ContentTypeClass, ConditionType>(null, DateTime.MinValue, DateTime.MaxValue);
+            var searchArgs = new SearchArgs<RulesetClass, ConditionNames>(null, DateTime.MinValue, DateTime.MaxValue);
 
-            SearchArgsValidator<ContentTypeClass, ConditionType> validator = new SearchArgsValidator<ContentTypeClass, ConditionType>();
+            var validator = new SearchArgsValidator<RulesetClass, ConditionNames>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeFalse();
             validationResult.Errors.Should().HaveCount(1);
-            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == nameof(searchArgs.ContentType)));
+            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == nameof(searchArgs.Ruleset)));
         }
 
         [Fact]
         public void Validate_GivenContentTypeAsEnumTypeAndDefinedValue_ReturnsSuccessValidation()
         {
             // Arrange
-            SearchArgs<ContentType, ConditionType> searchArgs = new SearchArgs<ContentType, ConditionType>(ContentType.Type1, DateTime.MinValue, DateTime.MaxValue);
+            var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue);
 
-            SearchArgsValidator<ContentType, ConditionType> validator = new SearchArgsValidator<ContentType, ConditionType>();
+            var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeTrue();
@@ -158,29 +157,29 @@ namespace Rules.Framework.Tests.Validation
         public void Validate_GivenContentTypeAsEnumTypeAndUndefinedValue_ReturnsFailedValidation()
         {
             // Arrange
-            SearchArgs<ContentType, ConditionType> searchArgs = new SearchArgs<ContentType, ConditionType>(0, DateTime.MinValue, DateTime.MaxValue);
+            var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(0, DateTime.MinValue, DateTime.MaxValue);
 
-            SearchArgsValidator<ContentType, ConditionType> validator = new SearchArgsValidator<ContentType, ConditionType>();
+            var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeFalse();
             validationResult.Errors.Should().HaveCount(1);
-            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == nameof(searchArgs.ContentType)));
+            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == nameof(searchArgs.Ruleset)));
         }
 
         [Fact]
         public void Validate_GivenDateEndLesserThanDateEnd_ReturnsFailedValidation()
         {
             // Arrange
-            SearchArgs<ContentType, ConditionType> searchArgs = new SearchArgs<ContentType, ConditionType>(ContentType.Type1, DateTime.Parse("2021-03-01Z"), DateTime.Parse("2021-02-01Z"));
+            var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.Parse("2021-03-01Z"), DateTime.Parse("2021-02-01Z"));
 
-            SearchArgsValidator<ContentType, ConditionType> validator = new SearchArgsValidator<ContentType, ConditionType>();
+            var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
 
             // Act
-            ValidationResult validationResult = validator.Validate(searchArgs);
+            var validationResult = validator.Validate(searchArgs);
 
             // Assert
             validationResult.IsValid.Should().BeFalse();

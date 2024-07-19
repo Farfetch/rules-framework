@@ -14,8 +14,6 @@ namespace Rules.Framework.Providers.MongoDb
         /// <summary>
         /// Sets the rules engine data source from a Mongo DB database.
         /// </summary>
-        /// <typeparam name="TContentType">The type of the content type.</typeparam>
-        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
         /// <param name="rulesDataSourceSelector">The rules data source selector.</param>
         /// <param name="mongoClient">The mongo client.</param>
         /// <param name="mongoDbProviderSettings">The mongo database provider settings.</param>

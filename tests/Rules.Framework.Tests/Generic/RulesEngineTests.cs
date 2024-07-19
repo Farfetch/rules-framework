@@ -21,60 +21,62 @@ namespace Rules.Framework.Tests.Generic
         }
 
         [Fact]
-        public async Task GetContentTypes_NoConditionsGiven_ReturnsContentTypes()
+        public async Task GetRulesetsAsync_NoConditionsGiven_ReturnsRulesets()
         {
             // Arrange
-            var expectedGenericContentTypes = new List<ContentType>
+            var ruleset1 = new Ruleset("Type1", DateTime.UtcNow);
+            var ruleset2 = new Ruleset("Type2", DateTime.UtcNow);
+            var rulesets = new[] { ruleset1, ruleset2, };
+            var expectedGenericRulesets = new[]
             {
-                ContentType.Type1,
-                ContentType.Type2,
+                new Ruleset<RulesetNames>(ruleset1),
+                new Ruleset<RulesetNames>(ruleset2),
             };
+            Mock.Get(this.rulesEngineMock)
+                .Setup(x => x.GetRulesetsAsync())
+                .ReturnsAsync(rulesets);
 
-            var contentTypes = new[] { "Type1", "Type2" };
-            Mock.Get(this.rulesEngineMock).Setup(x => x.GetContentTypesAsync())
-                .ReturnsAsync(contentTypes);
-
-            var genericRulesEngine = new RulesEngine<ContentType, ConditionType>(this.rulesEngineMock);
+            var genericRulesEngine = new RulesEngine<RulesetNames, ConditionNames>(this.rulesEngineMock);
 
             // Act
-            var genericContentTypes = await genericRulesEngine.GetContentTypesAsync();
+            var genericRulesets = await genericRulesEngine.GetRulesetsAsync();
 
             // Assert
-            genericContentTypes.Should().BeEquivalentTo(expectedGenericContentTypes);
+            genericRulesets.Should().BeEquivalentTo(expectedGenericRulesets);
         }
 
         [Fact]
-        public async Task GetContentTypes_WithEmptyContentType_Success()
+        public async Task GetRulesetsAsync_WithEmptyRulesetsNames_ReturnsEmptyRulesetsCollection()
         {
             // Arrange
             var mockRulesEngineEmptyContentType = new Mock<IRulesEngine>();
 
-            var genericRulesEngine = new RulesEngine<EmptyContentType, ConditionType>(mockRulesEngineEmptyContentType.Object);
+            var genericRulesEngine = new RulesEngine<EmptyRulesetNames, ConditionNames>(mockRulesEngineEmptyContentType.Object);
 
             // Act
-            var genericContentTypes = await genericRulesEngine.GetContentTypesAsync();
+            var genericRulesets = await genericRulesEngine.GetRulesetsAsync();
 
             // Assert
-            genericContentTypes.Should().BeEmpty();
+            genericRulesets.Should().BeEmpty();
         }
 
         [Fact]
-        public async Task GetUniqueConditionTypes_GivenContentTypeAndDatesInterval_ReturnsConditionTypes()
+        public async Task GetUniqueConditions_GivenRulesetAndDatesInterval_ReturnsConditions()
         {
             // Arrange
             Mock.Get(this.rulesEngineMock)
-                .Setup(x => x.GetUniqueConditionTypesAsync(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .ReturnsAsync(new[] { nameof(ConditionType.NumberOfSales), nameof(ConditionType.IsVip), });
+                .Setup(x => x.GetUniqueConditionsAsync(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsAsync(new[] { nameof(ConditionNames.NumberOfSales), nameof(ConditionNames.IsVip), });
 
-            var genericRulesEngine = new RulesEngine<ContentType, ConditionType>(rulesEngineMock);
+            var genericRulesEngine = new RulesEngine<RulesetNames, ConditionNames>(rulesEngineMock);
 
             // Act
-            var genericContentTypes = await genericRulesEngine.GetUniqueConditionTypesAsync(ContentType.Type1, DateTime.MinValue, DateTime.MaxValue);
+            var genericConditions = await genericRulesEngine.GetUniqueConditionsAsync(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue);
 
             // Assert
-            genericContentTypes.Should().NotBeNullOrEmpty()
-                .And.Contain(ConditionType.NumberOfSales)
-                .And.Contain(ConditionType.IsVip);
+            genericConditions.Should().NotBeNullOrEmpty()
+                .And.Contain(ConditionNames.NumberOfSales)
+                .And.Contain(ConditionNames.IsVip);
         }
 
         [Fact]
@@ -86,7 +88,7 @@ namespace Rules.Framework.Tests.Generic
                 .SetupGet(x => x.Options)
                 .Returns(options);
 
-            var genericRulesEngine = new RulesEngine<ContentType, ConditionType>(this.rulesEngineMock);
+            var genericRulesEngine = new RulesEngine<RulesetNames, ConditionNames>(this.rulesEngineMock);
 
             // Act
             var actual = genericRulesEngine.Options;
@@ -99,25 +101,27 @@ namespace Rules.Framework.Tests.Generic
         public async Task SearchAsync_GivenContentTypeAndDatesIntervalAndNoConditions_ReturnsRules()
         {
             // Arrange
-            var expectedRule = Rule.New<ContentType, ConditionType>()
-                .WithName("Test rule")
-                .WithDatesInterval(new DateTime(2018, 01, 01), new DateTime(2019, 01, 01))
-                .WithContent(ContentType.Type1, new object())
-                .WithCondition(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            var expectedRule = Rule.Create<RulesetNames, ConditionNames>("Test rule")
+                .OnRuleset(RulesetNames.Type1)
+                .SetContent(new object())
+                .Since(new DateTime(2018, 01, 01))
+                .Until(new DateTime(2019, 01, 01))
+                .ApplyWhen(ConditionNames.IsoCountryCode, Operators.Equal, "USA")
                 .Build().Rule;
             expectedRule.Priority = 3;
 
             var dateBegin = new DateTime(2022, 01, 01);
             var dateEnd = new DateTime(2022, 12, 01);
-            var genericContentType = ContentType.Type1;
+            var genericContentType = RulesetNames.Type1;
 
-            var genericSearchArgs = new SearchArgs<ContentType, ConditionType>(genericContentType, dateBegin, dateEnd);
+            var genericSearchArgs = new SearchArgs<RulesetNames, ConditionNames>(genericContentType, dateBegin, dateEnd);
 
-            var testRule = Rule.New<ContentType, ConditionType>()
-                .WithName("Test rule")
-                .WithDatesInterval(new DateTime(2018, 01, 01), new DateTime(2019, 01, 01))
-                .WithContent(ContentType.Type1, new object())
-                .WithCondition(ConditionType.IsoCountryCode, Operators.Equal, "USA")
+            var testRule = Rule.Create<RulesetNames, ConditionNames>("Test rule")
+                .OnRuleset(RulesetNames.Type1)
+                .SetContent(new object())
+                .Since(new DateTime(2018, 01, 01))
+                .Until(new DateTime(2019, 01, 01))
+                .ApplyWhen(ConditionNames.IsoCountryCode, Operators.Equal, "USA")
                 .Build().Rule;
             testRule.Priority = 3;
             var testRules = new List<Rule>
@@ -129,7 +133,7 @@ namespace Rules.Framework.Tests.Generic
                 .Setup(m => m.SearchAsync(It.IsAny<SearchArgs<string, string>>()))
                 .ReturnsAsync(testRules);
 
-            var genericRulesEngine = new RulesEngine<ContentType, ConditionType>(this.rulesEngineMock);
+            var genericRulesEngine = new RulesEngine<RulesetNames, ConditionNames>(this.rulesEngineMock);
 
             // Act
             var genericRules = await genericRulesEngine.SearchAsync(genericSearchArgs);
@@ -142,38 +146,38 @@ namespace Rules.Framework.Tests.Generic
         }
 
         [Theory]
-        [InlineData(nameof(RulesEngine<ContentType, ConditionType>.ActivateRuleAsync), "rule", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine<ContentType, ConditionType>.AddRuleAsync), "rule", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine<ContentType, ConditionType>.DeactivateRuleAsync), "rule", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine<ContentType, ConditionType>.SearchAsync), "searchArgs", typeof(ArgumentNullException))]
-        [InlineData(nameof(RulesEngine<ContentType, ConditionType>.UpdateRuleAsync), "rule", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine<RulesetNames, ConditionNames>.ActivateRuleAsync), "rule", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine<RulesetNames, ConditionNames>.AddRuleAsync), "rule", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine<RulesetNames, ConditionNames>.DeactivateRuleAsync), "rule", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine<RulesetNames, ConditionNames>.SearchAsync), "searchArgs", typeof(ArgumentNullException))]
+        [InlineData(nameof(RulesEngine<RulesetNames, ConditionNames>.UpdateRuleAsync), "rule", typeof(ArgumentNullException))]
         public async Task VerifyParameters_GivenNullParameter_ThrowsArgumentNullException(string methodName, string parameterName, Type exceptionType)
         {
             // Arrange
-            var sut = new RulesEngine<ContentType, ConditionType>(this.rulesEngineMock);
+            var sut = new RulesEngine<RulesetNames, ConditionNames>(this.rulesEngineMock);
 
             // Act
             var actual = await Assert.ThrowsAsync(exceptionType, async () =>
             {
                 switch (methodName)
                 {
-                    case nameof(RulesEngine<ContentType, ConditionType>.ActivateRuleAsync):
+                    case nameof(RulesEngine<RulesetNames, ConditionNames>.ActivateRuleAsync):
                         _ = await sut.ActivateRuleAsync(null);
                         break;
 
-                    case nameof(RulesEngine<ContentType, ConditionType>.AddRuleAsync):
+                    case nameof(RulesEngine<RulesetNames, ConditionNames>.AddRuleAsync):
                         _ = await sut.AddRuleAsync(null, RuleAddPriorityOption.AtTop);
                         break;
 
-                    case nameof(RulesEngine<ContentType, ConditionType>.DeactivateRuleAsync):
+                    case nameof(RulesEngine<RulesetNames, ConditionNames>.DeactivateRuleAsync):
                         _ = await sut.DeactivateRuleAsync(null);
                         break;
 
-                    case nameof(RulesEngine<ContentType, ConditionType>.SearchAsync):
+                    case nameof(RulesEngine<RulesetNames, ConditionNames>.SearchAsync):
                         _ = await sut.SearchAsync(null);
                         break;
 
-                    case nameof(RulesEngine<ContentType, ConditionType>.UpdateRuleAsync):
+                    case nameof(RulesEngine<RulesetNames, ConditionNames>.UpdateRuleAsync):
                         _ = await sut.UpdateRuleAsync(null);
                         break;
 

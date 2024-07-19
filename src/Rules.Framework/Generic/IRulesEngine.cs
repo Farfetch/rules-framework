@@ -7,9 +7,9 @@ namespace Rules.Framework.Generic
     /// <summary>
     /// The engine that holds the logic to match and manage rules.
     /// </summary>
-    /// <typeparam name="TContentType">The type of the content type.</typeparam>
-    /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    public interface IRulesEngine<TContentType, TConditionType>
+    /// <typeparam name="TRuleset">The ruleset type that strongly types rulesets.</typeparam>
+    /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
+    public interface IRulesEngine<TRuleset, TCondition>
     {
         /// <summary>
         /// Gets the options.
@@ -26,7 +26,7 @@ namespace Rules.Framework.Generic
         /// errors occurred during the operation.
         /// </returns>
         /// <exception cref="ArgumentNullException">rule</exception>
-        Task<OperationResult> ActivateRuleAsync(Rule<TContentType, TConditionType> rule);
+        Task<OperationResult> ActivateRuleAsync(Rule<TRuleset, TCondition> rule);
 
         /// <summary>
         /// Adds a new rule.
@@ -39,14 +39,18 @@ namespace Rules.Framework.Generic
         /// </returns>
         /// <exception cref="ArgumentNullException">rule or rule</exception>
         /// <exception cref="NotSupportedException">The priority option is not supported.</exception>
-        Task<OperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption);
+        Task<OperationResult> AddRuleAsync(Rule<TRuleset, TCondition> rule, RuleAddPriorityOption ruleAddPriorityOption);
 
         /// <summary>
-        /// Creates a content type.
+        /// Creates a ruleset.
         /// </summary>
-        /// <param name="contentType">Type of the content.</param>
-        /// <returns></returns>
-        Task CreateContentTypeAsync(TContentType contentType);
+        /// <param name="ruleset">the ruleset name.</param>
+        /// <returns>
+        /// the operation result, containing success/failure indication and messages associated to
+        /// errors occurred during the operation.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">ruleset</exception>
+        Task CreateRulesetAsync(TRuleset ruleset);
 
         /// <summary>
         /// Deactivates the specified existing rule.
@@ -57,35 +61,36 @@ namespace Rules.Framework.Generic
         /// errors occurred during the operation.
         /// </returns>
         /// <exception cref="ArgumentNullException">rule</exception>
-        Task<OperationResult> DeactivateRuleAsync(Rule<TContentType, TConditionType> rule);
+        Task<OperationResult> DeactivateRuleAsync(Rule<TRuleset, TCondition> rule);
 
         /// <summary>
-        /// Gets the content types.
+        /// Gets the rulesets.
         /// </summary>
-        /// <returns>List of content types</returns>
-        Task<IEnumerable<TContentType>> GetContentTypesAsync();
+        /// <returns>a collection of all rulesets, including respective metadata.</returns>
+        Task<IEnumerable<Ruleset<TRuleset>>> GetRulesetsAsync();
 
         /// <summary>
-        /// Get the unique condition types associated with rules of a specific content type.
+        /// Get the unique conditions associated with rules of a specific ruleset.
         /// </summary>
-        /// <param name="contentType"></param>
+        /// <param name="ruleset"></param>
         /// <param name="dateBegin"></param>
         /// <param name="dateEnd"></param>
         /// <remarks>
         /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
+        /// A set of rules is requested to rules data source and all conditions are fetched and a
+        /// distinct collection of all conditions is returned.
         /// </para>
-        /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
-        /// <returns>the matched rule; otherwise, empty.</returns>
-        Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd);
+        /// <returns>
+        /// the distinct collection of all conditions present on the rules of the provided ruleset.
+        /// </returns>
+        Task<IEnumerable<TCondition>> GetUniqueConditionsAsync(TRuleset ruleset, DateTime dateBegin, DateTime dateEnd);
 
         /// <summary>
-        /// Provides all rule matches (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// Provides all rule matches (if any) to the given <paramref name="ruleset"/> at the
+        /// specified <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>
-        /// <param name="contentType"></param>
+        /// <param name="ruleset"></param>
         /// <param name="matchDateTime"></param>
         /// <param name="conditions"></param>
         /// <remarks>
@@ -96,13 +101,13 @@ namespace Rules.Framework.Generic
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions);
+        Task<IEnumerable<Rule<TRuleset, TCondition>>> MatchManyAsync(TRuleset ruleset, DateTime matchDateTime, IEnumerable<Condition<TCondition>> conditions);
 
         /// <summary>
-        /// Provides a rule match (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
+        /// Provides a rule match (if any) to the given <paramref name="ruleset"/> at the specified
+        /// <paramref name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
         /// </summary>
-        /// <param name="contentType"></param>
+        /// <param name="ruleset"></param>
         /// <param name="matchDateTime"></param>
         /// <param name="conditions"></param>
         /// <remarks>
@@ -116,20 +121,20 @@ namespace Rules.Framework.Generic
         /// </para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<Rule<TContentType, TConditionType>> MatchOneAsync(TContentType contentType, DateTime matchDateTime, IEnumerable<Condition<TConditionType>> conditions);
+        Task<Rule<TRuleset, TCondition>> MatchOneAsync(TRuleset ruleset, DateTime matchDateTime, IEnumerable<Condition<TCondition>> conditions);
 
         /// <summary>
-        /// Searches for rules on given content type that match on supplied <paramref name="searchArgs"/>.
+        /// Searches for rules that match on supplied <paramref name="searchArgs"/>.
         /// </summary>
         /// <param name="searchArgs"></param>
         /// <remarks>
         /// <para>
-        /// Only the condition types supplied on input conditions are evaluated, the remaining
-        /// conditions are ignored.
+        /// Only the conditions supplied on input conditions are evaluated, the remaining conditions
+        /// are ignored.
         /// </para>
         /// </remarks>
         /// <returns>the set of rules matching the conditions.</returns>
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> SearchAsync(SearchArgs<TContentType, TConditionType> searchArgs);
+        Task<IEnumerable<Rule<TRuleset, TCondition>>> SearchAsync(SearchArgs<TRuleset, TCondition> searchArgs);
 
         /// <summary>
         /// Updates the specified existing rule.
@@ -140,6 +145,6 @@ namespace Rules.Framework.Generic
         /// errors occurred during the operation.
         /// </returns>
         /// <exception cref="ArgumentNullException">rule</exception>
-        Task<OperationResult> UpdateRuleAsync(Rule<TContentType, TConditionType> rule);
+        Task<OperationResult> UpdateRuleAsync(Rule<TRuleset, TCondition> rule);
     }
 }

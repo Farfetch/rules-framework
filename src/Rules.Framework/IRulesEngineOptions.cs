@@ -8,13 +8,13 @@ namespace Rules.Framework
     public interface IRulesEngineOptions
     {
         /// <summary>
-        /// Gets a value indicating whether automatic creation of content types is enabled, allowing
-        /// them to be added when a rule is added, when enabled.
+        /// Gets or sets a value indicating whether automatic creation of rulesets is enabled,
+        /// allowing them to be added when a rule is added, when enabled.
         /// </summary>
         /// <value>
-        /// <c>true</c> if content types should be automatically created on rule add; otherwise, <c>false</c>.
+        /// <c>true</c> if rulesets should be automatically created on rule add; otherwise, <c>false</c>.
         /// </value>
-        bool AutoCreateContentTypes { get; }
+        bool AutoCreateRulesets { get; }
 
         /// <summary>
         /// Gets the default values for each of the supported data types.
@@ -22,8 +22,13 @@ namespace Rules.Framework
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }
 
         /// <summary>
-        /// Gets the rules engine behavior when no condition with a specific type is provided to
-        /// rules engine to match with a rule's condition with the same type.
+        /// <para>
+        /// Gets or sets the rules engine behavior when no condition with a specific name is
+        /// provided to rules engine to match with a rule's condition with the same name.
+        /// </para>
+        /// <para>
+        /// e.g. a rule with a condition "Age" is under evaluation but no condition "Age" was supplied.
+        /// </para>
         /// </summary>
         public MissingConditionBehaviors MissingConditionBehavior { get; }
 
