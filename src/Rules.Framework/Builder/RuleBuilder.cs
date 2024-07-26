@@ -52,17 +52,6 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        [Obsolete("This way of adding conditions is being deprecated. Please use a non-deprecated overload instead.")]
-        public IRuleBuilder<TContentType, TConditionType> WithCondition(
-            Func<IConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
-        {
-            var conditionNodeBuilder = new ConditionNodeBuilder<TConditionType>();
-
-            var condition = conditionFunc.Invoke(conditionNodeBuilder);
-
-            return this.WithCondition(condition);
-        }
-
         public IRuleBuilder<TContentType, TConditionType> WithCondition(
             Func<IRootConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
         {
@@ -86,14 +75,6 @@ namespace Rules.Framework.Builder
         public IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content)
         {
             this.contentContainer = new ContentContainer<TContentType>(contentType, _ => content);
-
-            return this;
-        }
-
-        [Obsolete("This way of building the content is being deprecated. Please use WithContent().")]
-        public IRuleBuilder<TContentType, TConditionType> WithContentContainer(ContentContainer<TContentType> contentContainer)
-        {
-            this.contentContainer = contentContainer;
 
             return this;
         }
