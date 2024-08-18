@@ -1,7 +1,6 @@
 namespace Rules.Framework.Generic
 {
     using System;
-    using Rules.Framework.Core;
 
     /// <summary>
     /// Defines a rule.
@@ -15,13 +14,7 @@ namespace Rules.Framework.Generic
         private static readonly Type stringType = typeof(string);
 
         private readonly Rule wrappedRule;
-        private ContentContainer<TContentType>? contentContainer;
         private IConditionNode<TConditionType>? rootCondition;
-
-        internal Rule()
-            : this(new Rule())
-        {
-        }
 
         internal Rule(Rule wrappedRule)
         {
@@ -41,42 +34,24 @@ namespace Rules.Framework.Generic
         }
 
         /// <summary>
-        /// Gets and sets the if the rules is active.
+        /// Gets if the rule is active.
         /// </summary>
-        public bool Active
-        {
-            get => this.wrappedRule.Active;
-            internal set => this.wrappedRule.Active = value;
-        }
+        public bool Active => this.wrappedRule.Active;
 
         /// <summary>
         /// Gets the content container which contains the rule content.
         /// </summary>
-        public ContentContainer<TContentType> ContentContainer
-        {
-            get
-            {
-                this.contentContainer ??= new ContentContainer<TContentType>(
-                    GenericConversions.Convert<TContentType>(this.wrappedRule.ContentContainer.ContentType),
-                    this.wrappedRule.ContentContainer.ContentFunc);
+        public ContentContainer ContentContainer => this.wrappedRule.ContentContainer;
 
-                return this.contentContainer;
-            }
-            internal set
-            {
-                this.contentContainer = value;
-                this.wrappedRule.ContentContainer = new ContentContainer(GenericConversions.Convert(value.ContentType), value.ContentFunc);
-            }
-        }
+        /// <summary>
+        /// Gets the content type.
+        /// </summary>
+        public TContentType ContentType => GenericConversions.Convert<TContentType>(this.wrappedRule.ContentType);
 
         /// <summary>
         /// Gets the date from which the rule begins being applicable.
         /// </summary>
-        public DateTime DateBegin
-        {
-            get => this.wrappedRule.DateBegin;
-            internal set => this.wrappedRule.DateBegin = value;
-        }
+        public DateTime DateBegin => this.wrappedRule.DateBegin;
 
         /// <summary>
         /// Gets and sets the date from which the rule ceases to be applicable.
@@ -90,11 +65,7 @@ namespace Rules.Framework.Generic
         /// <summary>
         /// Gets the rule name.
         /// </summary>
-        public string Name
-        {
-            get => this.wrappedRule.Name;
-            internal set => this.wrappedRule.Name = value;
-        }
+        public string Name => this.wrappedRule.Name;
 
         /// <summary>
         /// Gets and sets the rule priority compared to other rules (preferably it is unique).
@@ -113,7 +84,7 @@ namespace Rules.Framework.Generic
             get
             {
                 this.rootCondition ??= this.wrappedRule.RootCondition?.ToGenericConditionNode<TConditionType>();
-                return this.rootCondition;
+                return this.rootCondition!;
             }
         }
 

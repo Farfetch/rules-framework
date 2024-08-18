@@ -45,7 +45,41 @@ namespace Rules.Framework.Providers.MongoDb
             await rulesCollection.InsertOneAsync(ruleDataModel).ConfigureAwait(false);
         }
 
-        public Task<IEnumerable<string>> GetContentTypesAsync() => throw new NotImplementedException();
+        /// <summary>
+        /// Creates a new content type on the data source.
+        /// </summary>
+        /// <param name="contentType">Type of the content.</param>
+        public async Task CreateContentTypeAsync(string contentType)
+        {
+            var contentTypesCollection = this.mongoDatabase.GetCollection<ContentTypeDataModel>(this.mongoDbProviderSettings.ContentTypesCollectionName);
+
+            var contentTypeDataModel = new ContentTypeDataModel
+            {
+                Creation = DateTime.UtcNow,
+                Id = Guid.NewGuid(),
+                Name = contentType,
+            };
+
+            await contentTypesCollection.InsertOneAsync(contentTypeDataModel).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Gets the content types from the data source.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<string>> GetContentTypesAsync()
+        {
+            var contentTypesCollection = this.mongoDatabase.GetCollection<ContentTypeDataModel>(this.mongoDbProviderSettings.ContentTypesCollectionName);
+
+            var findAllFilterDefinition = FilterDefinition<ContentTypeDataModel>.Empty;
+            var findOptions = new FindOptions<ContentTypeDataModel, string>
+            {
+                Projection = Builders<ContentTypeDataModel>.Projection.Expression(x => x.Name),
+            };
+
+            var resultsCursor = await contentTypesCollection.FindAsync(findAllFilterDefinition, findOptions).ConfigureAwait(false);
+            return await resultsCursor.ToListAsync().ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Gets the rules categorized with specified <paramref name="contentType"/> between
@@ -112,7 +146,7 @@ namespace Rules.Framework.Providers.MongoDb
 
         private static FilterDefinition<RuleDataModel> BuildFilterByContentTypeAndDatesInterval(string contentType, DateTime dateBegin, DateTime dateEnd)
         {
-            var contentTypeFilter = Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, contentType.ToString());
+            var contentTypeFilter = Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, contentType);
 
             var datesFilter = Builders<RuleDataModel>.Filter.And(
                 Builders<RuleDataModel>.Filter.Lte(rule => rule.DateBegin, dateEnd),
@@ -130,7 +164,7 @@ namespace Rules.Framework.Providers.MongoDb
 
             if (!object.Equals(rulesFilterArgs.ContentType, default(string)))
             {
-                filtersToApply.Add(Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, rulesFilterArgs.ContentType.ToString()));
+                filtersToApply.Add(Builders<RuleDataModel>.Filter.Eq(x => x.ContentType, rulesFilterArgs.ContentType));
             }
 
             if (!string.IsNullOrWhiteSpace(rulesFilterArgs.Name))
@@ -158,7 +192,7 @@ namespace Rules.Framework.Providers.MongoDb
             // later point. This approach assures the definitive realization of the query results
             // and does not produce side effects later on.
             var result = new Rule[fetchedRules.Count];
-            for (int i = 0; i < result.Length; i++)
+            for (var i = 0; i < result.Length; i++)
             {
                 result[i] = this.ruleFactory.CreateRule(fetchedRules[i]);
             }

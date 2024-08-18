@@ -65,7 +65,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
 
             // Assert
             Assert.Equal(expectedName, actualMatch.Name);
-            Assert.Equal(TestContentType, actualMatch.ContentContainer.ContentType);
+            Assert.Equal(TestContentType, actualMatch.ContentType);
             Assert.Equal(expectedValue, actualMatch.ContentContainer.GetContentAs<string>());
         }
 

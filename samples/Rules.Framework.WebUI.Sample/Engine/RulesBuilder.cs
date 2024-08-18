@@ -14,6 +14,11 @@ namespace Rules.Framework.WebUI.Sample.Engine
         {
             foreach (var contentType in contentTypes)
             {
+                foreach (var contentTypeValue in contentType.ContentTypes)
+                {
+                    await rulesEngine.CreateContentTypeAsync(contentTypeValue.ToString());
+                }
+
                 var rulesSpecifications = contentType.GetRulesSpecifications();
 
                 foreach (var ruleSpecification in rulesSpecifications)
@@ -27,7 +32,7 @@ namespace Rules.Framework.WebUI.Sample.Engine
                         .AddRuleAsync(
                             ruleSpecification.RuleBuilderResult.Rule,
                             ruleSpecification.RuleAddPriorityOption
-                        ).ConfigureAwait(false);
+                        );
 
                     if (!ruleOperationResult.IsSuccess)
                     {

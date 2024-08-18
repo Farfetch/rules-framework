@@ -2,6 +2,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using FluentAssertions;
     using MongoDB.Driver;
@@ -12,6 +13,104 @@ namespace Rules.Framework.Providers.MongoDb.Tests
 
     public class MongoDbProviderRulesDataSourceTests
     {
+        [Fact]
+        public async Task CreateContentTypeAsync_GivenContentTypeName_InsertsContentTypeOnCollection()
+        {
+            // Arrange
+            var contentType = nameof(ContentType.ContentTypeSample);
+            ContentTypeDataModel actual = null;
+            var contentTypesCollection = Mock.Of<IMongoCollection<ContentTypeDataModel>>();
+            Mock.Get(contentTypesCollection)
+                .Setup(x => x.InsertOneAsync(It.IsAny<ContentTypeDataModel>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Callback<ContentTypeDataModel, InsertOneOptions, CancellationToken>((ct, opt, t) => actual = ct);
+
+            var mongoDatabase = Mock.Of<IMongoDatabase>();
+            Mock.Get(mongoDatabase)
+                .Setup(x => x.GetCollection<ContentTypeDataModel>(It.IsAny<string>(), null))
+                .Returns(contentTypesCollection);
+
+            var mongoClient = Mock.Of<IMongoClient>();
+            Mock.Get(mongoClient)
+                .Setup(x => x.GetDatabase(It.IsAny<string>(), null))
+                .Returns(mongoDatabase);
+
+            var mongoDbProviderSettings = new MongoDbProviderSettings
+            {
+                DatabaseName = "TestDatabaseName",
+                RulesCollectionName = "TestCollectionName"
+            };
+
+            var ruleFactory = Mock.Of<IRuleFactory>();
+
+            var mongoDbProviderRulesDataSource = new MongoDbProviderRulesDataSource(
+                mongoClient,
+                mongoDbProviderSettings,
+                ruleFactory);
+
+            // Act
+            await mongoDbProviderRulesDataSource.CreateContentTypeAsync(contentType);
+
+            // Assert
+            actual.Should().NotBeNull();
+            actual.Name.Should().Be(contentType);
+            actual.Id.Should().NotBeEmpty();
+            actual.Creation.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(DateTime.UtcNow);
+        }
+
+        [Fact]
+        public async Task GetContentTypesAsync_NoConditions_ReturnsCollectionOfContentTypes()
+        {
+            // Arrange
+            var contentTypeDataModels = new[] { nameof(ContentType.ContentTypeSample), };
+
+            var fetchedRulesCursor = Mock.Of<IAsyncCursor<string>>();
+            Mock.Get(fetchedRulesCursor)
+                .SetupSequence(x => x.MoveNextAsync(default))
+                .ReturnsAsync(true)
+                .ReturnsAsync(false);
+            Mock.Get(fetchedRulesCursor)
+                .SetupGet(x => x.Current)
+                .Returns(contentTypeDataModels);
+            Mock.Get(fetchedRulesCursor)
+                .Setup(x => x.Dispose());
+
+            var contentTypesCollection = Mock.Of<IMongoCollection<ContentTypeDataModel>>();
+            Mock.Get(contentTypesCollection)
+                .Setup(x => x.FindAsync<string>(It.IsAny<FilterDefinition<ContentTypeDataModel>>(), It.IsAny<FindOptions<ContentTypeDataModel, string>>(), default))
+                .ReturnsAsync(fetchedRulesCursor);
+
+            var mongoDatabase = Mock.Of<IMongoDatabase>();
+            Mock.Get(mongoDatabase)
+                .Setup(x => x.GetCollection<ContentTypeDataModel>(It.IsAny<string>(), null))
+                .Returns(contentTypesCollection);
+
+            var mongoClient = Mock.Of<IMongoClient>();
+            Mock.Get(mongoClient)
+                .Setup(x => x.GetDatabase(It.IsAny<string>(), null))
+                .Returns(mongoDatabase);
+
+            var mongoDbProviderSettings = new MongoDbProviderSettings
+            {
+                DatabaseName = "TestDatabaseName",
+                RulesCollectionName = "TestCollectionName"
+            };
+
+            var ruleFactory = Mock.Of<IRuleFactory>();
+
+            var mongoDbProviderRulesDataSource = new MongoDbProviderRulesDataSource(
+                mongoClient,
+                mongoDbProviderSettings,
+                ruleFactory);
+
+            // Act
+            var actual = await mongoDbProviderRulesDataSource.GetContentTypesAsync();
+
+            // Assert
+            actual.Should().NotBeNull()
+                .And.HaveCount(1)
+                .And.Contain(nameof(ContentType.ContentTypeSample));
+        }
+
         [Fact]
         public async Task GetRulesAsync_GivenContentTypeAndDatesInterval_ReturnsCollectionOfRules()
         {

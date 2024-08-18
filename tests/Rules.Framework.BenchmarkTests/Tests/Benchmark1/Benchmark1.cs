@@ -33,9 +33,11 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
                 })
                 .Build();
 
+            await rulesEngine.CreateContentTypeAsync(nameof(ContentTypes.ContentType1));
+
             foreach (var rule in this.benchmarkData.Rules)
             {
-                await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+                await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
             }
 
             this.rulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();

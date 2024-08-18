@@ -27,6 +27,10 @@ namespace Rules.Framework.Evaluation.Compiled
             await next.Invoke(args).ConfigureAwait(false);
         }
 
+        public Task HandleCreateContentTypeAsync(CreateContentTypeArgs args, CreateContentTypeDelegate next) => next.Invoke(args);
+
+        public Task<IEnumerable<string>> HandleGetContentTypesAsync(GetContentTypesArgs args, GetContentTypesDelegate next) => next.Invoke(args);
+
         public async Task<IEnumerable<Rule>> HandleGetRulesAsync(
             GetRulesArgs args,
             GetRulesDelegate next)
@@ -35,7 +39,7 @@ namespace Rules.Framework.Evaluation.Compiled
 
             foreach (var rule in rules)
             {
-                bool compiled = this.TryCompile(rule);
+                var compiled = this.TryCompile(rule);
                 if (compiled)
                 {
                     // Commit compilation result to data source, so that next time rule is loaded,
@@ -55,7 +59,7 @@ namespace Rules.Framework.Evaluation.Compiled
 
             foreach (var rule in rules)
             {
-                bool compiled = this.TryCompile(rule);
+                var compiled = this.TryCompile(rule);
                 if (compiled)
                 {
                     // Commit compilation result to data source, so that next time rule is loaded,

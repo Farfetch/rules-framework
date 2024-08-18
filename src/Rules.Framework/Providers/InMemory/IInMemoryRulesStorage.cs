@@ -7,6 +7,8 @@ namespace Rules.Framework.Providers.InMemory
     {
         void AddRule(RuleDataModel ruleDataModel);
 
+        void CreateContentType(string contentType);
+
         IReadOnlyCollection<RuleDataModel> GetAllRules();
 
         IReadOnlyCollection<string> GetContentTypes();

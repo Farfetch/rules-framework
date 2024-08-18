@@ -3,7 +3,6 @@ namespace Rules.Framework.Builder
     using System;
     using System.Linq;
     using Rules.Framework.Builder.Validation;
-    using Rules.Framework.Generic;
     using Rules.Framework.Serialization;
 
     internal sealed class RuleBuilder : IRuleBuilder
@@ -13,6 +12,8 @@ namespace Rules.Framework.Builder
         private bool? active;
 
         private ContentContainer contentContainer;
+
+        private string contentType;
 
         private DateTime dateBegin;
 
@@ -27,6 +28,7 @@ namespace Rules.Framework.Builder
             var rule = new Rule
             {
                 ContentContainer = this.contentContainer,
+                ContentType = this.contentType,
                 DateBegin = this.dateBegin,
                 DateEnd = this.dateEnd,
                 Name = this.name,
@@ -79,8 +81,8 @@ namespace Rules.Framework.Builder
 
         public IRuleBuilder WithContent(string contentType, object content)
         {
-            var contentTypeAsString = GenericConversions.Convert(contentType);
-            this.contentContainer = new ContentContainer(contentTypeAsString, _ => content);
+            this.contentType = contentType;
+            this.contentContainer = new ContentContainer(_ => content);
 
             return this;
         }
@@ -116,8 +118,8 @@ namespace Rules.Framework.Builder
                 throw new ArgumentNullException(nameof(contentSerializationProvider));
             }
 
-            var contentTypeAsString = GenericConversions.Convert(contentType);
-            this.contentContainer = new SerializedContentContainer(contentTypeAsString, serializedContent, contentSerializationProvider);
+            this.contentType = contentType;
+            this.contentContainer = new SerializedContentContainer(contentType, serializedContent, contentSerializationProvider);
 
             return this;
         }

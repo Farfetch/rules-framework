@@ -61,6 +61,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
+            await genericRulesEngine.CreateContentTypeAsync(BestServerConfigurations.BestServerEvaluation);
 
             // Act 1 - Create rule with "in" operator
             var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()

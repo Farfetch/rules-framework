@@ -1,36 +1,19 @@
-namespace Rules.Framework.Tests.Core
+namespace Rules.Framework.Tests
 {
     using System;
     using FluentAssertions;
     using Rules.Framework;
-    using Rules.Framework.Core;
-    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class ContentContainerTests
     {
-        [Fact]
-        public void ContentContainer_ContentType_HavingProvidedContentTypeByCtor_ReturnsProvidedValue()
-        {
-            // Arrange
-            ContentType expected = ContentType.Type1;
-
-            ContentContainer<ContentType> sut = new ContentContainer<ContentType>(expected, (t) => new object());
-
-            // Act
-            ContentType actual = sut.ContentType;
-
-            // Assert
-            actual.Should().Be(expected);
-        }
-
         [Fact]
         public void ContentContainer_GetContentAs_HavingProvidedContentByCtorAndGivenCorrectRuntimeType_ReturnsProvidedValue()
         {
             // Arrange
             object expected = "Just some content";
 
-            ContentContainer<ContentType> sut = new ContentContainer<ContentType>(ContentType.Type1, (t) => expected);
+            var sut = new ContentContainer((t) => expected);
 
             // Act
             object actual = sut.GetContentAs<string>();
@@ -45,10 +28,10 @@ namespace Rules.Framework.Tests.Core
             // Arrange
             object expected = "Just some content";
 
-            ContentContainer<ContentType> sut = new ContentContainer<ContentType>(ContentType.Type1, (t) => expected);
+            var sut = new ContentContainer((t) => expected);
 
             // Act
-            ContentTypeException contentTypeException = Assert.Throws<ContentTypeException>(() => sut.GetContentAs<int>());
+            var contentTypeException = Assert.Throws<ContentTypeException>(() => sut.GetContentAs<int>());
 
             // Assert
             contentTypeException.Should().NotBeNull();

@@ -14,7 +14,7 @@ namespace Rules.Framework.Tests
             IEnumerable<string> errors = new[] { "Error1", "Error2" };
 
             // Act
-            RuleOperationResult ruleOperationResult = RuleOperationResult.Error(errors);
+            var ruleOperationResult = OperationResult.Error(errors);
 
             // Assert
             ruleOperationResult.Should().NotBeNull();
@@ -29,7 +29,7 @@ namespace Rules.Framework.Tests
             IEnumerable<string> errors = null;
 
             // Act
-            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => RuleOperationResult.Error(errors));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => OperationResult.Error(errors));
 
             // Assert
             argumentNullException.Should().NotBeNull();
@@ -40,7 +40,7 @@ namespace Rules.Framework.Tests
         public void Success_NoConditionGiven_ReturnsRuleOperationResultWithoutErrorsAndSuccess()
         {
             // Act
-            RuleOperationResult ruleOperationResult = RuleOperationResult.Success();
+            var ruleOperationResult = OperationResult.Success();
 
             // Assert
             ruleOperationResult.Should().NotBeNull();

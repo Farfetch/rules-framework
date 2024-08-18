@@ -1,6 +1,5 @@
 namespace Rules.Framework
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -12,6 +11,15 @@ namespace Rules.Framework
         {
             this.DataTypeDefaults = new Dictionary<DataTypes, object>();
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether automatic creation of content types is enabled,
+        /// allowing them to be added when a rule is added, when enabled.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if content types should be automatically created on rule add; otherwise, <c>false</c>.
+        /// </value>
+        public bool AutoCreateContentTypes { get; set; }
 
         /// <summary>
         /// Gets the default values for each of the supported data types.
@@ -59,16 +67,17 @@ namespace Rules.Framework
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
                 PriorityCriteria = PriorityCriterias.TopmostRuleWins,
                 DataTypeDefaults =
-                    {
-                        [DataTypes.Boolean] = default(bool),
-                        [DataTypes.Decimal] = default(decimal),
-                        [DataTypes.Integer] = default(int),
-                        [DataTypes.String] = string.Empty,
-                        [DataTypes.ArrayBoolean] = default(bool),
-                        [DataTypes.ArrayDecimal] = default(decimal),
-                        [DataTypes.ArrayInteger] = default(int),
-                        [DataTypes.ArrayString] = string.Empty,
-                    },
+                {
+                    [DataTypes.Boolean] = default(bool),
+                    [DataTypes.Decimal] = default(decimal),
+                    [DataTypes.Integer] = default(int),
+                    [DataTypes.String] = string.Empty,
+                    [DataTypes.ArrayBoolean] = default(bool),
+                    [DataTypes.ArrayDecimal] = default(decimal),
+                    [DataTypes.ArrayInteger] = default(int),
+                    [DataTypes.ArrayString] = string.Empty,
+                },
+                AutoCreateContentTypes = false,
             };
 
             return rulesEngineOptions;

@@ -14,6 +14,8 @@ namespace Rules.Framework.InMemory.Sample.Engine
         {
             foreach (var contentType in contentTypes)
             {
+                await rulesEngine.CreateContentTypeAsync(contentType.ContentType.ToString());
+
                 var rulesSpecifications = contentType.GetRulesSpecifications();
 
                 foreach (var ruleSpecification in rulesSpecifications)
@@ -27,7 +29,7 @@ namespace Rules.Framework.InMemory.Sample.Engine
                         .AddRuleAsync(
                             ruleSpecification.RuleBuilderResult.Rule,
                             ruleSpecification.RuleAddPriorityOption
-                        ).ConfigureAwait(false);
+                        );
 
                     if (!ruleOperationResult.IsSuccess)
                     {

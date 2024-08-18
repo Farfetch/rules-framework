@@ -8,7 +8,7 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using McMaster.Extensions.CommandLineUtils;
 
-[assembly: SimpleJob(RuntimeMoniker.Net60)]
+[assembly: SimpleJob(RuntimeMoniker.Net80)]
 
 internal static class Program
 {

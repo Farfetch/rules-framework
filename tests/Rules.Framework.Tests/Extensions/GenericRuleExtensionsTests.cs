@@ -78,7 +78,8 @@ namespace Rules.Framework.Tests.Extensions
             // Assert
             genericRule.Should().BeEquivalentTo(rule, config => config
                 .Excluding(r => r.ContentContainer)
-                .Excluding(r => r.RootCondition));
+                .Excluding(r => r.RootCondition)
+                .Excluding(r => r.ContentType));
             var content = genericRule.ContentContainer.GetContentAs<object>();
             content.Should().BeOfType<string>();
             content.Should().Be(expectedRuleContent);
@@ -105,7 +106,9 @@ namespace Rules.Framework.Tests.Extensions
             var genericRule = rule.ToGenericRule<ContentType, ConditionType>();
 
             // Assert
-            genericRule.Should().BeEquivalentTo(rule, config => config.Excluding(r => r.ContentContainer));
+            genericRule.Should().BeEquivalentTo(rule, config => config
+                .Excluding(r => r.ContentContainer)
+                .Excluding(r => r.ContentType));
             var content = genericRule.ContentContainer.GetContentAs<object>();
             content.Should().BeOfType<string>();
             content.Should().Be(expectedRuleContent);
@@ -140,7 +143,8 @@ namespace Rules.Framework.Tests.Extensions
             // Assert
             genericRule.Should().BeEquivalentTo(rule, config => config
                 .Excluding(r => r.ContentContainer)
-                .Excluding(r => r.RootCondition));
+                .Excluding(r => r.RootCondition)
+                .Excluding(r => r.ContentType));
             var content = genericRule.ContentContainer.GetContentAs<object>();
             content.Should().BeOfType<string>();
             content.Should().Be(expectedRuleContent);

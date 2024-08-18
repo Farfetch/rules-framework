@@ -10,51 +10,42 @@ namespace Rules.Framework.Builder.Generic
     internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
     {
         private readonly GenericRuleValidator<TContentType, TConditionType> genericRuleValidator = GenericRuleValidator<TContentType, TConditionType>.Instance;
-        private readonly RuleValidator ruleValidator = RuleValidator.Instance;
-        private bool? active;
-        private ContentContainer contentContainer;
-        private DateTime dateBegin;
-        private DateTime? dateEnd;
-        private string name;
-        private IConditionNode rootCondition;
+        private readonly RuleBuilder ruleBuilder;
+
+        public RuleBuilder()
+        {
+            this.ruleBuilder = new RuleBuilder();
+        }
 
         public RuleBuilderResult<TContentType, TConditionType> Build()
         {
-            var rule = new Rule
-            {
-                ContentContainer = this.contentContainer,
-                DateBegin = this.dateBegin,
-                DateEnd = this.dateEnd,
-                Name = this.name,
-                RootCondition = this.rootCondition,
-                Active = this.active ?? true,
-            };
+            var ruleBuilderResult = this.ruleBuilder.Build();
 
-            var validationResult = this.ruleValidator.Validate(rule);
-
-            if (validationResult.IsValid)
+            if (ruleBuilderResult.IsSuccess)
             {
-                var genericRule = new Rule<TContentType, TConditionType>(rule);
-                validationResult = this.genericRuleValidator.Validate(genericRule);
+                var genericRule = new Rule<TContentType, TConditionType>(ruleBuilderResult.Rule);
+                var validationResult = this.genericRuleValidator.Validate(genericRule);
                 if (validationResult.IsValid)
                 {
                     return RuleBuilderResult<TContentType, TConditionType>.Success(genericRule);
                 }
+
+                return RuleBuilderResult<TContentType, TConditionType>.Failure(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
             }
 
-            return RuleBuilderResult<TContentType, TConditionType>.Failure(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
+            return RuleBuilderResult<TContentType, TConditionType>.Failure(ruleBuilderResult.Errors);
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithActive(bool active)
         {
-            this.active = active;
+            this.ruleBuilder.WithActive(active);
 
             return this;
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode condition)
         {
-            this.rootCondition = condition;
+            this.ruleBuilder.WithCondition(condition);
 
             return this;
         }
@@ -81,30 +72,28 @@ namespace Rules.Framework.Builder.Generic
 
         public IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content)
         {
-            var contentTypeAsString = GenericConversions.Convert(contentType);
-            this.contentContainer = new ContentContainer(contentTypeAsString, _ => content);
+            this.ruleBuilder.WithContent(GenericConversions.Convert(contentType), content);
 
             return this;
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithDateBegin(DateTime dateBegin)
         {
-            this.dateBegin = dateBegin;
+            this.ruleBuilder.WithDateBegin(dateBegin);
 
             return this;
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithDatesInterval(DateTime dateBegin, DateTime? dateEnd)
         {
-            this.dateBegin = dateBegin;
-            this.dateEnd = dateEnd;
+            this.ruleBuilder.WithDatesInterval(dateBegin, dateEnd);
 
             return this;
         }
 
         public IRuleBuilder<TContentType, TConditionType> WithName(string name)
         {
-            this.name = name;
+            this.ruleBuilder.WithName(name);
 
             return this;
         }
@@ -114,13 +103,8 @@ namespace Rules.Framework.Builder.Generic
             object serializedContent,
             IContentSerializationProvider contentSerializationProvider)
         {
-            if (contentSerializationProvider is null)
-            {
-                throw new ArgumentNullException(nameof(contentSerializationProvider));
-            }
-
             var contentTypeAsString = GenericConversions.Convert(contentType);
-            this.contentContainer = new SerializedContentContainer(contentTypeAsString, serializedContent, contentSerializationProvider);
+            this.ruleBuilder.WithSerializedContent(contentTypeAsString, serializedContent, contentSerializationProvider);
 
             return this;
         }

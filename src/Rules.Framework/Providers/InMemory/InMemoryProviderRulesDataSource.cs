@@ -2,8 +2,8 @@ namespace Rules.Framework.Providers.InMemory
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
 
     /// <summary>
     /// The rules data source implementation for usage backed with a in-memory database.
@@ -42,6 +42,38 @@ namespace Rules.Framework.Providers.InMemory
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Creates a new content type on the data source.
+        /// </summary>
+        /// <param name="contentType">Type of the content.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">contentType</exception>
+        /// <exception cref="System.InvalidOperationException">
+        /// The content type '{contentType}' already exists.
+        /// </exception>
+        public Task CreateContentTypeAsync(string contentType)
+        {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+
+            var contentTypes = this.inMemoryRulesStorage.GetContentTypes();
+
+            if (contentTypes.Contains(contentType, StringComparer.Ordinal))
+            {
+                throw new InvalidOperationException($"The content type '{contentType}' already exists.");
+            }
+
+            this.inMemoryRulesStorage.CreateContentType(contentType);
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Gets the content types from the data source.
+        /// </summary>
+        /// <returns></returns>
         public Task<IEnumerable<string>> GetContentTypesAsync()
             => Task.FromResult<IEnumerable<string>>(this.inMemoryRulesStorage.GetContentTypes());
 

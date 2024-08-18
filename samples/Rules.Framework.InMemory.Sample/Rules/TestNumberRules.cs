@@ -15,6 +15,8 @@ namespace Rules.Framework.InMemory.Sample.Rules
             this.rulesSpecifications = new List<RuleSpecification>();
         }
 
+        public ContentTypes ContentType => ContentTypes.TestNumber;
+
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
         {
             Add(CreateRuleForCoolNumbers(), RuleAddPriorityOption.ByPriorityNumber(3));

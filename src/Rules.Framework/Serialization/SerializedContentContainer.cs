@@ -16,7 +16,7 @@ namespace Rules.Framework.Serialization
             string contentType,
             object serializedContent,
             IContentSerializationProvider contentSerializationProvider)
-            : base(contentType, (t) => contentSerializationProvider.GetContentSerializer(contentType).Deserialize(serializedContent, t))
+            : base((t) => contentSerializationProvider.GetContentSerializer(contentType).Deserialize(serializedContent, t))
         {
         }
     }

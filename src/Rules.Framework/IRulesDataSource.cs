@@ -3,7 +3,6 @@ namespace Rules.Framework
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
 
     /// <summary>
     /// Exposes the interface contract for a rules data source for specified content type.
@@ -17,6 +16,17 @@ namespace Rules.Framework
         /// <returns></returns>
         Task AddRuleAsync(Rule rule);
 
+        /// <summary>
+        /// Creates a new content type on the data source.
+        /// </summary>
+        /// <param name="contentType">Type of the content.</param>
+        /// <returns></returns>
+        Task CreateContentTypeAsync(string contentType);
+
+        /// <summary>
+        /// Gets the content types from the data source.
+        /// </summary>
+        /// <returns></returns>
         Task<IEnumerable<string>> GetContentTypesAsync();
 
         /// <summary>

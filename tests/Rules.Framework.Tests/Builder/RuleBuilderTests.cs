@@ -5,7 +5,6 @@ namespace Rules.Framework.Tests.Builder
     using FluentAssertions;
     using Moq;
     using Rules.Framework;
-    using Rules.Framework.Core;
     using Rules.Framework.Generic.ConditionNodes;
     using Rules.Framework.Serialization;
     using Rules.Framework.Tests.Stubs;
@@ -202,9 +201,9 @@ namespace Rules.Framework.Tests.Builder
                 .Build();
 
             // Assert
+            ruleBuilderResult.Rule.ContentType.Should().Be(contentType);
             var ruleContent = ruleBuilderResult.Rule.ContentContainer;
-            ruleContent.Should().NotBeNull().And.BeOfType<ContentContainer<ContentType>>();
-            ruleContent.ContentType.Should().Be(contentType);
+            ruleContent.Should().NotBeNull().And.BeOfType<SerializedContentContainer>();
             ruleContent.GetContentAs<string>().Should().Be(content);
         }
     }

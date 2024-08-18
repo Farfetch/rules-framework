@@ -30,6 +30,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
                 .Build();
 
             this.RulesEngine = rulesEngine.MakeGeneric<ContentType, ConditionType>();
+            this.RulesEngine.CreateContentTypeAsync(testContentType).GetAwaiter().GetResult();
         }
 
         protected IRulesEngine<ContentType, ConditionType> RulesEngine { get; }

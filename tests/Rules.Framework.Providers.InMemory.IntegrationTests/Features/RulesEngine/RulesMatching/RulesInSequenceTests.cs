@@ -72,7 +72,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
             // Assert
             Assert.Equal(expectedName, actualMatch.Name);
-            Assert.Equal(TestContentType, actualMatch.ContentContainer.ContentType);
+            Assert.Equal(TestContentType, actualMatch.ContentType);
             Assert.Equal(expectedValue, actualMatch.ContentContainer.GetContentAs<string>());
         }
 

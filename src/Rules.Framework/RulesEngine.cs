@@ -39,19 +39,11 @@ namespace Rules.Framework
             this.conditionTypeExtractor = conditionTypeExtractor;
         }
 
-        /// <summary>
-        /// Gets the rules engine options.
-        /// </summary>
-        /// <value>The rules engine options.</value>
+        /// <inheritdoc/>
         public IRulesEngineOptions Options { get; }
 
-        /// <summary>
-        /// Activates the specified existing rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule</exception>
-        public Task<RuleOperationResult> ActivateRuleAsync(Rule rule)
+        /// <inheritdoc/>
+        public Task<OperationResult> ActivateRuleAsync(Rule rule)
         {
             if (rule is null)
             {
@@ -63,17 +55,8 @@ namespace Rules.Framework
             return this.UpdateRuleInternalAsync(rule);
         }
 
-        /// <summary>
-        /// Adds a new rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <param name="ruleAddPriorityOption">The rule add priority option.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule or rule</exception>
-        /// <exception cref="NotSupportedException">
-        /// The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.
-        /// </exception>
-        public Task<RuleOperationResult> AddRuleAsync(Rule rule, RuleAddPriorityOption ruleAddPriorityOption)
+        /// <inheritdoc/>
+        public Task<OperationResult> AddRuleAsync(Rule rule, RuleAddPriorityOption ruleAddPriorityOption)
         {
             if (rule is null)
             {
@@ -82,19 +65,32 @@ namespace Rules.Framework
 
             if (ruleAddPriorityOption is null)
             {
-                throw new ArgumentNullException(nameof(rule));
+                throw new ArgumentNullException(nameof(ruleAddPriorityOption));
             }
 
             return this.AddRuleInternalAsync(rule, ruleAddPriorityOption);
         }
 
-        /// <summary>
-        /// Deactivates the specified existing rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule</exception>
-        public Task<RuleOperationResult> DeactivateRuleAsync(Rule rule)
+        /// <inheritdoc/>
+        public async Task<OperationResult> CreateContentTypeAsync(string contentType)
+        {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+
+            var getContentTypesArgs = new GetContentTypesArgs();
+            var existentContentTypes = await this.rulesSource.GetContentTypesAsync(getContentTypesArgs).ConfigureAwait(false);
+            if (existentContentTypes.Contains(contentType, StringComparer.Ordinal))
+            {
+                return OperationResult.Error($"The content type '{contentType}' already exists.");
+            }
+
+            return await this.CreateContentTypeInternalAsync(contentType).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public Task<OperationResult> DeactivateRuleAsync(Rule rule)
         {
             if (rule is null)
             {
@@ -106,27 +102,20 @@ namespace Rules.Framework
             return this.UpdateRuleInternalAsync(rule);
         }
 
+        /// <inheritdoc/>
         public Task<IEnumerable<string>> GetContentTypesAsync()
         {
-            return this.rulesSource.GetContentTypesAsync();
+            return this.rulesSource.GetContentTypesAsync(new GetContentTypesArgs());
         }
 
-        /// <summary>
-        /// Get the unique condition types associated with rules of a specific content type.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="dateBegin"></param>
-        /// <param name="dateEnd"></param>
-        /// <remarks>
-        /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
-        /// </para>
-        /// <para>All rules matching supplied conditions are returned.</para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, empty.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<string>> GetUniqueConditionTypesAsync(string contentType, DateTime dateBegin, DateTime dateEnd)
         {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+
             var getRulesArgs = new GetRulesArgs
             {
                 ContentType = contentType,
@@ -139,26 +128,17 @@ namespace Rules.Framework
             return this.conditionTypeExtractor.GetConditionTypes(matchedRules);
         }
 
-        /// <summary>
-        /// Provides all rule matches (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="matchDateTime"></param>
-        /// <param name="conditions"></param>
-        /// <remarks>
-        /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
-        /// </para>
-        /// <para>All rules matching supplied conditions are returned.</para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<Rule>> MatchManyAsync(
             string contentType,
             DateTime matchDateTime,
             IEnumerable<Condition<string>> conditions)
         {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+
             var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
@@ -172,34 +152,22 @@ namespace Rules.Framework
                 DateEnd = matchDateTime,
             };
 
-            var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
+            var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value, StringComparer.Ordinal);
             var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
             return this.EvalAll(orderedRules, evaluationOptions, conditionsAsDictionary, active: true);
         }
 
-        /// <summary>
-        /// Provides a rule match (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="matchDateTime"></param>
-        /// <param name="conditions"></param>
-        /// <remarks>
-        /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
-        /// </para>
-        /// <para>
-        /// If there's more than one match, a rule is selected based on the priority criteria and
-        /// value: topmost selects the lowest priority number and bottommost selects highest priority.
-        /// </para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
+        /// <inheritdoc/>
         public async Task<Rule> MatchOneAsync(
             string contentType,
             DateTime matchDateTime,
             IEnumerable<Condition<string>> conditions)
         {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+
             var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
@@ -220,17 +188,7 @@ namespace Rules.Framework
                 : EvalOneReverse(orderedRules, evaluationOptions, conditionsAsDictionary, active: true);
         }
 
-        /// <summary>
-        /// Searches for rules on given content type that match on supplied <paramref name="searchArgs"/>.
-        /// </summary>
-        /// <param name="searchArgs"></param>
-        /// <remarks>
-        /// <para>
-        /// Only the condition types supplied on input conditions are evaluated, the remaining
-        /// conditions are ignored.
-        /// </para>
-        /// </remarks>
-        /// <returns>the set of rules matching the conditions.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<Rule>> SearchAsync(SearchArgs<string, string> searchArgs)
         {
             if (searchArgs is null)
@@ -273,13 +231,8 @@ namespace Rules.Framework
             return this.EvalAll(orderedRules, evaluationOptions, conditionsAsDictionary, searchArgs.Active);
         }
 
-        /// <summary>
-        /// Updates the specified existing rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule</exception>
-        public Task<RuleOperationResult> UpdateRuleAsync(Rule rule)
+        /// <inheritdoc/>
+        public Task<OperationResult> UpdateRuleAsync(Rule rule)
         {
             if (rule is null)
             {
@@ -289,12 +242,26 @@ namespace Rules.Framework
             return this.UpdateRuleInternalAsync(rule);
         }
 
-        private async Task<RuleOperationResult> AddRuleInternalAsync(Rule rule, RuleAddPriorityOption ruleAddPriorityOption)
+        private async Task<OperationResult> AddRuleInternalAsync(Rule rule, RuleAddPriorityOption ruleAddPriorityOption)
         {
             var errors = new List<string>();
+            var contentTypes = await this.rulesSource.GetContentTypesAsync(new GetContentTypesArgs()).ConfigureAwait(false);
+
+            if (!contentTypes.Contains(rule.ContentType, StringComparer.Ordinal))
+            {
+                if (!this.Options.AutoCreateContentTypes)
+                {
+                    errors.Add($"Specified content type '{rule.ContentType}' does not exist. " +
+                        $"Please create the content type first or set the rules engine option '{nameof(this.Options.AutoCreateContentTypes)}' to true.");
+                    return OperationResult.Error(errors);
+                }
+
+                await this.CreateContentTypeInternalAsync(rule.ContentType).ConfigureAwait(false);
+            }
+
             var rulesFilterArgs = new GetRulesFilteredArgs
             {
-                ContentType = rule.ContentContainer.ContentType,
+                ContentType = rule.ContentType,
             };
 
             var existentRules = await this.rulesSource.GetRulesFilteredAsync(rulesFilterArgs).ConfigureAwait(false);
@@ -312,7 +279,7 @@ namespace Rules.Framework
 
             if (errors.Any())
             {
-                return RuleOperationResult.Error(errors);
+                return OperationResult.Error(errors);
             }
 
             switch (ruleAddPriorityOption.PriorityOption)
@@ -342,7 +309,7 @@ namespace Rules.Framework
                     throw new NotSupportedException($"The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.");
             }
 
-            return RuleOperationResult.Success();
+            return OperationResult.Success();
         }
 
         private async Task AddRuleInternalAtBottomAsync(Rule rule, IEnumerable<Rule> existentRules)
@@ -405,6 +372,13 @@ namespace Rules.Framework
                 .AddRule(rule)
                 .ExecuteOperationsAsync()
                 .ConfigureAwait(false);
+        }
+
+        private async Task<OperationResult> CreateContentTypeInternalAsync(string contentType)
+        {
+            var createContentTypeArgs = new CreateContentTypeArgs { Name = contentType };
+            await this.rulesSource.CreateContentTypeAsync(createContentTypeArgs).ConfigureAwait(false);
+            return OperationResult.Success();
         }
 
         private IEnumerable<Rule> EvalAll(
@@ -503,11 +477,11 @@ namespace Rules.Framework
             return orderedRules;
         }
 
-        private async Task<RuleOperationResult> UpdateRuleInternalAsync(Rule rule)
+        private async Task<OperationResult> UpdateRuleInternalAsync(Rule rule)
         {
             var rulesFilterArgs = new GetRulesFilteredArgs
             {
-                ContentType = rule.ContentContainer.ContentType,
+                ContentType = rule.ContentType,
             };
 
             var existentRules = await this.rulesSource.GetRulesFilteredAsync(rulesFilterArgs).ConfigureAwait(false);
@@ -515,14 +489,14 @@ namespace Rules.Framework
             var existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.OrdinalIgnoreCase));
             if (existentRule is null)
             {
-                return RuleOperationResult.Error(new[] { $"Rule with name '{rule.Name}' does not exist." });
+                return OperationResult.Error($"Rule with name '{rule.Name}' does not exist.");
             }
 
             var validationResult = this.ruleValidator.Validate(rule);
 
             if (!validationResult.IsValid)
             {
-                return RuleOperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage));
+                return OperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage));
             }
 
             var topPriorityThreshold = Math.Min(rule.Priority, existentRule.Priority);
@@ -563,7 +537,7 @@ namespace Rules.Framework
                     break;
             }
 
-            return RuleOperationResult.Success();
+            return OperationResult.Success();
         }
     }
 }

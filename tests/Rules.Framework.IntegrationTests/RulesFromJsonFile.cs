@@ -26,10 +26,16 @@ namespace Rules.Framework.IntegrationTests
             {
                 var contents = await streamReader.ReadToEndAsync();
                 var ruleDataModels = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents);
+                var addedContentTypes = new HashSet<TContentType>();
 
                 foreach (var ruleDataModel in ruleDataModels)
                 {
                     var contentType = GetContentType<TContentType>(ruleDataModel.ContentTypeCode);
+                    if (!addedContentTypes.Contains(contentType))
+                    {
+                        await rulesEngine.CreateContentTypeAsync(contentType);
+                        addedContentTypes.Add(contentType);
+                    }
 
                     var ruleBuilder = Rule.New<TContentType, TConditionType>()
                         .WithName(ruleDataModel.Name)

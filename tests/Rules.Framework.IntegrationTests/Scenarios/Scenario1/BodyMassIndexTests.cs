@@ -32,6 +32,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
 
+            await genericRulesEngine.CreateContentTypeAsync(ContentTypes.BodyMassIndexFormula);
+
             var newRuleResult1 = Rule.New<ContentTypes, ConditionTypes>()
                 .WithName("Body Mass Index up to 18 years formula")
                 .WithDateBegin(DateTime.Parse("2018-01-01"))

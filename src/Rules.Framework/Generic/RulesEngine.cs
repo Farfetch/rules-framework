@@ -23,65 +23,53 @@ namespace Rules.Framework.Generic
             this.wrappedRulesEngine = wrappedRulesEngine;
         }
 
+        /// <inheritdoc/>
         public IRulesEngineOptions Options => this.wrappedRulesEngine.Options;
 
-        /// <summary>
-        /// Activates the specified existing rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule</exception>
-        public Task<RuleOperationResult> ActivateRuleAsync(Rule<TContentType, TConditionType> rule)
+        /// <inheritdoc/>
+        public Task<OperationResult> ActivateRuleAsync(Rule<TContentType, TConditionType> rule)
         {
             if (rule is null)
             {
                 throw new ArgumentNullException(nameof(rule));
             }
 
+            // Implicit conversion from Rule<TContentType, TConditionType> to Rule.
             return this.wrappedRulesEngine.ActivateRuleAsync(rule);
         }
 
-        /// <summary>
-        /// Adds a new rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <param name="ruleAddPriorityOption">The rule add priority option.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule or rule</exception>
-        /// <exception cref="NotSupportedException">
-        /// The placement option '{ruleAddPriorityOption.PriorityOption}' is not supported.
-        /// </exception>
-        public Task<RuleOperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
+        /// <inheritdoc/>
+        public Task<OperationResult> AddRuleAsync(Rule<TContentType, TConditionType> rule, RuleAddPriorityOption ruleAddPriorityOption)
         {
             if (rule is null)
             {
                 throw new ArgumentNullException(nameof(rule));
             }
 
-            if (ruleAddPriorityOption is null)
-            {
-                throw new ArgumentNullException(nameof(rule));
-            }
-
+            // Implicit conversion from Rule<TContentType, TConditionType> to Rule.
             return this.wrappedRulesEngine.AddRuleAsync(rule, ruleAddPriorityOption);
         }
 
-        /// <summary>
-        /// Deactivates the specified existing rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule</exception>
-        public Task<RuleOperationResult> DeactivateRuleAsync(Rule<TContentType, TConditionType> rule)
+        /// <inheritdoc/>
+        public async Task CreateContentTypeAsync(TContentType contentType)
+        {
+            var contentTypeAsString = GenericConversions.Convert(contentType);
+            await this.wrappedRulesEngine.CreateContentTypeAsync(contentTypeAsString).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public Task<OperationResult> DeactivateRuleAsync(Rule<TContentType, TConditionType> rule)
         {
             if (rule is null)
             {
                 throw new ArgumentNullException(nameof(rule));
             }
 
+            // Implicit conversion from Rule<TContentType, TConditionType> to Rule.
             return this.wrappedRulesEngine.DeactivateRuleAsync(rule);
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<TContentType>> GetContentTypesAsync()
         {
             var contentTypes = await this.wrappedRulesEngine.GetContentTypesAsync().ConfigureAwait(false);
@@ -89,20 +77,7 @@ namespace Rules.Framework.Generic
             return contentTypes.Select(x => GenericConversions.Convert<TContentType>(x)).ToArray();
         }
 
-        /// <summary>
-        /// Get the unique condition types associated with rules of a specific content type.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="dateBegin"></param>
-        /// <param name="dateEnd"></param>
-        /// <remarks>
-        /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
-        /// </para>
-        /// <para>All rules matching supplied conditions are returned.</para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, empty.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<TConditionType>> GetUniqueConditionTypesAsync(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
         {
             var contentTypeAsString = GenericConversions.Convert(contentType);
@@ -110,21 +85,7 @@ namespace Rules.Framework.Generic
             return conditionTypes.Select(t => GenericConversions.Convert<TConditionType>(t)).ToArray();
         }
 
-        /// <summary>
-        /// Provides all rule matches (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="matchDateTime"></param>
-        /// <param name="conditions"></param>
-        /// <remarks>
-        /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
-        /// </para>
-        /// <para>All rules matching supplied conditions are returned.</para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> MatchManyAsync(
             TContentType contentType,
             DateTime matchDateTime,
@@ -141,24 +102,7 @@ namespace Rules.Framework.Generic
             return rules.Select(r => r.ToGenericRule<TContentType, TConditionType>()).ToArray();
         }
 
-        /// <summary>
-        /// Provides a rule match (if any) to the given content type at the specified <paramref
-        /// name="matchDateTime"/> and satisfying the supplied <paramref name="conditions"/>.
-        /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="matchDateTime"></param>
-        /// <param name="conditions"></param>
-        /// <remarks>
-        /// <para>
-        /// A set of rules is requested to rules data source and all conditions are evaluated
-        /// against them to provide a set of matches.
-        /// </para>
-        /// <para>
-        /// If there's more than one match, a rule is selected based on the priority criteria and
-        /// value: topmost selects the lowest priority number and bottommost selects highest priority.
-        /// </para>
-        /// </remarks>
-        /// <returns>the matched rule; otherwise, null.</returns>
+        /// <inheritdoc/>
         public async Task<Rule<TContentType, TConditionType>> MatchOneAsync(
             TContentType contentType,
             DateTime matchDateTime,
@@ -175,17 +119,7 @@ namespace Rules.Framework.Generic
             return rule?.ToGenericRule<TContentType, TConditionType>()!;
         }
 
-        /// <summary>
-        /// Searches for rules on given content type that match on supplied <paramref name="searchArgs"/>.
-        /// </summary>
-        /// <param name="searchArgs"></param>
-        /// <remarks>
-        /// <para>
-        /// Only the condition types supplied on input conditions are evaluated, the remaining
-        /// conditions are ignored.
-        /// </para>
-        /// </remarks>
-        /// <returns>the set of rules matching the conditions.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<Rule<TContentType, TConditionType>>> SearchAsync(SearchArgs<TContentType, TConditionType> searchArgs)
         {
             if (searchArgs is null)
@@ -205,19 +139,15 @@ namespace Rules.Framework.Generic
             return rules.Select(r => r.ToGenericRule<TContentType, TConditionType>()).ToArray();
         }
 
-        /// <summary>
-        /// Updates the specified existing rule.
-        /// </summary>
-        /// <param name="rule">The rule.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">rule</exception>
-        public Task<RuleOperationResult> UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
+        /// <inheritdoc/>
+        public Task<OperationResult> UpdateRuleAsync(Rule<TContentType, TConditionType> rule)
         {
             if (rule is null)
             {
                 throw new ArgumentNullException(nameof(rule));
             }
 
+            // Implicit conversion from Rule<TContentType, TConditionType> to Rule.
             return this.wrappedRulesEngine.UpdateRuleAsync(rule);
         }
     }

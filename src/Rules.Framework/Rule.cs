@@ -20,6 +20,11 @@ namespace Rules.Framework
         public ContentContainer ContentContainer { get; internal set; }
 
         /// <summary>
+        /// Gets the content type.
+        /// </summary>
+        public string ContentType { get; internal set; }
+
+        /// <summary>
         /// Gets the date from which the rule begins being applicable.
         /// </summary>
         public DateTime DateBegin { get; internal set; }
@@ -67,6 +72,7 @@ namespace Rules.Framework
         public virtual Rule Clone()
             => new Rule
             {
+                ContentType = this.ContentType,
                 ContentContainer = this.ContentContainer,
                 DateBegin = this.DateBegin,
                 DateEnd = this.DateEnd,

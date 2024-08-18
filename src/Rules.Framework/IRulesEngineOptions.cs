@@ -1,13 +1,21 @@
 namespace Rules.Framework
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
-    /// The set of rules engine options that influence rules engine rules matching.
+    /// The set of rules engine options that influence rules engine behavior.
     /// </summary>
     public interface IRulesEngineOptions
     {
+        /// <summary>
+        /// Gets a value indicating whether automatic creation of content types is enabled, allowing
+        /// them to be added when a rule is added, when enabled.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if content types should be automatically created on rule add; otherwise, <c>false</c>.
+        /// </value>
+        bool AutoCreateContentTypes { get; }
+
         /// <summary>
         /// Gets the default values for each of the supported data types.
         /// </summary>

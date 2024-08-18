@@ -17,12 +17,13 @@ namespace Rules.Framework.Providers.InMemory
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
-            var contentContainer = new ContentContainer(ruleDataModel.ContentType, (_) => ruleDataModel.Content);
+            var contentContainer = new ContentContainer((_) => ruleDataModel.Content);
 
             var rule = new Rule
             {
                 Active = ruleDataModel.Active,
                 ContentContainer = contentContainer,
+                ContentType = ruleDataModel.ContentType,
                 DateBegin = ruleDataModel.DateBegin,
                 DateEnd = ruleDataModel.DateEnd,
                 Name = ruleDataModel.Name,
@@ -45,7 +46,7 @@ namespace Rules.Framework.Providers.InMemory
             var ruleDataModel = new RuleDataModel
             {
                 Content = content,
-                ContentType = rule.ContentContainer.ContentType,
+                ContentType = rule.ContentType,
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
@@ -112,7 +113,7 @@ namespace Rules.Framework.Providers.InMemory
             var conditionNodeDataModels = new ConditionNodeDataModel[composedConditionNode.ChildConditionNodes.Count()];
             var i = 0;
 
-            foreach (IConditionNode child in composedConditionNode.ChildConditionNodes)
+            foreach (var child in composedConditionNode.ChildConditionNodes)
             {
                 conditionNodeDataModels[i++] = ConvertConditionNode(child);
             }

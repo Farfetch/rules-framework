@@ -16,17 +16,17 @@ namespace Rules.Framework.Tests.Source
         public async Task AddRuleAsync_NoMiddlewares_CallsRulesDataSource()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
 
             AddRuleArgs addRuleArgs = new()
             {
                 Rule = rule,
             };
 
-            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares
+            var rulesSourceMiddlewares
                 = Enumerable.Empty<IRulesSourceMiddleware>();
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.AddRuleAsync(It.Is<Rule>((val, _) => object.ReferenceEquals(val, rule))))
                 .Returns(Task.CompletedTask);
@@ -45,7 +45,7 @@ namespace Rules.Framework.Tests.Source
         public async Task AddRuleAsync_OneMiddleware_CallsMiddlewareAndRulesDataSourceAfter()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
 
             AddRuleArgs addRuleArgs = new()
             {
@@ -56,7 +56,7 @@ namespace Rules.Framework.Tests.Source
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.AddRuleAsync(It.Is<Rule>((val, _) => object.ReferenceEquals(val, rule))))
                 .Returns(Task.CompletedTask);
@@ -76,7 +76,7 @@ namespace Rules.Framework.Tests.Source
         public async Task AddRuleAsync_TwoMiddlewares_CallsFirstMiddlewareSecondMiddlewareAfterAndRulesDataSourceByLast()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
 
             AddRuleArgs addRuleArgs = new()
             {
@@ -89,7 +89,7 @@ namespace Rules.Framework.Tests.Source
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1, middleware2 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.AddRuleAsync(It.Is<Rule>((val, _) => object.ReferenceEquals(val, rule))))
                 .Returns(Task.CompletedTask);
@@ -108,18 +108,205 @@ namespace Rules.Framework.Tests.Source
         }
 
         [Fact]
+        public async Task CreateContentTypeAsync_NoMiddlewares_CallsRulesDataSource()
+        {
+            // Arrange
+            var contentType = "TestContent1";
+
+            CreateContentTypeArgs createContentTypeArgs = new()
+            {
+                Name = contentType,
+            };
+
+            var rulesSourceMiddlewares
+                = Enumerable.Empty<IRulesSourceMiddleware>();
+
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
+            Mock.Get(rulesDataSource)
+                .Setup(x => x.CreateContentTypeAsync(It.Is<string>((val, _) => object.Equals(val, contentType))))
+                .Returns(Task.CompletedTask);
+
+            RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
+
+            // Act
+            await rulesSource.CreateContentTypeAsync(createContentTypeArgs);
+
+            // Assert
+            Mock.Get(rulesDataSource)
+                .Verify(x => x.CreateContentTypeAsync(It.Is<string>((val, _) => object.Equals(val, contentType))), Times.Once());
+        }
+
+        [Fact]
+        public async Task CreateContentTypeAsync_OneMiddleware_CallsMiddlewareAndRulesDataSourceAfter()
+        {
+            // Arrange
+            var contentType = "TestContent1";
+
+            CreateContentTypeArgs createContentTypeArgs = new()
+            {
+                Name = contentType,
+            };
+
+            StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), new List<string>());
+
+            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1 };
+
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
+            Mock.Get(rulesDataSource)
+                .Setup(x => x.CreateContentTypeAsync(It.Is<string>((val, _) => object.Equals(val, contentType))))
+                .Returns(Task.CompletedTask);
+
+            RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
+
+            // Act
+            await rulesSource.CreateContentTypeAsync(createContentTypeArgs);
+
+            // Assert
+            middleware1.CreateContentTypeCalls.Should().Be(1);
+            Mock.Get(rulesDataSource)
+                .Verify(x => x.CreateContentTypeAsync(It.Is<string>((val, _) => object.Equals(val, contentType))), Times.Once());
+        }
+
+        [Fact]
+        public async Task CreateContentTypeAsync_TwoMiddlewares_CallsFirstMiddlewareSecondMiddlewareAfterAndRulesDataSourceByLast()
+        {
+            // Arrange
+            var contentType = "TestContent1";
+
+            CreateContentTypeArgs createContentTypeArgs = new()
+            {
+                Name = contentType,
+            };
+
+            List<string> middlewareMessages = new();
+            StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), middlewareMessages);
+            StubRulesSourceMiddleware middleware2 = new(nameof(middleware2), middlewareMessages);
+
+            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1, middleware2 };
+
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
+            Mock.Get(rulesDataSource)
+                .Setup(x => x.CreateContentTypeAsync(It.Is<string>((val, _) => object.Equals(val, contentType))))
+                .Returns(Task.CompletedTask);
+
+            RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
+
+            // Act
+            await rulesSource.CreateContentTypeAsync(createContentTypeArgs);
+
+            // Assert
+            middleware1.CreateContentTypeCalls.Should().Be(1);
+            middleware2.CreateContentTypeCalls.Should().Be(1);
+            middlewareMessages.Should().ContainInOrder("Enter middleware1.", "Enter middleware2.", "Exit middleware2.", "Exit middleware1.");
+            Mock.Get(rulesDataSource)
+                .Verify(x => x.CreateContentTypeAsync(It.Is<string>((val, _) => object.Equals(val, contentType))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetContentTypesAsync_NoMiddlewares_CallsRulesDataSource()
+        {
+            // Arrange
+            var expected = new[] { "Content Type 1", "Content Type 2", };
+
+            var getContentTypesArgs = new GetContentTypesArgs();
+
+            var rulesSourceMiddlewares
+                = Enumerable.Empty<IRulesSourceMiddleware>();
+
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
+            Mock.Get(rulesDataSource)
+                .Setup(x => x.GetContentTypesAsync())
+                .ReturnsAsync(expected);
+
+            RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
+
+            // Act
+            var actual = await rulesSource.GetContentTypesAsync(getContentTypesArgs);
+
+            // Assert
+            actual.Should().NotBeNullOrEmpty()
+                .And.BeEquivalentTo(expected);
+            Mock.Get(rulesDataSource)
+                .Verify(x => x.GetContentTypesAsync(), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetContentTypesAsync_OneMiddleware_CallsMiddlewareAndRulesDataSourceAfter()
+        {
+            // Arrange
+            var expected = new[] { "Content Type 1", "Content Type 2", };
+
+            var getContentTypesArgs = new GetContentTypesArgs();
+
+            StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), new List<string>());
+
+            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1 };
+
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
+            Mock.Get(rulesDataSource)
+                .Setup(x => x.GetContentTypesAsync())
+                .ReturnsAsync(expected);
+
+            RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
+
+            // Act
+            var actual = await rulesSource.GetContentTypesAsync(getContentTypesArgs);
+
+            // Assert
+            actual.Should().NotBeNullOrEmpty()
+                .And.Contain(expected);
+            middleware1.GetContentTypesCalls.Should().Be(1);
+            Mock.Get(rulesDataSource)
+                .Verify(x => x.GetContentTypesAsync(), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetContentTypesAsync_TwoMiddlewares_CallsFirstMiddlewareSecondMiddlewareAfterAndRulesDataSourceByLast()
+        {
+            // Arrange
+            var expected = new[] { "Content Type 1", "Content Type 2", };
+
+            var getContentTypesArgs = new GetContentTypesArgs();
+
+            List<string> middlewareMessages = new();
+            StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), middlewareMessages);
+            StubRulesSourceMiddleware middleware2 = new(nameof(middleware2), middlewareMessages);
+
+            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1, middleware2 };
+
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
+            Mock.Get(rulesDataSource)
+                .Setup(x => x.GetContentTypesAsync())
+                .ReturnsAsync(expected);
+
+            RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
+
+            // Act
+            var actual = await rulesSource.GetContentTypesAsync(getContentTypesArgs);
+
+            // Assert
+            actual.Should().NotBeNullOrEmpty()
+                .And.Contain(expected);
+            middleware1.GetContentTypesCalls.Should().Be(1);
+            middleware2.GetContentTypesCalls.Should().Be(1);
+            middlewareMessages.Should().ContainInOrder("Enter middleware1.", "Enter middleware2.", "Exit middleware2.", "Exit middleware1.");
+            Mock.Get(rulesDataSource)
+                .Verify(x => x.GetContentTypesAsync(), Times.Once());
+        }
+
+        [Fact]
         public async Task GetRulesAsync_NoMiddlewares_CallsRulesDataSource()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
             var expected = new[] { rule };
 
-            GetRulesArgs getRulesArgs = CreateGetRulesArgs();
+            var getRulesArgs = CreateGetRulesArgs();
 
-            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares
+            var rulesSourceMiddlewares
                 = Enumerable.Empty<IRulesSourceMiddleware>();
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
                 .ReturnsAsync(expected);
@@ -140,16 +327,16 @@ namespace Rules.Framework.Tests.Source
         public async Task GetRulesAsync_OneMiddleware_CallsMiddlewareAndRulesDataSourceAfter()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
             var expected = new[] { rule };
 
-            GetRulesArgs getRulesArgs = CreateGetRulesArgs();
+            var getRulesArgs = CreateGetRulesArgs();
 
             StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), new List<string>());
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
                 .ReturnsAsync(expected);
@@ -171,10 +358,10 @@ namespace Rules.Framework.Tests.Source
         public async Task GetRulesAsync_TwoMiddlewares_CallsFirstMiddlewareSecondMiddlewareAfterAndRulesDataSourceByLast()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
             var expected = new[] { rule };
 
-            GetRulesArgs getRulesArgs = CreateGetRulesArgs();
+            var getRulesArgs = CreateGetRulesArgs();
 
             List<string> middlewareMessages = new();
             StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), middlewareMessages);
@@ -182,7 +369,7 @@ namespace Rules.Framework.Tests.Source
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1, middleware2 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
                 .ReturnsAsync(expected);
@@ -206,15 +393,15 @@ namespace Rules.Framework.Tests.Source
         public async Task GetRulesFilteredAsync_NoMiddlewares_CallsRulesDataSource()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
             var expected = new[] { rule };
 
-            GetRulesFilteredArgs getRulesFilteredArgs = CreateGetRulesFilteredArgs();
+            var getRulesFilteredArgs = CreateGetRulesFilteredArgs();
 
-            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares
+            var rulesSourceMiddlewares
                 = Enumerable.Empty<IRulesSourceMiddleware>();
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.GetRulesByAsync(It.Is<RulesFilterArgs>(
                     (val) => string.Equals(val.Name, getRulesFilteredArgs.Name) && val.ContentType == getRulesFilteredArgs.ContentType && val.Priority == getRulesFilteredArgs.Priority)))
@@ -237,16 +424,16 @@ namespace Rules.Framework.Tests.Source
         public async Task GetRulesFilteredAsync_OneMiddleware_CallsMiddlewareAndRulesDataSourceAfter()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
             var expected = new[] { rule };
 
-            GetRulesFilteredArgs getRulesFilteredArgs = CreateGetRulesFilteredArgs();
+            var getRulesFilteredArgs = CreateGetRulesFilteredArgs();
 
             StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), new List<string>());
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.GetRulesByAsync(It.Is<RulesFilterArgs>(
                     (val) => string.Equals(val.Name, getRulesFilteredArgs.Name) && val.ContentType == getRulesFilteredArgs.ContentType && val.Priority == getRulesFilteredArgs.Priority)))
@@ -270,10 +457,10 @@ namespace Rules.Framework.Tests.Source
         public async Task GetRulesFilteredAsync_TwoMiddlewares_CallsFirstMiddlewareSecondMiddlewareAfterAndRulesDataSourceByLast()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
             var expected = new[] { rule };
 
-            GetRulesFilteredArgs getRulesFilteredArgs = CreateGetRulesFilteredArgs();
+            var getRulesFilteredArgs = CreateGetRulesFilteredArgs();
 
             List<string> middlewareMessages = new();
             StubRulesSourceMiddleware middleware1 = new(nameof(middleware1), middlewareMessages);
@@ -281,7 +468,7 @@ namespace Rules.Framework.Tests.Source
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1, middleware2 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.GetRulesByAsync(It.Is<RulesFilterArgs>(
                     (val) => string.Equals(val.Name, getRulesFilteredArgs.Name) && val.ContentType == getRulesFilteredArgs.ContentType && val.Priority == getRulesFilteredArgs.Priority)))
@@ -307,17 +494,17 @@ namespace Rules.Framework.Tests.Source
         public async Task UpdateRuleAsync_NoMiddlewares_CallsRulesDataSource()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
 
             UpdateRuleArgs updateRuleArgs = new()
             {
                 Rule = rule,
             };
 
-            IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares
+            var rulesSourceMiddlewares
                 = Enumerable.Empty<IRulesSourceMiddleware>();
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.UpdateRuleAsync(It.Is<Rule>((val, _) => object.ReferenceEquals(val, rule))))
                 .Returns(Task.CompletedTask);
@@ -336,7 +523,7 @@ namespace Rules.Framework.Tests.Source
         public async Task UpdateRuleAsync_OneMiddleware_CallsMiddlewareAndRulesDataSourceAfter()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
 
             UpdateRuleArgs updateRuleArgs = new()
             {
@@ -347,7 +534,7 @@ namespace Rules.Framework.Tests.Source
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.UpdateRuleAsync(It.Is<Rule>((val, _) => object.ReferenceEquals(val, rule))))
                 .Returns(Task.CompletedTask);
@@ -367,7 +554,7 @@ namespace Rules.Framework.Tests.Source
         public async Task UpdateRuleAsync_TwoMiddlewares_CallsFirstMiddlewareSecondMiddlewareAfterAndRulesDataSourceByLast()
         {
             // Arrange
-            Rule rule = CreateRule();
+            var rule = CreateRule();
 
             UpdateRuleArgs updateRuleArgs = new()
             {
@@ -380,7 +567,7 @@ namespace Rules.Framework.Tests.Source
 
             IEnumerable<IRulesSourceMiddleware> rulesSourceMiddlewares = new[] { middleware1, middleware2 };
 
-            IRulesDataSource rulesDataSource = Mock.Of<IRulesDataSource>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
                 .Setup(x => x.UpdateRuleAsync(It.Is<Rule>((val, _) => object.ReferenceEquals(val, rule))))
                 .Returns(Task.CompletedTask);

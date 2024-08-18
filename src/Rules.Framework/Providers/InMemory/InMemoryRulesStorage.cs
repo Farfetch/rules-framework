@@ -17,7 +17,7 @@ namespace Rules.Framework.Providers.InMemory
 
         public void AddRule(RuleDataModel ruleDataModel)
         {
-            List<RuleDataModel> contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
 
             lock (contentTypeRules)
             {
@@ -30,6 +30,11 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
+        public void CreateContentType(string contentType)
+        {
+            _ = this.rulesByContentType.TryAdd(contentType, new List<RuleDataModel>());
+        }
+
         public IReadOnlyCollection<RuleDataModel> GetAllRules()
             => this.rulesByContentType.SelectMany(kvp => kvp.Value).ToList().AsReadOnly();
 
@@ -38,18 +43,18 @@ namespace Rules.Framework.Providers.InMemory
 
         public IReadOnlyCollection<RuleDataModel> GetRulesBy(string contentType)
         {
-            List<RuleDataModel> contentTypeRules = GetRulesCollectionByContentType(contentType);
+            var contentTypeRules = GetRulesCollectionByContentType(contentType);
 
             return contentTypeRules.AsReadOnly();
         }
 
         public void UpdateRule(RuleDataModel ruleDataModel)
         {
-            List<RuleDataModel> contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
 
             lock (contentTypeRules)
             {
-                RuleDataModel existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
+                var existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
                 if (existent is null)
                 {
                     throw new InvalidOperationException($"Rule with name '{ruleDataModel.Name}' does not exist, no update can be done.");

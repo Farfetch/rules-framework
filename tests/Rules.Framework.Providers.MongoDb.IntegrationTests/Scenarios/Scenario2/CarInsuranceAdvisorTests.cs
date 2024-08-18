@@ -51,11 +51,25 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 }).ToList();
             }
 
-            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-            var mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var contentTypes = rules
+                .Select(r => new ContentTypeDataModel
+                {
+                    Creation = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    Name = r.ContentType,
+                })
+                .Distinct()
+                .ToArray();
 
-            mongoCollection.InsertMany(rules);
+            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.ContentTypesCollectionName);
+            var contentTypesMongoCollection = mongoDatabase.GetCollection<ContentTypeDataModel>(this.mongoDbProviderSettings.ContentTypesCollectionName);
+            contentTypesMongoCollection.InsertMany(contentTypes);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesMongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            rulesMongoCollection.InsertMany(rules);
         }
 
         public void Dispose()

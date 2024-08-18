@@ -2,11 +2,12 @@ namespace Rules.Framework.Source
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
 
     internal sealed class RulesSource : IRulesSource
     {
         private readonly AddRuleDelegate addRuleDelegate;
+        private readonly CreateContentTypeDelegate createContentTypeDelegate;
+        private readonly GetContentTypesDelegate getContentTypesDelegate;
         private readonly GetRulesDelegate getRulesDelegate;
         private readonly GetRulesFilteredDelegate getRulesFilteredDelegate;
         private readonly IRulesDataSource rulesDataSource;
@@ -18,6 +19,8 @@ namespace Rules.Framework.Source
         {
             var middlewaresLinkedList = new LinkedList<IRulesSourceMiddleware>(middlewares);
             this.addRuleDelegate = CreateAddRulePipelineDelegate(rulesDataSource, middlewaresLinkedList);
+            this.createContentTypeDelegate = CreateCreateContentTypePipelineDelegate(rulesDataSource, middlewaresLinkedList);
+            this.getContentTypesDelegate = CreateGetContentTypesPipelineDelegate(rulesDataSource, middlewaresLinkedList);
             this.getRulesDelegate = CreateGetRulesPipelineDelegate(rulesDataSource, middlewaresLinkedList);
             this.getRulesFilteredDelegate = CreateGetRulesFilteredPipelineDelegate(rulesDataSource, middlewaresLinkedList);
             this.updateRuleDelegate = CreateUpdateRulePipelineDelegate(rulesDataSource, middlewaresLinkedList);
@@ -29,7 +32,15 @@ namespace Rules.Framework.Source
             await this.addRuleDelegate.Invoke(args).ConfigureAwait(false);
         }
 
-        public Task<IEnumerable<string>> GetContentTypesAsync() => this.rulesDataSource.GetContentTypesAsync();
+        public async Task CreateContentTypeAsync(CreateContentTypeArgs args)
+        {
+            await this.createContentTypeDelegate(args).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<string>> GetContentTypesAsync(GetContentTypesArgs args)
+        {
+            return await this.getContentTypesDelegate(args).ConfigureAwait(false);
+        }
 
         public async Task<IEnumerable<Rule>> GetRulesAsync(GetRulesArgs args)
         {
@@ -61,6 +72,54 @@ namespace Rules.Framework.Source
                     var middleware = middlewareNode.Value;
                     var immutableAction = action;
                     action = async (args) => await middleware.HandleAddRuleAsync(args, immutableAction).ConfigureAwait(false);
+
+                    // Get previous middleware node.
+                    middlewareNode = middlewareNode.Previous;
+                }
+            }
+
+            return action;
+        }
+
+        private static CreateContentTypeDelegate CreateCreateContentTypePipelineDelegate(
+            IRulesDataSource rulesDataSource,
+            LinkedList<IRulesSourceMiddleware> middlewares)
+        {
+            CreateContentTypeDelegate action = async (args) => await rulesDataSource.CreateContentTypeAsync(args.Name).ConfigureAwait(false);
+
+            if (middlewares.Count > 0)
+            {
+                var middlewareNode = middlewares.Last;
+
+                while (middlewareNode is { })
+                {
+                    var middleware = middlewareNode.Value;
+                    var immutableAction = action;
+                    action = async (args) => await middleware.HandleCreateContentTypeAsync(args, immutableAction).ConfigureAwait(false);
+
+                    // Get previous middleware node.
+                    middlewareNode = middlewareNode.Previous;
+                }
+            }
+
+            return action;
+        }
+
+        private static GetContentTypesDelegate CreateGetContentTypesPipelineDelegate(
+            IRulesDataSource rulesDataSource,
+            LinkedList<IRulesSourceMiddleware> middlewares)
+        {
+            GetContentTypesDelegate action = async (args) => await rulesDataSource.GetContentTypesAsync().ConfigureAwait(false);
+
+            if (middlewares.Count > 0)
+            {
+                var middlewareNode = middlewares.Last;
+
+                while (middlewareNode is { })
+                {
+                    var middleware = middlewareNode.Value;
+                    var immutableAction = action;
+                    action = async (args) => await middleware.HandleGetContentTypesAsync(args, immutableAction).ConfigureAwait(false);
 
                     // Get previous middleware node.
                     middlewareNode = middlewareNode.Previous;

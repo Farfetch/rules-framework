@@ -57,12 +57,12 @@ namespace Rules.Framework.Providers.MongoDb
             }
 
             var content = rule.ContentContainer.GetContentAs<object>();
-            var serializedContent = this.contentSerializationProvider.GetContentSerializer(rule.ContentContainer.ContentType).Serialize(content);
+            var serializedContent = this.contentSerializationProvider.GetContentSerializer(rule.ContentType).Serialize(content);
 
             var ruleDataModel = new RuleDataModel
             {
                 Content = serializedContent,
-                ContentType = Convert.ToString(rule.ContentContainer.ContentType, CultureInfo.InvariantCulture),
+                ContentType = rule.ContentType,
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
@@ -85,7 +85,7 @@ namespace Rules.Framework.Providers.MongoDb
             var childConditionNodeDataModels = composedConditionNodeDataModel.ChildConditionNodes;
             var count = childConditionNodeDataModels.Length;
             var childConditionNodes = new IConditionNode[count];
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 childConditionNodes[i] = ConvertConditionNode(childConditionNodeDataModels[i]);
             }

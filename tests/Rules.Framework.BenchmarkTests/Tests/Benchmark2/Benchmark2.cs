@@ -33,6 +33,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
                 })
                 .Build();
 
+            await rulesEngine.CreateContentTypeAsync(nameof(ContentTypes.Songs));
+
             foreach (var rule in this.benchmarkData.Rules)
             {
                 await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);

@@ -33,6 +33,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
+                    options.AutoCreateContentTypes = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
@@ -93,6 +94,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
+                    options.AutoCreateContentTypes = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
@@ -154,6 +156,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
+                    options.AutoCreateContentTypes = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
@@ -210,6 +213,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
+                    options.AutoCreateContentTypes = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
@@ -266,6 +270,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
+                    options.AutoCreateContentTypes = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
@@ -318,6 +323,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
+                    options.AutoCreateContentTypes = true;
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();

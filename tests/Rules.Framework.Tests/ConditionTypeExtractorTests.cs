@@ -22,7 +22,7 @@ namespace Rules.Framework.Tests
 
             var rule1 = new Rule
             {
-                ContentContainer = new ContentContainer(contentType, _ => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
                 Name = "Rule 1",
@@ -32,7 +32,7 @@ namespace Rules.Framework.Tests
 
             var rule2 = new Rule
             {
-                ContentContainer = new ContentContainer(contentType, _ => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2020, 01, 01),
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Rule 2",
@@ -42,7 +42,7 @@ namespace Rules.Framework.Tests
 
             var rule3 = new Rule
             {
-                ContentContainer = new ContentContainer(contentType, _ => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
                 Name = "Rule 3",
@@ -52,7 +52,7 @@ namespace Rules.Framework.Tests
 
             var rule4 = new Rule
             {
-                ContentContainer = new ContentContainer(contentType, _ => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
                 Name = "Rule 4",
@@ -125,7 +125,7 @@ namespace Rules.Framework.Tests
             {
                 new Rule
                 {
-                    ContentContainer = new ContentContainer(contentType, _ => new object()),
+                    ContentContainer = new ContentContainer(_ => new object()),
                     DateBegin = dateBegin,
                     DateEnd = dateEnd,
                     Name = "Rule 3",

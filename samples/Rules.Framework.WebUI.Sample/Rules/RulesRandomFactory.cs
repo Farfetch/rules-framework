@@ -17,6 +17,18 @@ namespace Rules.Framework.WebUI.Sample.Rules
             this.random = new Random();
         }
 
+        public ContentTypes[] ContentTypes => new[]
+        {
+            Enums.ContentTypes.TestDateTime,
+            Enums.ContentTypes.TestDecimal,
+            Enums.ContentTypes.TestLong,
+            Enums.ContentTypes.TestBoolean,
+            Enums.ContentTypes.TestShort,
+            Enums.ContentTypes.TestNumber,
+            Enums.ContentTypes.TestString,
+            Enums.ContentTypes.TestBlob,
+        };
+
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
         {
             var currentYear = DateTime.UtcNow.Year;

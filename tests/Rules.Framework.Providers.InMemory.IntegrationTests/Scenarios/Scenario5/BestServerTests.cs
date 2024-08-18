@@ -56,6 +56,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .SetInMemoryDataSource()
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
+            await genericRulesEngine.CreateContentTypeAsync(BestServerConfigurations.BestServerEvaluation);
 
             // Act 1 - Create rule with "in" operator
             var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()

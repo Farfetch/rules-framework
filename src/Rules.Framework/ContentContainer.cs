@@ -12,22 +12,13 @@ namespace Rules.Framework
         /// <summary>
         /// Creates a new <see cref="ContentContainer"/>.
         /// </summary>
-        /// <param name="contentType">the content type.</param>
         /// <param name="getContentFunc">
         /// the function used to fetch content casted to provided type.
         /// </param>
-        public ContentContainer(string contentType, Func<Type, object> getContentFunc)
+        public ContentContainer(Func<Type, object> getContentFunc)
         {
-            this.ContentType = contentType;
             this.getContentFunc = getContentFunc;
         }
-
-        /// <summary>
-        /// Gets the content type.
-        /// </summary>
-        public string ContentType { get; }
-
-        internal Func<Type, object> ContentFunc => this.getContentFunc;
 
         /// <summary>
         /// Gets the content from container casted/converted to specified <typeparamref name="TContent"/>.

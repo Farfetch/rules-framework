@@ -24,6 +24,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
                  .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
 
+            await genericRulesEngine.CreateContentTypeAsync(BestServerConfigurations.BestServerEvaluation);
+
             // Act 1 - Create rule with "in" operator
             var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Top5")
@@ -117,6 +119,8 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
                  .SetInMemoryDataSource(serviceProvider)
                  .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
+
+            await genericRulesEngine.CreateContentTypeAsync(BestServerConfigurations.BestServerEvaluation);
 
             // Act 1 - Create rule with "in" operator
             var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()

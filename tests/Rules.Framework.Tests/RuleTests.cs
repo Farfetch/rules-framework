@@ -16,7 +16,7 @@ namespace Rules.Framework.Tests
             // Arrange
             var rule = new Rule
             {
-                ContentContainer = new ContentContainer(ContentType.Type1.ToString(), _ => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
                 Priority = 1,
@@ -37,7 +37,7 @@ namespace Rules.Framework.Tests
             // Arrange
             var rule = new Rule
             {
-                ContentContainer = new ContentContainer(ContentType.Type1.ToString(), _ => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
                 Priority = 1,
@@ -58,7 +58,7 @@ namespace Rules.Framework.Tests
         public void ContentContainer_HavingSettedInstance_ReturnsProvidedInstance()
         {
             // Arrange
-            var expected = new ContentContainer(ContentType.Type1.ToString(), (_) => null);
+            var expected = new ContentContainer((_) => null);
 
             var sut = new Rule
             {

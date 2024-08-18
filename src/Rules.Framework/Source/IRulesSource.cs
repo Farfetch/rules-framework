@@ -7,7 +7,9 @@ namespace Rules.Framework.Source
     {
         Task AddRuleAsync(AddRuleArgs args);
 
-        Task<IEnumerable<string>> GetContentTypesAsync();
+        Task CreateContentTypeAsync(CreateContentTypeArgs args);
+
+        Task<IEnumerable<string>> GetContentTypesAsync(GetContentTypesArgs args);
 
         Task<IEnumerable<Rule>> GetRulesAsync(GetRulesArgs args);
 
