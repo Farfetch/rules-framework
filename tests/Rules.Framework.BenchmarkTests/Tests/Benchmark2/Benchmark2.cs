@@ -8,7 +8,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
     public class Benchmark2 : IBenchmark
     {
         private readonly Scenario7Data benchmarkData = new Scenario7Data();
-        private IRulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
+        private IRulesEngine<ContentTypes, ConditionTypes>? genericRulesEngine;
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
@@ -19,7 +19,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
         [Benchmark]
         public async Task RunAsync()
         {
-            await this.rulesEngine!.MatchOneAsync(ContentTypes.Songs, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
+            await this.genericRulesEngine!.MatchOneAsync(ContentTypes.Songs, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
         }
 
         [GlobalSetup]
@@ -40,14 +40,14 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
                 await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
             }
 
-            this.rulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            this.genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
         }
 
         [GlobalCleanup]
         public async Task TearDownAsync()
         {
             await Extensions.TearDownProviderAsync(this.Provider!, nameof(Benchmark2)).ConfigureAwait(false);
-            this.rulesEngine = null;
+            this.genericRulesEngine = null;
         }
     }
 }

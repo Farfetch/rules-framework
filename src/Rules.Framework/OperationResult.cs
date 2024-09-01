@@ -32,18 +32,18 @@ namespace Rules.Framework
         /// <value><c>true</c> if rule operation was successfull; otherwise, <c>false</c>.</value>
         public bool IsSuccess { get; }
 
-        internal static OperationResult Error(string error) => Error(new[] { error });
+        internal static OperationResult Failure(string error) => Failure(new[] { error });
 
-        internal static OperationResult Error(IEnumerable<string> errors)
+        internal static OperationResult Failure(IEnumerable<string> errors)
         {
             if (errors is null)
             {
                 throw new ArgumentNullException(nameof(errors));
             }
 
-            return new OperationResult(false, errors);
+            return new OperationResult(isSuccess: false, errors: errors);
         }
 
-        internal static OperationResult Success() => new OperationResult(true, Enumerable.Empty<string>());
+        internal static OperationResult Success() => new(isSuccess: true, errors: Enumerable.Empty<string>());
     }
 }

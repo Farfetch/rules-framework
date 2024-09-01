@@ -22,7 +22,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             var contentTypesCollection = Mock.Of<IMongoCollection<ContentTypeDataModel>>();
             Mock.Get(contentTypesCollection)
                 .Setup(x => x.InsertOneAsync(It.IsAny<ContentTypeDataModel>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
-                .Callback<ContentTypeDataModel, InsertOneOptions, CancellationToken>((ct, opt, t) => actual = ct);
+                .Callback<ContentTypeDataModel, InsertOneOptions, CancellationToken>((ct, _, __) => actual = ct);
 
             var mongoDatabase = Mock.Of<IMongoDatabase>();
             Mock.Get(mongoDatabase)

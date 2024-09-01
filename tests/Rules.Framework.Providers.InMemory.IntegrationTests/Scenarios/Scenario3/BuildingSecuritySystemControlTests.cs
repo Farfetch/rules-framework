@@ -36,7 +36,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
                 new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
@@ -79,7 +79,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
                 new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
@@ -121,7 +121,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedConditions = new[]
             {
                 new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
                 new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),

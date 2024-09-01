@@ -3,7 +3,6 @@ namespace Rules.Framework.WebUI.Extensions
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework.ConditionNodes;
-    using Rules.Framework.Generic;
     using Rules.Framework.WebUI.Dto;
 
     internal static class RuleDtoExtensions
@@ -12,12 +11,6 @@ namespace Rules.Framework.WebUI.Extensions
 
         public static ConditionNodeDto ToConditionNodeDto(this IConditionNode rootCondition)
         {
-            /* Unmerged change from project 'Rules.Framework.WebUI (netstandard2.0)'
-            Before:
-                        if (rootCondition.LogicalOperator == Core.LogicalOperators.Eval ||
-            After:
-                        if (rootCondition.LogicalOperator == LogicalOperators.Eval ||
-            */
             if (rootCondition.LogicalOperator == Framework.LogicalOperators.Eval ||
                 rootCondition.LogicalOperator == 0)
             {

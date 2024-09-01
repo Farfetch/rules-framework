@@ -37,11 +37,9 @@ namespace Rules.Framework.Tests
         public async Task ActivateRuleAsync_GivenEmptyRuleDataSource_ActivatesRuleSuccessfully()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
-
             var testRule = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Update test rule",
@@ -79,7 +77,7 @@ namespace Rules.Framework.Tests
             var testRule = new Rule
             {
                 ContentType = contentType,
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Test rule",
@@ -117,7 +115,7 @@ namespace Rules.Framework.Tests
             var testRule = new Rule
             {
                 ContentType = contentType,
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Test rule",
@@ -155,7 +153,7 @@ namespace Rules.Framework.Tests
             var testRule = new Rule
             {
                 ContentType = contentType,
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Test rule",
@@ -260,7 +258,7 @@ namespace Rules.Framework.Tests
 
             var testRule = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Update test rule",
@@ -340,11 +338,9 @@ namespace Rules.Framework.Tests
                 .Setup(x => x.GetConditionTypes(It.IsAny<IEnumerable<Rule>>()))
                 .Returns(expectedCondtionTypes);
 
-            this.SetupMockForConditionsEvalEngine((rootConditionNode, _, _) => rootConditionNode switch
-            {
-                ValueConditionNode stringConditionNode => stringConditionNode.Operand.ToString() == "USA",
-                _ => false,
-            }, evaluationOptions);
+            this.SetupMockForConditionsEvalEngine(
+                (rootConditionNode, _, _) => rootConditionNode is ValueConditionNode stringConditionNode && stringConditionNode.Operand.ToString() == "USA",
+                evaluationOptions);
 
             var validatorProvider = Mock.Of<IValidatorProvider>();
 
@@ -375,7 +371,7 @@ namespace Rules.Framework.Tests
 
             var expected1 = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule 1",
@@ -385,7 +381,7 @@ namespace Rules.Framework.Tests
 
             var expected2 = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2010, 01, 01),
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule 2",
@@ -395,7 +391,7 @@ namespace Rules.Framework.Tests
 
             var notExpected = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Not expected rule",
@@ -455,7 +451,7 @@ namespace Rules.Framework.Tests
 
             var other = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule",
@@ -465,7 +461,7 @@ namespace Rules.Framework.Tests
 
             var expected = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2010, 01, 01),
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule",
@@ -521,7 +517,7 @@ namespace Rules.Framework.Tests
 
             var expected = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Expected rule",
@@ -531,7 +527,7 @@ namespace Rules.Framework.Tests
 
             var other = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2010, 01, 01),
                 DateEnd = new DateTime(2021, 01, 01),
                 Name = "Expected rule",
@@ -587,7 +583,7 @@ namespace Rules.Framework.Tests
             {
                 new Rule
                 {
-                    ContentContainer = new ContentContainer((t) => new object()),
+                    ContentContainer = new ContentContainer(_ => new object()),
                     DateBegin = new DateTime(2018, 01, 01),
                     DateEnd = new DateTime(2019, 01, 01),
                     Name = "Expected rule",
@@ -596,7 +592,7 @@ namespace Rules.Framework.Tests
                 },
                 new Rule
                 {
-                    ContentContainer = new ContentContainer((t) => new object()),
+                    ContentContainer = new ContentContainer(_ => new object()),
                     DateBegin = new DateTime(2010, 01, 01),
                     DateEnd = new DateTime(2021, 01, 01),
                     Name = "Expected rule",
@@ -639,7 +635,7 @@ namespace Rules.Framework.Tests
 
             var testRule = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Update test rule",
@@ -685,7 +681,7 @@ namespace Rules.Framework.Tests
 
             var testRule = new Rule
             {
-                ContentContainer = new ContentContainer((t) => new object()),
+                ContentContainer = new ContentContainer(_ => new object()),
                 DateBegin = new DateTime(2018, 01, 01),
                 DateEnd = new DateTime(2019, 01, 01),
                 Name = "Update test rule",

@@ -8,13 +8,13 @@ namespace Rules.Framework.Tests
     public class RuleOperationResultTests
     {
         [Fact]
-        public void Error_GivenCollectionOfErrors_ReturnsRuleOperationResultWithErrorsAndNoSuccess()
+        public void Failure_GivenCollectionOfErrors_ReturnsRuleOperationResultWithErrorsAndNoSuccess()
         {
             // Arrange
             IEnumerable<string> errors = new[] { "Error1", "Error2" };
 
             // Act
-            var ruleOperationResult = OperationResult.Error(errors);
+            var ruleOperationResult = OperationResult.Failure(errors);
 
             // Assert
             ruleOperationResult.Should().NotBeNull();
@@ -23,13 +23,13 @@ namespace Rules.Framework.Tests
         }
 
         [Fact]
-        public void Error_GivenNullCollectionOfErrors_ThrowsArgumentNullException()
+        public void Failure_GivenNullCollectionOfErrors_ThrowsArgumentNullException()
         {
             // Arrange
             IEnumerable<string> errors = null;
 
             // Act
-            var argumentNullException = Assert.Throws<ArgumentNullException>(() => OperationResult.Error(errors));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => OperationResult.Failure(errors));
 
             // Assert
             argumentNullException.Should().NotBeNull();

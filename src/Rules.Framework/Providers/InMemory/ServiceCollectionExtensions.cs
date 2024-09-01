@@ -15,9 +15,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddInMemoryRulesDataSource(this IServiceCollection serviceDescriptors, ServiceLifetime serviceLifetime)
         {
-            ServiceDescriptor item = ServiceDescriptor.Describe(
+            var item = ServiceDescriptor.Describe(
                 typeof(IInMemoryRulesStorage),
-                (sp) => new InMemoryRulesStorage(),
+                _ => new InMemoryRulesStorage(),
                 serviceLifetime);
             serviceDescriptors.Add(item);
 

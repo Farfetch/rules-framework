@@ -66,6 +66,6 @@ namespace Rules.Framework.Providers.InMemory
         }
 
         private List<RuleDataModel> GetRulesCollectionByContentType(string contentType) => this.rulesByContentType
-                                .GetOrAdd(contentType, (ct) => new List<RuleDataModel>());
+                                .GetOrAdd(contentType, _ => new List<RuleDataModel>());
     }
 }

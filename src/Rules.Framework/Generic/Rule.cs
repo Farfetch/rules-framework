@@ -1,6 +1,7 @@
 namespace Rules.Framework.Generic
 {
     using System;
+    using Rules.Framework.Core;
 
     /// <summary>
     /// Defines a rule.
@@ -11,21 +12,19 @@ namespace Rules.Framework.Generic
     /// </typeparam>
     public class Rule<TContentType, TConditionType>
     {
-        private static readonly Type stringType = typeof(string);
-
         private readonly Rule wrappedRule;
         private IConditionNode<TConditionType>? rootCondition;
 
         internal Rule(Rule wrappedRule)
         {
             var typeForContentType = typeof(TContentType);
-            if (!typeForContentType.IsEnum && typeForContentType != stringType)
+            if (!typeForContentType.IsEnum && typeForContentType != TypesCache.String)
             {
                 throw new NotSupportedException($"Only enum types or string are supported as {nameof(TContentType)}.");
             }
 
             var typeForConditionType = typeof(TConditionType);
-            if (!typeForConditionType.IsEnum && typeForConditionType != stringType)
+            if (!typeForConditionType.IsEnum && typeForConditionType != TypesCache.String)
             {
                 throw new NotSupportedException($"Only enum types or string are supported as {nameof(TConditionType)}.");
             }

@@ -43,7 +43,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                     TypeNameHandling = TypeNameHandling.All
                 });
 
-                rules = array.Select(t =>
+                rules = array!.Select(t =>
                 {
                     t.Content = t.Content as string;
 
@@ -136,7 +136,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
 
-            var rulesDataSource = CreateRulesDataSourceTest<ContentTypes, ConditionTypes>(this.mongoClient, this.mongoDbProviderSettings);
+            var rulesDataSource = CreateRulesDataSourceTest(this.mongoClient, this.mongoDbProviderSettings);
 
             var ruleBuilderResult = Rule.New<ContentTypes, ConditionTypes>()
                 .WithName("Car Insurance Advise on self damage coverage")
@@ -258,7 +258,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             return new MongoClient(settings);
         }
 
-        private static IRulesDataSource CreateRulesDataSourceTest<TContentType, TConditionType>(
+        private static MongoDbProviderRulesDataSource CreateRulesDataSourceTest(
             IMongoClient mongoClient,
             MongoDbProviderSettings mongoDbProviderSettings)
         {
@@ -270,7 +270,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                     ruleFactory);
         }
 
-        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        private MongoDbProviderSettings CreateProviderSettings() => new()
         {
             DatabaseName = "rules-framework-tests",
             RulesCollectionName = "car-insurance-advisor"

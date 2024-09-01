@@ -106,10 +106,6 @@ namespace Rules.Framework.Tests.Generic
                 .WithCondition(ConditionType.IsoCountryCode, Operators.Equal, "USA")
                 .Build().Rule;
             expectedRule.Priority = 3;
-            var expectedGenericRules = new List<Rule>
-            {
-                expectedRule,
-            };
 
             var dateBegin = new DateTime(2022, 01, 01);
             var dateEnd = new DateTime(2022, 12, 01);

@@ -83,7 +83,7 @@ namespace Rules.Framework
             var existentContentTypes = await this.rulesSource.GetContentTypesAsync(getContentTypesArgs).ConfigureAwait(false);
             if (existentContentTypes.Contains(contentType, StringComparer.Ordinal))
             {
-                return OperationResult.Error($"The content type '{contentType}' already exists.");
+                return OperationResult.Failure($"The content type '{contentType}' already exists.");
             }
 
             return await this.CreateContentTypeInternalAsync(contentType).ConfigureAwait(false);
@@ -253,7 +253,7 @@ namespace Rules.Framework
                 {
                     errors.Add($"Specified content type '{rule.ContentType}' does not exist. " +
                         $"Please create the content type first or set the rules engine option '{nameof(this.Options.AutoCreateContentTypes)}' to true.");
-                    return OperationResult.Error(errors);
+                    return OperationResult.Failure(errors);
                 }
 
                 await this.CreateContentTypeInternalAsync(rule.ContentType).ConfigureAwait(false);
@@ -279,7 +279,7 @@ namespace Rules.Framework
 
             if (errors.Any())
             {
-                return OperationResult.Error(errors);
+                return OperationResult.Failure(errors);
             }
 
             switch (ruleAddPriorityOption.PriorityOption)
@@ -489,14 +489,14 @@ namespace Rules.Framework
             var existentRule = existentRules.FirstOrDefault(r => string.Equals(r.Name, rule.Name, StringComparison.OrdinalIgnoreCase));
             if (existentRule is null)
             {
-                return OperationResult.Error($"Rule with name '{rule.Name}' does not exist.");
+                return OperationResult.Failure($"Rule with name '{rule.Name}' does not exist.");
             }
 
             var validationResult = this.ruleValidator.Validate(rule);
 
             if (!validationResult.IsValid)
             {
-                return OperationResult.Error(validationResult.Errors.Select(ve => ve.ErrorMessage));
+                return OperationResult.Failure(validationResult.Errors.Select(ve => ve.ErrorMessage));
             }
 
             var topPriorityThreshold = Math.Min(rule.Priority, existentRule.Priority);

@@ -15,9 +15,9 @@ namespace Rules.Framework.Management.Operations
 
         public async Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules)
         {
-            foreach (Rule existentRule in rules)
+            foreach (var existentRule in rules)
             {
-                var updateRuleArgs = new UpdateRuleArgs()
+                var updateRuleArgs = new UpdateRuleArgs
                 {
                     Rule = existentRule,
                 };
