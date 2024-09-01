@@ -254,8 +254,6 @@ namespace Rules.Framework.Tests
         public async Task DeactivateRuleAsync_GivenEmptyRuleDataSource_DeactivatesRuleSuccessfully()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
-
             var testRule = new Rule
             {
                 ContentContainer = new ContentContainer(_ => new object()),
@@ -630,9 +628,7 @@ namespace Rules.Framework.Tests
         [Fact]
         public async Task UpdateRuleAsync_GivenEmptyRuleDataSource_UpdatesRuleSuccesfully()
         {
-            // Arrange
-            var contentType = ContentType.Type1.ToString();
-
+            // Arrange«
             var testRule = new Rule
             {
                 ContentContainer = new ContentContainer(_ => new object()),
@@ -677,8 +673,6 @@ namespace Rules.Framework.Tests
         public async Task UpdateRuleAsync_GivenRuleWithInvalidDateEnd_UpdatesRuleFailure()
         {
             // Arrange
-            var contentType = ContentType.Type1.ToString();
-
             var testRule = new Rule
             {
                 ContentContainer = new ContentContainer(_ => new object()),

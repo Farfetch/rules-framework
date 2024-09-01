@@ -109,7 +109,7 @@ namespace Rules.Framework.Source
             IRulesDataSource rulesDataSource,
             LinkedList<IRulesSourceMiddleware> middlewares)
         {
-            GetContentTypesDelegate action = async (args) => await rulesDataSource.GetContentTypesAsync().ConfigureAwait(false);
+            GetContentTypesDelegate action = async (_) => await rulesDataSource.GetContentTypesAsync().ConfigureAwait(false);
 
             if (middlewares.Count > 0)
             {

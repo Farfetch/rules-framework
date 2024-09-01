@@ -18,8 +18,6 @@ namespace Rules.Framework.Tests
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2019, 01, 01);
 
-            var contentType = ContentType.Type1.ToString();
-
             var rule1 = new Rule
             {
                 ContentContainer = new ContentContainer(_ => new object()),
@@ -119,11 +117,9 @@ namespace Rules.Framework.Tests
             var dateBegin = new DateTime(2018, 01, 01);
             var dateEnd = new DateTime(2019, 01, 01);
 
-            var contentType = ContentType.Type1.ToString();
-
             var matchRules = new List<Rule>
             {
-                new Rule
+                new()
                 {
                     ContentContainer = new ContentContainer(_ => new object()),
                     DateBegin = dateBegin,

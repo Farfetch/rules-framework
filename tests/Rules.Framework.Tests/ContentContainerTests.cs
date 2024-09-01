@@ -13,7 +13,7 @@ namespace Rules.Framework.Tests
             // Arrange
             object expected = "Just some content";
 
-            var sut = new ContentContainer((t) => expected);
+            var sut = new ContentContainer(_ => expected);
 
             // Act
             object actual = sut.GetContentAs<string>();
@@ -28,7 +28,7 @@ namespace Rules.Framework.Tests
             // Arrange
             object expected = "Just some content";
 
-            var sut = new ContentContainer((t) => expected);
+            var sut = new ContentContainer(_ => expected);
 
             // Act
             var contentTypeException = Assert.Throws<ContentTypeException>(() => sut.GetContentAs<int>());

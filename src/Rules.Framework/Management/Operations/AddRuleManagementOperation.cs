@@ -2,7 +2,6 @@ namespace Rules.Framework.Management.Operations
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
     using Rules.Framework.Source;
 
     internal sealed class AddRuleManagementOperation : IManagementOperation
@@ -18,7 +17,7 @@ namespace Rules.Framework.Management.Operations
 
         public async Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules)
         {
-            var addRuleArgs = new AddRuleArgs()
+            var addRuleArgs = new AddRuleArgs
             {
                 Rule = this.rule,
             };

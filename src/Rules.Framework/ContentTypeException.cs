@@ -2,17 +2,6 @@ namespace Rules.Framework
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-
-    /* Unmerged change from project 'Rules.Framework (netstandard2.0)'
-    Before:
-        using System.Runtime.Serialization;
-    After:
-        using System.Runtime.Serialization;
-        using Rules;
-        using Rules.Framework;
-        using Rules.Framework;
-        using Rules.Framework.Core;
-    */
     using System.Runtime.Serialization;
 
     /// <summary>
