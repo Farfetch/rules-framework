@@ -51,7 +51,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         public async Task RulesEngine_UpdateRuleDateEnd_Validations(DateTime dateEnd, bool success)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
+            var emptyConditions = new Dictionary<ConditionNames, object>();
             var matchDate = new DateTime(2020, 01, 02);
 
             // Act

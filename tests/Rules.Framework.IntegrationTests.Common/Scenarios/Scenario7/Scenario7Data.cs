@@ -7,11 +7,11 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
 
     public class Scenario7Data : IScenarioData<Rulesets, ConditionNames>
     {
-        public IEnumerable<Condition<ConditionNames>> Conditions => new[]
+        public IDictionary<ConditionNames, object> Conditions => new Dictionary<ConditionNames, object>
         {
-            new Condition<ConditionNames>(ConditionNames.Artist, "Queen"),
-            new Condition<ConditionNames>(ConditionNames.Lyrics, "Is this the real life?\nIs this just fantasy?\nCaught in a landside,\nNo escape from reality" ),
-            new Condition<ConditionNames>(ConditionNames.ReleaseYear, 1975 )
+            { ConditionNames.Artist, "Queen" },
+            { ConditionNames.Lyrics, "Is this the real life?\nIs this just fantasy?\nCaught in a landside,\nNo escape from reality" },
+            { ConditionNames.ReleaseYear, 1975 },
         };
 
         public DateTime MatchDate => DateTime.Parse("2022-11-01");

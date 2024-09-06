@@ -45,7 +45,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_DeactivateThenActivateRule_Validations(bool compiled)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
+            var emptyConditions = new Dictionary<ConditionNames, object>();
             var matchDate = new DateTime(2020, 01, 02);
 
             // Act 1: Deactivate the rule
@@ -71,8 +71,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         {
             var ruleSpecs = new List<RuleSpecification>
             {
-                new RuleSpecification(rule1, RuleAddPriorityOption.ByPriorityNumber(1)),
-                new RuleSpecification(rule2, RuleAddPriorityOption.ByPriorityNumber(2))
+                new(rule1, RuleAddPriorityOption.ByPriorityNumber(1)),
+                new(rule2, RuleAddPriorityOption.ByPriorityNumber(2))
             };
 
             return ruleSpecs;

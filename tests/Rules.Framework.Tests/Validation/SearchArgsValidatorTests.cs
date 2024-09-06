@@ -1,6 +1,7 @@
 namespace Rules.Framework.Tests.Validation
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
     using Rules.Framework.Tests.Stubs;
@@ -15,10 +16,10 @@ namespace Rules.Framework.Tests.Validation
             // Arrange
             var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
             {
-                Conditions = new[]
+                Conditions = new Dictionary<ConditionNames, object>
                 {
-                    new Condition<ConditionNames>(0, 1)
-                }
+                    { 0, 1 },
+                },
             };
 
             var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
@@ -29,7 +30,7 @@ namespace Rules.Framework.Tests.Validation
             // Assert
             validationResult.IsValid.Should().BeFalse();
             validationResult.Errors.Should().HaveCount(1);
-            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == $"{nameof(searchArgs.Conditions)}[0].Type"));
+            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == $"{nameof(searchArgs.Conditions)}[0].Key"));
         }
 
         [Fact]
@@ -38,10 +39,10 @@ namespace Rules.Framework.Tests.Validation
             // Arrange
             var searchArgs = new SearchArgs<RulesetNames, ConditionClass>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
             {
-                Conditions = new[]
+                Conditions = new Dictionary<ConditionClass, object>
                 {
-                    new Condition<ConditionClass>(new ConditionClass{Id = 1, Name = "Sample Condition Type" }, 1)
-                }
+                    { new ConditionClass { Id = 1, Name = "Sample Condition Type" }, 1 },
+                },
             };
 
             var validator = new SearchArgsValidator<RulesetNames, ConditionClass>();
@@ -55,38 +56,15 @@ namespace Rules.Framework.Tests.Validation
         }
 
         [Fact]
-        public void Validate_GivenConditionWithTypeAsClassTypeAndNullValue_ReturnsFailedValidation()
-        {
-            // Arrange
-            var searchArgs = new SearchArgs<RulesetNames, ConditionClass>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
-            {
-                Conditions = new[]
-                {
-                    new Condition<ConditionClass>(null, 1)
-                }
-            };
-
-            var validator = new SearchArgsValidator<RulesetNames, ConditionClass>();
-
-            // Act
-            var validationResult = validator.Validate(searchArgs);
-
-            // Assert
-            validationResult.IsValid.Should().BeFalse();
-            validationResult.Errors.Should().HaveCount(1);
-            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == $"{nameof(searchArgs.Conditions)}[0].Type"));
-        }
-
-        [Fact]
         public void Validate_GivenConditionWithTypeAsEnumTypeAndDefinedValue_ReturnsSuccessValidation()
         {
             // Arrange
             var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue)
             {
-                Conditions = new[]
+                Conditions = new Dictionary<ConditionNames, object>
                 {
-                    new Condition<ConditionNames>(ConditionNames.IsoCountryCode,"PT")
-                }
+                    { ConditionNames.IsoCountryCode, "PT" },
+                },
             };
 
             var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();

@@ -55,7 +55,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
 
         protected async Task<Rule<RulesetNames, ConditionNames>> MatchOneAsync(
             DateTime matchDate,
-            Condition<ConditionNames>[] conditions) => await RulesEngine.MatchOneAsync(
+            Dictionary<ConditionNames, object> conditions) => await RulesEngine.MatchOneAsync(
                 TestRuleset,
                 matchDate,
                 conditions);

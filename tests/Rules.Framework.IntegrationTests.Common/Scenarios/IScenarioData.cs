@@ -2,12 +2,11 @@ namespace Rules.Framework.BenchmarkTests.Tests
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework;
     using Rules.Framework.Generic;
 
     public interface IScenarioData<TRuleset, TCondition>
     {
-        IEnumerable<Condition<TCondition>> Conditions { get; }
+        IDictionary<TCondition, object> Conditions { get; }
 
         DateTime MatchDate { get; }
 

@@ -8,9 +8,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 
     public class Scenario6Data : IScenarioData<Rulesets, ConditionNames>
     {
-        public IEnumerable<Condition<ConditionNames>> Conditions => new[]
+        public IDictionary<ConditionNames, object> Conditions => new Dictionary<ConditionNames, object>
         {
-            new Condition<ConditionNames>(ConditionNames.StringCondition, "Let's benchmark this!")
+            { ConditionNames.StringCondition, "Let's benchmark this!" },
         };
 
         public DateTime MatchDate => DateTime.Parse("2022-10-01");

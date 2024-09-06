@@ -15,33 +15,33 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
         {
             new object[]
             {
-                new[]
+                new Dictionary<BestServerConditions, object>
                 {
-                    new Condition<BestServerConditions>(BestServerConditions.Price,100),
-                    new Condition<BestServerConditions>(BestServerConditions.Memory,12),
-                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
-                    new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
+                    { BestServerConditions.Price,100 },
+                    { BestServerConditions.Memory,12 },
+                    { BestServerConditions.StoragePartionable,true },
+                    { BestServerConditions.Brand,"AMD" },
                 },
                 "Best Server Top5"
             },
             new object[]
             {
-                new[]
+                new Dictionary<BestServerConditions, object>
                 {
-                    new Condition<BestServerConditions>(BestServerConditions.Price,110),
-                    new Condition<BestServerConditions>(BestServerConditions.Memory,12),
-                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
-                    new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
+                    { BestServerConditions.Price,110 },
+                    { BestServerConditions.Memory,12 },
+                    { BestServerConditions.StoragePartionable,true },
+                    { BestServerConditions.Brand,"AMD" },
                 },
                 "Best Server Default"
             },
             new object[]
             {
-                new[]
+                new Dictionary<BestServerConditions, object>
                 {
-                    new Condition<BestServerConditions>(BestServerConditions.Price,100),
-                    new Condition<BestServerConditions>(BestServerConditions.Memory,12),
-                    new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
+                    { BestServerConditions.Price,100 },
+                    { BestServerConditions.Memory,12 },
+                    { BestServerConditions.StoragePartionable,true },
                 },
                 "Best Server Default"
             }
@@ -49,7 +49,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
         [Theory]
         [MemberData(nameof(DataTest))]
-        public async Task BestServer_InEvaluation(IEnumerable<Condition<BestServerConditions>> conditions, string expectedRuleName)
+        public async Task BestServer_InEvaluation(Dictionary<BestServerConditions, object> conditions, string expectedRuleName)
         {
             // Arrange
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()

@@ -367,10 +367,10 @@ namespace Rules.Framework.Tests
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
             var ruleset = RulesetNames.Type1.ToString();
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>
             {
-                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
+                { ConditionNames.IsoCountryCode.ToString(), "USA" },
+                { ConditionNames.IsoCurrency.ToString(), "USD" },
             };
 
             var expected1 = new Rule
@@ -447,10 +447,10 @@ namespace Rules.Framework.Tests
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
             var ruleset = RulesetNames.Type1.ToString();
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>
             {
-                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
+                { ConditionNames.IsoCountryCode.ToString(), "USA" },
+                { ConditionNames.IsoCurrency.ToString(), "USD" },
             };
 
             var other = new Rule
@@ -513,10 +513,10 @@ namespace Rules.Framework.Tests
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
             var ruleset = RulesetNames.Type1.ToString();
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>
             {
-                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
+                { ConditionNames.IsoCountryCode.ToString(), "USA" },
+                { ConditionNames.IsoCurrency.ToString(), "USD" },
             };
 
             var expected = new Rule
@@ -577,10 +577,10 @@ namespace Rules.Framework.Tests
             // Arrange
             var matchDateTime = new DateTime(2018, 07, 01, 18, 19, 30);
             var ruleset = RulesetNames.Type1.ToString();
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>
             {
-                new Condition<string>(ConditionNames.IsoCountryCode.ToString(), "USA"),
-                new Condition<string>(ConditionNames.IsoCurrency.ToString(), "USD")
+                { ConditionNames.IsoCountryCode.ToString(), "USA" },
+                { ConditionNames.IsoCurrency.ToString(), "USD" },
             };
 
             var rules = new[]
@@ -793,11 +793,11 @@ namespace Rules.Framework.Tests
                         break;
 
                     case nameof(RulesEngine.MatchManyAsync):
-                        _ = await sut.MatchManyAsync(null, DateTime.UtcNow, Enumerable.Empty<Condition<string>>());
+                        _ = await sut.MatchManyAsync(null, DateTime.UtcNow, new Dictionary<string, object>());
                         break;
 
                     case nameof(RulesEngine.MatchOneAsync):
-                        _ = await sut.MatchOneAsync(null, DateTime.UtcNow, Enumerable.Empty<Condition<string>>());
+                        _ = await sut.MatchOneAsync(null, DateTime.UtcNow, new Dictionary<string, object>());
                         break;
 
                     case nameof(RulesEngine.SearchAsync):

@@ -132,7 +132,7 @@ namespace Rules.Framework
         public async Task<IEnumerable<Rule>> MatchManyAsync(
             string ruleset,
             DateTime matchDateTime,
-            IEnumerable<Condition<string>> conditions)
+            IDictionary<string, object> conditions)
         {
             if (string.IsNullOrWhiteSpace(ruleset))
             {
@@ -152,16 +152,15 @@ namespace Rules.Framework
                 DateEnd = matchDateTime,
             };
 
-            var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value, StringComparer.Ordinal);
             var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
-            return this.EvalAll(orderedRules, evaluationOptions, conditionsAsDictionary, active: true);
+            return this.EvalAll(orderedRules, evaluationOptions, conditions, active: true);
         }
 
         /// <inheritdoc/>
         public async Task<Rule> MatchOneAsync(
             string ruleset,
             DateTime matchDateTime,
-            IEnumerable<Condition<string>> conditions)
+            IDictionary<string, object> conditions)
         {
             if (string.IsNullOrWhiteSpace(ruleset))
             {
@@ -181,11 +180,10 @@ namespace Rules.Framework
                 DateEnd = matchDateTime,
             };
 
-            var conditionsAsDictionary = conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
             var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
             return this.Options.PriorityCriteria == PriorityCriterias.TopmostRuleWins
-                ? EvalOneTraverse(orderedRules, evaluationOptions, conditionsAsDictionary, active: true)
-                : EvalOneReverse(orderedRules, evaluationOptions, conditionsAsDictionary, active: true);
+                ? EvalOneTraverse(orderedRules, evaluationOptions, conditions, active: true)
+                : EvalOneReverse(orderedRules, evaluationOptions, conditions, active: true);
         }
 
         /// <inheritdoc/>
@@ -226,9 +224,8 @@ namespace Rules.Framework
                 DateEnd = searchArgs.DateEnd,
             };
 
-            var conditionsAsDictionary = searchArgs.Conditions.ToDictionary(ks => ks.Type, ks => ks.Value);
             var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
-            return this.EvalAll(orderedRules, evaluationOptions, conditionsAsDictionary, searchArgs.Active);
+            return this.EvalAll(orderedRules, evaluationOptions, searchArgs.Conditions, searchArgs.Active);
         }
 
         /// <inheritdoc/>
@@ -384,7 +381,7 @@ namespace Rules.Framework
         private IEnumerable<Rule> EvalAll(
             List<Rule> orderedRules,
             EvaluationOptions evaluationOptions,
-            Dictionary<string, object> conditionsAsDictionary,
+            IDictionary<string, object> conditionsAsDictionary,
             bool? active)
         {
             // Begins evaluation at the first element of the given list as parameter. Returns all
@@ -404,7 +401,7 @@ namespace Rules.Framework
         private Rule EvalOneReverse(
             List<Rule> rules,
             EvaluationOptions evaluationOptions,
-            Dictionary<string, object> conditionsAsDictionary,
+            IDictionary<string, object> conditionsAsDictionary,
             bool? active)
         {
             // Begins evaluation at the last element of the given list as parameter. Returns the
@@ -424,7 +421,7 @@ namespace Rules.Framework
         private Rule EvalOneTraverse(
             List<Rule> rules,
             EvaluationOptions evaluationOptions,
-            Dictionary<string, object> conditionsAsDictionary,
+            IDictionary<string, object> conditionsAsDictionary,
             bool? active)
         {
             // Begins evaluation at the first element of the given list as parameter. Returns the
@@ -445,7 +442,7 @@ namespace Rules.Framework
         private bool EvalRule(
             Rule rule,
             EvaluationOptions evaluationOptions,
-            Dictionary<string, object> conditionsAsDictionary,
+            IDictionary<string, object> conditionsAsDictionary,
             bool? active)
             => rule.Active == active.GetValueOrDefault(defaultValue: true) && (rule.RootCondition == null || this.conditionsEvalEngine.Eval(rule.RootCondition, conditionsAsDictionary, evaluationOptions));
 

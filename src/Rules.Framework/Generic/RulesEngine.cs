@@ -87,15 +87,14 @@ namespace Rules.Framework.Generic
         public async Task<IEnumerable<Rule<TRuleset, TCondition>>> MatchManyAsync(
             TRuleset ruleset,
             DateTime matchDateTime,
-            IEnumerable<Condition<TCondition>> conditions)
+            IDictionary<TCondition, object> conditions)
         {
             var rulesetAsString = GenericConversions.Convert(ruleset);
+            var conditionsConverted = conditions.ToDictionary(c => GenericConversions.Convert(c.Key), c => c.Value, StringComparer.Ordinal);
             var rules = await this.wrappedRulesEngine.MatchManyAsync(
                 rulesetAsString,
                 matchDateTime,
-                conditions
-                    .Select(c => new Condition<string>(GenericConversions.Convert(c.Type), c.Value))
-                    .ToArray()).ConfigureAwait(false);
+                conditionsConverted).ConfigureAwait(false);
 
             return rules.Select(r => r.ToGenericRule<TRuleset, TCondition>()).ToArray();
         }
@@ -104,15 +103,14 @@ namespace Rules.Framework.Generic
         public async Task<Rule<TRuleset, TCondition>> MatchOneAsync(
             TRuleset ruleset,
             DateTime matchDateTime,
-            IEnumerable<Condition<TCondition>> conditions)
+            IDictionary<TCondition, object> conditions)
         {
             var rulesetAsString = GenericConversions.Convert(ruleset);
+            var conditionsConverted = conditions.ToDictionary(c => GenericConversions.Convert(c.Key), c => c.Value, StringComparer.Ordinal);
             var rule = await this.wrappedRulesEngine.MatchOneAsync(
                 rulesetAsString,
                 matchDateTime,
-                conditions
-                    .Select(c => new Condition<string>(GenericConversions.Convert(c.Type), c.Value))
-                    .ToArray()).ConfigureAwait(false);
+                conditionsConverted).ConfigureAwait(false);
 
             return rule?.ToGenericRule<TRuleset, TCondition>()!;
         }
@@ -128,7 +126,7 @@ namespace Rules.Framework.Generic
             var rulesetAsString = GenericConversions.Convert(searchArgs.Ruleset);
             var searchArgsNew = new SearchArgs<string, string>(rulesetAsString, searchArgs.DateBegin, searchArgs.DateEnd)
             {
-                Conditions = searchArgs.Conditions.Select(c => new Condition<string>(GenericConversions.Convert(c.Type), c.Value)).ToArray(),
+                Conditions = searchArgs.Conditions.ToDictionary(c => GenericConversions.Convert(c.Key), c => c.Value, StringComparer.Ordinal),
                 ExcludeRulesWithoutSearchConditions = searchArgs.ExcludeRulesWithoutSearchConditions,
             };
 

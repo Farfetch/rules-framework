@@ -87,10 +87,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
             const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<CarInsuranceConditionNames, object>
             {
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
+                { CarInsuranceConditionNames.RepairCosts, 800.00000m },
+                { CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -120,10 +120,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             // Arrange
             const CarInsuranceRulesetNames expectedContent = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<CarInsuranceConditionNames, object>
             {
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
+                { CarInsuranceConditionNames.RepairCosts, 800.00000m },
+                { CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()

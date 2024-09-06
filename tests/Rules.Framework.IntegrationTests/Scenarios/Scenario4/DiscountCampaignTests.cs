@@ -70,10 +70,10 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 3 - Evaluate new rule with "in" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new[]
+            var conditions = new Dictionary<DiscountConditions, object>
             {
-                new Condition<DiscountConditions>(DiscountConditions.ProductBrand,"ASUS"),
-                new Condition<DiscountConditions>(DiscountConditions.ProductRecommendedRetailPrice,1249.90m)
+                { DiscountConditions.ProductBrand,"ASUS" },
+                { DiscountConditions.ProductRecommendedRetailPrice,1249.90m },
             };
 
             var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
@@ -134,11 +134,11 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 3 - Evaluate new rule with "in" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new[]
+            var conditions = new Dictionary<DiscountConditions, object>
             {
-                new Condition<DiscountConditions>(DiscountConditions.ProductBrand, "ASUS"),
-                new Condition<DiscountConditions>(DiscountConditions.ProductTier, 1),
-                new Condition<DiscountConditions>(DiscountConditions.ProductRecommendedRetailPrice, 1249.90m)
+                { DiscountConditions.ProductBrand, "ASUS" },
+                { DiscountConditions.ProductTier, 1 },
+                { DiscountConditions.ProductRecommendedRetailPrice, 1249.90m },
             };
 
             var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
@@ -193,9 +193,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 3 - Evaluate new rule with "not contains" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new[]
+            var conditions = new Dictionary<DiscountConditions, object>
             {
-                new Condition<DiscountConditions>(DiscountConditions.CustomerEmail, "user12345@somewhere.com")
+                { DiscountConditions.CustomerEmail, "user12345@somewhere.com" },
             };
 
             var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
@@ -250,9 +250,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 3 - Evaluate new rule with "in" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new[]
+            var conditions = new Dictionary<DiscountConditions, object>
             {
-                new Condition<DiscountConditions>(DiscountConditions.ProductColor, ProductColor.Blue.ToString())
+                { DiscountConditions.ProductColor, ProductColor.Blue.ToString() },
             };
 
             var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
@@ -307,7 +307,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 3 - Evaluate new rule with "in" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new List<Condition<DiscountConditions>>();
+            var conditions = new Dictionary<DiscountConditions, object>();
 
             var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);
 
@@ -360,9 +360,9 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 3 - Evaluate new rule with "in" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new[]
+            var conditions = new Dictionary<DiscountConditions, object>
             {
-                new Condition<DiscountConditions>(DiscountConditions.ProductColor, ProductColor.White.ToString())
+                { DiscountConditions.ProductColor, ProductColor.White.ToString() },
             };
 
             var actual = await genericRulesEngine.MatchOneAsync(DiscountConfigurations.DiscountCampaigns, matchDateTime, conditions);

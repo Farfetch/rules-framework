@@ -3,23 +3,22 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Rules.Framework;
     using Rules.Framework.Generic;
 
     public partial class Scenario8Data : IScenarioData<PokerRulesets, PokerConditions>
     {
-        public IEnumerable<Condition<PokerConditions>> Conditions => new[]
+        public IDictionary<PokerConditions, object> Conditions => new Dictionary<PokerConditions, object>
         {
-            new Condition<PokerConditions>(PokerConditions.NumberOfKings, 1),
-            new Condition<PokerConditions>(PokerConditions.NumberOfQueens, 1 ),
-            new Condition<PokerConditions>(PokerConditions.NumberOfJacks, 1),
-            new Condition<PokerConditions>(PokerConditions.NumberOfTens, 1 ),
-            new Condition<PokerConditions>(PokerConditions.NumberOfNines, 1 ),
-            new Condition<PokerConditions>(PokerConditions.KingOfClubs, true ),
-            new Condition<PokerConditions>(PokerConditions.QueenOfDiamonds, true ),
-            new Condition<PokerConditions>(PokerConditions.JackOfClubs, true ),
-            new Condition<PokerConditions>(PokerConditions.TenOfHearts, true ),
-            new Condition<PokerConditions>(PokerConditions.NineOfSpades, true ),
+            { PokerConditions.NumberOfKings, 1 },
+            { PokerConditions.NumberOfQueens, 1 },
+            { PokerConditions.NumberOfJacks, 1 },
+            { PokerConditions.NumberOfTens, 1 },
+            { PokerConditions.NumberOfNines, 1 },
+            { PokerConditions.KingOfClubs, true },
+            { PokerConditions.QueenOfDiamonds, true },
+            { PokerConditions.JackOfClubs, true },
+            { PokerConditions.TenOfHearts, true },
+            { PokerConditions.NineOfSpades, true },
         };
 
         public DateTime MatchDate => DateTime.Parse("2022-12-01");

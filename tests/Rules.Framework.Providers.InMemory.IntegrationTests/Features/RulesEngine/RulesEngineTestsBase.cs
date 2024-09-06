@@ -81,7 +81,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
         protected async Task<Rule<RulesetNames, ConditionNames>> MatchOneAsync(
             DateTime matchDate,
-            Condition<ConditionNames>[] conditions,
+            IDictionary<ConditionNames, object> conditions,
             bool compiled)
         {
             if (compiled)

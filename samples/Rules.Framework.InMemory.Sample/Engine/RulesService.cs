@@ -2,7 +2,6 @@ namespace Rules.Framework.InMemory.Sample.Engine
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using global::Rules.Framework.InMemory.Sample.Enums;
     using global::Rules.Framework.InMemory.Sample.Exceptions;
@@ -21,10 +20,6 @@ namespace Rules.Framework.InMemory.Sample.Engine
             DateTime dateTime,
             IDictionary<ConditionNames, object> conditions)
         {
-            var rulesConditions = (conditions is null) ? new Condition<ConditionNames>[] { } :
-                conditions.Select(x => new Condition<ConditionNames>(x.Key, x.Value))
-                .ToArray();
-
             var rulesEngine = await
                 rulesEngineProvider
                 .GetRulesEngineAsync()
@@ -32,7 +27,7 @@ namespace Rules.Framework.InMemory.Sample.Engine
 
             var match = await rulesEngine
                 .MakeGeneric<RulesetNames, ConditionNames>()
-                .MatchOneAsync(ruleset, dateTime, rulesConditions)
+                .MatchOneAsync(ruleset, dateTime, conditions)
                 .ConfigureAwait(false);
 
             if (match is null)

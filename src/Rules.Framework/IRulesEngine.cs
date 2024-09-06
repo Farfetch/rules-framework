@@ -96,7 +96,7 @@ namespace Rules.Framework
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<IEnumerable<Rule>> MatchManyAsync(string ruleset, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
+        Task<IEnumerable<Rule>> MatchManyAsync(string ruleset, DateTime matchDateTime, IDictionary<string, object> conditions);
 
         /// <summary>
         /// Provides a rule match (if any) to the given <paramref name="ruleset"/> at the specified
@@ -116,7 +116,7 @@ namespace Rules.Framework
         /// </para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<Rule> MatchOneAsync(string ruleset, DateTime matchDateTime, IEnumerable<Condition<string>> conditions);
+        Task<Rule> MatchOneAsync(string ruleset, DateTime matchDateTime, IDictionary<string, object> conditions);
 
         /// <summary>
         /// Searches for rules that match on supplied <paramref name="searchArgs"/>.
