@@ -1,22 +1,12 @@
 namespace Rules.Framework.Tests.Source
 {
-    using Rules.Framework.Core;
-    using Rules.Framework.Source;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
+    using Rules.Framework.Source;
 
-    internal class StubRulesSourceMiddleware<TContentType, TConditionType> : IRulesSourceMiddleware<TContentType, TConditionType>
+    internal class StubRulesSourceMiddleware : IRulesSourceMiddleware
     {
         private readonly List<string> middlewareMessages;
-
-        public int AddRuleCalls { get; private set; }
-        public int GetRulesCalls { get; private set; }
-        public int GetRulesFilteredCalls { get; private set; }
-        public int UpdateRulesCalls { get; private set; }
-        public string Name { get; }
 
         public StubRulesSourceMiddleware(string name, List<string> middlewareMessages)
         {
@@ -24,9 +14,17 @@ namespace Rules.Framework.Tests.Source
             this.middlewareMessages = middlewareMessages;
         }
 
+        public int AddRuleCalls { get; private set; }
+        public int CreateContentTypeCalls { get; private set; }
+        public int GetContentTypesCalls { get; private set; }
+        public int GetRulesCalls { get; private set; }
+        public int GetRulesFilteredCalls { get; private set; }
+        public string Name { get; }
+        public int UpdateRulesCalls { get; private set; }
+
         public async Task HandleAddRuleAsync(
-            AddRuleArgs<TContentType, TConditionType> args,
-            AddRuleDelegate<TContentType, TConditionType> next)
+            AddRuleArgs args,
+            AddRuleDelegate next)
         {
             this.AddRuleCalls++;
             this.middlewareMessages.Add($"Enter {this.Name}.");
@@ -34,9 +32,28 @@ namespace Rules.Framework.Tests.Source
             this.middlewareMessages.Add($"Exit {this.Name}.");
         }
 
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesAsync(
-            GetRulesArgs<TContentType> args,
-            GetRulesDelegate<TContentType, TConditionType> next)
+        public async Task HandleCreateContentTypeAsync(
+            CreateContentTypeArgs args,
+            CreateContentTypeDelegate next)
+        {
+            this.CreateContentTypeCalls++;
+            this.middlewareMessages.Add($"Enter {this.Name}.");
+            await next.Invoke(args).ConfigureAwait(false);
+            this.middlewareMessages.Add($"Exit {this.Name}.");
+        }
+
+        public async Task<IEnumerable<string>> HandleGetContentTypesAsync(GetContentTypesArgs args, GetContentTypesDelegate next)
+        {
+            this.GetContentTypesCalls++;
+            this.middlewareMessages.Add($"Enter {this.Name}.");
+            var contentTypes = await next.Invoke(args).ConfigureAwait(false);
+            this.middlewareMessages.Add($"Exit {this.Name}.");
+            return contentTypes;
+        }
+
+        public async Task<IEnumerable<Rule>> HandleGetRulesAsync(
+            GetRulesArgs args,
+            GetRulesDelegate next)
         {
             this.GetRulesCalls++;
             this.middlewareMessages.Add($"Enter {this.Name}.");
@@ -45,9 +62,9 @@ namespace Rules.Framework.Tests.Source
             return rules;
         }
 
-        public async Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesFilteredAsync(
-            GetRulesFilteredArgs<TContentType> args,
-            GetRulesFilteredDelegate<TContentType, TConditionType> next)
+        public async Task<IEnumerable<Rule>> HandleGetRulesFilteredAsync(
+            GetRulesFilteredArgs args,
+            GetRulesFilteredDelegate next)
         {
             this.GetRulesFilteredCalls++;
             this.middlewareMessages.Add($"Enter {this.Name}.");
@@ -57,8 +74,8 @@ namespace Rules.Framework.Tests.Source
         }
 
         public async Task HandleUpdateRuleAsync(
-            UpdateRuleArgs<TContentType, TConditionType> args,
-            UpdateRuleDelegate<TContentType, TConditionType> next)
+            UpdateRuleArgs args,
+            UpdateRuleDelegate next)
         {
             this.UpdateRulesCalls++;
             this.middlewareMessages.Add($"Enter {this.Name}.");

@@ -6,6 +6,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
     using System.IO;
     using System.Linq;
     using Newtonsoft.Json;
+    using Rules.Framework;
     using Rules.Framework.Core;
     using Rules.Framework.Providers.InMemory.DataModel;
 
@@ -15,7 +16,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
         {
         }
 
-        internal ConditionNodeDataModel<TConditionType> CreateConditionNodeDataModel<TConditionType>(dynamic conditionNode)
+        internal ConditionNodeDataModel CreateConditionNodeDataModel(dynamic conditionNode)
         {
             var logicalOperator = this.Parse<LogicalOperators>((string)conditionNode.LogicalOperator);
 
@@ -34,9 +35,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
                     DataTypes.ArrayString => (IEnumerable<string>)conditionNode.Operand,
                     _ => null,
                 };
-                return new ValueConditionNodeDataModel<TConditionType>
+                return new ValueConditionNodeDataModel
                 {
-                    ConditionType = this.Parse<TConditionType>((string)conditionNode.ConditionType),
+                    ConditionType = conditionNode.ConditionType,
                     DataType = dataType,
                     LogicalOperator = logicalOperator,
                     Operator = this.Parse<Operators>((string)conditionNode.Operator),
@@ -48,14 +49,14 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             {
                 var childConditionNodes = conditionNode.ChildConditionNodes as IEnumerable<dynamic>;
 
-                var conditionNodeDataModels = new ConditionNodeDataModel<TConditionType>[childConditionNodes.Count()];
+                var conditionNodeDataModels = new ConditionNodeDataModel[childConditionNodes.Count()];
                 var i = 0;
-                foreach (dynamic child in childConditionNodes)
+                foreach (var child in childConditionNodes)
                 {
-                    conditionNodeDataModels[i++] = this.CreateConditionNodeDataModel<TConditionType>(child);
+                    conditionNodeDataModels[i++] = this.CreateConditionNodeDataModel(child);
                 }
 
-                return new ComposedConditionNodeDataModel<TConditionType>
+                return new ComposedConditionNodeDataModel
                 {
                     ChildConditionNodes = conditionNodeDataModels,
                     LogicalOperator = logicalOperator,
@@ -64,20 +65,20 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
             }
         }
 
-        internal IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
+        internal IRulesDataSource CreateRulesDataSourceTest(IInMemoryRulesStorage inMemoryRulesStorage)
         {
-            var ruleFactory = new RuleFactory<TContentType, TConditionType>();
-            return new InMemoryProviderRulesDataSource<TContentType, TConditionType>(inMemoryRulesStorage, ruleFactory);
+            var ruleFactory = new RuleFactory();
+            return new InMemoryProviderRulesDataSource(inMemoryRulesStorage, ruleFactory);
         }
 
-        internal void LoadInMemoryStorage<TContentType, TConditionType, TContent>(
+        internal void LoadInMemoryStorage<TContent>(
             string dataSourceFilePath,
-            IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage,
+            IInMemoryRulesStorage inMemoryRulesStorage,
             Func<dynamic, TContent> contentConvertFunc)
         {
             var rulesFile = File.OpenRead(dataSourceFilePath);
 
-            IEnumerable<RuleDataModel<TContentType, TConditionType>> rules;
+            IEnumerable<RuleDataModel> rules;
             using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
                 var json = streamReader.ReadToEnd();
@@ -89,16 +90,16 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
 
                 rules = array.Select(t =>
                 {
-                    return new RuleDataModel<TContentType, TConditionType>
+                    return new RuleDataModel
                     {
                         Content = contentConvertFunc.Invoke(t.Content),
-                        ContentType = (TContentType)t.ContentTypeCode,
+                        ContentType = t.ContentTypeCode,
                         DateBegin = t.DateBegin,
                         DateEnd = t.DateEnd,
                         Name = t.Name,
                         Priority = t.Priority,
                         Active = t.Active ?? true,
-                        RootCondition = this.CreateConditionNodeDataModel<TConditionType>(t.RootCondition)
+                        RootCondition = this.CreateConditionNodeDataModel(t.RootCondition)
                     };
                 }).ToList();
             }

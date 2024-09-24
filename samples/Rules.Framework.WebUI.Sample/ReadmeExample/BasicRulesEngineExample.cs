@@ -1,8 +1,6 @@
 namespace Rules.Framework.WebUI.Sample.ReadmeExample
 {
     using System;
-    using global::Rules.Framework.Core;
-    using global::Rules.Framework.Providers.InMemory;
     using global::Rules.Framework.WebUI.Sample.Engine;
 
     internal class BasicRulesEngineExample
@@ -11,8 +9,6 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
         {
             this.RulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
-                .WithContentType<BasicContentType>()
-                .WithConditionType<BasicConditionType>()
                 .SetInMemoryDataSource()
                 .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
                 .Build();
@@ -22,7 +18,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
             this.AddRules(rules);
         }
 
-        public RulesEngine<BasicContentType, BasicConditionType> RulesEngine { get; }
+        public IRulesEngine RulesEngine { get; }
 
         protected void AddRules(IEnumerable<RuleSpecificationBase<BasicContentType, BasicConditionType>> ruleSpecifications)
         {
@@ -37,24 +33,21 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
 
         private IEnumerable<RuleSpecificationBase<BasicContentType, BasicConditionType>> CreateRules()
         {
-            var ruleForPremiumFreeSampleJanuary = RuleBuilder
-                .NewRule<BasicContentType, BasicConditionType>()
+            var ruleForPremiumFreeSampleJanuary = Rule.New<BasicContentType, BasicConditionType>()
                 .WithName("Rule for January sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "SmallPerfumeSample")
                 .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 01, 01), new DateTime(2023, 02, 01))
                 .Build();
 
-            var ruleForPremiumFreeSampleApril = RuleBuilder
-                .NewRule<BasicContentType, BasicConditionType>()
+            var ruleForPremiumFreeSampleApril = Rule.New<BasicContentType, BasicConditionType>()
                 .WithName("Rule for April sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ShampooSample")
                 .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")
                 .WithDatesInterval(new DateTime(2023, 04, 01), new DateTime(2023, 05, 01))
                 .Build();
 
-            var ruleForPremiumFreeSampleSeptember = RuleBuilder
-                .NewRule<BasicContentType, BasicConditionType>()
+            var ruleForPremiumFreeSampleSeptember = Rule.New<BasicContentType, BasicConditionType>()
                 .WithName("Rule for September sample for premium clients.")
                 .WithContent(BasicContentType.FreeSample, "ConditionerSample")
                 .WithCondition(BasicConditionType.ClientType, Operators.Equal, "Premium")

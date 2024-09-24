@@ -3,47 +3,47 @@ namespace Rules.Framework.Evaluation.Interpreted
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework;
+    using Rules.Framework.ConditionNodes;
 
-    internal sealed class InterpretedConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
+    internal sealed class InterpretedConditionsEvalEngine : IConditionsEvalEngine
     {
-        private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
+        private readonly IConditionsTreeAnalyzer conditionsTreeAnalyzer;
         private readonly IDeferredEval deferredEval;
 
         public InterpretedConditionsEvalEngine(
             IDeferredEval deferredEval,
-            IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer)
+            IConditionsTreeAnalyzer conditionsTreeAnalyzer)
         {
             this.deferredEval = deferredEval;
             this.conditionsTreeAnalyzer = conditionsTreeAnalyzer;
         }
 
-        public bool Eval(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions, EvaluationOptions evaluationOptions)
+        public bool Eval(IConditionNode conditionNode, IDictionary<string, object> conditions, EvaluationOptions evaluationOptions)
         {
             if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !this.conditionsTreeAnalyzer.AreAllSearchConditionsPresent(conditionNode, conditions))
             {
                 return false;
             }
 
-            ISpecification<IDictionary<TConditionType, object>> specification = this.BuildSpecification(conditionNode, evaluationOptions.MatchMode);
+            ISpecification<IDictionary<string, object>> specification = this.BuildSpecification(conditionNode, evaluationOptions.MatchMode);
 
             return specification.IsSatisfiedBy(conditions);
         }
 
-        private ISpecification<IDictionary<TConditionType, object>> BuildSpecification(IConditionNode<TConditionType> conditionNode, MatchModes matchMode)
+        private ISpecification<IDictionary<string, object>> BuildSpecification(IConditionNode conditionNode, MatchModes matchMode)
         {
             return conditionNode switch
             {
-                IValueConditionNode<TConditionType> valueConditionNode => this.BuildSpecificationForValueNode(valueConditionNode, matchMode),
-                ComposedConditionNode<TConditionType> composedConditionNode => this.BuildSpecificationForComposedNode(composedConditionNode, matchMode),
+                IValueConditionNode valueConditionNode => this.BuildSpecificationForValueNode(valueConditionNode, matchMode),
+                ComposedConditionNode composedConditionNode => this.BuildSpecificationForComposedNode(composedConditionNode, matchMode),
                 _ => throw new NotSupportedException($"Unsupported condition node: '{conditionNode.GetType().Name}'."),
             };
         }
 
-        private ISpecification<IDictionary<TConditionType, object>> BuildSpecificationForComposedNode(ComposedConditionNode<TConditionType> composedConditionNode, MatchModes matchMode)
+        private ISpecification<IDictionary<string, object>> BuildSpecificationForComposedNode(ComposedConditionNode composedConditionNode, MatchModes matchMode)
         {
-            IEnumerable<ISpecification<IDictionary<TConditionType, object>>> childConditionNodesSpecifications = composedConditionNode
+            IEnumerable<ISpecification<IDictionary<string, object>>> childConditionNodesSpecifications = composedConditionNode
                 .ChildConditionNodes
                 .Select(cn => this.BuildSpecification(cn, matchMode));
 
@@ -55,9 +55,9 @@ namespace Rules.Framework.Evaluation.Interpreted
             };
         }
 
-        private ISpecification<IDictionary<TConditionType, object>> BuildSpecificationForValueNode(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
+        private ISpecification<IDictionary<string, object>> BuildSpecificationForValueNode(IValueConditionNode valueConditionNode, MatchModes matchMode)
         {
-            return new FuncSpecification<IDictionary<TConditionType, object>>(this.deferredEval.GetDeferredEvalFor(valueConditionNode, matchMode));
+            return new FuncSpecification<IDictionary<string, object>>(this.deferredEval.GetDeferredEvalFor(valueConditionNode, matchMode));
         }
     }
 }

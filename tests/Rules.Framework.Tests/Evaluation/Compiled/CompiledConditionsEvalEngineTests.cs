@@ -4,7 +4,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     using System.Collections.Generic;
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Builder;
+    using Rules.Framework;
+    using Rules.Framework.Builder.Generic;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled;
@@ -18,24 +19,24 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         {
             // Arrange
             var ruleResult = CreateTestRule();
-            var expectedRule = ruleResult.Rule;
-            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (_) => true;
+            var expectedRule = (Rule)ruleResult.Rule;
+            Func<EvaluationContext, bool> expectedExpression = (_) => true;
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.CompiledDelegateKey] = expectedExpression;
-            var conditions = new Dictionary<ConditionType, object>();
+            var conditions = new Dictionary<string, object>();
             var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = true,
                 MatchMode = MatchModes.Exact,
             };
 
-            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
+            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer>();
             Mock.Get(conditionsTreeAnalyzer)
-                .Setup(x => x.AreAllSearchConditionsPresent(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IDictionary<ConditionType, object>>()))
+                .Setup(x => x.AreAllSearchConditionsPresent(It.IsAny<IConditionNode>(), It.IsAny<IDictionary<string, object>>()))
                 .Returns(false);
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine<ConditionType>(conditionsTreeAnalyzer, rulesEngineOptions);
+            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine(conditionsTreeAnalyzer, rulesEngineOptions);
 
             // Act
             var result = compiledConditionsEvalEngine.Eval(expectedRule.RootCondition, conditions, evaluationOptions);
@@ -49,24 +50,24 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         {
             // Arrange
             var ruleResult = CreateTestRule();
-            var expectedRule = ruleResult.Rule;
-            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (_) => true;
+            var expectedRule = (Rule)ruleResult.Rule;
+            Func<EvaluationContext, bool> expectedExpression = (_) => true;
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.CompiledDelegateKey] = expectedExpression;
-            var conditions = new Dictionary<ConditionType, object>();
+            var conditions = new Dictionary<string, object>();
             var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = true,
                 MatchMode = MatchModes.Exact,
             };
 
-            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
+            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer>();
             Mock.Get(conditionsTreeAnalyzer)
-                .Setup(x => x.AreAllSearchConditionsPresent(It.IsAny<IConditionNode<ConditionType>>(), It.IsAny<IDictionary<ConditionType, object>>()))
+                .Setup(x => x.AreAllSearchConditionsPresent(It.IsAny<IConditionNode>(), It.IsAny<IDictionary<string, object>>()))
                 .Returns(true);
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine<ConditionType>(conditionsTreeAnalyzer, rulesEngineOptions);
+            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine(conditionsTreeAnalyzer, rulesEngineOptions);
 
             // Act
             var result = compiledConditionsEvalEngine.Eval(expectedRule.RootCondition, conditions, evaluationOptions);
@@ -80,21 +81,21 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         {
             // Arrange
             var ruleResult = CreateTestRule();
-            var expectedRule = ruleResult.Rule;
-            Func<EvaluationContext<ConditionType>, bool> expectedExpression = (_) => true;
+            var expectedRule = (Rule)ruleResult.Rule;
+            Func<EvaluationContext, bool> expectedExpression = (_) => true;
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.CompiledDelegateKey] = expectedExpression;
-            var conditions = new Dictionary<ConditionType, object>();
+            var conditions = new Dictionary<string, object>();
             var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
                 MatchMode = MatchModes.Exact,
             };
 
-            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
+            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer>();
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine<ConditionType>(conditionsTreeAnalyzer, rulesEngineOptions);
+            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine(conditionsTreeAnalyzer, rulesEngineOptions);
 
             // Act
             var result = compiledConditionsEvalEngine.Eval(expectedRule.RootCondition, conditions, evaluationOptions);
@@ -108,19 +109,19 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         {
             // Arrange
             var ruleResult = CreateTestRule();
-            var expectedRule = ruleResult.Rule;
-            var conditions = new Dictionary<ConditionType, object>();
+            var expectedRule = (Rule)ruleResult.Rule;
+            var conditions = new Dictionary<string, object>();
             var evaluationOptions = new EvaluationOptions
             {
                 ExcludeRulesWithoutSearchConditions = false,
                 MatchMode = MatchModes.Exact,
             };
 
-            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer<ConditionType>>();
+            var conditionsTreeAnalyzer = Mock.Of<IConditionsTreeAnalyzer>();
 
             var rulesEngineOptions = RulesEngineOptions.NewWithDefaults();
 
-            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine<ConditionType>(conditionsTreeAnalyzer, rulesEngineOptions);
+            var compiledConditionsEvalEngine = new CompiledConditionsEvalEngine(conditionsTreeAnalyzer, rulesEngineOptions);
 
             // Act
             var action = FluentActions.Invoking(() => compiledConditionsEvalEngine.Eval(expectedRule.RootCondition, conditions, evaluationOptions));
@@ -130,7 +131,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 .Which.ParamName.Should().Be("conditionNode");
         }
 
-        private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule() => RuleBuilder.NewRule<ContentType, ConditionType>()
+        private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule() => Rule.New<ContentType, ConditionType>()
             .WithName("Test rule")
             .WithDateBegin(DateTime.UtcNow)
             .WithContent(ContentType.Type1, "Test content")

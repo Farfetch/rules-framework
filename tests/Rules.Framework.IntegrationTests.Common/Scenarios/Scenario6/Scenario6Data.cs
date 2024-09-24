@@ -2,8 +2,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 {
     using System;
     using System.Collections.Generic;
+    using Rules.Framework;
     using Rules.Framework.BenchmarkTests.Tests;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
 
     public class Scenario6Data : IScenarioData<ContentTypes, ConditionTypes>
     {
@@ -18,7 +19,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 
         private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetRules()
         {
-            var ruleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+            var ruleResult = Rule.New<ContentTypes, ConditionTypes>()
                 .WithName("Benchmark 1 - Test rule")
                 .WithDateBegin(DateTime.Parse("2000-01-01"))
                 .WithContent(ContentTypes.ContentType1, "Dummy Content")

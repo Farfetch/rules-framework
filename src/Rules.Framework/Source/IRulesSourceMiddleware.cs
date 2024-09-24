@@ -1,25 +1,32 @@
 namespace Rules.Framework.Source
 {
-    using Rules.Framework.Core;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    internal interface IRulesSourceMiddleware<TContentType, TConditionType>
+    internal interface IRulesSourceMiddleware
     {
         Task HandleAddRuleAsync(
-            AddRuleArgs<TContentType, TConditionType> args,
-            AddRuleDelegate<TContentType, TConditionType> next);
+            AddRuleArgs args,
+            AddRuleDelegate next);
 
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesAsync(
-            GetRulesArgs<TContentType> args,
-            GetRulesDelegate<TContentType, TConditionType> next);
+        Task HandleCreateContentTypeAsync(
+            CreateContentTypeArgs args,
+            CreateContentTypeDelegate next);
 
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> HandleGetRulesFilteredAsync(
-            GetRulesFilteredArgs<TContentType> args,
-            GetRulesFilteredDelegate<TContentType, TConditionType> next);
+        Task<IEnumerable<string>> HandleGetContentTypesAsync(
+            GetContentTypesArgs args,
+            GetContentTypesDelegate next);
+
+        Task<IEnumerable<Rule>> HandleGetRulesAsync(
+            GetRulesArgs args,
+            GetRulesDelegate next);
+
+        Task<IEnumerable<Rule>> HandleGetRulesFilteredAsync(
+            GetRulesFilteredArgs args,
+            GetRulesFilteredDelegate next);
 
         Task HandleUpdateRuleAsync(
-            UpdateRuleArgs<TContentType, TConditionType> args,
-            UpdateRuleDelegate<TContentType, TConditionType> next);
+            UpdateRuleArgs args,
+            UpdateRuleDelegate next);
     }
 }

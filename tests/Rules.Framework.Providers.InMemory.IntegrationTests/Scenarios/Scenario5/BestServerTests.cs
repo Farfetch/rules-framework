@@ -5,9 +5,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario5;
-    using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class BestServerTests
@@ -54,13 +53,13 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
         {
             // Arrange
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<BestServerConfigurations>()
-                .WithConditionType<BestServerConditions>()
                 .SetInMemoryDataSource()
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
+            await genericRulesEngine.CreateContentTypeAsync(BestServerConfigurations.BestServerEvaluation);
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
+            var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Top5")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(BestServerConfigurations.BestServerEvaluation, "Top5")
@@ -75,7 +74,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 .Build();
 
             // Act 2 - Create rule default
-            var ruleBuilderResultDefault = RuleBuilder.NewRule<BestServerConfigurations, BestServerConditions>()
+            var ruleBuilderResultDefault = Rule.New<BestServerConfigurations, BestServerConditions>()
                 .WithName("Best Server Default")
                 .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
                 .WithContent(BestServerConfigurations.BestServerEvaluation, "Default")
@@ -83,7 +82,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
             // Assert 1
             ruleBuilderResult.Should().NotBeNull();
-            string errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
+            var errors = ruleBuilderResult.Errors.Any() ? ruleBuilderResult.Errors.Aggregate((s1, s2) => $"{s1}\n- {s2}") : string.Empty;
             ruleBuilderResult.IsSuccess.Should().BeTrue(
                 $"errors have occurred while creating rule: \n[\n- {errors}\n]");
 
@@ -94,12 +93,12 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 $"errors have occurred while creating rule default: \n[\n- {errors}\n]");
 
             // Act 2 - Add new rule with "in" operator
-            await rulesEngine.AddRuleAsync(ruleBuilderResultDefault.Rule, RuleAddPriorityOption.ByPriorityNumber(2)).ConfigureAwait(false);
-            await rulesEngine.AddRuleAsync(ruleBuilderResult.Rule, RuleAddPriorityOption.ByPriorityNumber(1)).ConfigureAwait(false);
+            await rulesEngine.AddRuleAsync(ruleBuilderResultDefault.Rule, RuleAddPriorityOption.ByPriorityNumber(2));
+            await rulesEngine.AddRuleAsync(ruleBuilderResult.Rule, RuleAddPriorityOption.ByPriorityNumber(1));
 
-            DateTime matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
+            var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
 
-            var actual = await rulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions);
 
             // Assert 3
             actual.Should().NotBeNull();

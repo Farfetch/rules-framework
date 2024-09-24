@@ -5,7 +5,7 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
     using MongoDB.Bson.Serialization.Options;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     [BsonKnownTypes(typeof(ComposedConditionNodeDataModel), typeof(ValueConditionNodeDataModel))]
     internal class ConditionNodeDataModel

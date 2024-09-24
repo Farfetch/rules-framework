@@ -2,7 +2,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted.ValueEvaluation
 {
     using System;
     using FluentAssertions;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
     using Xunit;
 

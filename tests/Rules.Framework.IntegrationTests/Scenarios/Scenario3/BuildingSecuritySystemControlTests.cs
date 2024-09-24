@@ -27,20 +27,19 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             };
 
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<SecuritySystemActionables, SecuritySystemConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             await RulesFromJsonFile.Load
-                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
+                .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
 
             // Act
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -67,20 +66,19 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             };
 
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<SecuritySystemActionables, SecuritySystemConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             await RulesFromJsonFile.Load
-                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
+                .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
 
             // Act
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -106,20 +104,19 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario3
             };
 
             var serviceProvider = new ServiceCollection()
-                .AddInMemoryRulesDataSource<SecuritySystemActionables, SecuritySystemConditions>(ServiceLifetime.Singleton)
+                .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)
                 .BuildServiceProvider();
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetInMemoryDataSource(serviceProvider)
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             await RulesFromJsonFile.Load
-                .FromJsonFileAsync(rulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
+                .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(SecuritySystemAction));
 
             // Act
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();

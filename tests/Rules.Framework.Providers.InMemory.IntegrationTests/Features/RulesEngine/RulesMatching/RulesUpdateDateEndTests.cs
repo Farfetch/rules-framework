@@ -3,7 +3,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngine;
     using Rules.Framework.Tests.Stubs;
@@ -23,16 +23,13 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
         public RulesUpdateDateEndTests() : base(TestContentType)
         {
-            rule1 = RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            rule1 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule1Name)
                 .WithContent(TestContentType, rule1Value)
                 .WithDatesInterval(ruleStartDate, ruleEndDate)
                 .Build().Rule;
 
-            rule2 =
-                RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            rule2 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule2Name)
                 .WithContent(TestContentType, rule2Value)
                 .WithDatesInterval(ruleStartDate, ruleEndDate)

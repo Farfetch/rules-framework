@@ -3,17 +3,12 @@ namespace Rules.Framework
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.ConditionNodes;
 
     /// <summary>
     /// Extracts Conditions Types from a Group of Rules.
     /// </summary>
-    /// <typeparam name="TContentType">The content type that allows to categorize rules.</typeparam>
-    /// <typeparam name="TConditionType">
-    /// The condition type that allows to filter rules based on a set of conditions.
-    /// </typeparam>
-    public class ConditionTypeExtractor<TContentType, TConditionType> : IConditionTypeExtractor<TContentType, TConditionType>
+    public class ConditionTypeExtractor : IConditionTypeExtractor
     {
         /// <summary>
         /// Get the unique condition types associated with rules of a specific content type.
@@ -27,9 +22,9 @@ namespace Rules.Framework
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, empty.</returns>
-        public IEnumerable<TConditionType> GetConditionTypes(IEnumerable<Rule<TContentType, TConditionType>> matchedRules)
+        public IEnumerable<string> GetConditionTypes(IEnumerable<Rule> matchedRules)
         {
-            var conditionTypes = new HashSet<TConditionType>();
+            var conditionTypes = new HashSet<string>(StringComparer.Ordinal);
 
             if (!matchedRules.Any())
             {
@@ -49,18 +44,18 @@ namespace Rules.Framework
             return conditionTypes;
         }
 
-        private static void VisitConditionNode(IConditionNode<TConditionType> conditionNode, HashSet<TConditionType> conditionTypes)
+        private static void VisitConditionNode(IConditionNode conditionNode, HashSet<string> conditionTypes)
         {
             switch (conditionNode)
             {
-                case IValueConditionNode<TConditionType> valueConditionNode:
+                case IValueConditionNode valueConditionNode:
 
                     conditionTypes.Add(valueConditionNode.ConditionType);
                     break;
 
-                case ComposedConditionNode<TConditionType> composedConditionNode:
+                case ComposedConditionNode composedConditionNode:
 
-                    foreach (IConditionNode<TConditionType> childConditionNode in composedConditionNode.ChildConditionNodes)
+                    foreach (IConditionNode childConditionNode in composedConditionNode.ChildConditionNodes)
                     {
                         VisitConditionNode(childConditionNode, conditionTypes);
                     }

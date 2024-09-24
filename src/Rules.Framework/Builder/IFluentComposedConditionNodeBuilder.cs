@@ -1,41 +1,40 @@
 namespace Rules.Framework.Builder
 {
     using System;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     /// <summary>
     /// Fluent builder for composed condition nodes.
     /// </summary>
-    /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    public interface IFluentComposedConditionNodeBuilder<TConditionType>
+    public interface IFluentComposedConditionNodeBuilder
     {
         /// <summary>
         /// Adds a And composed condition to the fluent condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
-        IFluentComposedConditionNodeBuilder<TConditionType> And(
-            Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc);
+        IFluentComposedConditionNodeBuilder And(
+            Func<IFluentComposedConditionNodeBuilder, IFluentComposedConditionNodeBuilder> conditionFunc);
 
         /// <summary>
         /// Builds the composed condition node.
         /// </summary>
         /// <returns></returns>
-        IConditionNode<TConditionType> Build();
+        IConditionNode Build();
 
         /// <summary>
         /// Adds a Condition to the fluent condition node builder.
         /// </summary>
         /// <param name="conditionNode">The condition node.</param>
-        IFluentComposedConditionNodeBuilder<TConditionType> Condition(IConditionNode<TConditionType> conditionNode);
+        IFluentComposedConditionNodeBuilder Condition(IConditionNode conditionNode);
 
         /// <summary>
         /// Adds a Or composed condition to the fluent condition node builder.
         /// </summary>
         /// <param name="conditionFunc">The function containing the logic for the new condition.</param>
         /// <returns></returns>
-        IFluentComposedConditionNodeBuilder<TConditionType> Or(
-            Func<IFluentComposedConditionNodeBuilder<TConditionType>, IFluentComposedConditionNodeBuilder<TConditionType>> conditionFunc);
+        IFluentComposedConditionNodeBuilder Or(
+            Func<IFluentComposedConditionNodeBuilder, IFluentComposedConditionNodeBuilder> conditionFunc);
 
         /// <summary>
         /// Adds a Value condition to the fluent condition node builder.
@@ -44,6 +43,6 @@ namespace Rules.Framework.Builder
         /// <param name="condOperator">The condition operator.</param>
         /// <param name="operand">The condition operand.</param>
         /// <returns></returns>
-        IFluentComposedConditionNodeBuilder<TConditionType> Value<TDataType>(TConditionType conditionType, Operators condOperator, TDataType operand);
+        IFluentComposedConditionNodeBuilder Value<TDataType>(string conditionType, Operators condOperator, TDataType operand);
     }
 }

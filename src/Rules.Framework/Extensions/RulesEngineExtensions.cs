@@ -1,6 +1,6 @@
-namespace Rules.Framework.Extension
+namespace Rules.Framework
 {
-    using Rules.Framework.Generics;
+    using Rules.Framework.Generic;
 
     /// <summary>
     /// Extensions for rules engine
@@ -14,9 +14,9 @@ namespace Rules.Framework.Extension
         /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
         /// <param name="rulesEngine">The rules engine.</param>
         /// <returns>A new instance of generic engine</returns>
-        public static IGenericRulesEngine CreateGenericEngine<TContentType, TConditionType>(this RulesEngine<TContentType, TConditionType> rulesEngine)
+        public static IRulesEngine<TContentType, TConditionType> MakeGeneric<TContentType, TConditionType>(this IRulesEngine rulesEngine)
         {
-            return new GenericRulesEngine<TContentType, TConditionType>(rulesEngine);
+            return new RulesEngine<TContentType, TConditionType>(rulesEngine);
         }
     }
 }

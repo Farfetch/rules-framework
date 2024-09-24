@@ -2,12 +2,13 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 {
     using System.Threading.Tasks;
     using BenchmarkDotNet.Attributes;
+    using Rules.Framework.Generic;
 
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark1 : IBenchmark
     {
         private readonly Scenario6Data benchmarkData = new Scenario6Data();
-        private RulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
+        private IRulesEngine<ContentTypes, ConditionTypes>? genericRulesEngine;
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
@@ -18,15 +19,13 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
         [Benchmark]
         public async Task RunAsync()
         {
-            await this.rulesEngine!.MatchOneAsync(ContentTypes.ContentType1, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
+            await this.genericRulesEngine!.MatchOneAsync(ContentTypes.ContentType1, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
         }
 
         [GlobalSetup]
         public async Task SetUpAsync()
         {
-            this.rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .SetDataSourceForBenchmark(this.Provider!, nameof(Benchmark1))
                 .Configure(options =>
                 {
@@ -34,17 +33,21 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
                 })
                 .Build();
 
+            await rulesEngine.CreateContentTypeAsync(nameof(ContentTypes.ContentType1));
+
             foreach (var rule in this.benchmarkData.Rules)
             {
-                await this.rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+                await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop);
             }
+
+            this.genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
         }
 
         [GlobalCleanup]
         public async Task TearDownAsync()
         {
             await Extensions.TearDownProviderAsync(this.Provider!, nameof(Benchmark1)).ConfigureAwait(false);
-            this.rulesEngine = null;
+            this.genericRulesEngine = null;
         }
     }
 }

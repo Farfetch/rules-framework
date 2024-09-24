@@ -5,7 +5,7 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal sealed class MovePriorityManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class MovePriorityManagementOperation : IManagementOperation
     {
         private readonly int priorityMoveFactor;
 
@@ -14,9 +14,9 @@ namespace Rules.Framework.Management.Operations
             this.priorityMoveFactor = priorityMoveFactor;
         }
 
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> ApplyAsync(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        public Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules)
         {
-            IEnumerable<Rule<TContentType, TConditionType>> updatedPrioritiesRules = rules.Select(r =>
+            IEnumerable<Rule> updatedPrioritiesRules = rules.Select(r =>
             {
                 r.Priority += this.priorityMoveFactor;
                 return r;

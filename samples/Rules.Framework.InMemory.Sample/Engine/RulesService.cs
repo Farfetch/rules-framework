@@ -31,6 +31,7 @@ namespace Rules.Framework.InMemory.Sample.Engine
                 .ConfigureAwait(false);
 
             var match = await rulesEngine
+                .MakeGeneric<ContentTypes, ConditionTypes>()
                 .MatchOneAsync(contentType, dateTime, rulesConditions)
                 .ConfigureAwait(false);
 

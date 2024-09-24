@@ -10,6 +10,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
     using FluentAssertions;
     using MongoDB.Driver;
     using Newtonsoft.Json;
+    using Rules.Framework;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
@@ -17,7 +18,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
 
     public sealed class BuildingSecuritySystemControlTests : IDisposable
     {
-        private readonly IMongoClient mongoClient;
+        private readonly MongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
 
         public BuildingSecuritySystemControlTests()
@@ -25,13 +26,13 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             this.mongoClient = CreateMongoClient();
             this.mongoDbProviderSettings = CreateProviderSettings();
 
-            Stream? rulesFile = Assembly.GetExecutingAssembly()
+            var rulesFile = Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3.rules-framework-tests.security-system-actionables.json");
 
             IEnumerable<RuleDataModel> rules;
             using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
-                string json = streamReader.ReadToEnd();
+                var json = streamReader.ReadToEnd();
 
                 var array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
                 {
@@ -50,11 +51,25 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 }).ToList();
             }
 
-            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-            var mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var contentTypes = rules
+                .Select(r => new ContentTypeDataModel
+                {
+                    Creation = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    Name = r.ContentType,
+                })
+                .Distinct()
+                .ToArray();
 
-            mongoCollection.InsertMany(rules);
+            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.ContentTypesCollectionName);
+            var contentTypesMongoCollection = mongoDatabase.GetCollection<ContentTypeDataModel>(this.mongoDbProviderSettings.ContentTypesCollectionName);
+            contentTypesMongoCollection.InsertMany(contentTypes);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesMongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            rulesMongoCollection.InsertMany(rules);
         }
 
         [Theory]
@@ -74,17 +89,16 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            var newRuleResult = RuleBuilder.NewRule<SecuritySystemActionables, SecuritySystemConditions>()
+            var newRuleResult = Rule.New<SecuritySystemActionables, SecuritySystemConditions>()
                 .WithName("Activate ventilation system rule")
                 .WithDateBegin(new DateTime(2018, 01, 01))
                 .WithContent(SecuritySystemActionables.FireSystem, new SecuritySystemAction
@@ -92,13 +106,13 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                     ActionId = new Guid("ef0d65ae-ec76-492a-84db-5cb9090c3eaa"),
                     ActionName = "ActivateVentilationSystem"
                 })
-                .WithCondition(b => b.Value(SecuritySystemConditions.SmokeRate, Core.Operators.GreaterThanOrEqual, 30.0m))
+                .WithCondition(b => b.Value(SecuritySystemConditions.SmokeRate, Operators.GreaterThanOrEqual, 30.0m))
                 .Build();
             var newRule = newRuleResult.Rule;
 
-            _ = await rulesEngine.AddRuleAsync(newRule, RuleAddPriorityOption.AtBottom);
+            _ = await genericRulesEngine.AddRuleAsync(newRule, RuleAddPriorityOption.AtBottom);
 
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -129,17 +143,16 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -168,17 +181,16 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -193,14 +205,15 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
         {
             var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.ContentTypesCollectionName);
         }
 
         private static MongoClient CreateMongoClient() => new MongoClient($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
 
-        private static MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        private static MongoDbProviderSettings CreateProviderSettings() => new()
         {
             DatabaseName = "rules-framework-tests",
-            RulesCollectionName = "security-system-actionables"
+            RulesCollectionName = "security-system-actionables",
         };
     }
 }

@@ -3,7 +3,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.Core;
+    using Rules.Framework;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
@@ -17,7 +18,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public OperatorContainsManyToOneTests()
             : base(testContentType)
         {
-            this.expectedMatchRule = RuleBuilder.NewRule<ContentType, ConditionType>()
+            this.expectedMatchRule = Rule.New<ContentType, ConditionType>()
                 .WithName("Expected rule")
                 .WithDateBegin(UtcDate("2020-01-01Z"))
                 .WithContent(testContentType, "Just as expected!")
@@ -25,7 +26,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                 .Build()
                 .Rule;
 
-            this.otherRule = RuleBuilder.NewRule<ContentType, ConditionType>()
+            this.otherRule = Rule.New<ContentType, ConditionType>()
                 .WithName("Other rule")
                 .WithDateBegin(UtcDate("2020-01-01Z"))
                 .WithContent(testContentType, "Oops! Not expected to be matched.")

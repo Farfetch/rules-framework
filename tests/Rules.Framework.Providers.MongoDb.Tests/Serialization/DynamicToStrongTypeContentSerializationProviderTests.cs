@@ -3,7 +3,6 @@ namespace Rules.Framework.Providers.MongoDb.Tests.Serialization
     using FluentAssertions;
     using Rules.Framework.Providers.MongoDb.Serialization;
     using Rules.Framework.Providers.MongoDb.Tests.TestStubs;
-    using Rules.Framework.Serialization;
     using Xunit;
 
     public class DynamicToStrongTypeContentSerializationProviderTests
@@ -12,10 +11,10 @@ namespace Rules.Framework.Providers.MongoDb.Tests.Serialization
         public void GetContentSerializer_GivenAnyContentTypeValue_ReturnsDynamicToStrongTypeContentSerializer()
         {
             // Arrange
-            DynamicToStrongTypeContentSerializationProvider<ContentType> dynamicToStrongTypeContentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<ContentType>();
+            var dynamicToStrongTypeContentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider();
 
             // Act
-            IContentSerializer contentSerializer = dynamicToStrongTypeContentSerializationProvider.GetContentSerializer(ContentType.ContentTypeSample);
+            var contentSerializer = dynamicToStrongTypeContentSerializationProvider.GetContentSerializer(ContentType.ContentTypeSample.ToString());
 
             // Assert
             contentSerializer.Should().NotBeNull()

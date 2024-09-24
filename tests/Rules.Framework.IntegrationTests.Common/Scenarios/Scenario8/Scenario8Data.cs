@@ -4,7 +4,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     using System.Collections.Generic;
     using System.Linq;
     using Rules.Framework;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
 
     public partial class Scenario8Data : IScenarioData<ContentTypes, ConditionTypes>
     {

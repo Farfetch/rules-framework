@@ -2,7 +2,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Core;
+    using Rules.Framework;
+    using Rules.Framework.Generic;
 
     public partial class Scenario8Data : IScenarioData<ContentTypes, ConditionTypes>
     {
@@ -10,7 +11,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         {
             return new[]
             {
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight 6, 5, 4, 3, 2")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
@@ -24,7 +25,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                             )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight 7, 6, 5, 4, 3")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
@@ -38,7 +39,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                             )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight 8, 7, 6, 5, 4")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
@@ -52,7 +53,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                             )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight 9, 8, 7, 6, 5")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
@@ -66,7 +67,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                             )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight 10, 9, 8, 7, 6")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
@@ -80,7 +81,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                         )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight Jack, 10, 9, 8, 7")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
@@ -94,7 +95,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                         )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight Queen, Jack, 10, 9, 8")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })
@@ -108,7 +109,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                         )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Straight King, Queen, Jack, 10, 9")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Straight" })

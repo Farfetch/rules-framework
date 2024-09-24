@@ -8,19 +8,18 @@ namespace Rules.Framework.WebUI.Handlers
     using System.Threading.Tasks;
     using System.Web;
     using Microsoft.AspNetCore.Http;
-    using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Extensions;
 
     internal sealed class GetRulesHandler : WebUIRequestHandlerBase
     {
         private static readonly string[] resourcePath = new[] { "/{0}/api/v1/rules" };
-        private readonly IGenericRulesEngine genericRulesEngine;
+        private readonly IRulesEngine rulesEngine;
         private readonly IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer;
 
-        public GetRulesHandler(IGenericRulesEngine genericRulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
+        public GetRulesHandler(IRulesEngine rulesEngine, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer, WebUIOptions webUIOptions) : base(resourcePath, webUIOptions)
         {
-            this.genericRulesEngine = genericRulesEngine;
+            this.rulesEngine = rulesEngine;
             this.ruleStatusDtoAnalyzer = ruleStatusDtoAnalyzer;
         }
 
@@ -46,9 +45,9 @@ namespace Rules.Framework.WebUI.Handlers
 
                 if (rulesFilter.ContentType.Equals("all"))
                 {
-                    var contents = this.genericRulesEngine.GetContentTypes();
+                    var contents = await this.rulesEngine.GetContentTypesAsync();
 
-                    foreach (var identifier in contents.Select(c => c.Identifier))
+                    foreach (var identifier in contents)
                     {
                         var rulesForContentType = await this.GetRulesForContentyType(identifier, rulesFilter).ConfigureAwait(false);
                         rules.AddRange(rulesForContentType);
@@ -129,13 +128,14 @@ namespace Rules.Framework.WebUI.Handlers
 
         private async Task<IEnumerable<RuleDto>> GetRulesForContentyType(string identifier, RulesFilterDto rulesFilter)
         {
-            var genericRules = await this.genericRulesEngine.SearchAsync(
-                                       new SearchArgs<GenericContentType, GenericConditionType>(
-                                           new GenericContentType { Identifier = identifier },
-                                           rulesFilter.DateBegin.Value, rulesFilter.DateEnd.Value))
+            var genericRules = await this.rulesEngine.SearchAsync(
+                                       new SearchArgs<string, string>(
+                                           identifier,
+                                           rulesFilter.DateBegin.Value,
+                                           rulesFilter.DateEnd.Value))
                                        .ConfigureAwait(false);
 
-            var priorityCriteria = this.genericRulesEngine.GetPriorityCriteria();
+            var priorityCriteria = this.rulesEngine.Options.PriorityCriteria;
 
             if (genericRules != null && genericRules.Any())
             {

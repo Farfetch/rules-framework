@@ -1,12 +1,11 @@
 namespace Rules.Framework.Providers.InMemory
 {
-    using Rules.Framework.Core;
     using Rules.Framework.Providers.InMemory.DataModel;
 
-    internal interface IRuleFactory<TContentType, TConditionType>
+    internal interface IRuleFactory
     {
-        Rule<TContentType, TConditionType> CreateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel);
+        Rule CreateRule(RuleDataModel ruleDataModel);
 
-        RuleDataModel<TContentType, TConditionType> CreateRule(Rule<TContentType, TConditionType> rule);
+        RuleDataModel CreateRule(Rule rule);
     }
 }

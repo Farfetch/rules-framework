@@ -2,8 +2,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
 {
     using System;
     using System.Collections.Generic;
-    using global::Rules.Framework.Builder;
-    using global::Rules.Framework.Core;
+    using global::Rules.Framework.Builder.Generic;
     using global::Rules.Framework.WebUI.Sample.Engine;
     using global::Rules.Framework.WebUI.Sample.Enums;
 
@@ -17,6 +16,18 @@ namespace Rules.Framework.WebUI.Sample.Rules
         {
             this.random = new Random();
         }
+
+        public ContentTypes[] ContentTypes => new[]
+        {
+            Enums.ContentTypes.TestDateTime,
+            Enums.ContentTypes.TestDecimal,
+            Enums.ContentTypes.TestLong,
+            Enums.ContentTypes.TestBoolean,
+            Enums.ContentTypes.TestShort,
+            Enums.ContentTypes.TestNumber,
+            Enums.ContentTypes.TestString,
+            Enums.ContentTypes.TestBlob,
+        };
 
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
         {
@@ -49,8 +60,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
             int value,
             DateTime dateBegin,
             DateTime? dateEnd,
-            bool isActive = true) => RuleBuilder
-                .NewRule<ContentTypes, ConditionTypes>()
+            bool isActive = true) => Rule.New<ContentTypes, ConditionTypes>()
                 .WithName($"Multi rule for test {contentTypes} {value}")
                 .WithContent(contentTypes, new { Value = value })
                 .WithDatesInterval(dateBegin, dateEnd)

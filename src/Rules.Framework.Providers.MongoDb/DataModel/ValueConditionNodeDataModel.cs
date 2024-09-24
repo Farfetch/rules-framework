@@ -1,7 +1,7 @@
 namespace Rules.Framework.Providers.MongoDb.DataModel
 {
     using MongoDB.Bson.Serialization.Attributes;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     [BsonDiscriminator("value")]
     internal sealed class ValueConditionNodeDataModel : ConditionNodeDataModel

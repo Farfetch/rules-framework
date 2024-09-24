@@ -2,7 +2,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Core;
+    using Rules.Framework;
+    using Rules.Framework.Generic;
 
     public partial class Scenario8Data : IScenarioData<ContentTypes, ConditionTypes>
     {
@@ -10,7 +11,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         {
             return new[]
             {
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Royal flush of Clubs: Ace, King, Queen, Jack, 10")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Royal Flush" })
@@ -24,7 +25,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                         )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Royal flush of Diamonds: Ace, King, Queen, Jack, 10")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Royal Flush" })
@@ -38,7 +39,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                         )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Royal flush of Hearts: Ace, King, Queen, Jack, 10")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Royal Flush" })
@@ -52,7 +53,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                             )
                         )
                     .Build().Rule,
-                RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
+                Rule.New<ContentTypes, ConditionTypes>()
                     .WithName("Benchmark 3 - Royal flush of Spades: Ace, King, Queen, Jack, 10")
                     .WithDateBegin(DateTime.Parse("2000-01-01"))
                     .WithContent(ContentTypes.TexasHoldemPokerSingleCombinations, new SingleCombinationPokerScore { Combination = "Royal Flush" })

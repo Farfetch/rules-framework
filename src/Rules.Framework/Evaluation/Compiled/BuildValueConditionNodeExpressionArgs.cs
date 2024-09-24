@@ -3,7 +3,7 @@ namespace Rules.Framework.Evaluation.Compiled
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal struct BuildValueConditionNodeExpressionArgs : IEquatable<BuildValueConditionNodeExpressionArgs>
     {

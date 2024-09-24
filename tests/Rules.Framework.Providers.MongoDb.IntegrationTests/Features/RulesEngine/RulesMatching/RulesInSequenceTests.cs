@@ -3,7 +3,6 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Builder;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
@@ -48,7 +47,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
 
             // Act
-            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions);
 
             // Assert
             Assert.Null(actualMatch);
@@ -62,11 +61,11 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             var emptyConditions = Array.Empty<Condition<ConditionType>>();
 
             // Act
-            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions).ConfigureAwait(false);
+            var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions);
 
             // Assert
             Assert.Equal(expectedName, actualMatch.Name);
-            Assert.Equal(TestContentType, actualMatch.ContentContainer.ContentType);
+            Assert.Equal(TestContentType, actualMatch.ContentType);
             Assert.Equal(expectedValue, actualMatch.ContentContainer.GetContentAs<string>());
         }
 
@@ -74,9 +73,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         {
             var ruleSpecs = new List<RuleSpecification>();
 
-            var rule1 =
-                RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            var rule1 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule1Name)
                 .WithContent(TestContentType, rule1Value)
                 .WithDatesInterval(rule1StartDate, ruleChangeDate)
@@ -84,9 +81,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
 
             ruleSpecs.Add(new RuleSpecification(rule1.Rule, RuleAddPriorityOption.ByPriorityNumber(1)));
 
-            var rule2 =
-                RuleBuilder
-                .NewRule<ContentType, ConditionType>()
+            var rule2 = Rule.New<ContentType, ConditionType>()
                 .WithName(rule2Name)
                 .WithContent(TestContentType, rule2Value)
                 .WithDatesInterval(ruleChangeDate, rule2EndDate)

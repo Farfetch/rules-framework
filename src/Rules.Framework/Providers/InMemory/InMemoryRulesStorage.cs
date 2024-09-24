@@ -6,18 +6,18 @@ namespace Rules.Framework.Providers.InMemory
     using System.Linq;
     using Rules.Framework.Providers.InMemory.DataModel;
 
-    internal sealed class InMemoryRulesStorage<TContentType, TConditionType> : IInMemoryRulesStorage<TContentType, TConditionType>
+    internal sealed class InMemoryRulesStorage : IInMemoryRulesStorage
     {
-        private readonly ConcurrentDictionary<TContentType, List<RuleDataModel<TContentType, TConditionType>>> rulesByContentType;
+        private readonly ConcurrentDictionary<string, List<RuleDataModel>> rulesByContentType;
 
         public InMemoryRulesStorage()
         {
-            this.rulesByContentType = new ConcurrentDictionary<TContentType, List<RuleDataModel<TContentType, TConditionType>>>();
+            this.rulesByContentType = new ConcurrentDictionary<string, List<RuleDataModel>>(StringComparer.Ordinal);
         }
 
-        public void AddRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
+        public void AddRule(RuleDataModel ruleDataModel)
         {
-            List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
 
             lock (contentTypeRules)
             {
@@ -30,23 +30,31 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        public IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetAllRules()
+        public void CreateContentType(string contentType)
+        {
+            _ = this.rulesByContentType.TryAdd(contentType, new List<RuleDataModel>());
+        }
+
+        public IReadOnlyCollection<RuleDataModel> GetAllRules()
             => this.rulesByContentType.SelectMany(kvp => kvp.Value).ToList().AsReadOnly();
 
-        public IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetRulesBy(TContentType contentType)
+        public IReadOnlyCollection<string> GetContentTypes()
+            => this.rulesByContentType.Keys.ToList().AsReadOnly();
+
+        public IReadOnlyCollection<RuleDataModel> GetRulesBy(string contentType)
         {
-            List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(contentType);
+            var contentTypeRules = GetRulesCollectionByContentType(contentType);
 
             return contentTypeRules.AsReadOnly();
         }
 
-        public void UpdateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
+        public void UpdateRule(RuleDataModel ruleDataModel)
         {
-            List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
 
             lock (contentTypeRules)
             {
-                RuleDataModel<TContentType, TConditionType> existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
+                var existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
                 if (existent is null)
                 {
                     throw new InvalidOperationException($"Rule with name '{ruleDataModel.Name}' does not exist, no update can be done.");
@@ -57,7 +65,7 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        private List<RuleDataModel<TContentType, TConditionType>> GetRulesCollectionByContentType(TContentType contentType) => this.rulesByContentType
-                                .GetOrAdd(contentType, (ct) => new List<RuleDataModel<TContentType, TConditionType>>());
+        private List<RuleDataModel> GetRulesCollectionByContentType(string contentType) => this.rulesByContentType
+                                .GetOrAdd(contentType, _ => new List<RuleDataModel>());
     }
 }

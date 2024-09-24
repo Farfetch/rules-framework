@@ -3,24 +3,32 @@ namespace Rules.Framework.Builder
     using System;
     using System.Linq;
     using Rules.Framework.Builder.Validation;
-    using Rules.Framework.Core;
     using Rules.Framework.Serialization;
 
-    internal sealed class RuleBuilder<TContentType, TConditionType> : IRuleBuilder<TContentType, TConditionType>
+    internal sealed class RuleBuilder : IRuleBuilder
     {
-        private readonly RuleValidator<TContentType, TConditionType> ruleValidator = RuleValidator<TContentType, TConditionType>.Instance;
-        private bool? active;
-        private ContentContainer<TContentType> contentContainer;
-        private DateTime dateBegin;
-        private DateTime? dateEnd;
-        private string name;
-        private IConditionNode<TConditionType> rootCondition;
+        private readonly RuleValidator ruleValidator = RuleValidator.Instance;
 
-        public RuleBuilderResult<TContentType, TConditionType> Build()
+        private bool? active;
+
+        private ContentContainer contentContainer;
+
+        private string contentType;
+
+        private DateTime dateBegin;
+
+        private DateTime? dateEnd;
+
+        private string name;
+
+        private IConditionNode rootCondition;
+
+        public RuleBuilderResult Build()
         {
-            var rule = new Rule<TContentType, TConditionType>
+            var rule = new Rule
             {
                 ContentContainer = this.contentContainer,
+                ContentType = this.contentType,
                 DateBegin = this.dateBegin,
                 DateEnd = this.dateEnd,
                 Name = this.name,
@@ -35,58 +43,58 @@ namespace Rules.Framework.Builder
                 return RuleBuilderResult.Success(rule);
             }
 
-            return RuleBuilderResult.Failure<TContentType, TConditionType>(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
+            return RuleBuilderResult.Failure(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithActive(bool active)
+        public IRuleBuilder WithActive(bool active)
         {
             this.active = active;
 
             return this;
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithCondition(IConditionNode<TConditionType> condition)
+        public IRuleBuilder WithCondition(IConditionNode condition)
         {
             this.rootCondition = condition;
 
             return this;
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithCondition(
-            Func<IRootConditionNodeBuilder<TConditionType>, IConditionNode<TConditionType>> conditionFunc)
+        public IRuleBuilder WithCondition(
+            Func<IRootConditionNodeBuilder, IConditionNode> conditionFunc)
         {
-            var rootConditionNodeBuilder = new RootConditionNodeBuilder<TConditionType>();
+            var rootConditionNodeBuilder = new RootConditionNodeBuilder();
 
             var condition = conditionFunc.Invoke(rootConditionNodeBuilder);
 
             return this.WithCondition(condition);
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithCondition<TDataType>(
-            TConditionType conditionType, Operators condOperator, TDataType operand)
+        public IRuleBuilder WithCondition<TDataType>(
+            string conditionType, Operators condOperator, TDataType operand)
         {
-            var rootConditionNodeBuilder = new RootConditionNodeBuilder<TConditionType>();
+            var rootConditionNodeBuilder = new RootConditionNodeBuilder();
 
             var valueCondition = rootConditionNodeBuilder.Value(conditionType, condOperator, operand);
-
             return this.WithCondition(valueCondition);
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithContent(TContentType contentType, object content)
+        public IRuleBuilder WithContent(string contentType, object content)
         {
-            this.contentContainer = new ContentContainer<TContentType>(contentType, _ => content);
+            this.contentType = contentType;
+            this.contentContainer = new ContentContainer(_ => content);
 
             return this;
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithDateBegin(DateTime dateBegin)
+        public IRuleBuilder WithDateBegin(DateTime dateBegin)
         {
             this.dateBegin = dateBegin;
 
             return this;
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithDatesInterval(DateTime dateBegin, DateTime? dateEnd)
+        public IRuleBuilder WithDatesInterval(DateTime dateBegin, DateTime? dateEnd)
         {
             this.dateBegin = dateBegin;
             this.dateEnd = dateEnd;
@@ -94,24 +102,24 @@ namespace Rules.Framework.Builder
             return this;
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithName(string name)
+        public IRuleBuilder WithName(string name)
         {
             this.name = name;
-
             return this;
         }
 
-        public IRuleBuilder<TContentType, TConditionType> WithSerializedContent(
-            TContentType contentType,
+        public IRuleBuilder WithSerializedContent(
+            string contentType,
             object serializedContent,
-            IContentSerializationProvider<TContentType> contentSerializationProvider)
+            IContentSerializationProvider contentSerializationProvider)
         {
             if (contentSerializationProvider is null)
             {
                 throw new ArgumentNullException(nameof(contentSerializationProvider));
             }
 
-            this.contentContainer = new SerializedContentContainer<TContentType>(contentType, serializedContent, contentSerializationProvider);
+            this.contentType = contentType;
+            this.contentContainer = new SerializedContentContainer(contentType, serializedContent, contentSerializationProvider);
 
             return this;
         }

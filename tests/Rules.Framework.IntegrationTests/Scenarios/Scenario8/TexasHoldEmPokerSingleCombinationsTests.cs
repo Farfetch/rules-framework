@@ -31,21 +31,20 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
                 .SetInMemoryDataSource()
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
 
             var scenarioData = new Scenario8Data();
 
             await ScenarioLoader.LoadScenarioAsync(rulesEngine, scenarioData);
 
             // Act
-            var result = await rulesEngine.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, matchDate, conditions);
+            var result = await genericRulesEngine.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, matchDate, conditions);
 
             // Assert
             result.Should().NotBeNull();
