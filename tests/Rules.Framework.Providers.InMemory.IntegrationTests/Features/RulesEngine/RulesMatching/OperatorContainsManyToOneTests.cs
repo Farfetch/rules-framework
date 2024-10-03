@@ -19,7 +19,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             : base(testContentType)
         {
             this.expectedMatchRule = Rule.Create<RulesetNames, ConditionNames>("Expected rule")
-                .OnRuleset(testContentType)
+                .InRuleset(testContentType)
                 .SetContent("Just as expected!")
                 .Since(UtcDate("2020-01-01Z"))
                 .ApplyWhen(ConditionNames.Condition1, Operators.Contains, "Cat")
@@ -27,7 +27,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                 .Rule;
 
             this.otherRule = Rule.Create<RulesetNames, ConditionNames>("Other rule")
-                .OnRuleset(testContentType)
+                .InRuleset(testContentType)
                 .SetContent("Oops! Not expected to be matched.")
                 .Since(UtcDate("2020-01-01Z"))
                 .Build()

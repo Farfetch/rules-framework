@@ -12,6 +12,6 @@ namespace Rules.Framework.Builder.Generic.RulesBuilder
         /// </summary>
         /// <param name="ruleset">The ruleset.</param>
         /// <returns></returns>
-        IRuleConfigureContent<TRuleset, TCondition> OnRuleset(TRuleset ruleset);
+        IRuleConfigureContent<TRuleset, TCondition> InRuleset(TRuleset ruleset);
     }
 }

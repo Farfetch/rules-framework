@@ -41,7 +41,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 1 - Create rule with "in" operator
             var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Discounts Weekend MAY2021")
-                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .InRuleset(DiscountConfigurations.DiscountCampaigns)
                 .SetContent(15m)
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .Until(DateTime.Parse("2021-05-31Z"))
@@ -105,7 +105,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 1 - Create rule with "in" operator
             var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Discounts Weekend MAY2021 - Tiered discount")
-                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .InRuleset(DiscountConfigurations.DiscountCampaigns)
                 .SetContent(15m)
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .Until(DateTime.Parse("2021-05-31Z"))
@@ -170,7 +170,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 1 - Create rule with "not contains" operator
             var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Not a staff discount")
-                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .InRuleset(DiscountConfigurations.DiscountCampaigns)
                 .SetContent(5m)
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .ApplyWhen(DiscountConditions.CustomerEmail, Operators.NotContains, "@staff.com")
@@ -227,7 +227,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 1 - Create rule with "equal" operator
             var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Blue Product")
-                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .InRuleset(DiscountConfigurations.DiscountCampaigns)
                 .SetContent(ProductColor.Blue.ToString())
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .ApplyWhen(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
@@ -284,7 +284,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 1 - Create rule with "equal" operator
             var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Blue Product")
-                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .InRuleset(DiscountConfigurations.DiscountCampaigns)
                 .SetContent(ProductColor.Blue.ToString())
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .ApplyWhen(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())
@@ -337,7 +337,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario4
 
             // Act 1 - Create rule with "equal" operator
             var ruleBuilderResult = Rule.Create<DiscountConfigurations, DiscountConditions>("Blue Product")
-                .OnRuleset(DiscountConfigurations.DiscountCampaigns)
+                .InRuleset(DiscountConfigurations.DiscountCampaigns)
                 .SetContent(ProductColor.Blue.ToString())
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .ApplyWhen(DiscountConditions.ProductColor, Operators.Equal, ProductColor.Blue.ToString())

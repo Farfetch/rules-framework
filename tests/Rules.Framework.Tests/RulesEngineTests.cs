@@ -839,7 +839,7 @@ namespace Rules.Framework.Tests
 
         private static Rule CreateTestStubRule()
             => Rule.Create("Test stub")
-                .OnRuleset("Test content type")
+                .InRuleset("Test content type")
                 .SetContent(new object())
                 .Since(DateTime.Parse("2024-08-17", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal))
                 .Build()

@@ -13,7 +13,7 @@ namespace Rules.Framework.InMemory.Sample
     {
         private static async Task Main(string[] args)
         {
-            var rulesService = new RulesService(new List<IRuleSpecificationsRegistrar>()
+            var rulesService = new RulesService(new List<IRuleSpecificationsProvider>()
             {
                 new TestNumberRules()
             });

@@ -47,7 +47,7 @@ namespace Rules.Framework.IntegrationTests
                     }
 
                     var ruleBuilder = Rule.Create<TRuleset, TCondition>(ruleDataModel.Name)
-                        .OnRuleset(contentType)
+                        .InRuleset(contentType)
                         .SetContent(content)
                         .Since(ruleDataModel.DateBegin)
                         .Until(ruleDataModel.DateEnd);

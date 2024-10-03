@@ -35,7 +35,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             await genericRulesEngine.CreateRulesetAsync(Scenario1RulesetNames.BodyMassIndexFormula);
 
             var newRuleResult1 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Body Mass Index up to 18 years formula")
-                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .InRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
                 .SetContent(new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
@@ -49,7 +49,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
 
             var ruleBuilderResult2 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Sample rule")
-                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .InRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
                 .SetContent(new Formula
                 {
                     Description = "Sample formula",
@@ -104,7 +104,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(Formula));
 
             var newRuleResult1 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Body Mass Index up to 18 years formula")
-                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .InRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
                 .SetContent(new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",
@@ -118,7 +118,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var ruleAddPriorityOption1 = RuleAddPriorityOption.ByPriorityNumber(1);
 
             var ruleBuilderResult2 = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Sample rule")
-                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .InRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
                 .SetContent(new Formula
                 {
                     Description = "Sample formula",
@@ -173,7 +173,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
                 .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(Formula));
 
             var newRuleResult = Rule.Create<Scenario1RulesetNames, Scenario1ConditionNames>("Body Mass Index up to 18 years formula")
-                .OnRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
+                .InRuleset(Scenario1RulesetNames.BodyMassIndexFormula)
                 .SetContent(new Formula
                 {
                     Description = "Body Mass Index up to 18 years formula",

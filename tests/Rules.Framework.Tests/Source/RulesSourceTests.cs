@@ -613,7 +613,7 @@ namespace Rules.Framework.Tests.Source
 
         private static Rule CreateRule() =>
             Rule.Create("Test rule")
-                .OnRuleset(RulesetNames.Type1.ToString())
+                .InRuleset(RulesetNames.Type1.ToString())
                 .SetContent("test")
                 .Since(DateTime.Parse("2022-11-27Z"))
                 .Build()

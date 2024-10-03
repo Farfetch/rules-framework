@@ -192,7 +192,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 .CreateValueNode(ConditionNames.SampleStringCondition.ToString(), Operators.Equal, "TEST") as ValueConditionNode;
 
             var rule1 = Rule.Create<RulesetNames, ConditionNames>("My rule used for testing purposes")
-                .OnRuleset(RulesetNames.ContentTypeSample)
+                .InRuleset(RulesetNames.ContentTypeSample)
                 .SetContent((object)content)
                 .Since(new DateTime(2020, 1, 1))
                 .ApplyWhen(c => c

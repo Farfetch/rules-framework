@@ -6,7 +6,7 @@ namespace Rules.Framework.InMemory.Sample.Rules
     using global::Rules.Framework.InMemory.Sample.Engine;
     using global::Rules.Framework.InMemory.Sample.Enums;
 
-    internal class TestNumberRules : IRuleSpecificationsRegistrar
+    internal class TestNumberRules : IRuleSpecificationsProvider
     {
         public readonly List<RuleSpecification> rulesSpecifications;
 
@@ -36,13 +36,13 @@ namespace Rules.Framework.InMemory.Sample.Rules
                 });
 
         private RuleBuilderResult<RulesetNames, ConditionNames> CreateDefaultRule() => Rule.Create<RulesetNames, ConditionNames>("Default rule for test number")
-            .OnRuleset(RulesetNames.TestNumber)
+            .InRuleset(RulesetNames.TestNumber)
             .SetContent(":| default nothing special about this number")
             .Since(new DateTime(2019, 01, 01))
             .Build();
 
         private RuleBuilderResult<RulesetNames, ConditionNames> CreateRuleForCoolNumbers() => Rule.Create<RulesetNames, ConditionNames>("Rule for cool numbers")
-            .OnRuleset(RulesetNames.TestNumber)
+            .InRuleset(RulesetNames.TestNumber)
             .SetContent(":D this number is so COOL!")
             .Since(new DateTime(2019, 01, 01))
             .ApplyWhen(c => c
@@ -54,7 +54,7 @@ namespace Rules.Framework.InMemory.Sample.Rules
             .Build();
 
         private RuleBuilderResult<RulesetNames, ConditionNames> CreateRuleForSosoNumbers() => Rule.Create<RulesetNames, ConditionNames>("Rule for so so numbers")
-            .OnRuleset(RulesetNames.TestNumber)
+            .InRuleset(RulesetNames.TestNumber)
             .SetContent(":) this number is so so")
             .Since(new DateTime(2019, 01, 01))
             .ApplyWhen(c => c

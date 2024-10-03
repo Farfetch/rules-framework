@@ -56,7 +56,7 @@ namespace Rules.Framework.Tests.Extensions
             };
 
             var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>("Dummy Rule")
-                .OnRuleset(RulesetNames.Type1)
+                .InRuleset(RulesetNames.Type1)
                 .SetContent(expectedRuleContent)
                 .Since(DateTime.Parse("2018-01-01"))
                 .ApplyWhen(b => b
@@ -95,7 +95,7 @@ namespace Rules.Framework.Tests.Extensions
             var expectedRuleContent = "Type2";
 
             var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>("Dummy Rule")
-                .OnRuleset(RulesetNames.Type2)
+                .InRuleset(RulesetNames.Type2)
                 .SetContent(expectedRuleContent)
                 .Since(DateTime.Parse("2018-01-01"))
                 .Build();
@@ -129,7 +129,7 @@ namespace Rules.Framework.Tests.Extensions
             };
 
             var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>("Dummy Rule")
-                .OnRuleset(RulesetNames.Type1)
+                .InRuleset(RulesetNames.Type1)
                 .SetContent(expectedRuleContent)
                 .Since(DateTime.Parse("2018-01-01"))
                 .ApplyWhen(ConditionNames.NumberOfSales, Operators.GreaterThan, 1000)

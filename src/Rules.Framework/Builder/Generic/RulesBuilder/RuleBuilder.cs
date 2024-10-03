@@ -63,9 +63,9 @@ namespace Rules.Framework.Builder.Generic.RulesBuilder
             return RuleBuilderResult<TRuleset, TCondition>.Failure(ruleBuilderResult.Errors);
         }
 
-        public IRuleConfigureContent<TRuleset, TCondition> OnRuleset(TRuleset ruleset)
+        public IRuleConfigureContent<TRuleset, TCondition> InRuleset(TRuleset ruleset)
         {
-            this.ruleBuilder.OnRuleset(GenericConversions.Convert(ruleset));
+            this.ruleBuilder.InRuleset(GenericConversions.Convert(ruleset));
             return this;
         }
 

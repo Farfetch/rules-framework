@@ -99,7 +99,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
 
             // Act
             var newRuleResult = Rule.Create<SecuritySystemActionables, SecuritySystemConditions>("Activate ventilation system rule")
-                .OnRuleset(SecuritySystemActionables.FireSystem)
+                .InRuleset(SecuritySystemActionables.FireSystem)
                 .SetContent(new SecuritySystemAction
                 {
                     ActionId = new Guid("ef0d65ae-ec76-492a-84db-5cb9090c3eaa"),

@@ -175,7 +175,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             Mock.Get(ruleFactory)
                 .Setup(x => x.CreateRule(It.IsAny<RuleDataModel>()))
                 .Returns<RuleDataModel>(x => Rule.Create(x.Name)
-                    .OnRuleset("test ruleset")
+                    .InRuleset("test ruleset")
                     .SetContent(new object())
                     .Since(dateBegin)
                     .Build()

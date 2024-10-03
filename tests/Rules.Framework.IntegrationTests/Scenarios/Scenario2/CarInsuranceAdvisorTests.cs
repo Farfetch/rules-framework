@@ -48,7 +48,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
 
             var ruleBuilderResult = Rule.Create<CarInsuranceRulesetNames, CarInsuranceConditionNames>("Car Insurance Advise on on accident under the effect of drugs or alcohol")
-                .OnRuleset(expectedRuleset)
+                .InRuleset(expectedRuleset)
                 .SetContent(CarInsuranceAdvices.PerformInvestigation)
                 .Since(DateTime.Parse("2020-01-01"))
                 .ApplyWhen(c => c
@@ -230,7 +230,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario2
                 .FromJsonFileAsync(genericRulesEngine, DataSourceFilePath, typeof(CarInsuranceAdvices), serializedContent: false);
 
             var ruleBuilderResult = Rule.Create<CarInsuranceRulesetNames, CarInsuranceConditionNames>("Car Insurance Advise on self damage coverage")
-                .OnRuleset(expectedContent)
+                .InRuleset(expectedContent)
                 .SetContent(CarInsuranceAdvices.Pay)
                 .Since(DateTime.Parse("2018-01-01"))
                 .Build();

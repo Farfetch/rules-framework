@@ -24,14 +24,14 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public RulesUpdateDateEndTests() : base(testRuleset)
         {
             rule1 = Rule.Create<RulesetNames, ConditionNames>(rule1Name)
-                .OnRuleset(testRuleset)
+                .InRuleset(testRuleset)
                 .SetContent(rule1Value)
                 .Since(ruleStartDate)
                 .Until(ruleEndDate)
                 .Build().Rule;
 
             rule2 = Rule.Create<RulesetNames, ConditionNames>(rule2Name)
-                .OnRuleset(testRuleset)
+                .InRuleset(testRuleset)
                 .SetContent(rule2Value)
                 .Since(ruleStartDate)
                 .Until(ruleEndDate)

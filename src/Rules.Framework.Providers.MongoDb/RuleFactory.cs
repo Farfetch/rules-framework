@@ -25,7 +25,7 @@ namespace Rules.Framework.Providers.MongoDb
             }
 
             var ruleBuilderResult = Rule.Create(ruleDataModel.Name)
-                .OnRuleset(ruleDataModel.Ruleset)
+                .InRuleset(ruleDataModel.Ruleset)
                 .SetContent((object)ruleDataModel.Content, this.contentSerializationProvider)
                 .Since(ruleDataModel.DateBegin)
                 .Until(ruleDataModel.DateEnd)

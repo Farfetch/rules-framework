@@ -21,9 +21,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
         private IEnumerable<Rule<Rulesets, ConditionNames>> GetRules()
         {
             var rule1Result = Rule.Create<Rulesets, ConditionNames>("Benchmark 2 - Bohemian Rapsody")
-                .OnRuleset(Rulesets.Songs)
+                .InRuleset(Rulesets.Songs)
                 .SetContent("Bohemian Rapsody")
-                .Since(DateTime.Parse("2000-01-01"))
+                .SinceUtc(2000, 1, 1)
                 .ApplyWhen(c => c
                     .And(x => x
                         .Value(ConditionNames.Artist, Operators.Equal, "Queen")
@@ -35,9 +35,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
                 .Build();
 
             var rule2Result = Rule.Create<Rulesets, ConditionNames>("Benchmark 2 - Stairway to Heaven")
-                .OnRuleset(Rulesets.Songs)
+                .InRuleset(Rulesets.Songs)
                 .SetContent("Stairway to Heaven")
-                .Since(DateTime.Parse("2000-01-01"))
+                .SinceUtc(2000, 1, 1)
                 .ApplyWhen(c => c
                     .And(x => x
                         .Value(ConditionNames.Artist, Operators.Equal, "Led Zeppelin")

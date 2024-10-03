@@ -139,7 +139,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             var rulesDataSource = CreateRulesDataSourceTest(this.mongoClient, this.mongoDbProviderSettings);
 
             var ruleBuilderResult = Rule.Create<CarInsuranceRulesetNames, CarInsuranceConditionNames>("Car Insurance Advise on self damage coverage")
-                .OnRuleset(CarInsuranceRulesetNames.CarInsuranceAdvice)
+                .InRuleset(CarInsuranceRulesetNames.CarInsuranceAdvice)
                 .SetContent(CarInsuranceAdvices.Pay)
                 .Since(DateTime.Parse("2018-01-01"))
                 .Build();

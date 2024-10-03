@@ -206,7 +206,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
                 .CreateValueNode(ConditionNames.SampleStringCondition.ToString(), Operators.Equal, "TEST");
 
             var rule = Rule.Create<RulesetNames, ConditionNames>("My rule used for testing purposes")
-                .OnRuleset(RulesetNames.RulesetSample)
+                .InRuleset(RulesetNames.RulesetSample)
                 .SetContent((object)content)
                 .Since(new DateTime(2020, 1, 1))
                 .ApplyWhen(c => c

@@ -598,7 +598,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         private static RuleBuilderResult<RulesetNames, ConditionNames> CreateTestRule(bool withCondition)
         {
             var ruleBuilder = Rule.Create<RulesetNames, ConditionNames>("Test rule")
-                .OnRuleset(RulesetNames.Type1)
+                .InRuleset(RulesetNames.Type1)
                 .SetContent("Test content")
                 .Since(DateTime.UtcNow);
 

@@ -132,7 +132,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         }
 
         private static RuleBuilderResult<RulesetNames, ConditionNames> CreateTestRule() => Rule.Create<RulesetNames, ConditionNames>("Test rule")
-            .OnRuleset(RulesetNames.Type1)
+            .InRuleset(RulesetNames.Type1)
             .SetContent("Test content")
             .Since(DateTime.UtcNow)
             .ApplyWhen(ConditionNames.IsoCurrency, Operators.Equal, "EUR")

@@ -50,7 +50,7 @@ namespace Rules.Framework.WebUI.Sample
                 return;
             }
 
-            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IRuleSpecificationsRegistrar>()
+            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IRuleSpecificationsProvider>()
             {
                 new RulesRandomFactory()
             }));

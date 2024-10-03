@@ -11,9 +11,9 @@ namespace Rules.Framework.InMemory.Sample.Engine
     {
         private readonly RulesEngineProvider rulesEngineProvider;
 
-        public RulesService(IEnumerable<IRuleSpecificationsRegistrar> ruleSpecificationsRegistrars)
+        public RulesService(IEnumerable<IRuleSpecificationsProvider> ruleSpecificationsProviders)
         {
-            this.rulesEngineProvider = new RulesEngineProvider(new RulesBuilder(ruleSpecificationsRegistrars));
+            this.rulesEngineProvider = new RulesEngineProvider(new RulesBuilder(ruleSpecificationsProviders));
         }
 
         public async Task<T> MatchOneAsync<T>(

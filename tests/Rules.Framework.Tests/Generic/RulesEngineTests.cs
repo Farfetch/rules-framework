@@ -102,7 +102,7 @@ namespace Rules.Framework.Tests.Generic
         {
             // Arrange
             var expectedRule = Rule.Create<RulesetNames, ConditionNames>("Test rule")
-                .OnRuleset(RulesetNames.Type1)
+                .InRuleset(RulesetNames.Type1)
                 .SetContent(new object())
                 .Since(new DateTime(2018, 01, 01))
                 .Until(new DateTime(2019, 01, 01))
@@ -117,7 +117,7 @@ namespace Rules.Framework.Tests.Generic
             var genericSearchArgs = new SearchArgs<RulesetNames, ConditionNames>(genericContentType, dateBegin, dateEnd);
 
             var testRule = Rule.Create<RulesetNames, ConditionNames>("Test rule")
-                .OnRuleset(RulesetNames.Type1)
+                .InRuleset(RulesetNames.Type1)
                 .SetContent(new object())
                 .Since(new DateTime(2018, 01, 01))
                 .Until(new DateTime(2019, 01, 01))

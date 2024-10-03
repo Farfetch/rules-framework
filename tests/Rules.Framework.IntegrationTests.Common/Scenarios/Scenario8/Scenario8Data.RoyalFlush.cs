@@ -1,6 +1,5 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    using System;
     using System.Collections.Generic;
     using Rules.Framework;
     using Rules.Framework.Generic;
@@ -12,9 +11,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
             return new[]
             {
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Clubs: Ace, King, Queen, Jack, 10")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.TenOfClubs, Operators.Equal, true)
@@ -26,9 +25,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                         )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Diamonds: Ace, King, Queen, Jack, 10")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.TenOfDiamonds, Operators.Equal, true)
@@ -40,9 +39,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                         )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Hearts: Ace, King, Queen, Jack, 10")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.TenOfHearts, Operators.Equal, true)
@@ -54,9 +53,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                         )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Spades: Ace, King, Queen, Jack, 10")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.TenOfSpades, Operators.Equal, true)

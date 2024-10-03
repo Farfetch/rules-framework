@@ -70,7 +70,7 @@ namespace Rules.Framework.Builder.RulesBuilder
             return RuleBuilderResult.Failure(validationResult.Errors.Select(ve => ve.ErrorMessage).ToList());
         }
 
-        public IRuleConfigureContent OnRuleset(string ruleset)
+        public IRuleConfigureContent InRuleset(string ruleset)
         {
             this.ruleset = ruleset;
             return this;

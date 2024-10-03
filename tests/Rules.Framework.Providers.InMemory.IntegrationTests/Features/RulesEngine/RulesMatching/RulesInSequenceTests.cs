@@ -81,7 +81,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             var ruleSpecs = new List<RuleSpecification>();
 
             var rule1 = Rule.Create<RulesetNames, ConditionNames>(rule1Name)
-                .OnRuleset(testRuleset)
+                .InRuleset(testRuleset)
                 .SetContent(rule1Value)
                 .Since(rule1StartDate)
                 .Until(ruleChangeDate)
@@ -90,7 +90,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             ruleSpecs.Add(new RuleSpecification(rule1.Rule, RuleAddPriorityOption.ByPriorityNumber(1)));
 
             var rule2 = Rule.Create<RulesetNames, ConditionNames>(rule2Name)
-                .OnRuleset(testRuleset)
+                .InRuleset(testRuleset)
                 .SetContent(rule2Value)
                 .Since(ruleChangeDate)
                 .Until(rule2EndDate)

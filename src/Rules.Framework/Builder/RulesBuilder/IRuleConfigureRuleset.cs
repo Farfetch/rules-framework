@@ -10,6 +10,6 @@ namespace Rules.Framework.Builder.RulesBuilder
         /// </summary>
         /// <param name="ruleset">The ruleset.</param>
         /// <returns></returns>
-        IRuleConfigureContent OnRuleset(string ruleset);
+        IRuleConfigureContent InRuleset(string ruleset);
     }
 }

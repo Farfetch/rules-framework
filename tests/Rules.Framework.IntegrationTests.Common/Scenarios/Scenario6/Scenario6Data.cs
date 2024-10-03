@@ -20,7 +20,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
         private IEnumerable<Rule<Rulesets, ConditionNames>> GetRules()
         {
             var ruleResult = Rule.Create<Rulesets, ConditionNames>("Benchmark 1 - Test rule")
-                .OnRuleset(Rulesets.Sample1)
+                .InRuleset(Rulesets.Sample1)
                 .SetContent("Dummy Content")
                 .Since(DateTime.Parse("2000-01-01"))
                 .ApplyWhen(ConditionNames.StringCondition, Operators.Equal, "Let's benchmark this!")

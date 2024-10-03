@@ -6,20 +6,20 @@ namespace Rules.Framework.InMemory.Sample.Engine
 
     internal class RulesBuilder
     {
-        private readonly IEnumerable<IRuleSpecificationsRegistrar> ruleSpecificationsRegistrars;
+        private readonly IEnumerable<IRuleSpecificationsProvider> ruleSpecificationsRegistrars;
 
-        public RulesBuilder(IEnumerable<IRuleSpecificationsRegistrar> ruleSpecificationsRegistrars) => this.ruleSpecificationsRegistrars = ruleSpecificationsRegistrars;
+        public RulesBuilder(IEnumerable<IRuleSpecificationsProvider> ruleSpecificationsProviders) => this.ruleSpecificationsRegistrars = ruleSpecificationsProviders;
 
         public async Task BuildAsync(IRulesEngine rulesEngine)
         {
-            foreach (var ruleSpecificationsRegistrar in ruleSpecificationsRegistrars)
+            foreach (var ruleSpecificationsProvider in ruleSpecificationsRegistrars)
             {
-                foreach (var ruleset in ruleSpecificationsRegistrar.Rulesets)
+                foreach (var ruleset in ruleSpecificationsProvider.Rulesets)
                 {
                     await rulesEngine.CreateRulesetAsync(ruleset.ToString());
                 }
 
-                var rulesSpecifications = ruleSpecificationsRegistrar.GetRulesSpecifications();
+                var rulesSpecifications = ruleSpecificationsProvider.GetRulesSpecifications();
 
                 foreach (var ruleSpecification in rulesSpecifications)
                 {

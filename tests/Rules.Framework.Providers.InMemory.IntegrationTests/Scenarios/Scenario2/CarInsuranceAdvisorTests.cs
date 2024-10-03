@@ -123,7 +123,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var rulesDataSource = CreateRulesDataSourceTest(this.inMemoryRulesStorage);
 
             var ruleBuilderResult = Rule.Create<CarInsuranceRulesetNames, CarInsuranceConditionNames>("Car Insurance Advise on self damage coverage")
-                .OnRuleset(expectedRuleset)
+                .InRuleset(expectedRuleset)
                 .SetContent(CarInsuranceAdvices.Pay)
                 .Since(DateTime.Parse("2018-01-01"))
                 .Build();

@@ -65,7 +65,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
 
             // Act 1 - Create rule with "in" operator
             var ruleBuilderResult = Rule.Create<BestServerConfigurations, BestServerConditions>("Best Server Top5")
-                .OnRuleset(BestServerConfigurations.BestServerEvaluation)
+                .InRuleset(BestServerConfigurations.BestServerEvaluation)
                 .SetContent("Top5")
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .Until(DateTime.Parse("2021-05-31Z"))
@@ -82,7 +82,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
 
             // Act 2 - Create rule default
             var ruleBuilderResultDefault = Rule.Create<BestServerConfigurations, BestServerConditions>("Best Server Default")
-                .OnRuleset(BestServerConfigurations.BestServerEvaluation)
+                .InRuleset(BestServerConfigurations.BestServerEvaluation)
                 .SetContent("Default")
                 .Since(DateTime.Parse("2021-05-29Z"))
                 .Until(DateTime.Parse("2021-05-31Z"))

@@ -1,6 +1,5 @@
 namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
-    using System;
     using System.Collections.Generic;
     using Rules.Framework;
     using Rules.Framework.Generic;
@@ -12,9 +11,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
             return new[]
             {
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 6, 5, 4, 3, 2")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfDeuces, Operators.GreaterThanOrEqual, 1)
@@ -26,9 +25,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 7, 6, 5, 4, 3")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfTreys, Operators.GreaterThanOrEqual, 1)
@@ -40,9 +39,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 8, 7, 6, 5, 4")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfFours, Operators.GreaterThanOrEqual, 1)
@@ -54,9 +53,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 9, 8, 7, 6, 5")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfFives, Operators.GreaterThanOrEqual, 1)
@@ -68,9 +67,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 10, 9, 8, 7, 6")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfSixes, Operators.GreaterThanOrEqual, 1)
@@ -82,9 +81,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight Jack, 10, 9, 8, 7")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfSevens, Operators.GreaterThanOrEqual, 1)
@@ -96,9 +95,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight Queen, Jack, 10, 9, 8")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfEigths, Operators.GreaterThanOrEqual, 1)
@@ -110,9 +109,9 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                     )
                     .Build().Rule,
                 Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight King, Queen, Jack, 10, 9")
-                    .OnRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
+                    .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
-                    .Since(DateTime.Parse("2000-01-01"))
+                    .Since("2000-01-01")
                     .ApplyWhen(c => c
                         .And(x => x
                             .Value(PokerConditions.NumberOfNines, Operators.GreaterThanOrEqual, 1)

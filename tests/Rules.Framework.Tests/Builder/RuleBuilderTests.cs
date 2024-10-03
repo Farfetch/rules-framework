@@ -24,7 +24,7 @@ namespace Rules.Framework.Tests.Builder
 
             // Act
             var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
-                .OnRuleset(ruleset)
+                .InRuleset(ruleset)
                 .SetContent(content)
                 .Since(dateBegin)
                 .ApplyWhen(c => c
@@ -99,7 +99,7 @@ namespace Rules.Framework.Tests.Builder
 
             // Act
             var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
-                .OnRuleset(ruleset)
+                .InRuleset(ruleset)
                 .SetContent(content)
                 .Since(dateBegin)
                 .ApplyWhen(conditionType, conditionOperator, conditionValue)
@@ -132,7 +132,7 @@ namespace Rules.Framework.Tests.Builder
 
             // Act
             var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
-                .OnRuleset(ruleset)
+                .InRuleset(ruleset)
                 .SetContent(content)
                 .Since(dateBegin)
                 .ApplyWhen(c => c.Value(conditionType, conditionOperator, conditionValue))
@@ -198,7 +198,7 @@ namespace Rules.Framework.Tests.Builder
 
             // Act
             var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
-                .OnRuleset(ruleset)
+                .InRuleset(ruleset)
                 .SetContent(content, contentSerializationProvider)
                 .Since(dateBegin)
                 .Build();

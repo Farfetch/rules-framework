@@ -46,7 +46,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
         private IEnumerable<RuleSpecificationBase<BasicRulesetNames, BasicConditionNames>> CreateRules()
         {
             var ruleForPremiumFreeSampleJanuary = Rule.Create<BasicRulesetNames, BasicConditionNames>("Rule for January sample for premium clients.")
-                .OnRuleset(BasicRulesetNames.FreeSample)
+                .InRuleset(BasicRulesetNames.FreeSample)
                 .SetContent("SmallPerfumeSample")
                 .Since(new DateTime(2023, 01, 01))
                 .Until(new DateTime(2023, 02, 01))
@@ -54,7 +54,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .Build();
 
             var ruleForPremiumFreeSampleApril = Rule.Create<BasicRulesetNames, BasicConditionNames>("Rule for April sample for premium clients.")
-                .OnRuleset(BasicRulesetNames.FreeSample)
+                .InRuleset(BasicRulesetNames.FreeSample)
                 .SetContent("ShampooSample")
                 .Since(new DateTime(2023, 04, 01))
                 .Until(new DateTime(2023, 05, 01))
@@ -62,7 +62,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
                 .Build();
 
             var ruleForPremiumFreeSampleSeptember = Rule.Create<BasicRulesetNames, BasicConditionNames>("Rule for September sample for premium clients.")
-                .OnRuleset(BasicRulesetNames.FreeSample)
+                .InRuleset(BasicRulesetNames.FreeSample)
                 .SetContent("ConditionerSample")
                 .Since(new DateTime(2023, 09, 01)).Until(new DateTime(2023, 10, 01))
                 .ApplyWhen(BasicConditionNames.ClientType, Operators.Equal, "Premium")

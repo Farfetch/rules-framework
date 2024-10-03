@@ -20,7 +20,7 @@ namespace Rules.Framework.WebUI.Tests.Extensions
         {
             // Arrange
             var genericRule = Rule.Create("Rule #1")
-                .OnRuleset("Ruleset #1")
+                .InRuleset("Ruleset #1")
                 .SetContent(new object())
                 .Since(new DateTime(2024, 6, 1))
                 .Build().Rule;

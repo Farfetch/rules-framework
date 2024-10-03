@@ -6,7 +6,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
     using global::Rules.Framework.WebUI.Sample.Engine;
     using global::Rules.Framework.WebUI.Sample.Enums;
 
-    internal class RulesRandomFactory : IRuleSpecificationsRegistrar
+    internal class RulesRandomFactory : IRuleSpecificationsProvider
     {
         private readonly int finalNumber = 50;
         private readonly int intialNumber = 10;
@@ -61,7 +61,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
             DateTime dateBegin,
             DateTime? dateEnd,
             bool isActive = true) => Rule.Create<RulesetNames, ConditionNames>($"Multi rule for test {ruleset} {value}")
-                .OnRuleset(ruleset)
+                .InRuleset(ruleset)
                 .SetContent(new { Value = value })
                 .Since(dateBegin)
                 .Until(dateEnd)
