@@ -30,12 +30,12 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
         {
             // Arrange
             var expected = CarInsuranceAdvices.PayOldCar;
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 0.0m),
-                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 0.0m)
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 0.0m),
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 0.0m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -49,10 +49,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<CarInsuranceRulesetNames, CarInsuranceConditionNames>();
 
             // Act
-            var actual = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchOneAsync(expectedRuleset, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -65,12 +65,12 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
         {
             // Arrange
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
-                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -84,10 +84,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<CarInsuranceRulesetNames, CarInsuranceConditionNames>();
 
             // Act
-            var actual = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchOneAsync(expectedRuleset, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -99,12 +99,12 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
         public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay()
         {
             // Arrange
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
             var expectedConditions = new[]
             {
-                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
-                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
+                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -118,14 +118,14 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<CarInsuranceRulesetNames, CarInsuranceConditionNames>();
 
             var rulesDataSource = CreateRulesDataSourceTest(this.inMemoryRulesStorage);
 
-            var ruleBuilderResult = Rule.New<ContentTypes, ConditionTypes>()
-                .WithName("Car Insurance Advise on self damage coverage")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentTypes.CarInsuranceAdvice, CarInsuranceAdvices.Pay)
+            var ruleBuilderResult = Rule.Create<CarInsuranceRulesetNames, CarInsuranceConditionNames>("Car Insurance Advise on self damage coverage")
+                .InRuleset(expectedRuleset)
+                .SetContent(CarInsuranceAdvices.Pay)
+                .Since(DateTime.Parse("2018-01-01"))
                 .Build();
 
             var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs
@@ -140,7 +140,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             // Act 1
             var updateOperationResult1 = await rulesEngine.UpdateRuleAsync(ruleToUpdate1);
 
-            var eval1 = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var eval1 = await genericRulesEngine.MatchOneAsync(expectedRuleset, expectedMatchDate, expectedConditions);
 
             var rules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs());
 
@@ -169,7 +169,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
                 AtRuleNameOptionValue = "Car Insurance Advise on repair costs lower than franchise boundary"
             });
 
-            var eval2 = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var eval2 = await genericRulesEngine.MatchOneAsync(expectedRuleset, expectedMatchDate, expectedConditions);
 
             var rules2 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs());
 
@@ -204,7 +204,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
 
             var updateOperationResult2 = await rulesEngine.UpdateRuleAsync(ruleToUpdate2);
 
-            var eval3 = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
+            var eval3 = await genericRulesEngine.MatchOneAsync(expectedRuleset, expectedMatchDate, expectedConditions);
 
             var rules3 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs());
 

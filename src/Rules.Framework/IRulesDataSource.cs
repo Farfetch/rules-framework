@@ -17,17 +17,11 @@ namespace Rules.Framework
         Task AddRuleAsync(Rule rule);
 
         /// <summary>
-        /// Creates a new content type on the data source.
+        /// Creates a new ruleset on the data source.
         /// </summary>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="ruleset">the ruleset name.</param>
         /// <returns></returns>
-        Task CreateContentTypeAsync(string contentType);
-
-        /// <summary>
-        /// Gets the content types from the data source.
-        /// </summary>
-        /// <returns></returns>
-        Task<IEnumerable<string>> GetContentTypesAsync();
+        Task CreateRulesetAsync(string ruleset);
 
         /// <summary>
         /// Gets the rules categorized with specified <paramref name="contentType"/> between
@@ -45,6 +39,12 @@ namespace Rules.Framework
         /// <param name="rulesFilterArgs">The rules filter arguments.</param>
         /// <returns></returns>
         Task<IEnumerable<Rule>> GetRulesByAsync(RulesFilterArgs rulesFilterArgs);
+
+        /// <summary>
+        /// Gets the rulesets from the data source.
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<Ruleset>> GetRulesetsAsync();
 
         /// <summary>
         /// Updates the existent rule on data source.

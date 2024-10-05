@@ -6,20 +6,20 @@ namespace Rules.Framework.WebUI.Sample.Engine
 
     internal class RulesBuilder
     {
-        private readonly IEnumerable<IContentTypes> contentTypes;
+        private readonly IEnumerable<IRuleSpecificationsProvider> ruleSpecificationsProviders;
 
-        public RulesBuilder(IEnumerable<IContentTypes> contentTypes) => this.contentTypes = contentTypes;
+        public RulesBuilder(IEnumerable<IRuleSpecificationsProvider> ruleSpecificationsProviders) => this.ruleSpecificationsProviders = ruleSpecificationsProviders;
 
         public async Task BuildAsync(IRulesEngine rulesEngine)
         {
-            foreach (var contentType in contentTypes)
+            foreach (var ruleSpecificationsProvider in ruleSpecificationsProviders)
             {
-                foreach (var contentTypeValue in contentType.ContentTypes)
+                foreach (var ruleset in ruleSpecificationsProvider.Rulesets)
                 {
-                    await rulesEngine.CreateContentTypeAsync(contentTypeValue.ToString());
+                    await rulesEngine.CreateRulesetAsync(ruleset.ToString());
                 }
 
-                var rulesSpecifications = contentType.GetRulesSpecifications();
+                var rulesSpecifications = ruleSpecificationsProvider.GetRulesSpecifications();
 
                 foreach (var ruleSpecification in rulesSpecifications)
                 {

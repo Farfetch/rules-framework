@@ -8,7 +8,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     public class Benchmark3 : IBenchmark
     {
         private readonly Scenario8Data benchmarkData = new Scenario8Data();
-        private IRulesEngine<ContentTypes, ConditionTypes>? genericRulesEngine;
+        private IRulesEngine<PokerRulesets, PokerConditions>? genericRulesEngine;
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
@@ -19,7 +19,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         [Benchmark]
         public async Task RunAsync()
         {
-            await this.genericRulesEngine!.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
+            await this.genericRulesEngine!.MatchOneAsync(PokerRulesets.TexasHoldemPokerSingleCombinations, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
         }
 
         [GlobalSetup]
@@ -33,14 +33,14 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                 })
                 .Build();
 
-            await rulesEngine.CreateContentTypeAsync(nameof(ContentTypes.TexasHoldemPokerSingleCombinations));
+            await rulesEngine.CreateRulesetAsync(nameof(PokerRulesets.TexasHoldemPokerSingleCombinations));
 
             foreach (var rule in this.benchmarkData.Rules)
             {
                 await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
             }
 
-            this.genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            this.genericRulesEngine = rulesEngine.MakeGeneric<PokerRulesets, PokerConditions>();
         }
 
         [GlobalCleanup]

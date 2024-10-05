@@ -18,16 +18,16 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
             var matchDate = new DateTime(2023, 1, 1);
             var conditions = new[]
             {
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfKings, 1),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfQueens, 1),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfJacks, 1 ),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfTens, 1 ),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfNines, 1),
-                new Condition<ConditionTypes>(ConditionTypes.KingOfClubs, true),
-                new Condition<ConditionTypes>(ConditionTypes.QueenOfDiamonds, true),
-                new Condition<ConditionTypes>(ConditionTypes.JackOfClubs, true),
-                new Condition<ConditionTypes>(ConditionTypes.TenOfHearts, true),
-                new Condition<ConditionTypes>(ConditionTypes.NineOfSpades, true),
+                new Condition<PokerConditions>(PokerConditions.NumberOfKings, 1),
+                new Condition<PokerConditions>(PokerConditions.NumberOfQueens, 1),
+                new Condition<PokerConditions>(PokerConditions.NumberOfJacks, 1 ),
+                new Condition<PokerConditions>(PokerConditions.NumberOfTens, 1 ),
+                new Condition<PokerConditions>(PokerConditions.NumberOfNines, 1),
+                new Condition<PokerConditions>(PokerConditions.KingOfClubs, true),
+                new Condition<PokerConditions>(PokerConditions.QueenOfDiamonds, true),
+                new Condition<PokerConditions>(PokerConditions.JackOfClubs, true),
+                new Condition<PokerConditions>(PokerConditions.TenOfHearts, true),
+                new Condition<PokerConditions>(PokerConditions.NineOfSpades, true),
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
@@ -37,14 +37,14 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
-            var genericRulesEngine = rulesEngine.MakeGeneric<ContentTypes, ConditionTypes>();
+            var genericRulesEngine = rulesEngine.MakeGeneric<PokerRulesets, PokerConditions>();
 
             var scenarioData = new Scenario8Data();
 
             await ScenarioLoader.LoadScenarioAsync(rulesEngine, scenarioData);
 
             // Act
-            var result = await genericRulesEngine.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, matchDate, conditions);
+            var result = await genericRulesEngine.MatchOneAsync(PokerRulesets.TexasHoldemPokerSingleCombinations, matchDate, conditions);
 
             // Assert
             result.Should().NotBeNull();

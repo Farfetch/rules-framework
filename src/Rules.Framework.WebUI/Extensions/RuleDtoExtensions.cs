@@ -18,7 +18,7 @@ namespace Rules.Framework.WebUI.Extensions
 
                 return new ValueConditionNodeDto
                 {
-                    ConditionTypeName = condition.ConditionType,
+                    Condition = condition.Condition,
                     DataType = condition.DataType.ToString(),
                     Operand = condition.Operand,
                     Operator = condition.Operator.ToString(),
@@ -41,18 +41,18 @@ namespace Rules.Framework.WebUI.Extensions
             };
         }
 
-        public static RuleDto ToRuleDto(this Rule rule, string ContentType, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer)
+        public static RuleDto ToRuleDto(this Rule rule, IRuleStatusDtoAnalyzer ruleStatusDtoAnalyzer)
         {
             return new RuleDto
             {
                 Conditions = rule.RootCondition?.ToConditionNodeDto(),
-                ContentType = ContentType,
-                Priority = rule.Priority,
-                Name = rule.Name,
-                Value = rule.ContentContainer.GetContentAs<object>(),
                 DateEnd = !rule.DateEnd.HasValue ? null : rule.DateEnd.Value.ToString(dateFormat),
                 DateBegin = rule.DateBegin.ToString(dateFormat),
+                Name = rule.Name,
+                Priority = rule.Priority,
+                Ruleset = rule.Ruleset,
                 Status = !rule.Active ? RuleStatusDto.Deactivated.ToString() : ruleStatusDtoAnalyzer.Analyze(rule.DateBegin, rule.DateEnd).ToString(),
+                Value = rule.ContentContainer.GetContentAs<object>(),
             };
         }
     }

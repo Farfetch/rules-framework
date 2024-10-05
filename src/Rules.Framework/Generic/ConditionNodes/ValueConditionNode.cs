@@ -1,6 +1,5 @@
 namespace Rules.Framework.Generic.ConditionNodes
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using Rules.Framework;
@@ -10,12 +9,10 @@ namespace Rules.Framework.Generic.ConditionNodes
     /// <summary>
     /// A generic implementation for a valued condition node.
     /// </summary>
-    /// <typeparam name="TConditionType">
-    /// The condition type that allows to filter rules based on a set of conditions.
-    /// </typeparam>
-    /// <seealso cref="IValueConditionNode{TConditionType}"/>
-    [DebuggerDisplay("{DataType.ToString(),nq} condition: <{ConditionType.ToString(),nq}> {Operator} {Operand}")]
-    public class ValueConditionNode<TConditionType> : IValueConditionNode<TConditionType>
+    /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
+    /// <seealso cref="IValueConditionNode{TCondition}"/>
+    [DebuggerDisplay("{DataType.ToString(),nq} condition: <{Condition.ToString(),nq}> {Operator} {Operand}")]
+    public class ValueConditionNode<TCondition> : IValueConditionNode<TCondition>
     {
         private readonly ValueConditionNode valueConditionNode;
 
@@ -28,43 +25,27 @@ namespace Rules.Framework.Generic.ConditionNodes
             this.valueConditionNode = valueConditionNode;
         }
 
-        /// <summary>
-        /// Gets the condition node type.
-        /// </summary>
-        public TConditionType ConditionType => GenericConversions.Convert<TConditionType>(valueConditionNode.ConditionType);
+        /// <inheritdoc/>
+        public TCondition Condition => GenericConversions.Convert<TCondition>(valueConditionNode.Condition);
 
-        /// <summary>
-        /// Gets the condition node data type.
-        /// </summary>
+        /// <inheritdoc/>
         public DataTypes DataType => this.valueConditionNode.DataType;
 
-        /// <summary>
-        /// Gets the logical operator to apply to condition node.
-        /// </summary>
+        /// <inheritdoc/>
         public LogicalOperators LogicalOperator => LogicalOperators.Eval;
 
-        /// <summary>
-        /// Gets the condition's operand.
-        /// </summary>
-        /// <value>The operand.</value>
+        /// <inheritdoc/>
         public object Operand => this.valueConditionNode.Operand;
 
-        /// <summary>
-        /// Gets the condition node operator.
-        /// </summary>
+        /// <inheritdoc/>
         public Operators Operator => this.valueConditionNode.Operator;
 
-        /// <summary>
-        /// Gets the condition node properties.
-        /// </summary>
+        /// <inheritdoc/>
         public IDictionary<string, object> Properties => this.valueConditionNode.Properties;
 
-        /// <summary>
-        /// Clones the condition node into a different instance.
-        /// </summary>
-        /// <returns></returns>
-        public IConditionNode<TConditionType> Clone()
-            => new ValueConditionNode<TConditionType>((ValueConditionNode)this.valueConditionNode.Clone());
+        /// <inheritdoc/>
+        public IConditionNode<TCondition> Clone()
+            => new ValueConditionNode<TCondition>((ValueConditionNode)this.valueConditionNode.Clone());
 
         /// <summary>
         /// Determines whether the specified <see cref="object"/>, is equal to this instance.
@@ -73,7 +54,7 @@ namespace Rules.Framework.Generic.ConditionNodes
         /// <returns>
         /// <c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj) => obj is ValueConditionNode<TConditionType> node && EqualityComparer<ValueConditionNode>.Default.Equals(this.valueConditionNode, node.valueConditionNode);
+        public override bool Equals(object obj) => obj is ValueConditionNode<TCondition> node && EqualityComparer<ValueConditionNode>.Default.Equals(this.valueConditionNode, node.valueConditionNode);
 
         /// <summary>
         /// Returns a hash code for this instance.

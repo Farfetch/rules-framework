@@ -21,9 +21,9 @@ namespace Rules.Framework.Evaluation
             switch (conditionNode)
             {
                 case IValueConditionNode valueConditionNode:
-                    if (conditionsChecklist.ContainsKey(valueConditionNode.ConditionType))
+                    if (conditionsChecklist.ContainsKey(valueConditionNode.Condition))
                     {
-                        conditionsChecklist[valueConditionNode.ConditionType] = true;
+                        conditionsChecklist[valueConditionNode.Condition] = true;
                     }
 
                     return conditionsChecklist.All(kvp => kvp.Value);

@@ -164,7 +164,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ContentType.Type1.ToString(),
+                ContentType = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
@@ -214,7 +214,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ContentType.Type1.ToString(),
+                ContentType = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
@@ -264,7 +264,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ContentType.Type1.ToString(),
+                ContentType = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
@@ -322,7 +322,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesFilteredArgs = new GetRulesFilteredArgs
             {
-                ContentType = ContentType.Type1.ToString(),
+                Ruleset = RulesetNames.Type1.ToString(),
             };
 
             var nextDelegateWasInvoked = false;
@@ -370,7 +370,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesFilteredArgs = new GetRulesFilteredArgs
             {
-                ContentType = ContentType.Type1.ToString(),
+                Ruleset = RulesetNames.Type1.ToString(),
             };
 
             var nextDelegateWasInvoked = false;
@@ -418,7 +418,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesFilteredArgs = new GetRulesFilteredArgs
             {
-                ContentType = ContentType.Type1.ToString(),
+                Ruleset = RulesetNames.Type1.ToString(),
             };
 
             var nextDelegateWasInvoked = false;
@@ -595,16 +595,16 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
                 Mock.Get(ruleConditionsExpressionBuilder));
         }
 
-        private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule(bool withCondition)
+        private static RuleBuilderResult<RulesetNames, ConditionNames> CreateTestRule(bool withCondition)
         {
-            var ruleBuilder = Rule.New<ContentType, ConditionType>()
-                        .WithName("Test rule")
-                        .WithDateBegin(DateTime.UtcNow)
-                        .WithContent(ContentType.Type1, "Test content");
+            var ruleBuilder = Rule.Create<RulesetNames, ConditionNames>("Test rule")
+                .InRuleset(RulesetNames.Type1)
+                .SetContent("Test content")
+                .Since(DateTime.UtcNow);
 
             if (withCondition)
             {
-                ruleBuilder.WithCondition(ConditionType.IsoCountryCode, Operators.Equal, "PT");
+                ruleBuilder.ApplyWhen(ConditionNames.IsoCountryCode, Operators.Equal, "PT");
             }
 
             return ruleBuilder.Build();

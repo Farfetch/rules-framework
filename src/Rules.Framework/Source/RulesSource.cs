@@ -6,9 +6,9 @@ namespace Rules.Framework.Source
     internal sealed class RulesSource : IRulesSource
     {
         private readonly AddRuleDelegate addRuleDelegate;
-        private readonly CreateContentTypeDelegate createContentTypeDelegate;
-        private readonly GetContentTypesDelegate getContentTypesDelegate;
+        private readonly CreateRulesetDelegate createRulesetDelegate;
         private readonly GetRulesDelegate getRulesDelegate;
+        private readonly GetRulesetsDelegate getRulesetsDelegate;
         private readonly GetRulesFilteredDelegate getRulesFilteredDelegate;
         private readonly IRulesDataSource rulesDataSource;
         private readonly UpdateRuleDelegate updateRuleDelegate;
@@ -19,8 +19,8 @@ namespace Rules.Framework.Source
         {
             var middlewaresLinkedList = new LinkedList<IRulesSourceMiddleware>(middlewares);
             this.addRuleDelegate = CreateAddRulePipelineDelegate(rulesDataSource, middlewaresLinkedList);
-            this.createContentTypeDelegate = CreateCreateContentTypePipelineDelegate(rulesDataSource, middlewaresLinkedList);
-            this.getContentTypesDelegate = CreateGetContentTypesPipelineDelegate(rulesDataSource, middlewaresLinkedList);
+            this.createRulesetDelegate = CreateCreateRulesetPipelineDelegate(rulesDataSource, middlewaresLinkedList);
+            this.getRulesetsDelegate = CreateGetRulesetsPipelineDelegate(rulesDataSource, middlewaresLinkedList);
             this.getRulesDelegate = CreateGetRulesPipelineDelegate(rulesDataSource, middlewaresLinkedList);
             this.getRulesFilteredDelegate = CreateGetRulesFilteredPipelineDelegate(rulesDataSource, middlewaresLinkedList);
             this.updateRuleDelegate = CreateUpdateRulePipelineDelegate(rulesDataSource, middlewaresLinkedList);
@@ -32,19 +32,19 @@ namespace Rules.Framework.Source
             await this.addRuleDelegate.Invoke(args).ConfigureAwait(false);
         }
 
-        public async Task CreateContentTypeAsync(CreateContentTypeArgs args)
+        public async Task CreateRulesetAsync(CreateRulesetArgs args)
         {
-            await this.createContentTypeDelegate(args).ConfigureAwait(false);
-        }
-
-        public async Task<IEnumerable<string>> GetContentTypesAsync(GetContentTypesArgs args)
-        {
-            return await this.getContentTypesDelegate(args).ConfigureAwait(false);
+            await this.createRulesetDelegate(args).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Rule>> GetRulesAsync(GetRulesArgs args)
         {
             return await this.getRulesDelegate.Invoke(args).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Ruleset>> GetRulesetsAsync(GetRulesetsArgs args)
+        {
+            return await this.getRulesetsDelegate(args).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Rule>> GetRulesFilteredAsync(GetRulesFilteredArgs args)
@@ -81,11 +81,11 @@ namespace Rules.Framework.Source
             return action;
         }
 
-        private static CreateContentTypeDelegate CreateCreateContentTypePipelineDelegate(
+        private static CreateRulesetDelegate CreateCreateRulesetPipelineDelegate(
             IRulesDataSource rulesDataSource,
             LinkedList<IRulesSourceMiddleware> middlewares)
         {
-            CreateContentTypeDelegate action = async (args) => await rulesDataSource.CreateContentTypeAsync(args.Name).ConfigureAwait(false);
+            CreateRulesetDelegate action = async (args) => await rulesDataSource.CreateRulesetAsync(args.Name).ConfigureAwait(false);
 
             if (middlewares.Count > 0)
             {
@@ -95,7 +95,7 @@ namespace Rules.Framework.Source
                 {
                     var middleware = middlewareNode.Value;
                     var immutableAction = action;
-                    action = async (args) => await middleware.HandleCreateContentTypeAsync(args, immutableAction).ConfigureAwait(false);
+                    action = async (args) => await middleware.HandleCreateRulesetAsync(args, immutableAction).ConfigureAwait(false);
 
                     // Get previous middleware node.
                     middlewareNode = middlewareNode.Previous;
@@ -105,11 +105,11 @@ namespace Rules.Framework.Source
             return action;
         }
 
-        private static GetContentTypesDelegate CreateGetContentTypesPipelineDelegate(
+        private static GetRulesetsDelegate CreateGetRulesetsPipelineDelegate(
             IRulesDataSource rulesDataSource,
             LinkedList<IRulesSourceMiddleware> middlewares)
         {
-            GetContentTypesDelegate action = async (_) => await rulesDataSource.GetContentTypesAsync().ConfigureAwait(false);
+            GetRulesetsDelegate action = async (_) => await rulesDataSource.GetRulesetsAsync().ConfigureAwait(false);
 
             if (middlewares.Count > 0)
             {
@@ -119,7 +119,7 @@ namespace Rules.Framework.Source
                 {
                     var middleware = middlewareNode.Value;
                     var immutableAction = action;
-                    action = async (args) => await middleware.HandleGetContentTypesAsync(args, immutableAction).ConfigureAwait(false);
+                    action = async (args) => await middleware.HandleGetRulesetsAsync(args, immutableAction).ConfigureAwait(false);
 
                     // Get previous middleware node.
                     middlewareNode = middlewareNode.Previous;
@@ -138,7 +138,7 @@ namespace Rules.Framework.Source
                 {
                     RulesFilterArgs rulesFilterArgs = new()
                     {
-                        ContentType = args.ContentType,
+                        Ruleset = args.Ruleset,
                         Name = args.Name,
                         Priority = args.Priority,
                     };

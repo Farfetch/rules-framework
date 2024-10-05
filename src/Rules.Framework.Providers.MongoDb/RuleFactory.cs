@@ -24,12 +24,13 @@ namespace Rules.Framework.Providers.MongoDb
                 throw new ArgumentNullException(nameof(ruleDataModel));
             }
 
-            var ruleBuilderResult = Rule.New()
-                .WithName(ruleDataModel.Name)
-                .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd)
+            var ruleBuilderResult = Rule.Create(ruleDataModel.Name)
+                .InRuleset(ruleDataModel.Ruleset)
+                .SetContent((object)ruleDataModel.Content, this.contentSerializationProvider)
+                .Since(ruleDataModel.DateBegin)
+                .Until(ruleDataModel.DateEnd)
                 .WithActive(ruleDataModel.Active ?? true)
-                .WithCondition(_ => ruleDataModel.RootCondition is { } ? ConvertConditionNode(ruleDataModel.RootCondition) : null)
-                .WithSerializedContent(ruleDataModel.ContentType, (object)ruleDataModel.Content, this.contentSerializationProvider)
+                .ApplyWhen(_ => ruleDataModel.RootCondition is { } ? ConvertConditionNode(ruleDataModel.RootCondition) : null)
                 .Build();
 
             if (!ruleBuilderResult.IsSuccess)
@@ -57,18 +58,18 @@ namespace Rules.Framework.Providers.MongoDb
             }
 
             var content = rule.ContentContainer.GetContentAs<object>();
-            var serializedContent = this.contentSerializationProvider.GetContentSerializer(rule.ContentType).Serialize(content);
+            var serializedContent = this.contentSerializationProvider.GetContentSerializer(rule.Ruleset).Serialize(content);
 
             var ruleDataModel = new RuleDataModel
             {
+                Active = rule.Active,
                 Content = serializedContent,
-                ContentType = rule.ContentType,
                 DateBegin = rule.DateBegin,
                 DateEnd = rule.DateEnd,
                 Name = rule.Name,
                 Priority = rule.Priority,
-                Active = rule.Active,
                 RootCondition = rule.RootCondition is { } ? ConvertConditionNode(rule.RootCondition) : null,
+                Ruleset = rule.Ruleset,
             };
 
             return ruleDataModel;
@@ -107,7 +108,7 @@ namespace Rules.Framework.Providers.MongoDb
 
             return new ValueConditionNodeDataModel
             {
-                ConditionType = Convert.ToString(valueConditionNode.ConditionType, CultureInfo.InvariantCulture),
+                Condition = Convert.ToString(valueConditionNode.Condition, CultureInfo.InvariantCulture),
                 LogicalOperator = LogicalOperators.Eval,
                 DataType = valueConditionNode.DataType,
                 Operand = valueConditionNode.Operand,
@@ -130,7 +131,7 @@ namespace Rules.Framework.Providers.MongoDb
 
             var valueConditionNode = new ValueConditionNode(
                 conditionNodeDataModel.DataType,
-                conditionNodeDataModel.ConditionType,
+                conditionNodeDataModel.Condition,
                 conditionNodeDataModel.Operator,
                 operand);
 

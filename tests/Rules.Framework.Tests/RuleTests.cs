@@ -42,7 +42,7 @@ namespace Rules.Framework.Tests
                 DateEnd = DateTime.UtcNow.AddDays(1),
                 Priority = 1,
                 Name = "Name",
-                RootCondition = new ValueConditionNode(DataTypes.Decimal, ConditionType.PluviosityRate.ToString(), Operators.GreaterThanOrEqual, 80.0d),
+                RootCondition = new ValueConditionNode(DataTypes.Decimal, ConditionNames.PluviosityRate.ToString(), Operators.GreaterThanOrEqual, 80.0d),
             };
             rule.RootCondition.Properties["key1"] = "value1";
             rule.RootCondition.Properties["key2"] = new object();

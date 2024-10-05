@@ -56,7 +56,7 @@ namespace Rules.Framework.Builder
                 conditionsEvalEngine = new InterpretedConditionsEvalEngine(deferredEval, conditionsTreeAnalyzer);
             }
 
-            var conditionTypeExtractor = new ConditionTypeExtractor();
+            var ruleConditionsExtractor = new RuleConditionsExtractor();
 
             var validationProvider = ValidationProvider.New()
                 .MapValidatorFor(new SearchArgsValidator<string, string>());
@@ -65,7 +65,7 @@ namespace Rules.Framework.Builder
                 .Reverse<IRulesSourceMiddleware>();
             var rulesSource = new RulesSource(this.rulesDataSource, orderedMiddlewares);
 
-            return new RulesEngine(conditionsEvalEngine, rulesSource, validationProvider, this.rulesEngineOptions, conditionTypeExtractor);
+            return new RulesEngine(conditionsEvalEngine, rulesSource, validationProvider, this.rulesEngineOptions, ruleConditionsExtractor);
         }
 
         public IConfiguredRulesEngineBuilder Configure(Action<RulesEngineOptions> configurationAction)

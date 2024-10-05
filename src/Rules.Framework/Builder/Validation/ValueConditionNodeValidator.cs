@@ -9,8 +9,7 @@ namespace Rules.Framework.Builder.Validation
     {
         public ValueConditionNodeValidator()
         {
-            this.RuleFor(c => c.ConditionType)
-                .NotNull()
+            this.RuleFor(c => c.Condition)
                 .NotEmpty();
 
             this.RuleFor(c => c.DataType)

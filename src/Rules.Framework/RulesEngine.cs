@@ -20,7 +20,7 @@ namespace Rules.Framework
     public class RulesEngine : IRulesEngine
     {
         private readonly IConditionsEvalEngine conditionsEvalEngine;
-        private readonly IConditionTypeExtractor conditionTypeExtractor;
+        private readonly IRuleConditionsExtractor ruleConditionsExtractor;
         private readonly IRulesSource rulesSource;
         private readonly RuleValidator ruleValidator = RuleValidator.Instance;
         private readonly IValidatorProvider validatorProvider;
@@ -30,13 +30,13 @@ namespace Rules.Framework
             IRulesSource rulesSource,
             IValidatorProvider validatorProvider,
             RulesEngineOptions rulesEngineOptions,
-            IConditionTypeExtractor conditionTypeExtractor)
+            IRuleConditionsExtractor ruleConditionsExtractor)
         {
             this.conditionsEvalEngine = conditionsEvalEngine;
             this.rulesSource = rulesSource;
             this.validatorProvider = validatorProvider;
             this.Options = rulesEngineOptions;
-            this.conditionTypeExtractor = conditionTypeExtractor;
+            this.ruleConditionsExtractor = ruleConditionsExtractor;
         }
 
         /// <inheritdoc/>
@@ -72,21 +72,21 @@ namespace Rules.Framework
         }
 
         /// <inheritdoc/>
-        public async Task<OperationResult> CreateContentTypeAsync(string contentType)
+        public async Task<OperationResult> CreateRulesetAsync(string ruleset)
         {
-            if (string.IsNullOrWhiteSpace(contentType))
+            if (string.IsNullOrWhiteSpace(ruleset))
             {
-                throw new ArgumentNullException(nameof(contentType));
+                throw new ArgumentNullException(nameof(ruleset));
             }
 
-            var getContentTypesArgs = new GetContentTypesArgs();
-            var existentContentTypes = await this.rulesSource.GetContentTypesAsync(getContentTypesArgs).ConfigureAwait(false);
-            if (existentContentTypes.Contains(contentType, StringComparer.Ordinal))
+            var getContentTypesArgs = new GetRulesetsArgs();
+            var existentRulesets = await this.rulesSource.GetRulesetsAsync(getContentTypesArgs).ConfigureAwait(false);
+            if (existentRulesets.Any(rs => string.Equals(rs.Name, ruleset, StringComparison.Ordinal)))
             {
-                return OperationResult.Failure($"The content type '{contentType}' already exists.");
+                return OperationResult.Failure($"The ruleset '{ruleset}' already exists.");
             }
 
-            return await this.CreateContentTypeInternalAsync(contentType).ConfigureAwait(false);
+            return await this.CreateRulesetInternalAsync(ruleset).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -103,40 +103,40 @@ namespace Rules.Framework
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<string>> GetContentTypesAsync()
+        public Task<IEnumerable<Ruleset>> GetRulesetsAsync()
         {
-            return this.rulesSource.GetContentTypesAsync(new GetContentTypesArgs());
+            return this.rulesSource.GetRulesetsAsync(new GetRulesetsArgs());
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<string>> GetUniqueConditionTypesAsync(string contentType, DateTime dateBegin, DateTime dateEnd)
+        public async Task<IEnumerable<string>> GetUniqueConditionsAsync(string ruleset, DateTime dateBegin, DateTime dateEnd)
         {
-            if (string.IsNullOrWhiteSpace(contentType))
+            if (string.IsNullOrWhiteSpace(ruleset))
             {
-                throw new ArgumentNullException(nameof(contentType));
+                throw new ArgumentNullException(nameof(ruleset));
             }
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = contentType,
+                ContentType = ruleset,
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
             };
 
             var matchedRules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
 
-            return this.conditionTypeExtractor.GetConditionTypes(matchedRules);
+            return this.ruleConditionsExtractor.GetConditions(matchedRules);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<Rule>> MatchManyAsync(
-            string contentType,
+            string ruleset,
             DateTime matchDateTime,
             IEnumerable<Condition<string>> conditions)
         {
-            if (string.IsNullOrWhiteSpace(contentType))
+            if (string.IsNullOrWhiteSpace(ruleset))
             {
-                throw new ArgumentNullException(nameof(contentType));
+                throw new ArgumentNullException(nameof(ruleset));
             }
 
             var evaluationOptions = new EvaluationOptions
@@ -147,7 +147,7 @@ namespace Rules.Framework
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = contentType,
+                ContentType = ruleset,
                 DateBegin = matchDateTime,
                 DateEnd = matchDateTime,
             };
@@ -159,13 +159,13 @@ namespace Rules.Framework
 
         /// <inheritdoc/>
         public async Task<Rule> MatchOneAsync(
-            string contentType,
+            string ruleset,
             DateTime matchDateTime,
             IEnumerable<Condition<string>> conditions)
         {
-            if (string.IsNullOrWhiteSpace(contentType))
+            if (string.IsNullOrWhiteSpace(ruleset))
             {
-                throw new ArgumentNullException(nameof(contentType));
+                throw new ArgumentNullException(nameof(ruleset));
             }
 
             var evaluationOptions = new EvaluationOptions
@@ -176,7 +176,7 @@ namespace Rules.Framework
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = contentType,
+                ContentType = ruleset,
                 DateBegin = matchDateTime,
                 DateEnd = matchDateTime,
             };
@@ -221,7 +221,7 @@ namespace Rules.Framework
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = searchArgs.ContentType,
+                ContentType = searchArgs.Ruleset,
                 DateBegin = searchArgs.DateBegin,
                 DateEnd = searchArgs.DateEnd,
             };
@@ -245,23 +245,23 @@ namespace Rules.Framework
         private async Task<OperationResult> AddRuleInternalAsync(Rule rule, RuleAddPriorityOption ruleAddPriorityOption)
         {
             var errors = new List<string>();
-            var contentTypes = await this.rulesSource.GetContentTypesAsync(new GetContentTypesArgs()).ConfigureAwait(false);
+            var rulesets = await this.rulesSource.GetRulesetsAsync(new GetRulesetsArgs()).ConfigureAwait(false);
 
-            if (!contentTypes.Contains(rule.ContentType, StringComparer.Ordinal))
+            if (!rulesets.Any(rs => string.Equals(rs.Name, rule.Ruleset, StringComparison.Ordinal)))
             {
-                if (!this.Options.AutoCreateContentTypes)
+                if (!this.Options.AutoCreateRulesets)
                 {
-                    errors.Add($"Specified content type '{rule.ContentType}' does not exist. " +
-                        $"Please create the content type first or set the rules engine option '{nameof(this.Options.AutoCreateContentTypes)}' to true.");
+                    errors.Add($"Specified ruleset '{rule.Ruleset}' does not exist. " +
+                        $"Please create the ruleset first or set the rules engine option '{nameof(this.Options.AutoCreateRulesets)}' to true.");
                     return OperationResult.Failure(errors);
                 }
 
-                await this.CreateContentTypeInternalAsync(rule.ContentType).ConfigureAwait(false);
+                await this.CreateRulesetInternalAsync(rule.Ruleset).ConfigureAwait(false);
             }
 
             var rulesFilterArgs = new GetRulesFilteredArgs
             {
-                ContentType = rule.ContentType,
+                Ruleset = rule.Ruleset,
             };
 
             var existentRules = await this.rulesSource.GetRulesFilteredAsync(rulesFilterArgs).ConfigureAwait(false);
@@ -374,10 +374,10 @@ namespace Rules.Framework
                 .ConfigureAwait(false);
         }
 
-        private async Task<OperationResult> CreateContentTypeInternalAsync(string contentType)
+        private async Task<OperationResult> CreateRulesetInternalAsync(string ruleset)
         {
-            var createContentTypeArgs = new CreateContentTypeArgs { Name = contentType };
-            await this.rulesSource.CreateContentTypeAsync(createContentTypeArgs).ConfigureAwait(false);
+            var createContentTypeArgs = new CreateRulesetArgs { Name = ruleset };
+            await this.rulesSource.CreateRulesetAsync(createContentTypeArgs).ConfigureAwait(false);
             return OperationResult.Success();
         }
 
@@ -481,7 +481,7 @@ namespace Rules.Framework
         {
             var rulesFilterArgs = new GetRulesFilteredArgs
             {
-                ContentType = rule.ContentType,
+                Ruleset = rule.Ruleset,
             };
 
             var existentRules = await this.rulesSource.GetRulesFilteredAsync(rulesFilterArgs).ConfigureAwait(false);

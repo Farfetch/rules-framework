@@ -5,6 +5,7 @@ namespace Rules.Framework.Tests.Builder
     using FluentAssertions;
     using Moq;
     using Rules.Framework;
+    using Rules.Framework.Builder.Generic.RulesBuilder;
     using Rules.Framework.Generic.ConditionNodes;
     using Rules.Framework.Serialization;
     using Rules.Framework.Tests.Stubs;
@@ -18,21 +19,23 @@ namespace Rules.Framework.Tests.Builder
             // Arrange
             var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
-            var contentType = ContentType.Type1;
+            var ruleset = RulesetNames.Type1;
             var content = "Content";
 
             // Act
-            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
-                .WithName(ruleName)
-                .WithDateBegin(dateBegin)
-                .WithContent(contentType, content)
-                .WithCondition(c => c
+            var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
+                .InRuleset(ruleset)
+                .SetContent(content)
+                .Since(dateBegin)
+                .ApplyWhen(c => c
                     .Or(o => o
-                        .Value(ConditionType.IsoCountryCode, Operators.Equal, "PT")
+                        .Value(ConditionNames.IsoCountryCode, Operators.Equal, "PT")
                         .And(a => a
-                            .Value(ConditionType.NumberOfSales, Operators.GreaterThan, 1000)
-                            .Value(ConditionType.IsoCurrency, Operators.In, new[] { "EUR", "USD" })
-                     )))
+                            .Value(ConditionNames.NumberOfSales, Operators.GreaterThan, 1000)
+                            .Value(ConditionNames.IsoCurrency, Operators.In, new[] { "EUR", "USD" })
+                        )
+                    )
+                )
                 .Build();
 
             // Assert
@@ -46,35 +49,35 @@ namespace Rules.Framework.Tests.Builder
             rule.ContentContainer.Should().NotBeNull();
 
             // root node
-            rule.RootCondition.Should().BeOfType<ComposedConditionNode<ConditionType>>();
-            var rootCondition = rule.RootCondition as ComposedConditionNode<ConditionType>;
+            rule.RootCondition.Should().BeOfType<ComposedConditionNode<ConditionNames>>();
+            var rootCondition = rule.RootCondition as ComposedConditionNode<ConditionNames>;
             rootCondition.LogicalOperator.Should().Be(LogicalOperators.Or);
             rootCondition.ChildConditionNodes.Should().HaveCount(2);
             var childNodes = rootCondition.ChildConditionNodes.ToList();
 
             // first child node
-            childNodes[0].Should().BeOfType<ValueConditionNode<ConditionType>>();
-            var isoCountryChildNode = childNodes[0] as ValueConditionNode<ConditionType>;
-            isoCountryChildNode.ConditionType.Should().Be(ConditionType.IsoCountryCode);
+            childNodes[0].Should().BeOfType<ValueConditionNode<ConditionNames>>();
+            var isoCountryChildNode = childNodes[0] as ValueConditionNode<ConditionNames>;
+            isoCountryChildNode.Condition.Should().Be(ConditionNames.IsoCountryCode);
             isoCountryChildNode.Operator.Should().Be(Operators.Equal);
             isoCountryChildNode.Operand.Should().Be("PT");
 
             // second child nodes
-            childNodes[1].Should().BeOfType<ComposedConditionNode<ConditionType>>();
-            var composedChildNode = childNodes[1] as ComposedConditionNode<ConditionType>;
+            childNodes[1].Should().BeOfType<ComposedConditionNode<ConditionNames>>();
+            var composedChildNode = childNodes[1] as ComposedConditionNode<ConditionNames>;
             composedChildNode.LogicalOperator.Should().Be(LogicalOperators.And);
             composedChildNode.ChildConditionNodes.Should().HaveCount(2);
             var composedChildNodes = composedChildNode.ChildConditionNodes.ToList();
 
-            composedChildNodes[0].Should().BeOfType<ValueConditionNode<ConditionType>>();
-            var numberOfSalesChildNode = composedChildNodes[0] as ValueConditionNode<ConditionType>;
-            numberOfSalesChildNode.ConditionType.Should().Be(ConditionType.NumberOfSales);
+            composedChildNodes[0].Should().BeOfType<ValueConditionNode<ConditionNames>>();
+            var numberOfSalesChildNode = composedChildNodes[0] as ValueConditionNode<ConditionNames>;
+            numberOfSalesChildNode.Condition.Should().Be(ConditionNames.NumberOfSales);
             numberOfSalesChildNode.Operator.Should().Be(Operators.GreaterThan);
             numberOfSalesChildNode.Operand.Should().Be(1000);
 
-            composedChildNodes[1].Should().BeOfType<ValueConditionNode<ConditionType>>();
-            var isoCurrencyChildNode = composedChildNodes[1] as ValueConditionNode<ConditionType>;
-            isoCurrencyChildNode.ConditionType.Should().Be(ConditionType.IsoCurrency);
+            composedChildNodes[1].Should().BeOfType<ValueConditionNode<ConditionNames>>();
+            var isoCurrencyChildNode = composedChildNodes[1] as ValueConditionNode<ConditionNames>;
+            isoCurrencyChildNode.Condition.Should().Be(ConditionNames.IsoCurrency);
             isoCurrencyChildNode.Operator.Should().Be(Operators.In);
             isoCurrencyChildNode.Operand.Should().BeEquivalentTo(new[] { "EUR", "USD" });
         }
@@ -87,19 +90,19 @@ namespace Rules.Framework.Tests.Builder
             // Arrange
             var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
-            var contentType = ContentType.Type1;
+            var ruleset = RulesetNames.Type1;
             var content = "Content";
-            const ConditionType conditionType = ConditionType.NumberOfSales;
+            const ConditionNames conditionType = ConditionNames.NumberOfSales;
             const int conditionValue = 40;
             var conditionOperator = containsOperator;
             const DataTypes dataType = DataTypes.Integer;
 
             // Act
-            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
-                .WithName(ruleName)
-                .WithDateBegin(dateBegin)
-                .WithContent(contentType, content)
-                .WithCondition(conditionType, conditionOperator, conditionValue)
+            var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
+                .InRuleset(ruleset)
+                .SetContent(content)
+                .Since(dateBegin)
+                .ApplyWhen(conditionType, conditionOperator, conditionValue)
                 .Build();
 
             // Assert
@@ -119,20 +122,20 @@ namespace Rules.Framework.Tests.Builder
             // Arrange
             var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
-            var contentType = ContentType.Type1;
+            var ruleset = RulesetNames.Type1;
             var content = "Content";
-            const ConditionType conditionType = ConditionType.IsoCountryCode;
+            const ConditionNames conditionType = ConditionNames.IsoCountryCode;
             const string conditionValue = "PT";
             var conditionOperator = containsOperator;
             const LogicalOperators logicalOperator = LogicalOperators.Eval;
             const DataTypes dataType = DataTypes.String;
 
             // Act
-            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
-                .WithName(ruleName)
-                .WithDateBegin(dateBegin)
-                .WithContent(contentType, content)
-                .WithCondition(c => c.Value(conditionType, conditionOperator, conditionValue))
+            var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
+                .InRuleset(ruleset)
+                .SetContent(content)
+                .Since(dateBegin)
+                .ApplyWhen(c => c.Value(conditionType, conditionOperator, conditionValue))
                 .Build();
 
             // Assert
@@ -147,10 +150,10 @@ namespace Rules.Framework.Tests.Builder
             rule.DateEnd.Should().BeNull();
             rule.ContentContainer.Should().NotBeNull();
             rule.RootCondition.Should().NotBeNull();
-            rule.RootCondition.Should().BeAssignableTo<IValueConditionNode<ConditionType>>();
+            rule.RootCondition.Should().BeAssignableTo<IValueConditionNode<ConditionNames>>();
 
-            var rootCondition = rule.RootCondition as IValueConditionNode<ConditionType>;
-            rootCondition.ConditionType.Should().Be(conditionType);
+            var rootCondition = rule.RootCondition as IValueConditionNode<ConditionNames>;
+            rootCondition.Condition.Should().Be(conditionType);
             rootCondition.DataType.Should().Be(dataType);
             rootCondition.LogicalOperator.Should().Be(logicalOperator);
             rootCondition.Operator.Should().Be(conditionOperator);
@@ -162,12 +165,12 @@ namespace Rules.Framework.Tests.Builder
         public void NewRule_WithSerializedContent_GivenNullContentSerializationProvider_ThrowsArgumentNullException()
         {
             // Arrange
-            var ruleBuilder = Rule.New<ContentType, ConditionType>();
+            var ruleBuilder = new RuleBuilder<RulesetNames, ConditionNames>("My rule used for testing purposes");
             IContentSerializationProvider contentSerializationProvider = null;
 
             // Act
             var argumentNullException = Assert
-                .Throws<ArgumentNullException>(() => ruleBuilder.WithSerializedContent(ContentType.Type1, "TEST", contentSerializationProvider));
+                .Throws<ArgumentNullException>(() => ruleBuilder.SetContent(new object(), contentSerializationProvider));
 
             // Assert
             argumentNullException.Should().NotBeNull();
@@ -180,7 +183,7 @@ namespace Rules.Framework.Tests.Builder
             // Arrange
             var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
-            var contentType = ContentType.Type1;
+            var ruleset = RulesetNames.Type1;
             var content = "TEST";
 
             var contentSerializer = Mock.Of<IContentSerializer>();
@@ -190,18 +193,18 @@ namespace Rules.Framework.Tests.Builder
 
             var contentSerializationProvider = Mock.Of<IContentSerializationProvider>();
             Mock.Get(contentSerializationProvider)
-                .Setup(x => x.GetContentSerializer(contentType.ToString()))
+                .Setup(x => x.GetContentSerializer(ruleset.ToString()))
                 .Returns(contentSerializer);
 
             // Act
-            var ruleBuilderResult = Rule.New<ContentType, ConditionType>()
-                .WithName(ruleName)
-                .WithDateBegin(dateBegin)
-                .WithSerializedContent(contentType, content, contentSerializationProvider)
+            var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>(ruleName)
+                .InRuleset(ruleset)
+                .SetContent(content, contentSerializationProvider)
+                .Since(dateBegin)
                 .Build();
 
             // Assert
-            ruleBuilderResult.Rule.ContentType.Should().Be(contentType);
+            ruleBuilderResult.Rule.Ruleset.Should().Be(ruleset);
             var ruleContent = ruleBuilderResult.Rule.ContentContainer;
             ruleContent.Should().NotBeNull().And.BeOfType<SerializedContentContainer>();
             ruleContent.GetContentAs<string>().Should().Be(content);

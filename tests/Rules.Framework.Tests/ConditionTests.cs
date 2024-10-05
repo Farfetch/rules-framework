@@ -10,11 +10,11 @@ namespace Rules.Framework.Tests
         public void Condition_Ctor_Success()
         {
             // Arrange
-            var expectedType = ConditionType.IsoCountryCode;
+            var expectedType = ConditionNames.IsoCountryCode;
             var expectedValue = "abc";
 
             // Act
-            var sut = new Condition<ConditionType>(expectedType, expectedValue);
+            var sut = new Condition<ConditionNames>(expectedType, expectedValue);
 
             // Assert
             sut.Type.Should().Be(expectedType);

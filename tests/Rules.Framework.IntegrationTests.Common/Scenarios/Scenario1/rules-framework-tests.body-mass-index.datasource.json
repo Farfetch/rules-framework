@@ -1,7 +1,7 @@
 [
     {
         "Content": "{\"Description\":\"Body Mass Index default formula\",\"Value\":\"weight / (height ^ 2)\"}",
-        "ContentTypeCode": "BodyMassIndexFormula",
+        "Ruleset": "BodyMassIndexFormula",
         "DateBegin": "2018-01-01",
         "DateEnd": null,
         "Name": "Body Mass Index default",

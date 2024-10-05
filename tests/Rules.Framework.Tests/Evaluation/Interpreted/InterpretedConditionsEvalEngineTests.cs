@@ -17,8 +17,8 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void Eval_GivenComposedConditionNodeWithAndOperatorAndMissingConditionWithSearchMode_EvalsAndReturnsResult()
         {
             // Arrange
-            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionType.IsVip.ToString(), Operators.Equal, true);
-            var condition2 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
+            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionNames.IsVip.ToString(), Operators.Equal, true);
+            var condition2 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
 
             var composedConditionNode = new ComposedConditionNode(
                 LogicalOperators.And,
@@ -27,11 +27,11 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             var conditions = new Dictionary<string, object>
             {
                 {
-                    ConditionType.IsoCurrency.ToString(),
+                    ConditionNames.IsoCurrency.ToString(),
                     "SGD"
                 },
                 {
-                    ConditionType.IsVip.ToString(),
+                    ConditionNames.IsVip.ToString(),
                     true
                 }
             };
@@ -70,8 +70,8 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void Eval_GivenComposedConditionNodeWithAndOperatorWithExactMatch_EvalsAndReturnsResult()
         {
             // Arrange
-            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionType.IsVip.ToString(), Operators.Equal, true);
-            var condition2 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
+            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionNames.IsVip.ToString(), Operators.Equal, true);
+            var condition2 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
 
             var composedConditionNode = new ComposedConditionNode(
                 LogicalOperators.Eval,
@@ -80,11 +80,11 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             var conditions = new Dictionary<string, object>
             {
                 {
-                    ConditionType.IsoCurrency.ToString(),
+                    ConditionNames.IsoCurrency.ToString(),
                     "SGD"
                 },
                 {
-                    ConditionType.IsVip.ToString(),
+                    ConditionNames.IsVip.ToString(),
                     true
                 }
             };
@@ -113,8 +113,8 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void Eval_GivenComposedConditionNodeWithEvalOperator_ThrowsNotSupportedException()
         {
             // Arrange
-            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionType.IsVip.ToString(), Operators.Equal, true);
-            var condition2 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
+            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionNames.IsVip.ToString(), Operators.Equal, true);
+            var condition2 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
 
             var composedConditionNode = new ComposedConditionNode(
                 LogicalOperators.Eval,
@@ -123,11 +123,11 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             var conditions = new Dictionary<string, object>
             {
                 {
-                    ConditionType.IsoCurrency.ToString(),
+                    ConditionNames.IsoCurrency.ToString(),
                     "SGD"
                 },
                 {
-                    ConditionType.IsVip.ToString(),
+                    ConditionNames.IsVip.ToString(),
                     true
                 }
             };
@@ -156,8 +156,8 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void Eval_GivenComposedConditionNodeWithOrOperatorWithExactMatch_EvalsAndReturnsResult()
         {
             // Arrange
-            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionType.IsVip.ToString(), Operators.Equal, true);
-            var condition2 = new ValueConditionNode(DataTypes.String, ConditionType.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
+            var condition1 = new ValueConditionNode(DataTypes.Boolean, ConditionNames.IsVip.ToString(), Operators.Equal, true);
+            var condition2 = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.NotEqual, "SGD");
 
             var composedConditionNode = new ComposedConditionNode(
                 LogicalOperators.Or,
@@ -166,11 +166,11 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             var conditions = new Dictionary<string, object>
             {
                 {
-                    ConditionType.IsoCurrency.ToString(),
+                    ConditionNames.IsoCurrency.ToString(),
                     "SGD"
                 },
                 {
-                    ConditionType.IsVip.ToString(),
+                    ConditionNames.IsVip.ToString(),
                     true
                 }
             };

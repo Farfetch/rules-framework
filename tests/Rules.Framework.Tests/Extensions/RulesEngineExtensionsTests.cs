@@ -20,14 +20,14 @@ namespace Rules.Framework.Tests.Extensions
                 Mock.Of<IRulesSource>(),
                 Mock.Of<IValidatorProvider>(),
                 RulesEngineOptions.NewWithDefaults(),
-                Mock.Of<IConditionTypeExtractor>());
+                Mock.Of<IRuleConditionsExtractor>());
 
             // Act
-            var genericEngine = rulesEngine.MakeGeneric<ContentType, ConditionType>();
+            var genericEngine = rulesEngine.MakeGeneric<RulesetNames, ConditionNames>();
 
             // Assert
             genericEngine.Should().NotBeNull();
-            genericEngine.GetType().Should().Be(typeof(RulesEngine<ContentType, ConditionType>));
+            genericEngine.GetType().Should().Be(typeof(RulesEngine<RulesetNames, ConditionNames>));
         }
     }
 }

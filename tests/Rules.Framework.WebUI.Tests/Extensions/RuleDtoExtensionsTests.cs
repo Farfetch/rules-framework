@@ -19,14 +19,14 @@ namespace Rules.Framework.WebUI.Tests.Extensions
         public void RuleDtoExtensions_ToRuleDto_Success()
         {
             // Arrange
-            var genericRule = Rule.New()
-                .WithName("Rule #1")
-                .WithDateBegin(new DateTime(2024, 6, 1))
-                .WithContent("Type #1", new object())
+            var genericRule = Rule.Create("Rule #1")
+                .InRuleset("Ruleset #1")
+                .SetContent(new object())
+                .Since(new DateTime(2024, 6, 1))
                 .Build().Rule;
-            var contentType = "contentType";
+
             // Act
-            var ruleDto = genericRule.ToRuleDto(contentType, this.ruleStatusDtoAnalyzer);
+            var ruleDto = genericRule.ToRuleDto(this.ruleStatusDtoAnalyzer);
 
             // Assert
             ruleDto.Should().NotBeNull();

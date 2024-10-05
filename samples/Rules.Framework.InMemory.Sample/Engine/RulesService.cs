@@ -11,18 +11,18 @@ namespace Rules.Framework.InMemory.Sample.Engine
     {
         private readonly RulesEngineProvider rulesEngineProvider;
 
-        public RulesService(IEnumerable<IContentTypes> contentTypes)
+        public RulesService(IEnumerable<IRuleSpecificationsProvider> ruleSpecificationsProviders)
         {
-            this.rulesEngineProvider = new RulesEngineProvider(new RulesBuilder(contentTypes));
+            this.rulesEngineProvider = new RulesEngineProvider(new RulesBuilder(ruleSpecificationsProviders));
         }
 
         public async Task<T> MatchOneAsync<T>(
-            ContentTypes contentType,
+            RulesetNames ruleset,
             DateTime dateTime,
-            IDictionary<ConditionTypes, object> conditions)
+            IDictionary<ConditionNames, object> conditions)
         {
-            var rulesConditions = (conditions is null) ? new Condition<ConditionTypes>[] { } :
-                conditions.Select(x => new Condition<ConditionTypes>(x.Key, x.Value))
+            var rulesConditions = (conditions is null) ? new Condition<ConditionNames>[] { } :
+                conditions.Select(x => new Condition<ConditionNames>(x.Key, x.Value))
                 .ToArray();
 
             var rulesEngine = await
@@ -31,13 +31,13 @@ namespace Rules.Framework.InMemory.Sample.Engine
                 .ConfigureAwait(false);
 
             var match = await rulesEngine
-                .MakeGeneric<ContentTypes, ConditionTypes>()
-                .MatchOneAsync(contentType, dateTime, rulesConditions)
+                .MakeGeneric<RulesetNames, ConditionNames>()
+                .MatchOneAsync(ruleset, dateTime, rulesConditions)
                 .ConfigureAwait(false);
 
             if (match is null)
             {
-                var message = $"Error trying to match one rule. No rule was found {contentType} {dateTime} {string.Join(", ", conditions)}.";
+                var message = $"Error trying to match one rule. No rule was found {ruleset} {dateTime} {string.Join(", ", conditions)}.";
 
                 throw new RulesNotFoundException(message);
             }

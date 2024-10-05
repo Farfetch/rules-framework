@@ -1,8 +1,8 @@
 namespace Rules.Framework
 {
     using System;
-    using Rules.Framework.Builder;
-    using Rules.Framework.Builder.Generic;
+    using Rules.Framework.Builder.Generic.RulesBuilder;
+    using Rules.Framework.Builder.RulesBuilder;
 
     /// <summary>
     /// Defines a rule.
@@ -18,11 +18,6 @@ namespace Rules.Framework
         /// Gets the content container which contains the rule content.
         /// </summary>
         public ContentContainer ContentContainer { get; internal set; }
-
-        /// <summary>
-        /// Gets the content type.
-        /// </summary>
-        public string ContentType { get; internal set; }
 
         /// <summary>
         /// Gets the date from which the rule begins being applicable.
@@ -50,20 +45,25 @@ namespace Rules.Framework
         public IConditionNode RootCondition { get; internal set; }
 
         /// <summary>
-        /// Creates a new rule with generic content type and condition type.
+        /// Gets the ruleset to which the rule belongs to.
         /// </summary>
-        /// <typeparam name="TContentType">The type of the content type.</typeparam>
-        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
+        public string Ruleset { get; internal set; }
+
+        /// <summary>
+        /// Creates a new rule with generic ruleset type and condition type.
+        /// </summary>
+        /// <typeparam name="TRuleset">The type of the ruleset.</typeparam>
+        /// <typeparam name="TCondition">The type of the conditions.</typeparam>
         /// <returns></returns>
-        public static IRuleBuilder<TContentType, TConditionType> New<TContentType, TConditionType>()
-            => new RuleBuilder<TContentType, TConditionType>();
+        public static IRuleConfigureRuleset<TRuleset, TCondition> Create<TRuleset, TCondition>(string name)
+            => new RuleBuilder<TRuleset, TCondition>(name);
 
         /// <summary>
         /// Creates a new rule.
         /// </summary>
         /// <returns></returns>
-        public static IRuleBuilder New()
-            => new RuleBuilder();
+        public static IRuleConfigureRuleset Create(string name)
+            => new RuleBuilder(name);
 
         /// <summary>
         /// Clones the rule into a different instance.
@@ -72,14 +72,14 @@ namespace Rules.Framework
         public virtual Rule Clone()
             => new Rule
             {
-                ContentType = this.ContentType,
+                Active = this.Active,
                 ContentContainer = this.ContentContainer,
                 DateBegin = this.DateBegin,
                 DateEnd = this.DateEnd,
                 Name = this.Name,
                 Priority = this.Priority,
-                RootCondition = this.RootCondition?.Clone(),
-                Active = this.Active,
+                RootCondition = this.RootCondition?.Clone()!,
+                Ruleset = this.Ruleset,
             };
     }
 }

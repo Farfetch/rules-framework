@@ -61,28 +61,31 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario5
                 })
                 .Build();
             var genericRulesEngine = rulesEngine.MakeGeneric<BestServerConfigurations, BestServerConditions>();
-            await genericRulesEngine.CreateContentTypeAsync(BestServerConfigurations.BestServerEvaluation);
+            await genericRulesEngine.CreateRulesetAsync(BestServerConfigurations.BestServerEvaluation);
 
             // Act 1 - Create rule with "in" operator
-            var ruleBuilderResult = Rule.New<BestServerConfigurations, BestServerConditions>()
-                .WithName("Best Server Top5")
-                .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContent(BestServerConfigurations.BestServerEvaluation, "Top5")
-                .WithCondition(c => c
+            var ruleBuilderResult = Rule.Create<BestServerConfigurations, BestServerConditions>("Best Server Top5")
+                .InRuleset(BestServerConfigurations.BestServerEvaluation)
+                .SetContent("Top5")
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .Until(DateTime.Parse("2021-05-31Z"))
+                .ApplyWhen(c => c
                     .And(a => a
                         .Value(BestServerConditions.Price, Operators.In, new[] { 100m, 200m, 300m })
                         .Value(BestServerConditions.Memory, Operators.In, new[] { 12, 16, 24, 36 })
                         .Value(BestServerConditions.Memory, Operators.NotIn, new[] { 4, 8 })
                         .Value(BestServerConditions.StoragePartionable, Operators.In, new[] { true })
-                        .Value(BestServerConditions.Brand, Operators.In, new[] { "AMD", "Intel", "Cisco" }
-                    )))
+                        .Value(BestServerConditions.Brand, Operators.In, new[] { "AMD", "Intel", "Cisco" })
+                    )
+                )
                 .Build();
 
             // Act 2 - Create rule default
-            var ruleBuilderResultDefault = Rule.New<BestServerConfigurations, BestServerConditions>()
-                .WithName("Best Server Default")
-                .WithDatesInterval(DateTime.Parse("2021-05-29Z"), DateTime.Parse("2021-05-31Z"))
-                .WithContent(BestServerConfigurations.BestServerEvaluation, "Default")
+            var ruleBuilderResultDefault = Rule.Create<BestServerConfigurations, BestServerConditions>("Best Server Default")
+                .InRuleset(BestServerConfigurations.BestServerEvaluation)
+                .SetContent("Default")
+                .Since(DateTime.Parse("2021-05-29Z"))
+                .Until(DateTime.Parse("2021-05-31Z"))
                 .Build();
 
             // Assert 1

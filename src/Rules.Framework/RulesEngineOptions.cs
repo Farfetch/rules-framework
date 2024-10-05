@@ -12,40 +12,19 @@ namespace Rules.Framework
             this.DataTypeDefaults = new Dictionary<DataTypes, object>();
         }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether automatic creation of content types is enabled,
-        /// allowing them to be added when a rule is added, when enabled.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if content types should be automatically created on rule add; otherwise, <c>false</c>.
-        /// </value>
-        public bool AutoCreateContentTypes { get; set; }
+        /// <inheritdoc/>
+        public bool AutoCreateRulesets { get; set; }
 
-        /// <summary>
-        /// Gets the default values for each of the supported data types.
-        /// </summary>
+        /// <inheritdoc/>
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }
 
-        /// <summary>
-        /// Gets or sets whether rules' conditions is enabled or not.
-        /// </summary>
+        /// <inheritdoc/>
         public bool EnableCompilation { get; set; }
 
-        /// <summary>
-        /// <para>
-        /// Gets or sets the rules engine behavior when no condition with a specific type is
-        /// provided to rules engine to match with a rule's condition with the same type.
-        /// </para>
-        /// <para>
-        /// e.g. a rule with a condition of type "Age" is under evaluation but no condition of type
-        /// "Age" was supplied.
-        /// </para>
-        /// </summary>
+        /// <inheritdoc/>
         public MissingConditionBehaviors MissingConditionBehavior { get; set; }
 
-        /// <summary>
-        /// Gets or sets the priority criteria to untie when multiples rules are matched.
-        /// </summary>
+        /// <inheritdoc/>
         public PriorityCriterias PriorityCriteria { get; set; }
 
         /// <summary>
@@ -77,7 +56,7 @@ namespace Rules.Framework
                     [DataTypes.ArrayInteger] = default(int),
                     [DataTypes.ArrayString] = string.Empty,
                 },
-                AutoCreateContentTypes = false,
+                AutoCreateRulesets = false,
             };
 
             return rulesEngineOptions;

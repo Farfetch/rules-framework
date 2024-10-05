@@ -6,27 +6,25 @@ namespace Rules.Framework.Generic
     /// <summary>
     /// Defines a rule.
     /// </summary>
-    /// <typeparam name="TContentType">The content type that allows to categorize rules.</typeparam>
-    /// <typeparam name="TConditionType">
-    /// The condition type that allows to filter rules based on a set of conditions.
-    /// </typeparam>
-    public class Rule<TContentType, TConditionType>
+    /// <typeparam name="TRuleset">The ruleset type that strongly types rulesets.</typeparam>
+    /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
+    public class Rule<TRuleset, TCondition>
     {
         private readonly Rule wrappedRule;
-        private IConditionNode<TConditionType>? rootCondition;
+        private IConditionNode<TCondition>? rootCondition;
 
         internal Rule(Rule wrappedRule)
         {
-            var typeForContentType = typeof(TContentType);
-            if (!typeForContentType.IsEnum && typeForContentType != TypesCache.String)
+            var typeForRuleset = typeof(TRuleset);
+            if (!typeForRuleset.IsEnum && typeForRuleset != TypesCache.String)
             {
-                throw new NotSupportedException($"Only enum types or string are supported as {nameof(TContentType)}.");
+                throw new NotSupportedException($"Only enum types or string are supported as {nameof(TRuleset)}.");
             }
 
-            var typeForConditionType = typeof(TConditionType);
-            if (!typeForConditionType.IsEnum && typeForConditionType != TypesCache.String)
+            var typeForCondition = typeof(TCondition);
+            if (!typeForCondition.IsEnum && typeForCondition != TypesCache.String)
             {
-                throw new NotSupportedException($"Only enum types or string are supported as {nameof(TConditionType)}.");
+                throw new NotSupportedException($"Only enum types or string are supported as {nameof(TCondition)}.");
             }
 
             this.wrappedRule = wrappedRule ?? throw new ArgumentNullException(nameof(wrappedRule));
@@ -41,11 +39,6 @@ namespace Rules.Framework.Generic
         /// Gets the content container which contains the rule content.
         /// </summary>
         public ContentContainer ContentContainer => this.wrappedRule.ContentContainer;
-
-        /// <summary>
-        /// Gets the content type.
-        /// </summary>
-        public TContentType ContentType => GenericConversions.Convert<TContentType>(this.wrappedRule.ContentType);
 
         /// <summary>
         /// Gets the date from which the rule begins being applicable.
@@ -78,27 +71,32 @@ namespace Rules.Framework.Generic
         /// <summary>
         /// Gets the rule root condition. This property is null when rule has no conditions.
         /// </summary>
-        public IConditionNode<TConditionType> RootCondition
+        public IConditionNode<TCondition> RootCondition
         {
             get
             {
-                this.rootCondition ??= this.wrappedRule.RootCondition?.ToGenericConditionNode<TConditionType>();
+                this.rootCondition ??= this.wrappedRule.RootCondition?.ToGenericConditionNode<TCondition>();
                 return this.rootCondition!;
             }
         }
 
         /// <summary>
+        /// Gets the ruleset to which the rule belongs to.
+        /// </summary>
+        public TRuleset Ruleset => GenericConversions.Convert<TRuleset>(this.wrappedRule.Ruleset);
+
+        /// <summary>
         /// Obtains the non-generic <see cref="Rule"/> contained on the given instance of <see
-        /// cref="Rule{TContentType, TConditionType}"/>.
+        /// cref="Rule{TRuleset, TCondition}"/>.
         /// </summary>
         /// <param name="rule">The rule.</param>
         /// <returns>The non-generic rule.</returns>
-        public static implicit operator Rule(Rule<TContentType, TConditionType> rule) => rule.wrappedRule;
+        public static implicit operator Rule(Rule<TRuleset, TCondition> rule) => rule.wrappedRule;
 
         /// <summary>
         /// Clones the rule into a different instance.
         /// </summary>
         /// <returns></returns>
-        public virtual Rule<TContentType, TConditionType> Clone() => new(this.wrappedRule.Clone());
+        public virtual Rule<TRuleset, TCondition> Clone() => new(this.wrappedRule.Clone());
     }
 }

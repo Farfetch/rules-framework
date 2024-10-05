@@ -37,7 +37,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
                 };
                 return new ValueConditionNodeDataModel
                 {
-                    ConditionType = conditionNode.ConditionType,
+                    Condition = conditionNode.Condition,
                     DataType = dataType,
                     LogicalOperator = logicalOperator,
                     Operator = this.Parse<Operators>((string)conditionNode.Operator),
@@ -78,7 +78,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
         {
             var rulesFile = File.OpenRead(dataSourceFilePath);
 
-            IEnumerable<RuleDataModel> rules;
+            RuleDataModel[] rules;
             using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
                 var json = streamReader.ReadToEnd();
@@ -93,7 +93,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
                     return new RuleDataModel
                     {
                         Content = contentConvertFunc.Invoke(t.Content),
-                        ContentType = t.ContentTypeCode,
+                        Ruleset = t.Ruleset,
                         DateBegin = t.DateBegin,
                         DateEnd = t.DateEnd,
                         Name = t.Name,
@@ -101,7 +101,13 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios
                         Active = t.Active ?? true,
                         RootCondition = this.CreateConditionNodeDataModel(t.RootCondition)
                     };
-                }).ToList();
+                }).ToArray();
+            }
+
+            var rulesets = rules.Select(r => r.Ruleset).Distinct().ToArray();
+            foreach (var ruleset in rulesets)
+            {
+                inMemoryRulesStorage.CreateRuleset(ruleset);
             }
 
             foreach (var rule in rules)

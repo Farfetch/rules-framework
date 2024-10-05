@@ -6,8 +6,8 @@ namespace Rules.Framework.Generic
     /// <summary>
     /// Defines the interface contract for a rule's condition node.
     /// </summary>
-    /// <typeparam name="TConditionType">The condition type that allows to filter rules based on a set of conditions.</typeparam>
-    public interface IConditionNode<TConditionType>
+    /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
+    public interface IConditionNode<TCondition>
     {
         /// <summary>
         /// Gets the logical operator to apply to condition node.
@@ -23,6 +23,6 @@ namespace Rules.Framework.Generic
         /// Clones the condition node into a different instance.
         /// </summary>
         /// <returns></returns>
-        IConditionNode<TConditionType> Clone();
+        IConditionNode<TCondition> Clone();
     }
 }

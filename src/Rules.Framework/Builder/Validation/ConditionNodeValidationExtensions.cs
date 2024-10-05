@@ -7,12 +7,12 @@ namespace Rules.Framework.Builder.Validation
 
     internal static class ConditionNodeValidationExtensions
     {
-        public static void PerformValidation<TConditionType, TValidationContext>(this IConditionNode<TConditionType> conditionNode, GenericConditionNodeValidationArgs<TConditionType, TValidationContext> conditionNodeValidationArgs)
+        public static void PerformValidation<TCondition, TValidationContext>(this IConditionNode<TCondition> conditionNode, GenericConditionNodeValidationArgs<TCondition, TValidationContext> conditionNodeValidationArgs)
         {
             ValidationResult validationResult;
             switch (conditionNode)
             {
-                case ComposedConditionNode<TConditionType> composedConditionNode:
+                case ComposedConditionNode<TCondition> composedConditionNode:
                     validationResult = conditionNodeValidationArgs.ComposedConditionNodeValidator.Validate(composedConditionNode);
                     break;
 
@@ -20,13 +20,13 @@ namespace Rules.Framework.Builder.Validation
                     return;
 
                 default:
-                    validationResult = conditionNodeValidationArgs.ValueConditionNodeValidator.Validate((ValueConditionNode<TConditionType>)conditionNode);
+                    validationResult = conditionNodeValidationArgs.ValueConditionNodeValidator.Validate((ValueConditionNode<TCondition>)conditionNode);
                     break;
             }
 
             if (!validationResult.IsValid)
             {
-                foreach (ValidationFailure validationFailure in validationResult.Errors)
+                foreach (var validationFailure in validationResult.Errors)
                 {
                     conditionNodeValidationArgs.ValidationContext.AddFailure(validationFailure);
                 }
@@ -52,7 +52,7 @@ namespace Rules.Framework.Builder.Validation
 
             if (!validationResult.IsValid)
             {
-                foreach (ValidationFailure validationFailure in validationResult.Errors)
+                foreach (var validationFailure in validationResult.Errors)
                 {
                     conditionNodeValidationArgs.ValidationContext.AddFailure(validationFailure);
                 }

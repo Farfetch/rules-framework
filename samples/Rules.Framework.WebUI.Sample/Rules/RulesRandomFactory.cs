@@ -6,7 +6,7 @@ namespace Rules.Framework.WebUI.Sample.Rules
     using global::Rules.Framework.WebUI.Sample.Engine;
     using global::Rules.Framework.WebUI.Sample.Enums;
 
-    internal class RulesRandomFactory : IContentTypes
+    internal class RulesRandomFactory : IRuleSpecificationsProvider
     {
         private readonly int finalNumber = 50;
         private readonly int intialNumber = 10;
@@ -17,16 +17,16 @@ namespace Rules.Framework.WebUI.Sample.Rules
             this.random = new Random();
         }
 
-        public ContentTypes[] ContentTypes => new[]
+        public RulesetNames[] Rulesets => new[]
         {
-            Enums.ContentTypes.TestDateTime,
-            Enums.ContentTypes.TestDecimal,
-            Enums.ContentTypes.TestLong,
-            Enums.ContentTypes.TestBoolean,
-            Enums.ContentTypes.TestShort,
-            Enums.ContentTypes.TestNumber,
-            Enums.ContentTypes.TestString,
-            Enums.ContentTypes.TestBlob,
+            RulesetNames.TestDateTime,
+            RulesetNames.TestDecimal,
+            RulesetNames.TestLong,
+            RulesetNames.TestBoolean,
+            RulesetNames.TestShort,
+            RulesetNames.TestNumber,
+            RulesetNames.TestString,
+            RulesetNames.TestBlob,
         };
 
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
@@ -34,20 +34,20 @@ namespace Rules.Framework.WebUI.Sample.Rules
             var currentYear = DateTime.UtcNow.Year;
             var rulesSpecifications = new List<RuleSpecification>();
 
-            foreach (var contentType in Enum.GetValues(typeof(ContentTypes)))
+            foreach (var ruleset in Enum.GetValues(typeof(RulesetNames)).Cast<RulesetNames>())
             {
                 for (var i = 1; i < random.Next(intialNumber, finalNumber); i++)
                 {
                     var dateBegin = CreateRandomDateBegin(currentYear);
 
-                    Add(CreateMultipleRule((ContentTypes)contentType, i, dateBegin, CreateRandomDateEnd(dateBegin)),
+                    Add(CreateMultipleRule(ruleset, i, dateBegin, CreateRandomDateEnd(dateBegin)),
                         RuleAddPriorityOption.ByPriorityNumber(i),
                         rulesSpecifications);
                 }
 
                 var deactiveDateBegin = CreateRandomDateBegin(currentYear);
 
-                Add(CreateMultipleRule((ContentTypes)contentType, finalNumber, deactiveDateBegin, CreateRandomDateEnd(deactiveDateBegin), isActive: false),
+                Add(CreateMultipleRule(ruleset, finalNumber, deactiveDateBegin, CreateRandomDateEnd(deactiveDateBegin), isActive: false),
                         RuleAddPriorityOption.ByPriorityNumber(finalNumber),
                         rulesSpecifications);
             }
@@ -55,37 +55,38 @@ namespace Rules.Framework.WebUI.Sample.Rules
             return rulesSpecifications;
         }
 
-        private static RuleBuilderResult<ContentTypes, ConditionTypes> CreateMultipleRule(
-            ContentTypes contentTypes,
+        private static RuleBuilderResult<RulesetNames, ConditionNames> CreateMultipleRule(
+            RulesetNames ruleset,
             int value,
             DateTime dateBegin,
             DateTime? dateEnd,
-            bool isActive = true) => Rule.New<ContentTypes, ConditionTypes>()
-                .WithName($"Multi rule for test {contentTypes} {value}")
-                .WithContent(contentTypes, new { Value = value })
-                .WithDatesInterval(dateBegin, dateEnd)
+            bool isActive = true) => Rule.Create<RulesetNames, ConditionNames>($"Multi rule for test {ruleset} {value}")
+                .InRuleset(ruleset)
+                .SetContent(new { Value = value })
+                .Since(dateBegin)
+                .Until(dateEnd)
                 .WithActive(isActive)
-                .WithCondition(rootCond => rootCond
+                .ApplyWhen(rootCond => rootCond
                     .Or(o => o
-                        .Value(ConditionTypes.RoyalNumber, Operators.Equal, 7)
-                        .Value(ConditionTypes.SumAll, Operators.In, new int[] { 9, 8, 6 })
+                        .Value(ConditionNames.RoyalNumber, Operators.Equal, 7)
+                        .Value(ConditionNames.SumAll, Operators.In, new int[] { 9, 8, 6 })
                         .And(a => a
-                            .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, false)
-                            .Value(ConditionTypes.SumAll, Operators.StartsWith, "15")
+                            .Value(ConditionNames.IsPrimeNumber, Operators.Equal, false)
+                            .Value(ConditionNames.SumAll, Operators.StartsWith, "15")
                         )
                         .And(a => a
-                            .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
-                            .Value(ConditionTypes.SumAll, Operators.NotEqual, string.Empty)
+                            .Value(ConditionNames.CanNumberBeDividedBy3, Operators.Equal, false)
+                            .Value(ConditionNames.SumAll, Operators.NotEqual, string.Empty)
                         )
                         .And(a => a
-                            .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, true)
-                            .Value(ConditionTypes.SumAll, Operators.StartsWith, "5")
-                            .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, false)
+                            .Value(ConditionNames.IsPrimeNumber, Operators.Equal, true)
+                            .Value(ConditionNames.SumAll, Operators.StartsWith, "5")
+                            .Value(ConditionNames.CanNumberBeDividedBy3, Operators.Equal, false)
                         )))
                 .Build();
 
         private void Add(
-            RuleBuilderResult<ContentTypes, ConditionTypes> rule,
+            RuleBuilderResult<RulesetNames, ConditionNames> rule,
             RuleAddPriorityOption ruleAddPriorityOption, List<RuleSpecification> rulesSpecifications)
             => rulesSpecifications.Add(new RuleSpecification(rule, ruleAddPriorityOption));
 
