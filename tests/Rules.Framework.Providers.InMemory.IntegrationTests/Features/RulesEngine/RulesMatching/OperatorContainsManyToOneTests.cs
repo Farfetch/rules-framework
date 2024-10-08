@@ -42,9 +42,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_GivenConditionType1WithArrayOfStringsContainingCat_MatchesExpectedRule(bool compiled)
         {
             // Arrange
-            var emptyConditions = new[]
+            var emptyConditions = new Dictionary<ConditionNames, object>
             {
-                new Condition<ConditionNames>(ConditionNames.Condition1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", })
+                {  ConditionNames.Condition1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", } },
             };
             var matchDate = UtcDate("2020-01-02Z");
 
@@ -61,9 +61,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_GivenConditionType1WithArrayOfStringsNotContainingCat_MatchesOtherRule(bool compiled)
         {
             // Arrange
-            var emptyConditions = new[]
+            var emptyConditions = new Dictionary<ConditionNames, object>
             {
-                new Condition<ConditionNames>(ConditionNames.Condition1, new[]{ "Dog", "Fish", "Bat", "Spider", "Mockingbird", })
+                { ConditionNames.Condition1, new[]{ "Dog", "Fish", "Bat", "Spider", "Mockingbird", } },
             };
             var matchDate = UtcDate("2020-01-02Z");
 

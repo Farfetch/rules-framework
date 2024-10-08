@@ -35,15 +35,15 @@ namespace Rules.Framework.Validation
             this.RuleForEach(sa => sa.Conditions)
                 .ChildRules(conditionValidator =>
                 {
-                    conditionValidator.RuleFor(condition => condition.Type)
-                        .Must(conditionType =>
+                    conditionValidator.RuleFor(condition => condition.Key)
+                        .Must(conditionKey =>
                         {
-                            if (this.conditionTypeRuntimeType.IsClass && conditionType is null)
+                            if (this.conditionTypeRuntimeType.IsClass && conditionKey is null)
                             {
                                 return false;
                             }
 
-                            if (this.conditionTypeRuntimeType.IsEnum && !Enum.IsDefined(this.conditionTypeRuntimeType, conditionType))
+                            if (this.conditionTypeRuntimeType.IsEnum && !Enum.IsDefined(this.conditionTypeRuntimeType, conditionKey))
                             {
                                 return false;
                             }

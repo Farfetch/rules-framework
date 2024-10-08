@@ -1,6 +1,7 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
     using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
@@ -16,18 +17,18 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
         {
             // Arrange
             var matchDate = new DateTime(2023, 1, 1);
-            var conditions = new[]
+            var conditions = new Dictionary<PokerConditions, object>
             {
-                new Condition<PokerConditions>(PokerConditions.NumberOfKings, 1),
-                new Condition<PokerConditions>(PokerConditions.NumberOfQueens, 1),
-                new Condition<PokerConditions>(PokerConditions.NumberOfJacks, 1 ),
-                new Condition<PokerConditions>(PokerConditions.NumberOfTens, 1 ),
-                new Condition<PokerConditions>(PokerConditions.NumberOfNines, 1),
-                new Condition<PokerConditions>(PokerConditions.KingOfClubs, true),
-                new Condition<PokerConditions>(PokerConditions.QueenOfDiamonds, true),
-                new Condition<PokerConditions>(PokerConditions.JackOfClubs, true),
-                new Condition<PokerConditions>(PokerConditions.TenOfHearts, true),
-                new Condition<PokerConditions>(PokerConditions.NineOfSpades, true),
+                { PokerConditions.NumberOfKings, 1 },
+                { PokerConditions.NumberOfQueens, 1 },
+                { PokerConditions.NumberOfJacks, 1  },
+                { PokerConditions.NumberOfTens, 1  },
+                { PokerConditions.NumberOfNines, 1 },
+                { PokerConditions.KingOfClubs, true },
+                { PokerConditions.QueenOfDiamonds, true },
+                { PokerConditions.JackOfClubs, true },
+                { PokerConditions.TenOfHearts, true },
+                { PokerConditions.NineOfSpades, true },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()

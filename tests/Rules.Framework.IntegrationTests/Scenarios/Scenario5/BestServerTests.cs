@@ -1,6 +1,7 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
@@ -79,12 +80,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
 
             // Act 5 - Evaluate new rule with "in" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new[]
+            var conditions = new Dictionary<BestServerConditions, object>
             {
-                new Condition<BestServerConditions>(BestServerConditions.Price, 100),
-                new Condition<BestServerConditions>(BestServerConditions.Memory, 12),
-                new Condition<BestServerConditions>(BestServerConditions.StoragePartionable, true),
-                new Condition<BestServerConditions>(BestServerConditions.Brand, "AMD")
+                { BestServerConditions.Price, 100 },
+                { BestServerConditions.Memory, 12 },
+                { BestServerConditions.StoragePartionable, true },
+                { BestServerConditions.Brand, "AMD" },
             };
 
             var actual = await genericRulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions);
@@ -178,12 +179,12 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario5
 
             // Act 5 - Evaluate new rule with "in" operator
             var matchDateTime = DateTime.Parse("2021-05-29T12:34:52Z");
-            var conditions = new[]
+            var conditions = new Dictionary<BestServerConditions, object>
             {
-                new Condition<BestServerConditions>(BestServerConditions.Price,100),
-                new Condition<BestServerConditions>(BestServerConditions.Memory,12),
-                new Condition<BestServerConditions>(BestServerConditions.StoragePartionable,true),
-                new Condition<BestServerConditions>(BestServerConditions.Brand,"AMD")
+                { BestServerConditions.Price, 100 },
+                { BestServerConditions.Memory, 12 },
+                { BestServerConditions.StoragePartionable, true },
+                { BestServerConditions.Brand, "AMD" },
             };
 
             var actual = await genericRulesEngine.MatchOneAsync(BestServerConfigurations.BestServerEvaluation, matchDateTime, conditions);

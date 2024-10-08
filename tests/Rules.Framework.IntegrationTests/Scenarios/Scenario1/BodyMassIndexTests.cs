@@ -1,6 +1,7 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
@@ -214,7 +215,7 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario1
             var expectedFormulaValue = "weight / (height ^ 2)";
             const Scenario1RulesetNames expectedContent = Scenario1RulesetNames.BodyMassIndexFormula;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = Array.Empty<Condition<Scenario1ConditionNames>>();
+            var expectedConditions = new Dictionary<Scenario1ConditionNames, object>();
 
             var serviceProvider = new ServiceCollection()
                 .AddInMemoryRulesDataSource(ServiceLifetime.Singleton)

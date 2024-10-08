@@ -21,7 +21,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
         public RulesInSequenceTests() : base(testRuleset)
         {
-            this.AddRules(this.CreateTestRules());
+            this.AddRules(CreateTestRules());
         }
 
         public static IEnumerable<object[]> FailureCases =>
@@ -51,7 +51,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate, bool compiled)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
+            var emptyConditions = new Dictionary<ConditionNames, object>();
 
             // Act
             var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions, compiled);
@@ -65,7 +65,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_MatchOneAsync_WithRulesInSequence_ReturnsCorrectRule(DateTime matchDate, string expectedName, string expectedValue, bool compiled)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
+            var emptyConditions = new Dictionary<ConditionNames, object>();
 
             // Act
             var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions, compiled);
@@ -76,7 +76,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             Assert.Equal(expectedValue, actualMatch.ContentContainer.GetContentAs<string>());
         }
 
-        private IEnumerable<RuleSpecification> CreateTestRules()
+        private static List<RuleSpecification> CreateTestRules()
         {
             var ruleSpecs = new List<RuleSpecification>();
 

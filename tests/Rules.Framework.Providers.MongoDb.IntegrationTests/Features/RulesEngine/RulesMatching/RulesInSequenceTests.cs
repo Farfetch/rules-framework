@@ -44,7 +44,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         public async Task RulesEngine_MatchOneAsync_OutsideRulesPeriod_Failure(DateTime matchDate)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
+            var emptyConditions = new Dictionary<ConditionNames, object>();
 
             // Act
             var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions);
@@ -58,7 +58,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
         public async Task RulesEngine_MatchOneAsync_WithRulesInSequence_ReturnsCorrectRule(DateTime matchDate, string expectedName, string expectedValue)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionNames>>();
+            var emptyConditions = new Dictionary<ConditionNames, object>();
 
             // Act
             var actualMatch = await this.MatchOneAsync(matchDate, emptyConditions);

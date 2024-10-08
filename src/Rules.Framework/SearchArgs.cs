@@ -2,7 +2,6 @@ namespace Rules.Framework
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// The set of search arguments to find rules.
@@ -19,7 +18,7 @@ namespace Rules.Framework
         /// <param name="dateEnd">The date end.</param>
         public SearchArgs(TRuleset ruleset, DateTime dateBegin, DateTime dateEnd)
         {
-            this.Conditions = Enumerable.Empty<Condition<TCondition>>();
+            this.Conditions = new Dictionary<TCondition, object>();
             this.Ruleset = ruleset;
             this.DateBegin = dateBegin;
             this.DateEnd = dateEnd;
@@ -36,7 +35,7 @@ namespace Rules.Framework
         /// <param name="active">The active status.</param>
         public SearchArgs(TRuleset ruleset, DateTime dateBegin, DateTime dateEnd, bool active)
         {
-            this.Conditions = Enumerable.Empty<Condition<TCondition>>();
+            this.Conditions = new Dictionary<TCondition, object>();
             this.Ruleset = ruleset;
             this.DateBegin = dateBegin;
             this.DateEnd = dateEnd;
@@ -54,7 +53,7 @@ namespace Rules.Framework
         /// Gets or sets the search conditions.
         /// </summary>
         /// <value>The conditions.</value>
-        public IEnumerable<Condition<TCondition>> Conditions { get; set; }
+        public IDictionary<TCondition, object> Conditions { get; set; }
 
         /// <summary>
         /// Gets or sets the date begin.

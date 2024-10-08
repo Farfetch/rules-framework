@@ -1,6 +1,7 @@
 namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario2
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
@@ -32,10 +33,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expected = CarInsuranceAdvices.PayOldCar;
             const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2016, 06, 01, 20, 23, 23);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<CarInsuranceConditionNames, object>
             {
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 0.0m),
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 0.0m)
+                { CarInsuranceConditionNames.RepairCosts, 0.0m },
+                { CarInsuranceConditionNames.RepairCostsCommercialValueRate, 0.0m },
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -67,10 +68,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
             const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<CarInsuranceConditionNames, object>
             {
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
+                { CarInsuranceConditionNames.RepairCosts, 800.00000m },
+                { CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m },
             };
 
             var serviceDescriptors = new ServiceCollection();
@@ -101,10 +102,10 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             // Arrange
             const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<CarInsuranceConditionNames, object>
             {
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCosts, 800.00000m),
-                new Condition<CarInsuranceConditionNames>(CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m)
+                { CarInsuranceConditionNames.RepairCosts, 800.00000m },
+                { CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m },
             };
 
             var serviceDescriptors = new ServiceCollection();

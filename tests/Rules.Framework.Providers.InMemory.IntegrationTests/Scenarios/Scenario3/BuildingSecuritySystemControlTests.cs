@@ -36,11 +36,11 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Online")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Online" },
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
@@ -79,11 +79,11 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Offline")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Offline" },
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
@@ -121,11 +121,11 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Shutdown")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Shutdown" },
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();

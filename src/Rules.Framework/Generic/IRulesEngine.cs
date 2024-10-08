@@ -101,7 +101,7 @@ namespace Rules.Framework.Generic
         /// <para>All rules matching supplied conditions are returned.</para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<IEnumerable<Rule<TRuleset, TCondition>>> MatchManyAsync(TRuleset ruleset, DateTime matchDateTime, IEnumerable<Condition<TCondition>> conditions);
+        Task<IEnumerable<Rule<TRuleset, TCondition>>> MatchManyAsync(TRuleset ruleset, DateTime matchDateTime, IDictionary<TCondition, object> conditions);
 
         /// <summary>
         /// Provides a rule match (if any) to the given <paramref name="ruleset"/> at the specified
@@ -121,7 +121,7 @@ namespace Rules.Framework.Generic
         /// </para>
         /// </remarks>
         /// <returns>the matched rule; otherwise, null.</returns>
-        Task<Rule<TRuleset, TCondition>> MatchOneAsync(TRuleset ruleset, DateTime matchDateTime, IEnumerable<Condition<TCondition>> conditions);
+        Task<Rule<TRuleset, TCondition>> MatchOneAsync(TRuleset ruleset, DateTime matchDateTime, IDictionary<TCondition, object> conditions);
 
         /// <summary>
         /// Searches for rules that match on supplied <paramref name="searchArgs"/>.
