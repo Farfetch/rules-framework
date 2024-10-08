@@ -4,8 +4,8 @@ namespace Rules.Framework.Management
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal interface IManagementOperation<TContentType, TConditionType>
+    internal interface IManagementOperation
     {
-        Task<IEnumerable<Rule<TContentType, TConditionType>>> ApplyAsync(IEnumerable<Rule<TContentType, TConditionType>> rules);
+        Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules);
     }
 }

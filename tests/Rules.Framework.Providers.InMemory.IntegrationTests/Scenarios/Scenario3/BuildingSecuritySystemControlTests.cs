@@ -7,20 +7,19 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
-    using Rules.Framework.Core;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Rules.Framework.Providers.InMemory;
     using Xunit;
 
     public class BuildingSecuritySystemControlTests : BaseScenarioTests
     {
-        private readonly IInMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions> inMemoryRulesStorage;
+        private readonly IInMemoryRulesStorage inMemoryRulesStorage;
 
         public BuildingSecuritySystemControlTests()
         {
-            this.inMemoryRulesStorage = new InMemoryRulesStorage<SecuritySystemActionables, SecuritySystemConditions>();
+            this.inMemoryRulesStorage = new InMemoryRulesStorage();
 
-            this.LoadInMemoryStorage<SecuritySystemActionables, SecuritySystemConditions, SecuritySystemAction>(
+            this.LoadInMemoryStorage<SecuritySystemAction>(
                 DataSourceFilePath,
                 this.inMemoryRulesStorage,
                 (c) => JsonConvert.DeserializeObject<SecuritySystemAction>((string)c));
@@ -36,30 +35,29 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Online")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Online" },
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
             serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
             IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -80,30 +78,29 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Offline")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Offline" },
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
             serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
             IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -123,30 +120,29 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Scenarios.Scenario
             // Assert
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
-            DateTime expectedMatchDate = new DateTime(2018, 06, 01);
-            Condition<SecuritySystemConditions>[] expectedConditions = new Condition<SecuritySystemConditions>[]
+            var expectedMatchDate = new DateTime(2018, 06, 01);
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Shutdown")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Shutdown" },
             };
 
             IServiceCollection serviceDescriptors = new ServiceCollection();
             serviceDescriptors.AddSingleton(this.inMemoryRulesStorage);
             IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
 
-            RulesEngine<SecuritySystemActionables, SecuritySystemConditions> rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .SetInMemoryDataSource(serviceProvider)
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            IEnumerable<Rule<SecuritySystemActionables, SecuritySystemConditions>> actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();

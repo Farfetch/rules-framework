@@ -4,7 +4,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
     using System.Linq.Expressions;
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;

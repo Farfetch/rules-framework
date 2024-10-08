@@ -13,11 +13,11 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         {
             // Arrange
             const string expected = "EUR";
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<string, object>
             {
-                { ConditionType.IsoCurrency, expected }
+                { ConditionNames.IsoCurrency.ToString(), expected }
             };
-            var conditionType = ConditionType.IsoCurrency;
+            var conditionType = ConditionNames.IsoCurrency.ToString();
 
             // Act
             var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, conditionType);
@@ -30,8 +30,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
         public void GetValueOrDefault_GivenEmptyConditionsDictionaryAndConditionType_ReturnsNull()
         {
             // Arrange
-            var conditions = new Dictionary<ConditionType, object>();
-            var conditionType = ConditionType.IsoCurrency;
+            var conditions = new Dictionary<string, object>();
+            var conditionType = ConditionNames.IsoCurrency.ToString();
 
             // Act
             var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, conditionType);

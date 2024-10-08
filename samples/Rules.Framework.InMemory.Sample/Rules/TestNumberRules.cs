@@ -2,12 +2,11 @@ namespace Rules.Framework.InMemory.Sample.Rules
 {
     using System;
     using System.Collections.Generic;
-    using global::Rules.Framework.Builder;
-    using global::Rules.Framework.Core;
+    using global::Rules.Framework.Builder.Generic;
     using global::Rules.Framework.InMemory.Sample.Engine;
     using global::Rules.Framework.InMemory.Sample.Enums;
 
-    internal class TestNumberRules : IContentTypes
+    internal class TestNumberRules : IRuleSpecificationsProvider
     {
         public readonly List<RuleSpecification> rulesSpecifications;
 
@@ -15,6 +14,8 @@ namespace Rules.Framework.InMemory.Sample.Rules
         {
             this.rulesSpecifications = new List<RuleSpecification>();
         }
+
+        public RulesetNames[] Rulesets => new[] { RulesetNames.TestNumber, };
 
         public IEnumerable<RuleSpecification> GetRulesSpecifications()
         {
@@ -26,7 +27,7 @@ namespace Rules.Framework.InMemory.Sample.Rules
         }
 
         private void Add(
-            RuleBuilderResult<ContentTypes, ConditionTypes> rule,
+            RuleBuilderResult<RulesetNames, ConditionNames> rule,
             RuleAddPriorityOption ruleAddPriorityOption) => rulesSpecifications.Add(
                 new RuleSpecification
                 {
@@ -34,39 +35,33 @@ namespace Rules.Framework.InMemory.Sample.Rules
                     RuleAddPriorityOption = ruleAddPriorityOption,
                 });
 
-        private RuleBuilderResult<ContentTypes, ConditionTypes> CreateDefaultRule() =>
-                                     RuleBuilder
-            .NewRule<ContentTypes, ConditionTypes>()
-            .WithName("Default rule for test number")
-            .WithContent(ContentTypes.TestNumber, ":| default nothing special about this number")
-            .WithDateBegin(new DateTime(2019, 01, 01))
+        private RuleBuilderResult<RulesetNames, ConditionNames> CreateDefaultRule() => Rule.Create<RulesetNames, ConditionNames>("Default rule for test number")
+            .InRuleset(RulesetNames.TestNumber)
+            .SetContent(":| default nothing special about this number")
+            .Since(new DateTime(2019, 01, 01))
             .Build();
 
-        private RuleBuilderResult<ContentTypes, ConditionTypes> CreateRuleForCoolNumbers() =>
-                                     RuleBuilder
-            .NewRule<ContentTypes, ConditionTypes>()
-            .WithName("Rule for cool numbers")
-            .WithContent(ContentTypes.TestNumber, ":D this number is so COOL!")
-            .WithDateBegin(new DateTime(2019, 01, 01))
-            .WithCondition(c => c
-            .Or(o => o
-                .Value(ConditionTypes.RoyalNumber, Operators.Equal, 7)
-                .And(a => a
-                    .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, 7)
-                    .Value(ConditionTypes.SumAll, Operators.StartsWith, "5"))))
-            .Build();
-
-        private RuleBuilderResult<ContentTypes, ConditionTypes> CreateRuleForSosoNumbers() =>
-                                     RuleBuilder
-            .NewRule<ContentTypes, ConditionTypes>()
-            .WithName("Rule for so so numbers")
-            .WithContent(ContentTypes.TestNumber, ":) this number is so so")
-            .WithDateBegin(new DateTime(2019, 01, 01))
-            .WithCondition(c => c
+        private RuleBuilderResult<RulesetNames, ConditionNames> CreateRuleForCoolNumbers() => Rule.Create<RulesetNames, ConditionNames>("Rule for cool numbers")
+            .InRuleset(RulesetNames.TestNumber)
+            .SetContent(":D this number is so COOL!")
+            .Since(new DateTime(2019, 01, 01))
+            .ApplyWhen(c => c
                 .Or(o => o
-                    .Value(ConditionTypes.CanNumberBeDividedBy3, Operators.Equal, true)
-                    .Value(ConditionTypes.IsPrimeNumber, Operators.Equal, false)
-                    .Value(ConditionTypes.SumAll, Operators.StartsWith, "9")))
+                    .Value(ConditionNames.RoyalNumber, Operators.Equal, 7)
+                    .And(a => a
+                        .Value(ConditionNames.IsPrimeNumber, Operators.Equal, 7)
+                        .Value(ConditionNames.SumAll, Operators.StartsWith, "5"))))
+            .Build();
+
+        private RuleBuilderResult<RulesetNames, ConditionNames> CreateRuleForSosoNumbers() => Rule.Create<RulesetNames, ConditionNames>("Rule for so so numbers")
+            .InRuleset(RulesetNames.TestNumber)
+            .SetContent(":) this number is so so")
+            .Since(new DateTime(2019, 01, 01))
+            .ApplyWhen(c => c
+                .Or(o => o
+                    .Value(ConditionNames.CanNumberBeDividedBy3, Operators.Equal, true)
+                    .Value(ConditionNames.IsPrimeNumber, Operators.Equal, false)
+                    .Value(ConditionNames.SumAll, Operators.StartsWith, "9")))
             .Build();
     }
 }

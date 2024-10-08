@@ -3,50 +3,50 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
     using System;
     using System.Collections.Generic;
     using Rules.Framework;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
 
-    public class Scenario7Data : IScenarioData<ContentTypes, ConditionTypes>
+    public class Scenario7Data : IScenarioData<Rulesets, ConditionNames>
     {
-        public IEnumerable<Condition<ConditionTypes>> Conditions => new[]
+        public IDictionary<ConditionNames, object> Conditions => new Dictionary<ConditionNames, object>
         {
-            new Condition<ConditionTypes>(ConditionTypes.Artist, "Queen"),
-            new Condition<ConditionTypes>(ConditionTypes.Lyrics, "Is this the real life?\nIs this just fantasy?\nCaught in a landside,\nNo escape from reality" ),
-            new Condition<ConditionTypes>(ConditionTypes.ReleaseYear, 1975 )
+            { ConditionNames.Artist, "Queen" },
+            { ConditionNames.Lyrics, "Is this the real life?\nIs this just fantasy?\nCaught in a landside,\nNo escape from reality" },
+            { ConditionNames.ReleaseYear, 1975 },
         };
 
         public DateTime MatchDate => DateTime.Parse("2022-11-01");
 
-        public IEnumerable<Rule<ContentTypes, ConditionTypes>> Rules => this.GetRules();
+        public IEnumerable<Rule<Rulesets, ConditionNames>> Rules => this.GetRules();
 
-        private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetRules()
+        private IEnumerable<Rule<Rulesets, ConditionNames>> GetRules()
         {
-            var rule1Result = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                .WithName("Benchmark 2 - Bohemian Rapsody")
-                .WithDateBegin(DateTime.Parse("2000-01-01"))
-                .WithContent(ContentTypes.Songs, "Bohemian Rapsody")
-                .WithCondition(c => c
+            var rule1Result = Rule.Create<Rulesets, ConditionNames>("Benchmark 2 - Bohemian Rapsody")
+                .InRuleset(Rulesets.Songs)
+                .SetContent("Bohemian Rapsody")
+                .SinceUtc(2000, 1, 1)
+                .ApplyWhen(c => c
                     .And(x => x
-                        .Value(ConditionTypes.Artist, Operators.Equal, "Queen")
-                        .Value(ConditionTypes.Lyrics, Operators.Contains, "real life")
-                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
-                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
+                        .Value(ConditionNames.Artist, Operators.Equal, "Queen")
+                        .Value(ConditionNames.Lyrics, Operators.Contains, "real life")
+                        .Value(ConditionNames.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
+                        .Value(ConditionNames.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
                     )
                 )
                 .Build();
 
-            var rule2Result = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                .WithName("Benchmark 2 - Stairway to Heaven")
-                .WithDateBegin(DateTime.Parse("2000-01-01"))
-                .WithContent(ContentTypes.Songs, "Stairway to Heaven")
-                .WithCondition(c => c
+            var rule2Result = Rule.Create<Rulesets, ConditionNames>("Benchmark 2 - Stairway to Heaven")
+                .InRuleset(Rulesets.Songs)
+                .SetContent("Stairway to Heaven")
+                .SinceUtc(2000, 1, 1)
+                .ApplyWhen(c => c
                     .And(x => x
-                        .Value(ConditionTypes.Artist, Operators.Equal, "Led Zeppelin")
+                        .Value(ConditionNames.Artist, Operators.Equal, "Led Zeppelin")
                         .Or(sub => sub
-                            .Value(ConditionTypes.Lyrics, Operators.Contains, "all that glitters is gold")
-                            .Value(ConditionTypes.Lyrics, Operators.Contains, "it makes me wonder")
+                            .Value(ConditionNames.Lyrics, Operators.Contains, "all that glitters is gold")
+                            .Value(ConditionNames.Lyrics, Operators.Contains, "it makes me wonder")
                         )
-                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
-                        .Value(ConditionTypes.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
+                        .Value(ConditionNames.ReleaseYear, Operators.GreaterThanOrEqual, 1973)
+                        .Value(ConditionNames.ReleaseYear, Operators.GreaterThanOrEqual, 1977)
                     )
                 )
                 .Build();

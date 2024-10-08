@@ -3,7 +3,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngine;
     using Rules.Framework.Tests.Stubs;
@@ -17,25 +17,23 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         private static readonly string rule2Value = "DummyRule2 Value";
         private static readonly DateTime ruleEndDate = new DateTime(2021, 02, 01);
         private static readonly DateTime ruleStartDate = new DateTime(2020, 01, 01);
-        private static readonly ContentType TestContentType = ContentType.ContentType1;
-        private readonly Rule<ContentType, ConditionType> rule1;
-        private readonly Rule<ContentType, ConditionType> rule2;
+        private static readonly RulesetNames testRuleset = RulesetNames.Sample1;
+        private readonly Rule<RulesetNames, ConditionNames> rule1;
+        private readonly Rule<RulesetNames, ConditionNames> rule2;
 
-        public RulesDeactivateAndActivateTests() : base(TestContentType)
+        public RulesDeactivateAndActivateTests() : base(testRuleset)
         {
-            rule1 = RuleBuilder
-                .NewRule<ContentType, ConditionType>()
-                .WithName(rule1Name)
-                .WithContent(TestContentType, rule1Value)
-                .WithDatesInterval(ruleStartDate, ruleEndDate)
+            rule1 = Rule.Create<RulesetNames, ConditionNames>(rule1Name)
+                .InRuleset(testRuleset)
+                .SetContent(rule1Value)
+                .Since(ruleStartDate)
+                .Until(ruleEndDate)
                 .Build().Rule;
 
-            rule2 =
-                RuleBuilder
-                .NewRule<ContentType, ConditionType>()
-                .WithName(rule2Name)
-                .WithContent(TestContentType, rule2Value)
-                .WithDatesInterval(ruleStartDate, ruleEndDate)
+            rule2 = Rule.Create<RulesetNames, ConditionNames>(rule2Name)
+                .InRuleset(testRuleset)
+                .SetContent(rule2Value)
+                .Since(ruleStartDate).Until(ruleEndDate)
                 .Build().Rule;
 
             this.AddRules(this.CreateTestRules());
@@ -47,7 +45,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_DeactivateThenActivateRule_Validations(bool compiled)
         {
             // Arrange
-            var emptyConditions = Array.Empty<Condition<ConditionType>>();
+            var emptyConditions = new Dictionary<ConditionNames, object>();
             var matchDate = new DateTime(2020, 01, 02);
 
             // Act 1: Deactivate the rule
@@ -73,8 +71,8 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         {
             var ruleSpecs = new List<RuleSpecification>
             {
-                new RuleSpecification(rule1, RuleAddPriorityOption.ByPriorityNumber(1)),
-                new RuleSpecification(rule2, RuleAddPriorityOption.ByPriorityNumber(2))
+                new(rule1, RuleAddPriorityOption.ByPriorityNumber(1)),
+                new(rule2, RuleAddPriorityOption.ByPriorityNumber(2))
             };
 
             return ruleSpecs;

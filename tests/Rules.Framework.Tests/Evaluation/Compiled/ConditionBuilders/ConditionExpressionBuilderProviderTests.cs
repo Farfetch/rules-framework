@@ -4,7 +4,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled.ConditionBuilders
     using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Compiled.ConditionBuilders;
     using Xunit;

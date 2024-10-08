@@ -1,41 +1,31 @@
 namespace Rules.Framework.Builder.Validation
 {
     using FluentValidation;
-    using Rules.Framework.Core;
 
-    internal sealed class RuleValidator<TContentType, TConditionType> : AbstractValidator<Rule<TContentType, TConditionType>>
+    internal sealed class RuleValidator : AbstractValidator<Rule>
     {
-        private static RuleValidator<TContentType, TConditionType> ruleValidator;
+        private readonly ComposedConditionNodeValidator composedConditionNodeValidator;
 
-        private readonly ComposedConditionNodeValidator<TConditionType> composedConditionNodeValidator;
-
-        private readonly ValueConditionNodeValidator<TConditionType> valueConditionNodeValidator;
+        private readonly ValueConditionNodeValidator valueConditionNodeValidator;
 
         private RuleValidator()
         {
-            this.composedConditionNodeValidator = new ComposedConditionNodeValidator<TConditionType>();
-            this.valueConditionNodeValidator = new ValueConditionNodeValidator<TConditionType>();
+            this.composedConditionNodeValidator = new ComposedConditionNodeValidator();
+            this.valueConditionNodeValidator = new ValueConditionNodeValidator();
 
             this.RuleFor(r => r.ContentContainer).NotNull();
             this.RuleFor(r => r.DateBegin).NotEmpty();
             this.RuleFor(r => r.DateEnd).GreaterThanOrEqualTo(r => r.DateBegin).When(r => r.DateEnd != null);
             this.RuleFor(r => r.Name).NotNull().NotEmpty();
-            this.RuleFor(r => r.RootCondition).Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<TConditionType, Rule<TContentType, TConditionType>>
+            this.RuleFor(r => r.RootCondition).Custom((cn, cc) => cn.PerformValidation(new ConditionNodeValidationArgs<Rule>
             {
                 ComposedConditionNodeValidator = this.composedConditionNodeValidator,
                 ValidationContext = cc,
-                ValueConditionNodeValidator = this.valueConditionNodeValidator
+                ValueConditionNodeValidator = this.valueConditionNodeValidator,
             }));
+            this.RuleFor(r => r.Ruleset).NotEmpty();
         }
 
-        public static RuleValidator<TContentType, TConditionType> Instance
-        {
-            get
-            {
-                ruleValidator ??= new RuleValidator<TContentType, TConditionType>();
-
-                return ruleValidator;
-            }
-        }
+        public static RuleValidator Instance { get; } = new RuleValidator();
     }
 }

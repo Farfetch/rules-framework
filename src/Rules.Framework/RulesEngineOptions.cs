@@ -1,8 +1,6 @@
 namespace Rules.Framework
 {
-    using System;
     using System.Collections.Generic;
-    using Rules.Framework.Core;
 
     /// <summary>
     /// The set of rules engine options that influence rules engine rules matching.
@@ -14,42 +12,20 @@ namespace Rules.Framework
             this.DataTypeDefaults = new Dictionary<DataTypes, object>();
         }
 
-        /// <summary>
-        /// Gets the default values for each of the supported data types.
-        /// </summary>
+        /// <inheritdoc/>
+        public bool AutoCreateRulesets { get; set; }
+
+        /// <inheritdoc/>
         public IDictionary<DataTypes, object> DataTypeDefaults { get; }
 
-        /// <summary>
-        /// Gets or sets whether rules' conditions is enabled or not.
-        /// </summary>
+        /// <inheritdoc/>
         public bool EnableCompilation { get; set; }
 
-        /// <summary>
-        /// <para>
-        /// Gets or sets the rules engine behavior when no condition with a specific type is
-        /// provided to rules engine to match with a rule's condition with the same type.
-        /// </para>
-        /// <para>
-        /// e.g. a rule with a condition of type "Age" is under evaluation but no condition of type
-        /// "Age" was supplied.
-        /// </para>
-        /// </summary>
+        /// <inheritdoc/>
         public MissingConditionBehaviors MissingConditionBehavior { get; set; }
 
-        /// <summary>
-        /// Gets or sets the priority criteria to untie when multiples rules are matched.
-        /// </summary>
+        /// <inheritdoc/>
         public PriorityCriterias PriorityCriteria { get; set; }
-
-        /// <summary>
-        /// Gets or sets the priority criteria to untie when multiples rules are matched.
-        /// </summary>
-        [Obsolete("This property has a typo and has been replaced by PriorityCriteria.")]
-        public PriorityCriterias PriotityCriteria
-        {
-            get { return this.PriorityCriteria; }
-            set { this.PriorityCriteria = value; }
-        }
 
         /// <summary>
         /// Creates a new set of rules engine options with framework-configured defaults.
@@ -70,18 +46,18 @@ namespace Rules.Framework
                 MissingConditionBehavior = MissingConditionBehaviors.UseDataTypeDefault,
                 PriorityCriteria = PriorityCriterias.TopmostRuleWins,
                 DataTypeDefaults =
-                    {
-                        [DataTypes.Boolean] = default(bool),
-                        [DataTypes.Decimal] = default(decimal),
-                        [DataTypes.Integer] = default(int),
-                        [DataTypes.String] = string.Empty,
-                        [DataTypes.ArrayBoolean] = default(bool),
-                        [DataTypes.ArrayDecimal] = default(decimal),
-                        [DataTypes.ArrayInteger] = default(int),
-                        [DataTypes.ArrayString] = string.Empty,
-                    },
+                {
+                    [DataTypes.Boolean] = default(bool),
+                    [DataTypes.Decimal] = default(decimal),
+                    [DataTypes.Integer] = default(int),
+                    [DataTypes.String] = string.Empty,
+                    [DataTypes.ArrayBoolean] = default(bool),
+                    [DataTypes.ArrayDecimal] = default(decimal),
+                    [DataTypes.ArrayInteger] = default(int),
+                    [DataTypes.ArrayString] = string.Empty,
+                },
+                AutoCreateRulesets = false,
             };
-
 
             return rulesEngineOptions;
         }

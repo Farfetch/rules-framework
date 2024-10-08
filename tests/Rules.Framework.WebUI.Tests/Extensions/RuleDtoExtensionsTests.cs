@@ -1,7 +1,7 @@
 namespace Rules.Framework.WebUI.Tests.Extensions
 {
+    using System;
     using FluentAssertions;
-    using Rules.Framework.Generics;
     using Rules.Framework.WebUI.Dto;
     using Rules.Framework.WebUI.Extensions;
     using Xunit;
@@ -19,10 +19,14 @@ namespace Rules.Framework.WebUI.Tests.Extensions
         public void RuleDtoExtensions_ToRuleDto_Success()
         {
             // Arrange
-            var genericRule = new GenericRule();
-            var contentType = "contentType";
+            var genericRule = Rule.Create("Rule #1")
+                .InRuleset("Ruleset #1")
+                .SetContent(new object())
+                .Since(new DateTime(2024, 6, 1))
+                .Build().Rule;
+
             // Act
-            var ruleDto = genericRule.ToRuleDto(contentType, this.ruleStatusDtoAnalyzer);
+            var ruleDto = genericRule.ToRuleDto(this.ruleStatusDtoAnalyzer);
 
             // Assert
             ruleDto.Should().NotBeNull();

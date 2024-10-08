@@ -1,6 +1,5 @@
 namespace Rules.Framework.WebUI.Sample
 {
-    using global::Rules.Framework.Extension;
     using global::Rules.Framework.WebUI.Sample.Engine;
     using global::Rules.Framework.WebUI.Sample.ReadmeExample;
     using global::Rules.Framework.WebUI.Sample.Rules;
@@ -46,23 +45,22 @@ namespace Rules.Framework.WebUI.Sample
         {
             if (useReadmeExample)
             {
-                app.UseRulesFrameworkWebUI(new BasicRulesEngineExample().RulesEngine.CreateGenericEngine());
+                app.UseRulesFrameworkWebUI(new BasicRulesEngineExample().RulesEngine);
 
                 return;
             }
 
-            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IContentTypes>()
+            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IRuleSpecificationsProvider>()
             {
                 new RulesRandomFactory()
             }));
 
             var rulesEngine = rulesProvider
                 .GetRulesEngineAsync()
-                .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
 
-            app.UseRulesFrameworkWebUI(rulesEngine.CreateGenericEngine());
+            app.UseRulesFrameworkWebUI(rulesEngine);
         }
     }
 }

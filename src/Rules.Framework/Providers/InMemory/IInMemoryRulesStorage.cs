@@ -3,14 +3,18 @@ namespace Rules.Framework.Providers.InMemory
     using System.Collections.Generic;
     using Rules.Framework.Providers.InMemory.DataModel;
 
-    internal interface IInMemoryRulesStorage<TContentType, TConditionType>
+    internal interface IInMemoryRulesStorage
     {
-        void AddRule(RuleDataModel<TContentType, TConditionType> ruleDataModel);
+        void AddRule(RuleDataModel ruleDataModel);
 
-        IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetAllRules();
+        void CreateRuleset(string contentType);
 
-        IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetRulesBy(TContentType contentType);
+        IReadOnlyCollection<RuleDataModel> GetAllRules();
 
-        void UpdateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel);
+        IReadOnlyCollection<RuleDataModel> GetRulesBy(string ruleset);
+
+        IReadOnlyCollection<RulesetDataModel> GetRulesets();
+
+        void UpdateRule(RuleDataModel ruleDataModel);
     }
 }

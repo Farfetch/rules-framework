@@ -10,6 +10,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
     using FluentAssertions;
     using MongoDB.Driver;
     using Newtonsoft.Json;
+    using Rules.Framework;
     using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario3;
     using Rules.Framework.Providers.MongoDb;
     using Rules.Framework.Providers.MongoDb.DataModel;
@@ -17,7 +18,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
 
     public sealed class BuildingSecuritySystemControlTests : IDisposable
     {
-        private readonly IMongoClient mongoClient;
+        private readonly MongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
 
         public BuildingSecuritySystemControlTests()
@@ -25,20 +26,20 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             this.mongoClient = CreateMongoClient();
             this.mongoDbProviderSettings = CreateProviderSettings();
 
-            Stream? rulesFile = Assembly.GetExecutingAssembly()
+            var rulesFile = Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3.rules-framework-tests.security-system-actionables.json");
 
             IEnumerable<RuleDataModel> rules;
             using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
-                string json = streamReader.ReadToEnd();
+                var json = streamReader.ReadToEnd();
 
                 var array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
 
-                rules = array.Select(t =>
+                rules = array!.Select(t =>
                 {
                     SecuritySystemAction securitySystemAction = t.Content.ToObject<SecuritySystemAction>();
                     dynamic dynamicContent = new ExpandoObject();
@@ -50,11 +51,25 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
                 }).ToList();
             }
 
-            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-            var mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var contentTypes = rules
+                .Select(r => new RulesetDataModel
+                {
+                    Creation = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    Name = r.Ruleset,
+                })
+                .Distinct()
+                .ToArray();
 
-            mongoCollection.InsertMany(rules);
+            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesetsCollectionName);
+            var contentTypesMongoCollection = mongoDatabase.GetCollection<RulesetDataModel>(this.mongoDbProviderSettings.RulesetsCollectionName);
+            contentTypesMongoCollection.InsertMany(contentTypes);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesMongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            rulesMongoCollection.InsertMany(rules);
         }
 
         [Theory]
@@ -66,43 +81,38 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.FireSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Online")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Online" },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            var newRuleResult = RuleBuilder.NewRule<SecuritySystemActionables, SecuritySystemConditions>()
-                .WithName("Activate ventilation system rule")
-                .WithDateBegin(new DateTime(2018, 01, 01))
-                .WithContent(SecuritySystemActionables.FireSystem, new SecuritySystemAction
+            var newRuleResult = Rule.Create<SecuritySystemActionables, SecuritySystemConditions>("Activate ventilation system rule")
+                .InRuleset(SecuritySystemActionables.FireSystem)
+                .SetContent(new SecuritySystemAction
                 {
                     ActionId = new Guid("ef0d65ae-ec76-492a-84db-5cb9090c3eaa"),
                     ActionName = "ActivateVentilationSystem"
                 })
-                .WithCondition(b => b.AsValued(SecuritySystemConditions.SmokeRate)
-                    .OfDataType<decimal>()
-                    .WithComparisonOperator(Core.Operators.GreaterThanOrEqual)
-                    .SetOperand(30.0m)
-                    .Build())
+                .Since(new DateTime(2018, 01, 01))
+                .ApplyWhen(b => b.Value(SecuritySystemConditions.SmokeRate, Operators.GreaterThanOrEqual, 30.0m))
                 .Build();
             var newRule = newRuleResult.Rule;
 
-            _ = await rulesEngine.AddRuleAsync(newRule, RuleAddPriorityOption.AtBottom);
+            _ = await genericRulesEngine.AddRuleAsync(newRule, RuleAddPriorityOption.AtBottom);
 
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -125,25 +135,24 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Offline")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Offline" },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -164,25 +173,24 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
             const SecuritySystemActionables securitySystemActionable = SecuritySystemActionables.PowerSystem;
 
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<SecuritySystemConditions, object>
             {
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.TemperatureCelsius, 100.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.SmokeRate, 55.0m),
-                new Condition<SecuritySystemConditions>(SecuritySystemConditions.PowerStatus, "Shutdown")
+                { SecuritySystemConditions.TemperatureCelsius, 100.0m },
+                { SecuritySystemConditions.SmokeRate, 55.0m },
+                { SecuritySystemConditions.PowerStatus, "Shutdown" },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<SecuritySystemActionables>()
-                .WithConditionType<SecuritySystemConditions>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
                     opt.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<SecuritySystemActionables, SecuritySystemConditions>();
 
             // Act
-            var actual = await rulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
+            var actual = await genericRulesEngine.MatchManyAsync(securitySystemActionable, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -197,14 +205,15 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario3
         {
             var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesetsCollectionName);
         }
 
-        private static MongoClient CreateMongoClient() => new MongoClient($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
+        private static MongoClient CreateMongoClient() => new($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
 
-        private static MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        private static MongoDbProviderSettings CreateProviderSettings() => new()
         {
             DatabaseName = "rules-framework-tests",
-            RulesCollectionName = "security-system-actionables"
+            RulesCollectionName = "security-system-actionables",
         };
     }
 }

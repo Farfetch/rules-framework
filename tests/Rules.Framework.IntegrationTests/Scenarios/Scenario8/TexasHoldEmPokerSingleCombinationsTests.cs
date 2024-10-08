@@ -1,6 +1,7 @@
 namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
     using Rules.Framework.BenchmarkTests.Tests.Benchmark3;
@@ -16,36 +17,35 @@ namespace Rules.Framework.IntegrationTests.Scenarios.Scenario8
         {
             // Arrange
             var matchDate = new DateTime(2023, 1, 1);
-            var conditions = new[]
+            var conditions = new Dictionary<PokerConditions, object>
             {
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfKings, 1),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfQueens, 1),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfJacks, 1 ),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfTens, 1 ),
-                new Condition<ConditionTypes>(ConditionTypes.NumberOfNines, 1),
-                new Condition<ConditionTypes>(ConditionTypes.KingOfClubs, true),
-                new Condition<ConditionTypes>(ConditionTypes.QueenOfDiamonds, true),
-                new Condition<ConditionTypes>(ConditionTypes.JackOfClubs, true),
-                new Condition<ConditionTypes>(ConditionTypes.TenOfHearts, true),
-                new Condition<ConditionTypes>(ConditionTypes.NineOfSpades, true),
+                { PokerConditions.NumberOfKings, 1 },
+                { PokerConditions.NumberOfQueens, 1 },
+                { PokerConditions.NumberOfJacks, 1  },
+                { PokerConditions.NumberOfTens, 1  },
+                { PokerConditions.NumberOfNines, 1 },
+                { PokerConditions.KingOfClubs, true },
+                { PokerConditions.QueenOfDiamonds, true },
+                { PokerConditions.JackOfClubs, true },
+                { PokerConditions.TenOfHearts, true },
+                { PokerConditions.NineOfSpades, true },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
                 .SetInMemoryDataSource()
                 .Configure(options =>
                 {
                     options.EnableCompilation = enableCompilation;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<PokerRulesets, PokerConditions>();
 
             var scenarioData = new Scenario8Data();
 
             await ScenarioLoader.LoadScenarioAsync(rulesEngine, scenarioData);
 
             // Act
-            var result = await rulesEngine.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, matchDate, conditions);
+            var result = await genericRulesEngine.MatchOneAsync(PokerRulesets.TexasHoldemPokerSingleCombinations, matchDate, conditions);
 
             // Assert
             result.Should().NotBeNull();

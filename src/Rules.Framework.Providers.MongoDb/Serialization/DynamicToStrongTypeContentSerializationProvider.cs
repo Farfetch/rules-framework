@@ -6,15 +6,14 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
     /// <summary>
     /// Defines a content serialization provider for dynamic types.
     /// </summary>
-    /// <typeparam name="TContentType">The type of the content type.</typeparam>
-    /// <seealso cref="Rules.Framework.Serialization.IContentSerializationProvider{TContentType}"/>
-    public class DynamicToStrongTypeContentSerializationProvider<TContentType> : IContentSerializationProvider<TContentType>
+    /// <seealso cref="Rules.Framework.Serialization.IContentSerializationProvider"/>
+    public class DynamicToStrongTypeContentSerializationProvider : IContentSerializationProvider
     {
         private readonly Lazy<IContentSerializer> contentSerializerLazy;
 
         /// <summary>
         /// Initializes a new instance of the <see
-        /// cref="DynamicToStrongTypeContentSerializationProvider{TContentType}"/> class.
+        /// cref="DynamicToStrongTypeContentSerializationProvider"/> class.
         /// </summary>
         public DynamicToStrongTypeContentSerializationProvider()
         {
@@ -28,6 +27,6 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
         /// </summary>
         /// <param name="contentType">the content type.</param>
         /// <returns>the content serializer to deal with contents for specified content type.</returns>
-        public IContentSerializer GetContentSerializer(TContentType contentType) => this.contentSerializerLazy.Value;
+        public IContentSerializer GetContentSerializer(string contentType) => this.contentSerializerLazy.Value;
     }
 }

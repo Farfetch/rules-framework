@@ -2,27 +2,28 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
 {
     using System;
     using System.Collections.Generic;
+    using Rules.Framework;
     using Rules.Framework.BenchmarkTests.Tests;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
 
-    public class Scenario6Data : IScenarioData<ContentTypes, ConditionTypes>
+    public class Scenario6Data : IScenarioData<Rulesets, ConditionNames>
     {
-        public IEnumerable<Condition<ConditionTypes>> Conditions => new[]
+        public IDictionary<ConditionNames, object> Conditions => new Dictionary<ConditionNames, object>
         {
-            new Condition<ConditionTypes>(ConditionTypes.StringCondition, "Let's benchmark this!")
+            { ConditionNames.StringCondition, "Let's benchmark this!" },
         };
 
         public DateTime MatchDate => DateTime.Parse("2022-10-01");
 
-        public IEnumerable<Rule<ContentTypes, ConditionTypes>> Rules => this.GetRules();
+        public IEnumerable<Rule<Rulesets, ConditionNames>> Rules => this.GetRules();
 
-        private IEnumerable<Rule<ContentTypes, ConditionTypes>> GetRules()
+        private IEnumerable<Rule<Rulesets, ConditionNames>> GetRules()
         {
-            var ruleResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                .WithName("Benchmark 1 - Test rule")
-                .WithDateBegin(DateTime.Parse("2000-01-01"))
-                .WithContent(ContentTypes.ContentType1, "Dummy Content")
-                .WithCondition(ConditionTypes.StringCondition, Operators.Equal, "Let's benchmark this!")
+            var ruleResult = Rule.Create<Rulesets, ConditionNames>("Benchmark 1 - Test rule")
+                .InRuleset(Rulesets.Sample1)
+                .SetContent("Dummy Content")
+                .Since(DateTime.Parse("2000-01-01"))
+                .ApplyWhen(ConditionNames.StringCondition, Operators.Equal, "Let's benchmark this!")
                 .Build();
 
             return new[] { ruleResult.Rule };

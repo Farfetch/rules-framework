@@ -2,55 +2,54 @@ namespace Rules.Framework.Management
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
     using Rules.Framework.Management.Operations;
     using Rules.Framework.Source;
 
-    internal sealed class ManagementOperationsController<TContentType, TConditionType>
+    internal sealed class ManagementOperationsController
     {
-        private readonly List<IManagementOperation<TContentType, TConditionType>> managementOperations;
-        private readonly IEnumerable<Rule<TContentType, TConditionType>> rules;
-        private readonly IRulesSource<TContentType, TConditionType> rulesSource;
+        private readonly List<IManagementOperation> managementOperations;
+        private readonly IEnumerable<Rule> rules;
+        private readonly IRulesSource rulesSource;
 
-        public ManagementOperationsController(IRulesSource<TContentType, TConditionType> rulesSource, IEnumerable<Rule<TContentType, TConditionType>> rules)
+        public ManagementOperationsController(IRulesSource rulesSource, IEnumerable<Rule> rules)
         {
-            this.managementOperations = new List<IManagementOperation<TContentType, TConditionType>>();
+            this.managementOperations = new List<IManagementOperation>();
             this.rulesSource = rulesSource;
             this.rules = rules;
         }
 
-        public ManagementOperationsController<TContentType, TConditionType> AddRule(Rule<TContentType, TConditionType> rule)
-            => this.AddOperation(new AddRuleManagementOperation<TContentType, TConditionType>(this.rulesSource, rule));
+        public ManagementOperationsController AddRule(Rule rule)
+            => this.AddOperation(new AddRuleManagementOperation(this.rulesSource, rule));
+
+        public ManagementOperationsController DecreasePriority()
+            => this.AddOperation(new MovePriorityManagementOperation(-1));
 
         public async Task ExecuteOperationsAsync()
         {
-            IEnumerable<Rule<TContentType, TConditionType>> rulesIntermediateResult = rules;
+            IEnumerable<Rule> rulesIntermediateResult = rules;
 
-            foreach (IManagementOperation<TContentType, TConditionType> managementOperation in this.managementOperations)
+            foreach (IManagementOperation managementOperation in this.managementOperations)
             {
                 rulesIntermediateResult = await managementOperation.ApplyAsync(rulesIntermediateResult).ConfigureAwait(false);
             }
         }
 
-        public ManagementOperationsController<TContentType, TConditionType> FilterFromThresholdPriorityToBottom(int thresholdPriority)
-            => this.AddOperation(new FilterPrioritiesRangeManagementOperation<TContentType, TConditionType>(thresholdPriority, null));
+        public ManagementOperationsController FilterFromThresholdPriorityToBottom(int thresholdPriority)
+            => this.AddOperation(new FilterPrioritiesRangeManagementOperation(thresholdPriority, null));
 
-        public ManagementOperationsController<TContentType, TConditionType> FilterPrioritiesRange(int topPriorityThreshold, int bottomPriorityThreshold)
-            => this.AddOperation(new FilterPrioritiesRangeManagementOperation<TContentType, TConditionType>(topPriorityThreshold, bottomPriorityThreshold));
+        public ManagementOperationsController FilterPrioritiesRange(int topPriorityThreshold, int bottomPriorityThreshold)
+            => this.AddOperation(new FilterPrioritiesRangeManagementOperation(topPriorityThreshold, bottomPriorityThreshold));
 
-        public ManagementOperationsController<TContentType, TConditionType> IncreasePriority()
-            => this.AddOperation(new MovePriorityManagementOperation<TContentType, TConditionType>(1));
+        public ManagementOperationsController IncreasePriority()
+            => this.AddOperation(new MovePriorityManagementOperation(1));
 
-        public ManagementOperationsController<TContentType, TConditionType> DecreasePriority()
-            => this.AddOperation(new MovePriorityManagementOperation<TContentType, TConditionType>(-1));
+        public ManagementOperationsController SetRuleForUpdate(Rule updatedRule)
+            => this.AddOperation(new SetRuleForUpdateManagementOperation(updatedRule));
 
-        public ManagementOperationsController<TContentType, TConditionType> SetRuleForUpdate(Rule<TContentType, TConditionType> updatedRule)
-            => this.AddOperation(new SetRuleForUpdateManagementOperation<TContentType, TConditionType>(updatedRule));
+        public ManagementOperationsController UpdateRules()
+            => this.AddOperation(new UpdateRulesManagementOperation(this.rulesSource));
 
-        public ManagementOperationsController<TContentType, TConditionType> UpdateRules()
-            => this.AddOperation(new UpdateRulesManagementOperation<TContentType, TConditionType>(this.rulesSource));
-
-        private ManagementOperationsController<TContentType, TConditionType> AddOperation(IManagementOperation<TContentType, TConditionType> managementOperation)
+        private ManagementOperationsController AddOperation(IManagementOperation managementOperation)
         {
             this.managementOperations.Add(managementOperation);
 

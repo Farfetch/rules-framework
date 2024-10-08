@@ -3,32 +3,33 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.Core;
+    using Rules.Framework;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class OperatorContainsManyToOneTests : RulesEngineTestsBase
     {
-        private static readonly ContentType testContentType = ContentType.ContentType1;
-        private readonly Rule<ContentType, ConditionType> expectedMatchRule;
-        private readonly Rule<ContentType, ConditionType> otherRule;
+        private static readonly RulesetNames testContentType = RulesetNames.Sample1;
+        private readonly Rule<RulesetNames, ConditionNames> expectedMatchRule;
+        private readonly Rule<RulesetNames, ConditionNames> otherRule;
 
         public OperatorContainsManyToOneTests()
             : base(testContentType)
         {
-            this.expectedMatchRule = RuleBuilder.NewRule<ContentType, ConditionType>()
-                .WithName("Expected rule")
-                .WithDateBegin(UtcDate("2020-01-01Z"))
-                .WithContent(testContentType, "Just as expected!")
-                .WithCondition(ConditionType.ConditionType1, Operators.Contains, "Cat")
+            this.expectedMatchRule = Rule.Create<RulesetNames, ConditionNames>("Expected rule")
+                .InRuleset(testContentType)
+                .SetContent("Just as expected!")
+                .Since(UtcDate("2020-01-01Z"))
+                .ApplyWhen(ConditionNames.Condition1, Operators.Contains, "Cat")
                 .Build()
                 .Rule;
 
-            this.otherRule = RuleBuilder.NewRule<ContentType, ConditionType>()
-                .WithName("Other rule")
-                .WithDateBegin(UtcDate("2020-01-01Z"))
-                .WithContent(testContentType, "Oops! Not expected to be matched.")
+            this.otherRule = Rule.Create<RulesetNames, ConditionNames>("Other rule")
+                .InRuleset(testContentType)
+                .SetContent("Oops! Not expected to be matched.")
+                .Since(UtcDate("2020-01-01Z"))
                 .Build()
                 .Rule;
 
@@ -41,9 +42,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_GivenConditionType1WithArrayOfStringsContainingCat_MatchesExpectedRule(bool compiled)
         {
             // Arrange
-            var emptyConditions = new[]
+            var emptyConditions = new Dictionary<ConditionNames, object>
             {
-                new Condition<ConditionType>(ConditionType.ConditionType1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", })
+                {  ConditionNames.Condition1, new[]{ "Dog", "Fish", "Cat", "Spider", "Mockingbird", } },
             };
             var matchDate = UtcDate("2020-01-02Z");
 
@@ -60,9 +61,9 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         public async Task RulesEngine_GivenConditionType1WithArrayOfStringsNotContainingCat_MatchesOtherRule(bool compiled)
         {
             // Arrange
-            var emptyConditions = new[]
+            var emptyConditions = new Dictionary<ConditionNames, object>
             {
-                new Condition<ConditionType>(ConditionType.ConditionType1, new[]{ "Dog", "Fish", "Bat", "Spider", "Mockingbird", })
+                { ConditionNames.Condition1, new[]{ "Dog", "Fish", "Bat", "Spider", "Mockingbird", } },
             };
             var matchDate = UtcDate("2020-01-02Z");
 

@@ -3,21 +3,22 @@ namespace Rules.Framework.Evaluation.Compiled
     using System;
     using System.Collections.Generic;
     using Rules.Framework.Core;
+    using Rules.Framework.Generic;
 
-    internal sealed class CompiledConditionsEvalEngine<TConditionType> : IConditionsEvalEngine<TConditionType>
+    internal sealed class CompiledConditionsEvalEngine : IConditionsEvalEngine
     {
-        private readonly IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer;
+        private readonly IConditionsTreeAnalyzer conditionsTreeAnalyzer;
         private readonly RulesEngineOptions rulesEngineOptions;
 
         public CompiledConditionsEvalEngine(
-            IConditionsTreeAnalyzer<TConditionType> conditionsTreeAnalyzer,
+            IConditionsTreeAnalyzer conditionsTreeAnalyzer,
             RulesEngineOptions rulesEngineOptions)
         {
             this.conditionsTreeAnalyzer = conditionsTreeAnalyzer;
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
-        public bool Eval(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions, EvaluationOptions evaluationOptions)
+        public bool Eval(IConditionNode conditionNode, IDictionary<string, object> conditions, EvaluationOptions evaluationOptions)
         {
             if (evaluationOptions.ExcludeRulesWithoutSearchConditions && !this.conditionsTreeAnalyzer.AreAllSearchConditionsPresent(conditionNode, conditions))
             {
@@ -29,8 +30,8 @@ namespace Rules.Framework.Evaluation.Compiled
                 throw new ArgumentException("Condition node does not contain compiled information.", nameof(conditionNode));
             }
 
-            var conditionFunc = (Func<EvaluationContext<TConditionType>, bool>)conditionFuncAux;
-            var compiledConditionsEvaluationContext = new EvaluationContext<TConditionType>(
+            var conditionFunc = (Func<EvaluationContext, bool>)conditionFuncAux;
+            var compiledConditionsEvaluationContext = new EvaluationContext(
                 conditions,
                 evaluationOptions.MatchMode,
                 this.rulesEngineOptions.MissingConditionBehavior);

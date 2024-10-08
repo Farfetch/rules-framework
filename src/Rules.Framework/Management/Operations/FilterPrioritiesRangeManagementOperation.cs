@@ -5,10 +5,10 @@ namespace Rules.Framework.Management.Operations
     using System.Threading.Tasks;
     using Rules.Framework.Core;
 
-    internal sealed class FilterPrioritiesRangeManagementOperation<TContentType, TConditionType> : IManagementOperation<TContentType, TConditionType>
+    internal sealed class FilterPrioritiesRangeManagementOperation : IManagementOperation
     {
-        private readonly int? topPriorityThreshold;
         private readonly int? bottomPriorityThreshold;
+        private readonly int? topPriorityThreshold;
 
         public FilterPrioritiesRangeManagementOperation(int? topPriorityThreshold, int? bottomPriorityThreshold)
         {
@@ -16,9 +16,9 @@ namespace Rules.Framework.Management.Operations
             this.bottomPriorityThreshold = bottomPriorityThreshold;
         }
 
-        public Task<IEnumerable<Rule<TContentType, TConditionType>>> ApplyAsync(IEnumerable<Rule<TContentType, TConditionType>> rules)
+        public Task<IEnumerable<Rule>> ApplyAsync(IEnumerable<Rule> rules)
         {
-            IEnumerable<Rule<TContentType, TConditionType>> filteredRules = rules;
+            var filteredRules = rules;
 
             if (this.topPriorityThreshold.HasValue)
             {

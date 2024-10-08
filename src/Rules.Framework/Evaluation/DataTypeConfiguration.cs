@@ -1,7 +1,7 @@
 namespace Rules.Framework.Evaluation
 {
     using System;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal sealed class DataTypeConfiguration
     {
