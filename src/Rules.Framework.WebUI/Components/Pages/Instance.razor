@@ -1,0 +1,70 @@
+@page "/rules-ui/instance"
+@rendermode InteractiveServer
+@inject ProtectedSessionStorage Storage
+@inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
+
+<PageTitle>Rules.Framework - Instance</PageTitle>
+
+<h1>Instance</h1>
+
+@if (this.instanceId == Guid.Empty)
+{
+    <p>Loading... Please wait.</p>
+}
+else
+{
+    <p>Name: @(instance.Name)</p>
+
+    <h1>Options</h1>
+
+    <ul>
+        <li><code>AutoCreateRulesets</code>: @(instance.Options["AutoCreateRulesets"])</li>
+        <li><code>MissingConditionBehavior</code>: @(instance.Options["MissingConditionBehavior"])</li>
+        <li><code>PriorityCriteria</code>: @(instance.Options["PriorityCriteria"])</li>
+    </ul>
+}
+
+
+@code {
+    private Guid instanceId;
+    private RulesEngineInstanceViewModel instance;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var instanceIdResult = await Storage.GetAsync<Guid>("Selected-Instance-ID");
+            if (instanceIdResult.Success)
+            {
+                this.instanceId = instanceIdResult.Value;
+                var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
+                this.instance = new RulesEngineInstanceViewModel
+                {
+                    Id = instance.Id,
+                    Name = instance.Name,
+                    Options = new Dictionary<string, object>
+                    {
+                        {
+                            nameof(instance.RulesEngine.Options.AutoCreateRulesets),
+                            instance.RulesEngine.Options.AutoCreateRulesets.ToString()
+                        },
+                        {
+                            nameof(instance.RulesEngine.Options.DataTypeDefaults),
+                            instance.RulesEngine.Options.DataTypeDefaults.ToDictionary(k => k.Key.ToString(), v => v.Value)
+                        },
+                        {
+                            nameof(instance.RulesEngine.Options.MissingConditionBehavior),
+                            instance.RulesEngine.Options.MissingConditionBehavior.ToString()
+                        },
+                        {
+                            nameof(instance.RulesEngine.Options.PriorityCriteria),
+                            instance.RulesEngine.Options.PriorityCriteria.ToString()
+                        },
+                    },
+                };
+
+                this.StateHasChanged();
+            }
+        }
+    }
+}

@@ -1,0 +1,60 @@
+@rendermode InteractiveServer
+@inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
+@inject ProtectedSessionStorage Storage
+
+<Dropdown Color="DropdownColor.Primary">
+    <DropdownToggleButton>Change instance</DropdownToggleButton>
+    <DropdownMenu Position="DropdownMenuPosition.Start">
+        @if (this.allInstances is not null)
+        {
+            foreach (var instance in this.allInstances)
+            {
+                <DropdownItem Type="DropdownItemType.Button" @onclick="() => SelectInstanceAsync(instance.Id)">@(instance.Name)</DropdownItem>
+            }
+        }
+    </DropdownMenu>
+</Dropdown>
+
+@code {
+    private IEnumerable<RulesEngineInstance> allInstances;
+
+    [Parameter]
+    public InstanceChangedEventHandler OnInstanceChanged { get; set; }
+
+    [Parameter]
+    public Guid SelectedInstanceId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        this.allInstances = this.RulesEngineInstanceProvider.GetAllInstances();
+    }
+
+    private async Task SelectInstanceAsync(Guid instanceId)
+    {
+        if (instanceId != Guid.Empty)
+        {
+            var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
+            if (instance is not null)
+            {
+                var oldInstanceIdResult = await this.Storage.GetAsync<Guid>("Selected-Instance-ID");
+                await this.Storage.SetAsync("Selected-Instance-ID", instanceId);
+                await this.Storage.DeleteAsync("Selected-Ruleset-ID");
+                this.OnInstanceChanged?.Invoke(new InstanceChangedEventArgs
+                {
+                    NewInstanceId = instanceId,
+                    OldInstanceId = oldInstanceIdResult.Success ? oldInstanceIdResult.Value : null,
+                });
+            }
+        }
+
+    }
+
+    public class InstanceChangedEventArgs
+    {
+        public Guid NewInstanceId { get; set; }
+
+        public Guid? OldInstanceId { get; set; }
+    }
+
+    public delegate void InstanceChangedEventHandler(InstanceChangedEventArgs args);
+}

@@ -1,0 +1,52 @@
+@rendermode InteractiveServer
+@inject ProtectedSessionStorage Storage
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="d-flex flex-column">
+        <div class="nav-item">
+            <NavLink class="nav-link" href="rules-ui/instance" Match="NavLinkMatch.All">
+                <span class="px-3"><Icon Name="IconName.InfoCircle" /> Instance details</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="rules-ui/rulesets">
+                <span class="px-3"><Icon Name="IconName.ListStars" /> Rulesets</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="rules-ui/search-rules">
+                <span class="px-3"><Icon Name="IconName.Search" /> Search rules</span>
+            </NavLink>
+        </div>
+
+        @if (this.shouldRenderSwitchInstanceLink)
+        {
+            <div class="nav-item">
+                <NavLink class="nav-link" href="rules-ui/instance-selection">
+                    <span class="px-3"><Icon Name="IconName.ArrowLeftRight" /> Switch instance</span>
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    private bool shouldRenderSwitchInstanceLink = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var isUniqueInstanceResult = await this.Storage.GetAsync<bool>("Is-Unique-Instance");
+            if (isUniqueInstanceResult.Success && isUniqueInstanceResult.Value)
+            {
+                shouldRenderSwitchInstanceLink = false;
+                this.StateHasChanged();
+            }
+        }
+    }
+}

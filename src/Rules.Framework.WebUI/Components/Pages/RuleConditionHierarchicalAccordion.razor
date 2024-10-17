@@ -1,0 +1,169 @@
+@using System.Collections
+@using System.Text;
+@rendermode InteractiveAuto
+
+<div class="d-grid gap-2 d-md-block mt-2">
+    @if (this.EnableShowAllButton)
+    {
+        <Button Type="ButtonType.Button" Color="ButtonColor.Secondary" Class="me-2 my-2" @onclick="ShowAllAsync">Show all</Button>
+    }
+    @if (this.EnableCollapseAllButton)
+    {
+        <Button Type="ButtonType.Button" Color="ButtonColor.Secondary" Class="me-2 my-2" @onclick="CollapseAllAsync">Collapse all</Button>
+    }
+</div>
+<div class="row">
+    <Accordion @ref="innerAccordion" AlwaysOpen="true">
+        @foreach (var conditionNode in this.ConditionNodes)
+        {
+            if (conditionNode is ComposedConditionNode composedConditionNode)
+            {
+                <AccordionItem Title="@($"{composedConditionNode.LogicalOperator} {{...}}")">
+                    <Content>
+                        <RuleConditionHierarchicalAccordion @ref="InnerReference" ConditionNodes="composedConditionNode.ChildConditionNodes" />
+                    </Content>
+                </AccordionItem>
+            }
+            else if (conditionNode is ValueConditionNode valueConditionNode)
+            {
+                var shortValueConditionText = $"{valueConditionNode.Condition} {valueConditionNode.Operator} {valueConditionNode.GetOperandPrettyPrint()}";
+                <AccordionItem Title="@shortValueConditionText">
+                    <Content>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <Card>
+                                    <CardBody>
+                                        <CardText>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <p><strong>Condition name:</strong> <article>@(valueConditionNode.Condition)</article></p>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <p><strong>Data type:</strong> <article class="font-monospace text-success-emphasis">@(valueConditionNode.DataType)</article></p>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <p><strong>Operator:</strong> <article>@(valueConditionNode.Operator)</article></p>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <p><strong>Operand:</strong> <article>@(valueConditionNode.GetOperandPrettyPrint())</article></p>
+                                                </div>
+                                            </div>
+                                        </CardText>
+                                    </CardBody>
+                                </Card>
+                            </div>
+                        </div>
+                    </Content>
+                </AccordionItem>
+            }
+        }
+    </Accordion>
+</div>
+
+@code {
+    private Accordion innerAccordion;
+    private List<RuleConditionHierarchicalAccordion> innerRuleConditionHierarchicalAccordions = new List<RuleConditionHierarchicalAccordion>();
+    private RuleConditionHierarchicalAccordion InnerReference
+    {
+        set
+        {
+            this.innerRuleConditionHierarchicalAccordions.Add(value);
+        }
+    }
+
+    [Parameter]
+    public IEnumerable<ConditionNode> ConditionNodes { get; set; } = Enumerable.Empty<ConditionNode>();
+
+    [Parameter]
+    public bool EnableCollapseAllButton { get; set; } = false;
+
+    [Parameter]
+    public bool EnableShowAllButton { get; set; } = false;
+
+    public async Task CollapseAllAsync()
+    {
+        await this.innerAccordion.HideAllAccordionItemsAsync();
+        if (this.innerRuleConditionHierarchicalAccordions.Count > 0)
+        {
+            foreach (var ruleConditionHierarchicalAccordion in this.innerRuleConditionHierarchicalAccordions)
+            {
+                await ruleConditionHierarchicalAccordion.CollapseAllAsync();
+            }
+        }
+    }
+
+    public async Task ShowAllAsync()
+    {
+        await this.innerAccordion.ShowAllAccordionItemsAsync();
+        if (this.innerRuleConditionHierarchicalAccordions.Count > 0)
+        {
+            foreach (var ruleConditionHierarchicalAccordion in this.innerRuleConditionHierarchicalAccordions)
+            {
+                await ruleConditionHierarchicalAccordion.ShowAllAsync();
+            }
+        }
+    }
+
+    public sealed class ComposedConditionNode : ConditionNode
+    {
+        public IEnumerable<ConditionNode> ChildConditionNodes { get; internal set; }
+    }
+
+    public class ConditionNode
+    {
+        public string LogicalOperator { get; internal set; }
+    }
+
+    public sealed class ValueConditionNode : ConditionNode
+    {
+        public string Condition { get; internal set; }
+
+        public string DataType { get; internal set; }
+
+        public dynamic Operand { get; internal set; }
+
+        public string Operator { get; internal set; }
+
+        internal string GetOperandPrettyPrint()
+        {
+            var operandPrettyPrintBuilder = new StringBuilder();
+            if (this.Operand is IEnumerable elements && elements is not string)
+            {
+                operandPrettyPrintBuilder.Append("{ ");
+                var elementsProcessedCount = 0;
+                foreach (var element in elements)
+                {
+                    if (elementsProcessedCount >= 10)
+                    {
+                        operandPrettyPrintBuilder.Append(", ...");
+                    }
+                    else if (elementsProcessedCount > 0)
+                    {
+                        operandPrettyPrintBuilder.Append(',');
+                    }
+
+                    operandPrettyPrintBuilder.Append(element switch
+                    {
+                        null => "(null)",
+                        "" => "(empty)",
+                        _ => element,
+                    });
+                    elementsProcessedCount++;
+                }
+
+                operandPrettyPrintBuilder.Append(" }");
+            }
+            else
+            {
+                operandPrettyPrintBuilder.Append(this.Operand switch
+                {
+                    null => "(null)",
+                    "" => "(empty)",
+                    _ => this.Operand,
+                });
+            }
+
+            return operandPrettyPrintBuilder.ToString();
+        }
+    }
+}

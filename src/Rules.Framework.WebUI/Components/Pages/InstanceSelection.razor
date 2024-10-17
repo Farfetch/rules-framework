@@ -1,0 +1,60 @@
+@page "/rules-ui/instance-selection"
+@rendermode InteractiveServer
+@layout global::Rules.Framework.WebUI.Components.Layout.SimpleLayout
+@inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
+@inject ProtectedSessionStorage Storage
+@inject NavigationManager NavigationManager
+
+<h1>Select a rules engine instance</h1>
+
+<div class="d-flex flex-wrap">
+    @if (this.allInstances is not null)
+    {
+        foreach (var instance in this.allInstances)
+        {
+            <div class="my-3 me-4">
+                <Card>
+                    <CardBody>
+                        <CardTitle><Image Src="rules-ui/engine.svg" Style="width: 24px; height: 24px;" /> @(instance.Name)</CardTitle>
+                        <Button Color="ButtonColor.Secondary" @onclick="() => SelectInstanceAsync(instance.Id)">Select</Button>
+                    </CardBody>
+                </Card>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private IEnumerable<RulesEngineInstance> allInstances;
+    private string selectedInstanceId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && this.allInstances.Count() == 1)
+        {
+            var instance = this.allInstances.First();
+            await this.Storage.SetAsync("Selected-Instance-ID", instance.Id);
+            await this.Storage.SetAsync("Is-Unique-Instance", true);
+            this.NavigationManager.NavigateTo("rules-ui/instance");
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        this.allInstances = this.RulesEngineInstanceProvider.GetAllInstances();
+    }
+
+    private async Task SelectInstanceAsync(Guid instanceId)
+    {
+        if (instanceId != Guid.Empty)
+        {
+            var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
+            if (instance is not null)
+            {
+                await this.Storage.SetAsync("Selected-Instance-ID", instanceId);
+                await this.Storage.SetAsync("Is-Unique-Instance", false);
+                this.NavigationManager.NavigateTo("rules-ui/instance");
+            }
+        }
+    }
+}

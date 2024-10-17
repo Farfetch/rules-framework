@@ -11,7 +11,22 @@ namespace Rules.Framework.WebUI.Sample
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews()
+                .AddRulesFrameworkWebUI(registrar =>
+                {
+                    registrar.AddInstance("Readme example", (_, _) => new BasicRulesEngineExample().RulesEngine)
+                        .AddInstance("Random rules example", async (_, _) =>
+                        {
+                            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IRuleSpecificationsProvider>()
+                            {
+                                new RulesRandomFactory()
+                            }));
+
+                            return await rulesProvider.GetRulesEngineAsync();
+                        });
+                });
+
+            builder.Logging.SetMinimumLevel(LogLevel.Trace).AddConsole();
 
             var app = builder.Build();
 
@@ -24,43 +39,21 @@ namespace Rules.Framework.WebUI.Sample
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAntiforgery();
+
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            AddRulesFrameworkUI(app, useReadmeExample: false);
+            app.UseRulesFrameworkWebUI();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
-        }
-
-        private static void AddRulesFrameworkUI(IApplicationBuilder app, bool useReadmeExample = false)
-        {
-            if (useReadmeExample)
-            {
-                app.UseRulesFrameworkWebUI(new BasicRulesEngineExample().RulesEngine);
-
-                return;
-            }
-
-            var rulesProvider = new RulesEngineProvider(new RulesBuilder(new List<IRuleSpecificationsProvider>()
-            {
-                new RulesRandomFactory()
-            }));
-
-            var rulesEngine = rulesProvider
-                .GetRulesEngineAsync()
-                .GetAwaiter()
-                .GetResult();
-
-            app.UseRulesFrameworkWebUI(rulesEngine);
         }
     }
 }

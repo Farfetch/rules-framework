@@ -1,0 +1,110 @@
+@page "/rules-ui/rulesets"
+@rendermode InteractiveServer
+@inject ProtectedSessionStorage Storage
+@inject NavigationManager NavigationManager
+@inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
+
+<h1>Rulesets</h1>
+
+<div class="col-12">
+    @if (this.instanceId == Guid.Empty)
+    {
+        <div class="d-flex justify-content-center">
+            <Spinner Type="SpinnerType.Border" Id="loadingRulesetsSpinner" />
+            <label for="loadingRulesSpinner">Loading... Please wait.</label>
+        </div>
+    }
+    else
+    {
+        <Grid TItem="RulesetViewModel"
+            DataProvider="LoadRulesetsAsync"
+            PageSize="@DefaultPageSize"
+            AllowPaging="true"
+            AllowSorting="true"
+            AllowFiltering="true"
+            Responsive="true"
+            Class="table table-hover table-bordered table-striped">
+            <GridColumns>
+                <GridColumn TItem="RulesetViewModel" HeaderText="#" PropertyName="Number" SortKeySelector="item => item.Number">
+                    @(context.Number)
+                </GridColumn>
+                <GridColumn TItem="RulesetViewModel" HeaderText="Name" PropertyName="Name" SortKeySelector="item => item.Name">
+                    @(context.Name)
+                </GridColumn>
+                <GridColumn TItem="RulesetViewModel" HeaderText="Active Rules" PropertyName="ActiveRulesCount" SortKeySelector="item => item.ActiveRulesCount">
+                    @(context.ActiveRulesCount)
+                </GridColumn>
+                <GridColumn TItem="RulesetViewModel" HeaderText="Total Rules" PropertyName="TotalRulesCount" SortKeySelector="item => item.TotalRulesCount">
+                    @(context.TotalRulesCount)
+                </GridColumn>
+                <GridColumn TItem="RulesetViewModel" HeaderText="Rules" PropertyName="Id">
+                    <Button value="@(context.Id)"
+                            Color="ButtonColor.Secondary"
+                            title="Rules"
+                            TooltipTitle="View rules"
+                            @onclick="() => ButtonViewRulesOnClickAsync(context.Id)">
+                        <Icon Name="IconName.ArrowRightCircleFill" Id="@(context.Name)" />
+                        <span>Rules</span>
+                    </Button>
+                </GridColumn>
+            </GridColumns>
+        </Grid>
+    }
+</div>
+
+@code {
+    private const int DefaultPageSize = 5;
+    private int currentPageNumber = 1;
+    private int totalPages = 0;
+    private Guid instanceId;
+    private List<RulesetViewModel> allRulesets;
+    private IEnumerable<RulesetViewModel> filteredRulesets;
+    private IEnumerable<RulesetViewModel> pagedRulesets;
+    private bool onlyShowRulesetsWithRules = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var instanceIdResult = await this.Storage.GetAsync<Guid>("Selected-Instance-ID");
+            if (instanceIdResult.Success)
+            {
+                this.instanceId = instanceIdResult.Value;
+                this.StateHasChanged();
+            }
+        }
+    }
+
+    private async Task<GridDataProviderResult<RulesetViewModel>> LoadRulesetsAsync(GridDataProviderRequest<RulesetViewModel> request)
+    {
+        var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
+        var rulesets = await instance.RulesEngine.GetRulesetsAsync();
+        var number = 1;
+        var rulesetViewModels = rulesets.OrderBy(r => r.Name).Select(r => new RulesetViewModel
+        {
+            Id = GuidGenerator.GenerateFromString(r.Name),
+            Name = r.Name,
+            Number = number++,
+        }).ToList();
+
+        foreach (var ruleset in rulesetViewModels)
+        {
+            var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(
+                ruleset.Name,
+                DateTime.MinValue,
+                DateTime.MaxValue));
+
+            ruleset.TotalRulesCount = rules.Count();
+            ruleset.ActiveRulesCount = rules.Count(r => r.Active);
+        }
+
+        return request.ApplyTo(rulesetViewModels);
+    }
+
+    private async Task ButtonViewRulesOnClickAsync(Guid rulesetId)
+    {
+        await this.Storage.SetAsync("Selected-Ruleset-ID", rulesetId);
+
+        this.NavigationManager.NavigateTo($"rules-ui/search-rules");
+    }
+}
