@@ -9,39 +9,77 @@
 @inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
 @inject ProtectedSessionStorage Storage
 
-<h1>Search Rules</h1>
+<h2>Search Rules</h2>
 
 <div id="rules" class="content">
     <div class="row">
         <div class="col-12">
-            <div class="row" style="display: flex;
-                                flex-direction: row;
-                                justify-content: space-between;">
-
-                <div class="col-md-4">
-                    <h5 class="mb-3">Ruleset</h5>
-                                
-                    <select class="form-select form-select-sm" id="rulesetsSelect" required @onchange="OnRulesetChangeAsync">
-                        @if (this.instanceId == Guid.Empty)
+            <div class="d-flex flex-row">
+                <div>
+                    <Dropdown Color="DropdownColor.Secondary"
+                        AutoClose="true"
+                        AutoCloseBehavior="DropdownAutoCloseBehavior.Outside">
+                        <DropdownToggleButton>Select rulesets</DropdownToggleButton>
+                        <DropdownMenu Class="overflow-auto" Style="max-height: 15rem;">
+                            @if (this.instanceId == Guid.Empty)
+                            {
+                                <p>Loading...</p>
+                            }
+                            else
+                            {
+                                <div class="form-check m-2">
+                                    <input type="checkbox"
+                                        id="checkbox_ruleset_all"
+                                        class="form-check-input"
+                                        checked="@(this.allRulesetsSelected)"
+                                        @onchange="() => OnRulesetCheckAsync(Guid.Empty)" />
+                                    <label for="checkbox_ruleset_all"
+                                        class="form-check-label">All</label>
+                                </div>
+                                <DropdownDivider />
+                                foreach (var ruleset in this.rulesets)
+                                {
+                                    <div class="form-check m-2">
+                                        <input type="checkbox"
+                                            id="@($"checkbox_ruleset_{ruleset.Id}")"
+                                            class="form-check-input"
+                                            checked="@(this.rulesetIds.Contains(ruleset.Id))"
+                                            @onchange="() => OnRulesetCheckAsync(ruleset.Id)" />
+                                        <label for="@($"checkbox_ruleset_{ruleset.Id}")"
+                                            class="form-check-label">@(ruleset.Name)</label>
+                                    </div>
+                                }
+                            }
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+                <div class="ms-2 d-flex flex-row align-items-center">
+                    <div>
+                        @if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
                         {
-                            <option value="">Loading...</option>
-                        }
-                        else
-                        {
-                            <option value="">Select a ruleset</option>
+                            <b>@(this.rulesetIds.Count) selected: </b>
+                            var count = 0;
                             foreach (var ruleset in this.rulesets)
                             {
-                                if (ruleset.Id == this.rulesetId)
+                                if (this.rulesetIds.Contains(ruleset.Id))
                                 {
-                                    <option value="@(ruleset.Id)" selected>@(ruleset.Name)</option>
-                                }
-                                else
-                                {
-                                    <option value="@(ruleset.Id)">@(ruleset.Name)</option>
+                                    if (count > 0)
+                                    {
+                                        <span>, </span>
+                                    }
+
+                                    if (count == 5)
+                                    {
+                                        <i>and more...</i>
+                                        break;
+                                    }
+
+                                    <span>@(ruleset.Name)</span>
+                                    count++;
                                 }
                             }
                         }
-                    </select>
+                    </div>
                 </div>
             </div>
             <br />
@@ -54,7 +92,7 @@
                     <Dropdown Color="DropdownColor.Dark">
                         <DropdownToggleButton><Icon Name="IconName.LightningFill" Color="IconColor.Light" /></DropdownToggleButton>
                         <DropdownMenu>
-                            <DropdownItem Type="DropdownItemType.Button" @onclick="OnExportJsonButtonClickAsync" Disabled="@(this.rulesetId == Guid.Empty)">Export JSON</DropdownItem>
+                            <DropdownItem Type="DropdownItemType.Button" @onclick="OnExportJsonButtonClickAsync" Disabled="@(!this.rulesetIds.Any())">Export JSON</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -62,11 +100,13 @@
             <div class="table-responsive">
                 <Grid TItem="RuleViewModel"
                     DataProvider="LoadRulesAsync"
-                    PageSize="@DefaultPageSize"
                     AllowPaging="true"
                     AllowSorting="true"
                     AllowFiltering="true"
                     Responsive="true"
+                    PageSizeSelectorVisible="true"
+                    PageSizeSelectorItems="new[] { 5, 10, 50 }"
+                    PageSize="@DefaultPageSize"
                     Class="table table-hover table-bordered table-striped"
                     @ref="rulesGrid"
                     AllowDetailView="true">
@@ -151,17 +191,19 @@
 </Modal>
 
 @code {
+    private bool allRulesetsSelected;
     private const int DefaultPageSize = 5;
     private DateTime? dateBegin;
     private DateInput<DateTime?> dateBeginSearch;
     private DateTime? dateEnd;
     private Guid instanceId;
     private JsonSerializerOptions jsonSerializerOptions;
+    private string exportFileName;
     private Modal exportModal;
     private string exportText;
     private string priorityCriteria;
     private string priorityCriteriaTooltip;
-    private Guid rulesetId;
+    private HashSet<Guid> rulesetIds;
     private List<RulesetViewModel> rulesets;
     private Grid<RuleViewModel> rulesGrid;
 
@@ -175,13 +217,14 @@
             };
         this.jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         this.jsonSerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeViewModel>());
+        this.rulesetIds = new HashSet<Guid>();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var instanceIdResult = await this.Storage.GetAsync<Guid>("Selected-Instance-ID");
+            var instanceIdResult = await this.Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
             if (instanceIdResult.Success)
             {
                 this.instanceId = instanceIdResult.Value;
@@ -220,10 +263,10 @@
                 }
             }
 
-            var rulesetIdResult = await this.Storage.GetAsync<Guid>("Selected-Ruleset-ID");
+            var rulesetIdResult = await this.Storage.GetAsync<Guid[]>(WebUIConstants.SelectedRulesetsStorageKey);
             if (rulesetIdResult.Success)
             {
-                this.rulesetId = rulesetIdResult.Value;
+                this.rulesetIds = new HashSet<Guid>(rulesetIdResult.Value);
             }
 
             this.StateHasChanged();
@@ -254,43 +297,68 @@
 
     private async Task<GridDataProviderResult<RuleViewModel>> LoadRulesAsync(GridDataProviderRequest<RuleViewModel> request)
     {
-        IEnumerable<RuleViewModel> ruleViewModels;
-        if (this.instanceId != Guid.Empty && this.rulesetId != Guid.Empty)
+        List<RuleViewModel> ruleViewModels = new List<RuleViewModel>();
+        if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
         {
+
             var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
             var rulesets = await instance.RulesEngine.GetRulesetsAsync();
-            var ruleset = rulesets.FirstOrDefault(r => GuidGenerator.GenerateFromString(r.Name) == this.rulesetId);
+            var rulesetsToSearch = this.rulesetIds.Contains(Guid.Empty)
+                ? rulesets
+                : rulesets.Where(r => this.rulesetIds.Contains(GuidGenerator.GenerateFromString(r.Name)));
 
             var searchDateBegin = this.dateBegin.GetValueOrDefault(DateTime.MinValue);
             var searchDateEnd = this.dateEnd.GetValueOrDefault(DateTime.MaxValue);
-            var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(ruleset.Name, searchDateBegin, searchDateEnd)
+            foreach (var ruleset in rulesetsToSearch)
             {
+                var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(ruleset.Name, searchDateBegin, searchDateEnd));
 
-            });
-
-            ruleViewModels = rules.OrderBy(r => r.Priority).Select(r => r.ToViewModel()).ToList();
-        }
-        else
-        {
-            ruleViewModels = Enumerable.Empty<RuleViewModel>();
+                ruleViewModels.AddRange(rules.OrderBy(r => r.Priority).Select(r => r.ToViewModel()));
+            }
         }
 
         return request.ApplyTo(ruleViewModels);
     }
 
-    private async Task OnRulesetChangeAsync(ChangeEventArgs e)
+    private async Task OnRulesetCheckAsync(Guid rulesetId)
     {
-        Guid.TryParse((string)e.Value, out var rulesetId);
-        this.rulesetId = rulesetId;
-        await this.Storage.SetAsync("Selected-Ruleset-ID", rulesetId);
+        if (rulesetId == Guid.Empty)
+        {
+            if (this.allRulesetsSelected)
+            {
+                this.rulesetIds.Clear();
+            }
+            else
+            {
+                this.rulesetIds.Clear();
+                foreach (var ruleset in this.rulesets)
+                {
+                    this.rulesetIds.Add(ruleset.Id);
+                }
+            }
 
+            this.allRulesetsSelected = !this.allRulesetsSelected;
+        }
+        else
+        {
+            if (this.rulesetIds.Contains(rulesetId))
+            {
+                this.rulesetIds.Remove(rulesetId);
+            }
+            else
+            {
+                this.rulesetIds.Add(rulesetId);
+            }
+        }
+
+        await this.Storage.SetAsync(WebUIConstants.SelectedRulesetsStorageKey, this.rulesetIds);
         this.StateHasChanged();
         await this.rulesGrid.RefreshDataAsync();
     }
 
     private async Task OnExportJsonButtonClickAsync()
     {
-        if (this.rulesetId != Guid.Empty)
+        if (this.rulesetIds.Any())
         {
             var request = new GridDataProviderRequest<RuleViewModel>
             {
@@ -298,6 +366,16 @@
             };
             var response = await this.rulesGrid.DataProvider.Invoke(request);
             this.exportText = JsonSerializer.Serialize(response.Data, this.jsonSerializerOptions);
+            if (this.rulesetIds.Count > 1)
+            {
+                this.exportFileName = "selection-rules.json";
+            }
+            else
+            {
+                var rulesetId = this.rulesetIds.Single();
+                var selectedRulesetName = this.rulesets.First(r => r.Id == rulesetId).Name;
+                this.exportFileName = $"{selectedRulesetName}-selection-rules.json";
+            }
 
             this.StateHasChanged();
             await this.exportModal.ShowAsync();
@@ -308,18 +386,17 @@
     {
         await this.exportModal.HideAsync();
         this.exportText = string.Empty;
+        this.exportFileName = string.Empty;
         this.StateHasChanged();
     }
 
     private async Task OnExportModalDownloadButtonClickAsync(MouseEventArgs e)
     {
-        if (this.rulesetId != Guid.Empty)
+        if (this.rulesetIds.Any())
         {
-            var selectedRulesetName = this.rulesets.First(r => r.Id == this.rulesetId).Name;
-            var fileName = $"{selectedRulesetName}-selection-rules.json";
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(exportText));
             using var streamReference = new DotNetStreamReference(stream);
-            await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamReference);
+            await JS.InvokeVoidAsync("downloadFileFromStream", this.exportFileName, streamReference);
         }
     }
 }

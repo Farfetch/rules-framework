@@ -36,9 +36,9 @@
             var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
             if (instance is not null)
             {
-                var oldInstanceIdResult = await this.Storage.GetAsync<Guid>("Selected-Instance-ID");
-                await this.Storage.SetAsync("Selected-Instance-ID", instanceId);
-                await this.Storage.DeleteAsync("Selected-Ruleset-ID");
+                var oldInstanceIdResult = await this.Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
+                await this.Storage.SetAsync(WebUIConstants.SelectedInstanceStorageKey, instanceId);
+                await this.Storage.DeleteAsync(WebUIConstants.SelectedRulesetsStorageKey);
                 this.OnInstanceChanged?.Invoke(new InstanceChangedEventArgs
                 {
                     NewInstanceId = instanceId,

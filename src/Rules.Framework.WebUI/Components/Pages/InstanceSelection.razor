@@ -5,7 +5,7 @@
 @inject ProtectedSessionStorage Storage
 @inject NavigationManager NavigationManager
 
-<h1>Select a rules engine instance</h1>
+<h2>Select a rules engine instance</h2>
 
 <div class="d-flex flex-wrap">
     @if (this.allInstances is not null)
@@ -15,7 +15,7 @@
             <div class="my-3 me-4">
                 <Card>
                     <CardBody>
-                        <CardTitle><Image Src="rules-ui/engine.svg" Style="width: 24px; height: 24px;" /> @(instance.Name)</CardTitle>
+                        <p><Image Src="rules-ui/engine.svg" Style="width: 24px; height: 24px;" /> @(instance.Name)</p>
                         <Button Color="ButtonColor.Secondary" @onclick="() => SelectInstanceAsync(instance.Id)">Select</Button>
                     </CardBody>
                 </Card>
@@ -33,8 +33,9 @@
         if (firstRender && this.allInstances.Count() == 1)
         {
             var instance = this.allInstances.First();
-            await this.Storage.SetAsync("Selected-Instance-ID", instance.Id);
-            await this.Storage.SetAsync("Is-Unique-Instance", true);
+            await this.Storage.SetAsync(WebUIConstants.SelectedInstanceStorageKey, instance.Id);
+            await this.Storage.SetAsync(WebUIConstants.IsUniqueInstanceStorageKey, true);
+            await this.Storage.DeleteAsync(WebUIConstants.SelectedRulesetsStorageKey);
             this.NavigationManager.NavigateTo("rules-ui/instance");
         }
     }
@@ -51,8 +52,9 @@
             var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
             if (instance is not null)
             {
-                await this.Storage.SetAsync("Selected-Instance-ID", instanceId);
-                await this.Storage.SetAsync("Is-Unique-Instance", false);
+                await this.Storage.SetAsync(WebUIConstants.SelectedInstanceStorageKey, instanceId);
+                await this.Storage.SetAsync(WebUIConstants.IsUniqueInstanceStorageKey, false);
+                await this.Storage.DeleteAsync(WebUIConstants.SelectedRulesetsStorageKey);
                 this.NavigationManager.NavigateTo("rules-ui/instance");
             }
         }

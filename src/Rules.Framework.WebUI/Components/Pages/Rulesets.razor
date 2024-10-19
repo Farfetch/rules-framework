@@ -4,7 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
 
-<h1>Rulesets</h1>
+<h2>Rulesets</h2>
 
 <div class="col-12">
     @if (this.instanceId == Guid.Empty)
@@ -23,9 +23,11 @@
             AllowSorting="true"
             AllowFiltering="true"
             Responsive="true"
+            PageSizeSelectorVisible="true"
+            PageSizeSelectorItems="new[] { 5, 10, 50 }"
             Class="table table-hover table-bordered table-striped">
             <GridColumns>
-                <GridColumn TItem="RulesetViewModel" HeaderText="#" PropertyName="Number" SortKeySelector="item => item.Number">
+                <GridColumn TItem="RulesetViewModel" HeaderText="#" PropertyName="Number" SortKeySelector="item => item.Number" Filterable="false">
                     @(context.Number)
                 </GridColumn>
                 <GridColumn TItem="RulesetViewModel" HeaderText="Name" PropertyName="Name" SortKeySelector="item => item.Name">
@@ -37,7 +39,7 @@
                 <GridColumn TItem="RulesetViewModel" HeaderText="Total Rules" PropertyName="TotalRulesCount" SortKeySelector="item => item.TotalRulesCount">
                     @(context.TotalRulesCount)
                 </GridColumn>
-                <GridColumn TItem="RulesetViewModel" HeaderText="Rules" PropertyName="Id">
+                <GridColumn TItem="RulesetViewModel" HeaderText="Rules" PropertyName="Id" Filterable="false">
                     <Button value="@(context.Id)"
                             Color="ButtonColor.Secondary"
                             title="Rules"
@@ -66,7 +68,7 @@
     {
         if (firstRender)
         {
-            var instanceIdResult = await this.Storage.GetAsync<Guid>("Selected-Instance-ID");
+            var instanceIdResult = await this.Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
             if (instanceIdResult.Success)
             {
                 this.instanceId = instanceIdResult.Value;
@@ -103,7 +105,7 @@
 
     private async Task ButtonViewRulesOnClickAsync(Guid rulesetId)
     {
-        await this.Storage.SetAsync("Selected-Ruleset-ID", rulesetId);
+        await this.Storage.SetAsync(WebUIConstants.SelectedRulesetsStorageKey, new[] { rulesetId });
 
         this.NavigationManager.NavigateTo($"rules-ui/search-rules");
     }

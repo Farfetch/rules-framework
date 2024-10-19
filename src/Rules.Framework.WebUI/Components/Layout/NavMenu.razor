@@ -41,7 +41,7 @@
     {
         if (firstRender)
         {
-            var isUniqueInstanceResult = await this.Storage.GetAsync<bool>("Is-Unique-Instance");
+            var isUniqueInstanceResult = await this.Storage.GetAsync<bool>(WebUIConstants.IsUniqueInstanceStorageKey);
             if (isUniqueInstanceResult.Success && isUniqueInstanceResult.Value)
             {
                 shouldRenderSwitchInstanceLink = false;

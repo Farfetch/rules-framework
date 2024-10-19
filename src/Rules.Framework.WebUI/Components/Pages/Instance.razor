@@ -5,7 +5,7 @@
 
 <PageTitle>Rules.Framework - Instance</PageTitle>
 
-<h1>Instance</h1>
+<h2>Instance</h2>
 
 @if (this.instanceId == Guid.Empty)
 {
@@ -15,7 +15,7 @@ else
 {
     <p>Name: @(instance.Name)</p>
 
-    <h1>Options</h1>
+    <h2>Options</h2>
 
     <ul>
         <li><code>AutoCreateRulesets</code>: @(instance.Options["AutoCreateRulesets"])</li>
@@ -33,7 +33,7 @@ else
     {
         if (firstRender)
         {
-            var instanceIdResult = await Storage.GetAsync<Guid>("Selected-Instance-ID");
+            var instanceIdResult = await Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
             if (instanceIdResult.Success)
             {
                 this.instanceId = instanceIdResult.Value;
