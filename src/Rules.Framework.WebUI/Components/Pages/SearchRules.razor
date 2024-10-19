@@ -174,21 +174,7 @@
     </div>
 </div>
 
-<Modal @ref="exportModal" Title="Export result" Size="ModalSize.ExtraLarge">
-    <BodyTemplate>
-        <div class="overflow-auto" style="max-height: 75vh;">
-            <pre>
-                <code>
-                    @exportText
-                </code>
-            </pre>
-        </div>
-    </BodyTemplate>
-    <FooterTemplate>
-        <Button Color="ButtonColor.Primary" @onclick="OnExportModalDownloadButtonClickAsync">Download</Button>
-        <Button Color="ButtonColor.Secondary" @onclick="OnExportModalCloseButtonClickAsync">Close</Button>
-    </FooterTemplate>
-</Modal>
+<Modal @ref="exportModal" Size="ModalSize.ExtraLarge" />
 
 @code {
     private bool allRulesetsSelected;
@@ -210,11 +196,11 @@
     public SearchRules()
     {
         this.jsonSerializerOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                IncludeFields = true,
-                WriteIndented = true,
-            };
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IncludeFields = true,
+            WriteIndented = true,
+        };
         this.jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         this.jsonSerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeViewModel>());
         this.rulesetIds = new HashSet<Guid>();
@@ -365,38 +351,30 @@
                 Filters = this.rulesGrid.GetFilters(),
             };
             var response = await this.rulesGrid.DataProvider.Invoke(request);
-            this.exportText = JsonSerializer.Serialize(response.Data, this.jsonSerializerOptions);
+            var rules = response.Data.Select(r => r.ToExportRulesModel()).ToArray();
             if (this.rulesetIds.Count > 1)
             {
-                this.exportFileName = "selection-rules.json";
+                this.exportFileName = "selection-rules";
             }
             else
             {
                 var rulesetId = this.rulesetIds.Single();
                 var selectedRulesetName = this.rulesets.First(r => r.Id == rulesetId).Name;
-                this.exportFileName = $"{selectedRulesetName}-selection-rules.json";
+                this.exportFileName = $"{selectedRulesetName}-selection-rules";
             }
 
             this.StateHasChanged();
-            await this.exportModal.ShowAsync();
+            await this.exportModal.ShowAsync<ExportRules>(
+                title: "Export result",
+                parameters: new Dictionary<string, object>(StringComparer.Ordinal)
+                {
+                    { "CloseButtonCallback", EventCallback.Factory.Create(this.exportModal, async () => await this.exportModal.HideAsync()) },
+                    { "CloseButtonEnable", true },
+                    { "ExportFileName", this.exportFileName },
+                    { "Rules", rules },
+                });
         }
     }
 
-    private async Task OnExportModalCloseButtonClickAsync(MouseEventArgs e)
-    {
-        await this.exportModal.HideAsync();
-        this.exportText = string.Empty;
-        this.exportFileName = string.Empty;
-        this.StateHasChanged();
-    }
-
-    private async Task OnExportModalDownloadButtonClickAsync(MouseEventArgs e)
-    {
-        if (this.rulesetIds.Any())
-        {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(exportText));
-            using var streamReference = new DotNetStreamReference(stream);
-            await JS.InvokeVoidAsync("downloadFileFromStream", this.exportFileName, streamReference);
-        }
-    }
+    
 }

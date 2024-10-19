@@ -1,0 +1,136 @@
+@using System.Text.Json
+@using System.Text
+@using System.IO
+@using System.Text.Json.Serialization
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<div class="overflow-auto" style="max-height: 75vh;">
+    <pre>
+        <code>
+            @exportText
+        </code>
+    </pre>
+</div>
+
+<hr/>
+
+<div class="d-flex flex-row align-items-center">
+    <input type="checkbox" @bind="customizeFileNameEnabled" id="exportFileNameCustomizeCheckbox" class="ms-2" />
+    <label for="exportFileNameCustomizeCheckbox" class="mx-2">Change filename</label>
+    <input type="text" disabled="@(!customizeFileNameEnabled)" @bind="ExportFileName" class="ms-2" />
+    <span>.json</span>
+    <Button Color="ButtonColor.Primary" Class="ms-auto me-2" @onclick="OnExportModalDownloadButtonClickAsync">Download</Button>
+    @if (this.CloseButtonEnable)
+    {
+        <Button Color="ButtonColor.Secondary" Class="mx-2" @onclick="OnExportModalCloseButtonClickAsync">Close</Button>
+    }
+</div>
+
+@code {
+    private bool customizeFileNameEnabled;
+    private string exportText = string.Empty;
+    private JsonSerializerOptions jsonSerializerOptions;
+
+    public ExportRules()
+    {
+        this.Reset();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (this.CloseButtonEnable && !this.CloseButtonCallback.HasDelegate)
+        {
+            throw new InvalidOperationException("Close button needs a callback when enabled.");
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        this.exportText = JsonSerializer.Serialize(this.Rules, this.jsonSerializerOptions);
+        this.StateHasChanged();
+    }
+
+
+    [Parameter]
+    public EventCallback CloseButtonCallback { get; set; }
+
+    [Parameter]
+    public bool CloseButtonEnable { get; set; }
+
+    [Parameter]
+    public string ExportFileName { get; set; }
+
+    [Parameter]
+    public IEnumerable<Rule> Rules { get; set; }
+
+    private async Task OnExportModalCloseButtonClickAsync(MouseEventArgs e)
+    {
+        await this.CloseButtonCallback.InvokeAsync();
+        this.Reset();
+    }
+
+    private async Task OnExportModalDownloadButtonClickAsync(MouseEventArgs e)
+    {
+        if (this.Rules != null && this.Rules.Any())
+        {
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(exportText));
+            using var streamReference = new DotNetStreamReference(stream);
+            await JS.InvokeVoidAsync("downloadFileFromStream", $"{this.ExportFileName}.json", streamReference);
+        }
+    }
+
+    private void Reset()
+    {
+        this.exportText = string.Empty;
+        this.customizeFileNameEnabled = false;
+        this.jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IncludeFields = true,
+            WriteIndented = true,
+        };
+        this.jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        this.jsonSerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNode>());
+    }
+
+    public sealed class Rule
+    {
+        public bool Active { get; set; }
+
+        public object Content { get; set; }
+
+        public DateTime DateBegin { get; set; }
+
+        public DateTime? DateEnd { get; set; }
+
+        public string Name { get; set; }
+
+        public int Priority { get; set; }
+
+        public ConditionNode RootCondition { get; set; }
+
+        public string Ruleset { get; set; }
+    }
+
+    public sealed class ComposedConditionNode : ConditionNode
+    {
+        public IEnumerable<ConditionNode> ChildConditionNodes { get; set; }
+    }
+
+    public class ConditionNode
+    {
+        public string LogicalOperator { get; set; }
+    }
+
+    public sealed class ValueConditionNode : ConditionNode
+    {
+        public string Condition { get; set; }
+
+        public string DataType { get; set; }
+
+        public dynamic Operand { get; set; }
+
+        public string Operator { get; set; }
+    }
+}
