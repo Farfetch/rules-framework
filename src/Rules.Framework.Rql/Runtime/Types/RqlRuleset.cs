@@ -1,7 +1,9 @@
 namespace Rules.Framework.Rql.Runtime.Types
 {
     using System;
+    using System.Diagnostics;
 
+    [DebuggerDisplay("<{this.Type.Name,nq}> {this.Value.Name,nq}")]
     public readonly struct RqlRuleset : IRuntimeValue, IEquatable<RqlRuleset>
     {
         private static readonly Type runtimeType = typeof(Ruleset);

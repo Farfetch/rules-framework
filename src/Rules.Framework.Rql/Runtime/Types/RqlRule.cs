@@ -2,10 +2,12 @@ namespace Rules.Framework.Rql.Runtime.Types
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using Rules.Framework.ConditionNodes;
 
+    [DebuggerDisplay("<{this.Type.Name,nq}> ({this.Value.Priority}) {this.Value.Name, nq}")]
     public readonly struct RqlRule : IRuntimeValue, IEquatable<RqlRule>
     {
         private static readonly Type runtimeType = typeof(Rule);

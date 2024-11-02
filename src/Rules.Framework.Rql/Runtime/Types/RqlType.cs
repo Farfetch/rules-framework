@@ -2,7 +2,9 @@ namespace Rules.Framework.Rql.Runtime.Types
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
 
+    [DebuggerDisplay("RQL Type: {this.Name,nq}")]
     public readonly struct RqlType : IEquatable<RqlType>
     {
         private readonly IDictionary<string, RqlType> assignableTypes;
@@ -40,7 +42,7 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         internal void AddAssignableType(RqlType rqlType)
         {
-            string rqlTypeName = rqlType.Name;
+            var rqlTypeName = rqlType.Name;
             if (string.Equals(rqlTypeName, this.Name, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException("Type already is assignable to itself.");

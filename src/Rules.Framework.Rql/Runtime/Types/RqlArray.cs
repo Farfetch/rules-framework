@@ -1,10 +1,11 @@
 namespace Rules.Framework.Rql.Runtime.Types
 {
     using System;
-    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Text;
     using Rules.Framework.Rql.Runtime;
 
+    [DebuggerDisplay("<{this.Type.Name,nq}>")]
     public readonly struct RqlArray : IRuntimeValue, IEquatable<RqlArray>
     {
         private static readonly Type runtimeType = typeof(object[]);
@@ -46,7 +47,7 @@ namespace Rules.Framework.Rql.Runtime.Types
         public static object[] ConvertToNativeArray(RqlArray rqlArray)
         {
             var result = new object[rqlArray.size];
-            for (int i = 0; i < rqlArray.size; i++)
+            for (var i = 0; i < rqlArray.size; i++)
             {
                 result[i] = rqlArray.Value[i].RuntimeValue;
             }
@@ -63,7 +64,7 @@ namespace Rules.Framework.Rql.Runtime.Types
                 return false;
             }
 
-            for (int i = 0; i < this.size; i++)
+            for (var i = 0; i < this.size; i++)
             {
                 if (!this.Value[i].Equals(other.Value[i]))
                 {
@@ -103,7 +104,7 @@ namespace Rules.Framework.Rql.Runtime.Types
                     .Append('{')
                     .AppendLine();
                 var min = Math.Min(this.size, 5);
-                for (int i = 0; i < min; i++)
+                for (var i = 0; i < min; i++)
                 {
                     stringBuilder.Append(new string(' ', indent + 4))
                         .Append(this.Value[i]);

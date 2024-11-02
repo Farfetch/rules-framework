@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Runtime.Types
 {
     using System;
+    using System.Diagnostics;
     using Rules.Framework.Rql.Runtime;
 
+    [DebuggerDisplay("<{this.Type.Name,nq}>")]
     public readonly struct RqlNothing : IRuntimeValue, IEquatable<RqlNothing>
     {
         private static readonly Type runtimeType = typeof(object);

@@ -1,8 +1,10 @@
 namespace Rules.Framework.Rql.Runtime.Types
 {
     using System;
+    using System.Diagnostics;
     using Rules.Framework.Rql.Runtime;
 
+    [DebuggerDisplay("<{this.Type.Name,nq}> (<{this.UnderlyingType.Name,nq}>)")]
     public readonly struct RqlAny : IRuntimeValue, IEquatable<RqlAny>
     {
         private static readonly RqlType type = RqlTypes.Any;
