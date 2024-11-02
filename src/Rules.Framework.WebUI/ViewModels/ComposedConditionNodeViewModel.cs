@@ -2,8 +2,12 @@ namespace Rules.Framework.WebUI.ViewModels
 {
     using System.Collections.Generic;
 
-    internal sealed class ComposedConditionNodeViewModel : ConditionNodeViewModel
+    public sealed class ComposedConditionNodeViewModel : ConditionNodeViewModel
     {
+        internal ComposedConditionNodeViewModel()
+        {
+        }
+
         public IEnumerable<ConditionNodeViewModel> ChildConditionNodes { get; internal set; }
     }
 }

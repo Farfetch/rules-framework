@@ -17,7 +17,7 @@
     <Accordion @ref="innerAccordion" AlwaysOpen="true">
         @foreach (var conditionNode in this.ConditionNodes)
         {
-            if (conditionNode is ComposedConditionNode composedConditionNode)
+            if (conditionNode is ComposedConditionNodeViewModel composedConditionNode)
             {
                 <AccordionItem Title="@($"{composedConditionNode.LogicalOperator} {{...}}")">
                     <Content>
@@ -25,9 +25,9 @@
                     </Content>
                 </AccordionItem>
             }
-            else if (conditionNode is ValueConditionNode valueConditionNode)
+            else if (conditionNode is ValueConditionNodeViewModel valueConditionNode)
             {
-                var shortValueConditionText = $"{valueConditionNode.Condition} {valueConditionNode.Operator} {valueConditionNode.GetOperandPrettyPrint()}";
+                var shortValueConditionText = $"{valueConditionNode.Condition} {valueConditionNode.Operator} {GetOperandPrettyPrint(valueConditionNode.Operand)}";
                 <AccordionItem Title="@shortValueConditionText">
                     <Content>
                         <div class="row">
@@ -46,7 +46,7 @@
                                                     <p><strong>Operator:</strong> <article>@(valueConditionNode.Operator)</article></p>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <p><strong>Operand:</strong> <article>@(valueConditionNode.GetOperandPrettyPrint())</article></p>
+                                                    <p><strong>Operand:</strong> <article>@(GetOperandPrettyPrint(valueConditionNode.Operand))</article></p>
                                                 </div>
                                             </div>
                                         </CardText>
@@ -73,7 +73,7 @@
     }
 
     [Parameter]
-    public IEnumerable<ConditionNode> ConditionNodes { get; set; } = Enumerable.Empty<ConditionNode>();
+    public IEnumerable<ConditionNodeViewModel> ConditionNodes { get; set; } = Enumerable.Empty<ConditionNodeViewModel>();
 
     [Parameter]
     public bool EnableCollapseAllButton { get; set; } = false;
@@ -105,66 +105,45 @@
         }
     }
 
-    public sealed class ComposedConditionNode : ConditionNode
+    internal string GetOperandPrettyPrint(object operand)
     {
-        public IEnumerable<ConditionNode> ChildConditionNodes { get; internal set; }
-    }
-
-    public class ConditionNode
-    {
-        public string LogicalOperator { get; internal set; }
-    }
-
-    public sealed class ValueConditionNode : ConditionNode
-    {
-        public string Condition { get; internal set; }
-
-        public string DataType { get; internal set; }
-
-        public dynamic Operand { get; internal set; }
-
-        public string Operator { get; internal set; }
-
-        internal string GetOperandPrettyPrint()
+        var operandPrettyPrintBuilder = new StringBuilder();
+        if (operand is IEnumerable elements && elements is not string)
         {
-            var operandPrettyPrintBuilder = new StringBuilder();
-            if (this.Operand is IEnumerable elements && elements is not string)
+            operandPrettyPrintBuilder.Append("{ ");
+            var elementsProcessedCount = 0;
+            foreach (var element in elements)
             {
-                operandPrettyPrintBuilder.Append("{ ");
-                var elementsProcessedCount = 0;
-                foreach (var element in elements)
+                if (elementsProcessedCount >= 10)
                 {
-                    if (elementsProcessedCount >= 10)
-                    {
-                        operandPrettyPrintBuilder.Append(", ...");
-                    }
-                    else if (elementsProcessedCount > 0)
-                    {
-                        operandPrettyPrintBuilder.Append(',');
-                    }
-
-                    operandPrettyPrintBuilder.Append(element switch
-                    {
-                        null => "(null)",
-                        "" => "(empty)",
-                        _ => element,
-                    });
-                    elementsProcessedCount++;
+                    operandPrettyPrintBuilder.Append(", ...");
+                }
+                else if (elementsProcessedCount > 0)
+                {
+                    operandPrettyPrintBuilder.Append(',');
                 }
 
-                operandPrettyPrintBuilder.Append(" }");
-            }
-            else
-            {
-                operandPrettyPrintBuilder.Append(this.Operand switch
+                operandPrettyPrintBuilder.Append(element switch
                 {
                     null => "(null)",
                     "" => "(empty)",
-                    _ => this.Operand,
+                    _ => element,
                 });
+                elementsProcessedCount++;
             }
 
-            return operandPrettyPrintBuilder.ToString();
+            operandPrettyPrintBuilder.Append(" }");
         }
+        else
+        {
+            operandPrettyPrintBuilder.Append(operand switch
+            {
+                null => "(null)",
+                "" => "(empty)",
+                _ => operand,
+            });
+        }
+
+        return operandPrettyPrintBuilder.ToString();
     }
 }

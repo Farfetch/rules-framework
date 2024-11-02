@@ -101,79 +101,7 @@
                     </Dropdown>
                 </div>
             </div>
-            <div class="table-responsive">
-                <Grid TItem="RuleViewModel"
-                    DataProvider="LoadRulesAsync"
-                    AllowPaging="true"
-                    AllowSorting="true"
-                    AllowFiltering="true"
-                    Responsive="true"
-                    PageSizeSelectorVisible="true"
-                    PageSizeSelectorItems="new[] { 5, 10, 50 }"
-                    PageSize="@DefaultPageSize"
-                    Class="table table-hover table-bordered table-striped"
-                    @ref="rulesGrid"
-                    AllowDetailView="true">
-                    <GridColumns>
-                        <GridColumn TItem="RuleViewModel" HeaderText="Priority" PropertyName="Priority" SortKeySelector="item => item.Priority">
-                            @(context.Priority)
-                        </GridColumn>
-                        <GridColumn TItem="RuleViewModel" HeaderText="Ruleset" PropertyName="Ruleset" SortKeySelector="item => item.Ruleset">
-                            @(context.Ruleset)
-                        </GridColumn>
-                        <GridColumn TItem="RuleViewModel" HeaderText="Name" PropertyName="Name" SortKeySelector="item => item.Name">
-                            @(context.Name)
-                        </GridColumn>
-                        <GridColumn TItem="RuleViewModel" HeaderText="Date begin" PropertyName="DateBegin" SortKeySelector="item => item.DateBegin">
-                            @(context.DateBegin)
-                        </GridColumn>
-                        <GridColumn TItem="RuleViewModel" HeaderText="Date end" PropertyName="DateEnd" SortKeySelector="item => item.DateEnd">
-                            @(context.DateEnd)
-                        </GridColumn>
-                        <GridColumn TItem="RuleViewModel" HeaderText="Content" PropertyName="Content">
-                            @(JsonSerializer.Serialize(context.Content, this.jsonSerializerOptions))
-                        </GridColumn>
-                        <GridColumn TItem="RuleViewModel" HeaderText="Status" PropertyName="Active">
-                            @if (context.Active)
-                            {
-                                <Badge Color="BadgeColor.Primary" IndicatorType="BadgeIndicatorType.RoundedPill" Class="p-2">Active</Badge>
-                            }
-                            else
-                            {
-                                <Badge Color="BadgeColor.Secondary" IndicatorType="BadgeIndicatorType.RoundedPill" Class="p-2">Deactivated</Badge>
-                            }
-                        </GridColumn>
-                    </GridColumns>
-                    <GridDetailView TItem="RuleViewModel">
-                        <Tabs EnableFadeEffect="true">
-                            <Tab Title="JSON view" Active="true">
-                                <Content>
-                                    <div class="overflow-auto" style="max-height: 40vh;">
-                                        <pre>
-                                            <code>
-                                                @(JsonSerializer.Serialize(context.RootCondition, this.jsonSerializerOptions))
-                                            </code>
-                                        </pre>
-                                    </div>
-                                </Content>
-                            </Tab>
-                            <Tab Title="Tree view">
-                                <Content>
-                                    <div class="overflow-auto" style="max-height: 40vh;">
-                                        @if (context.RootCondition is not null)
-                                        {
-                                            var conditionNodes = new[] { ConvertToComponentModel(context.RootCondition) };
-                                            <RuleConditionHierarchicalAccordion ConditionNodes="@conditionNodes"
-                                                                                EnableCollapseAllButton="true"
-                                                                                EnableShowAllButton="true" />
-                                        }
-                                    </div>
-                                </Content>
-                            </Tab>
-                        </Tabs>
-                    </GridDetailView>
-                </Grid>
-            </div>
+            <RulesGrid @ref="rulesGrid" DataProvider="LoadRulesAsync" />
         </div>
     </div>
 </div>
@@ -182,12 +110,7 @@
 
 @code {
     private bool allRulesetsSelected;
-    private const int DefaultPageSize = 5;
-    private DateTime? dateBegin;
-    private DateInput<DateTime?> dateBeginSearch;
-    private DateTime? dateEnd;
     private Guid instanceId;
-    private JsonSerializerOptions jsonSerializerOptions;
     private string exportFileName;
     private Modal exportModal;
     private string exportText;
@@ -195,18 +118,10 @@
     private string priorityCriteriaTooltip;
     private HashSet<Guid> rulesetIds;
     private List<RulesetViewModel> rulesets;
-    private Grid<RuleViewModel> rulesGrid;
+    private RulesGrid rulesGrid;
 
     public SearchRules()
     {
-        this.jsonSerializerOptions = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            IncludeFields = true,
-            WriteIndented = true,
-        };
-        this.jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        this.jsonSerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeViewModel>());
         this.rulesetIds = new HashSet<Guid>();
     }
 
@@ -260,32 +175,11 @@
             }
 
             this.StateHasChanged();
-            await this.rulesGrid.RefreshDataAsync();
+            await this.rulesGrid.RefreshAsync();
         }
     }
 
-    private RuleConditionHierarchicalAccordion.ConditionNode ConvertToComponentModel(ConditionNodeViewModel viewModel)
-    {
-        return viewModel switch
-        {
-            ComposedConditionNodeViewModel composedConditionNodeViewModel => new RuleConditionHierarchicalAccordion.ComposedConditionNode
-                {
-                ChildConditionNodes = composedConditionNodeViewModel.ChildConditionNodes.Select(x => ConvertToComponentModel(x)),
-                LogicalOperator = composedConditionNodeViewModel.LogicalOperator,
-            },
-            ValueConditionNodeViewModel valueConditionNodeViewModel => new RuleConditionHierarchicalAccordion.ValueConditionNode
-            {
-                Condition = valueConditionNodeViewModel.Condition,
-                DataType = valueConditionNodeViewModel.DataType,
-                LogicalOperator = valueConditionNodeViewModel.LogicalOperator,
-                Operand = valueConditionNodeViewModel.Operand,
-                Operator = valueConditionNodeViewModel.Operator,
-            },
-            _ => throw new NotSupportedException(),
-        };
-    }
-
-    private async Task<GridDataProviderResult<RuleViewModel>> LoadRulesAsync(GridDataProviderRequest<RuleViewModel> request)
+    private async Task<IEnumerable<RuleViewModel>> LoadRulesAsync()
     {
         List<RuleViewModel> ruleViewModels = new List<RuleViewModel>();
         if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
@@ -297,17 +191,15 @@
                 ? rulesets
                 : rulesets.Where(r => this.rulesetIds.Contains(GuidGenerator.GenerateFromString(r.Name)));
 
-            var searchDateBegin = this.dateBegin.GetValueOrDefault(DateTime.MinValue);
-            var searchDateEnd = this.dateEnd.GetValueOrDefault(DateTime.MaxValue);
             foreach (var ruleset in rulesetsToSearch)
             {
-                var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(ruleset.Name, searchDateBegin, searchDateEnd));
+                var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(ruleset.Name, DateTime.MinValue, DateTime.MaxValue));
 
                 ruleViewModels.AddRange(rules.OrderBy(r => r.Priority).Select(r => r.ToViewModel()));
             }
         }
 
-        return request.ApplyTo(ruleViewModels);
+        return ruleViewModels;
     }
 
     private async Task OnRulesetCheckAsync(Guid rulesetId)
@@ -343,19 +235,15 @@
 
         await this.Storage.SetAsync(WebUIConstants.SelectedRulesetsStorageKey, this.rulesetIds);
         this.StateHasChanged();
-        await this.rulesGrid.RefreshDataAsync();
+        await this.rulesGrid.RefreshAsync();
     }
 
     private async Task OnExportJsonButtonClickAsync()
     {
         if (this.rulesetIds.Any())
         {
-            var request = new GridDataProviderRequest<RuleViewModel>
-            {
-                Filters = this.rulesGrid.GetFilters(),
-            };
-            var response = await this.rulesGrid.DataProvider.Invoke(request);
-            var rules = response.Data.Select(r => r.ToExportRulesModel()).ToArray();
+            var response = await this.rulesGrid.DataProvider.Invoke();
+            var rules = response.Select(r => r.ToExportRulesModel()).ToArray();
             if (this.rulesetIds.Count > 1)
             {
                 this.exportFileName = "selection-rules";

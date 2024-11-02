@@ -1,0 +1,112 @@
+@attribute [ExcludeFromCodeCoverage]
+@rendermode InteractiveServer
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
+<div class="table-responsive">
+    <Grid TItem="RuleViewModel"
+          DataProvider="LoadRulesAsync"
+          AllowPaging="true"
+          AllowSorting="true"
+          AllowFiltering="true"
+          Responsive="true"
+          PageSizeSelectorVisible="true"
+          PageSizeSelectorItems="new[] { 5, 10, 50 }"
+          PageSize="@DefaultPageSize"
+          Class="table table-hover table-bordered table-striped"
+          @ref="rulesGrid"
+          AllowDetailView="true">
+        <GridColumns>
+            <GridColumn TItem="RuleViewModel" HeaderText="Priority" PropertyName="Priority" SortKeySelector="item => item.Priority">
+                @(context.Priority)
+            </GridColumn>
+            <GridColumn TItem="RuleViewModel" HeaderText="Ruleset" PropertyName="Ruleset" SortKeySelector="item => item.Ruleset">
+                @(context.Ruleset)
+            </GridColumn>
+            <GridColumn TItem="RuleViewModel" HeaderText="Name" PropertyName="Name" SortKeySelector="item => item.Name">
+                @(context.Name)
+            </GridColumn>
+            <GridColumn TItem="RuleViewModel" HeaderText="Date begin" PropertyName="DateBegin" SortKeySelector="item => item.DateBegin">
+                @(context.DateBegin)
+            </GridColumn>
+            <GridColumn TItem="RuleViewModel" HeaderText="Date end" PropertyName="DateEnd" SortKeySelector="item => item.DateEnd">
+                @(context.DateEnd)
+            </GridColumn>
+            <GridColumn TItem="RuleViewModel" HeaderText="Content" PropertyName="Content">
+                @(JsonSerializer.Serialize(context.Content, this.jsonSerializerOptions))
+            </GridColumn>
+            <GridColumn TItem="RuleViewModel" HeaderText="Status" PropertyName="Active">
+                @if (context.Active)
+                {
+                    <Badge Color="BadgeColor.Primary" IndicatorType="BadgeIndicatorType.RoundedPill" Class="p-2">Active</Badge>
+                }
+                else
+                {
+                    <Badge Color="BadgeColor.Secondary" IndicatorType="BadgeIndicatorType.RoundedPill" Class="p-2">Deactivated</Badge>
+                }
+            </GridColumn>
+        </GridColumns>
+        <GridDetailView TItem="RuleViewModel">
+            <Tabs EnableFadeEffect="true">
+                <Tab Title="JSON view" Active="true">
+                    <Content>
+                        <div class="overflow-auto" style="max-height: 40vh;">
+                            <pre>
+                                <code>
+                                    @(JsonSerializer.Serialize(context.RootCondition, this.jsonSerializerOptions))
+                                </code>
+                            </pre>
+                        </div>
+                    </Content>
+                </Tab>
+                <Tab Title="Tree view">
+                    <Content>
+                        <div class="overflow-auto" style="max-height: 40vh;">
+                            @if (context.RootCondition is not null)
+                            {
+                                var conditionNodes = new[] { context.RootCondition };
+                                <RuleConditionHierarchicalAccordion ConditionNodes="@conditionNodes"
+                                                                    EnableCollapseAllButton="true"
+                                                                    EnableShowAllButton="true" />
+                            }
+                        </div>
+                    </Content>
+                </Tab>
+            </Tabs>
+        </GridDetailView>
+    </Grid>
+</div>
+
+@code {
+    private const int DefaultPageSize = 5;
+    private JsonSerializerOptions jsonSerializerOptions;
+    private Grid<RuleViewModel> rulesGrid;
+
+    public RulesGrid()
+    {
+        this.jsonSerializerOptions = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                IncludeFields = true,
+                WriteIndented = true,
+            };
+        this.jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        this.jsonSerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeViewModel>());
+    }
+
+    [Parameter]
+    public RulesGridProviderDelegate DataProvider { get; set; }
+
+    public async Task RefreshAsync()
+    {
+        await this.rulesGrid.RefreshDataAsync();
+    }
+
+    private async Task<GridDataProviderResult<RuleViewModel>> LoadRulesAsync(GridDataProviderRequest<RuleViewModel> request)
+    {
+        var rules = await this.DataProvider.Invoke();
+        return request.ApplyTo(rules);
+    }
+
+    public delegate Task<IEnumerable<RuleViewModel>> RulesGridProviderDelegate();
+}

@@ -1,7 +1,11 @@
 namespace Rules.Framework.WebUI.ViewModels
 {
-    internal sealed class ValueConditionNodeViewModel : ConditionNodeViewModel
+    public sealed class ValueConditionNodeViewModel : ConditionNodeViewModel
     {
+        internal ValueConditionNodeViewModel()
+        {
+        }
+
         public string Condition { get; internal set; }
 
         public string DataType { get; internal set; }

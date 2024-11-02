@@ -46,7 +46,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.Rql", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.Rql.Tests", "tests\Rules.Framework.Rql.Tests\Rules.Framework.Rql.Tests.csproj", "{776E54A7-9099-4EBD-9C62-A371DFED58E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rules.Framework.Rql.IntegrationTests", "tests\Rules.Framework.Rql.IntegrationTests\Rules.Framework.Rql.IntegrationTests.csproj", "{C24A2234-AD6A-4377-9FAA-9CC58386107C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rules.Framework.Rql.IntegrationTests", "tests\Rules.Framework.Rql.IntegrationTests\Rules.Framework.Rql.IntegrationTests.csproj", "{C24A2234-AD6A-4377-9FAA-9CC58386107C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

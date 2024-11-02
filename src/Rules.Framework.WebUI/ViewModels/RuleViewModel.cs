@@ -2,8 +2,12 @@ namespace Rules.Framework.WebUI.ViewModels
 {
     using System;
 
-    internal sealed class RuleViewModel
+    public sealed class RuleViewModel
     {
+        internal RuleViewModel()
+        {
+        }
+
         public bool Active { get; set; }
 
         public string Conditions { get; set; }
