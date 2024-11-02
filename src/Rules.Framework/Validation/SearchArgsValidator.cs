@@ -5,22 +5,22 @@ namespace Rules.Framework.Validation
 
     internal sealed class SearchArgsValidator<TRuleset, TCondition> : AbstractValidator<SearchArgs<TRuleset, TCondition>>
     {
-        private readonly Type conditionTypeRuntimeType;
-        private readonly Type contentTypeRuntimeType;
+        private readonly Type conditionRuntimeType;
+        private readonly Type rulesetRuntimeType;
 
         public SearchArgsValidator()
         {
-            this.conditionTypeRuntimeType = typeof(TCondition);
-            this.contentTypeRuntimeType = typeof(TRuleset);
+            this.conditionRuntimeType = typeof(TCondition);
+            this.rulesetRuntimeType = typeof(TRuleset);
 
             this.RuleFor(searchArgs => searchArgs.Ruleset).Must(ct =>
             {
-                if (this.contentTypeRuntimeType.IsClass && ct is null)
+                if (this.rulesetRuntimeType.IsClass && ct is null)
                 {
                     return false;
                 }
 
-                if (this.contentTypeRuntimeType.IsEnum && !Enum.IsDefined(this.contentTypeRuntimeType, ct))
+                if (this.rulesetRuntimeType.IsEnum && !Enum.IsDefined(this.rulesetRuntimeType, ct))
                 {
                     return false;
                 }
@@ -38,12 +38,12 @@ namespace Rules.Framework.Validation
                     conditionValidator.RuleFor(condition => condition.Key)
                         .Must(conditionKey =>
                         {
-                            if (this.conditionTypeRuntimeType.IsClass && conditionKey is null)
+                            if (this.conditionRuntimeType.IsClass && conditionKey is null)
                             {
                                 return false;
                             }
 
-                            if (this.conditionTypeRuntimeType.IsEnum && !Enum.IsDefined(this.conditionTypeRuntimeType, conditionKey))
+                            if (this.conditionRuntimeType.IsEnum && !Enum.IsDefined(this.conditionRuntimeType, conditionKey))
                             {
                                 return false;
                             }

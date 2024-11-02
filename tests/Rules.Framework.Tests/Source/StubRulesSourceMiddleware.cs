@@ -57,9 +57,9 @@ namespace Rules.Framework.Tests.Source
         {
             this.GetRulesetsCalls++;
             this.middlewareMessages.Add($"Enter {this.Name}.");
-            var contentTypes = await next.Invoke(args).ConfigureAwait(false);
+            var rulesets = await next.Invoke(args).ConfigureAwait(false);
             this.middlewareMessages.Add($"Exit {this.Name}.");
-            return contentTypes;
+            return rulesets;
         }
 
         public async Task<IEnumerable<Rule>> HandleGetRulesFilteredAsync(

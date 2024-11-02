@@ -11,7 +11,7 @@ namespace Rules.Framework.Tests
     public class RuleConditionsExtractorTests
     {
         [Fact]
-        public void GetConditionTypes_ReturnsCorrectExtraction()
+        public void GetConditions_ReturnsCorrectExtraction()
         {
             // Arrange
 
@@ -74,7 +74,7 @@ namespace Rules.Framework.Tests
                 rule4
             };
 
-            var expectedConditionTypeList = new List<string>
+            var expectedConditionList = new List<string>
             {
                 ConditionNames.IsoCurrency.ToString(),
                 ConditionNames.IsoCountryCode.ToString(),
@@ -82,35 +82,35 @@ namespace Rules.Framework.Tests
                 ConditionNames.PluviosityRate.ToString(),
             };
 
-            var conditionTypeExtractor = new RuleConditionsExtractor();
+            var ruleConditionsExtractor = new RuleConditionsExtractor();
 
             // Act
-            var actual = conditionTypeExtractor.GetConditions(matchRules);
+            var actual = ruleConditionsExtractor.GetConditions(matchRules);
 
             // Assert
-            actual.Should().BeEquivalentTo(expectedConditionTypeList);
+            actual.Should().BeEquivalentTo(expectedConditionList);
         }
 
         [Fact]
-        public void GetConditionTypes_WithEmptyMatchRules_ReturnsEmptyListConditionTypes()
+        public void GetConditions_WithEmptyMatchRules_ReturnsEmptyListConditions()
         {
             // Arrange
 
             var matchRules = new List<Rule>();
 
-            var expectedConditionTypeList = new List<string>();
+            var expectedConditionList = new List<string>();
 
-            var conditionTypeExtractor = new RuleConditionsExtractor();
+            var ruleConditionsExtractor = new RuleConditionsExtractor();
 
             // Act
-            var actual = conditionTypeExtractor.GetConditions(matchRules);
+            var actual = ruleConditionsExtractor.GetConditions(matchRules);
 
             // Assert
-            actual.Should().BeEquivalentTo(expectedConditionTypeList);
+            actual.Should().BeEquivalentTo(expectedConditionList);
         }
 
         [Fact]
-        public void GetConditionTypes_WithNullRootCondition_ReturnsEmptyListConditionTypes()
+        public void GetConditions_WithNullRootCondition_ReturnsEmptyListConditions()
         {
             // Arrange
 
@@ -130,15 +130,15 @@ namespace Rules.Framework.Tests
                 }
             };
 
-            var expectedConditionTypeList = new List<string>();
+            var expectedConditionList = new List<string>();
 
-            var conditionTypeExtractor = new RuleConditionsExtractor();
+            var ruleConditionsExtractor = new RuleConditionsExtractor();
 
             // Act
-            var actual = conditionTypeExtractor.GetConditions(matchRules);
+            var actual = ruleConditionsExtractor.GetConditions(matchRules);
 
             // Assert
-            actual.Should().BeEquivalentTo(expectedConditionTypeList);
+            actual.Should().BeEquivalentTo(expectedConditionList);
         }
     }
 }

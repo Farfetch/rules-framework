@@ -1,6 +1,6 @@
 namespace Rules.Framework.Tests.Stubs
 {
-    public enum EmptyContentType
+    public enum EmptyRuleset
     {
     }
 }

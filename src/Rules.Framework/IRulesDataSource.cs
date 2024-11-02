@@ -5,7 +5,7 @@ namespace Rules.Framework
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Exposes the interface contract for a rules data source for specified content type.
+    /// Exposes the interface contract for a rules data source.
     /// </summary>
     public interface IRulesDataSource
     {
@@ -24,14 +24,14 @@ namespace Rules.Framework
         Task CreateRulesetAsync(string ruleset);
 
         /// <summary>
-        /// Gets the rules categorized with specified <paramref name="contentType"/> between
-        /// <paramref name="dateBegin"/> and <paramref name="dateEnd"/>.
+        /// Gets the rules categorized with specified <paramref name="ruleset"/> between <paramref
+        /// name="dateBegin"/> and <paramref name="dateEnd"/>.
         /// </summary>
-        /// <param name="contentType">the content type categorization.</param>
+        /// <param name="ruleset">the ruleset categorization.</param>
         /// <param name="dateBegin">the filtering begin date.</param>
         /// <param name="dateEnd">the filtering end date.</param>
         /// <returns></returns>
-        Task<IEnumerable<Rule>> GetRulesAsync(string contentType, DateTime dateBegin, DateTime dateEnd);
+        Task<IEnumerable<Rule>> GetRulesAsync(string ruleset, DateTime dateBegin, DateTime dateEnd);
 
         /// <summary>
         /// Gets the rules filtered by specified arguments.

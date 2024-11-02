@@ -33,15 +33,15 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var serializedContentType = serializedContent.GetType();
-            if (serializedContentType.IsValueType || stringType.IsAssignableFrom(serializedContentType))
+            var serializedRuleset = serializedContent.GetType();
+            if (serializedRuleset.IsValueType || stringType.IsAssignableFrom(serializedRuleset))
             {
                 return Parse(serializedContent, type);
             }
 
-            if (!expandoObjectType.IsAssignableFrom(serializedContentType))
+            if (!expandoObjectType.IsAssignableFrom(serializedRuleset))
             {
-                throw new NotSupportedException($"The serialized content type is not supported for deserialization: {serializedContent.GetType().FullName}");
+                throw new NotSupportedException($"The serialized ruleset is not supported for deserialization: {serializedContent.GetType().FullName}");
             }
 
             if (type == objectType || type == expandoObjectType)
@@ -98,9 +98,9 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
                 throw new NotSupportedException($"The target type '{type.FullName}' must define a default (no parameters) constructor.", mme);
             }
 
-            foreach (string key in serializedContentDictionary.Keys)
+            foreach (var key in serializedContentDictionary.Keys)
             {
-                if (reflectedProperties.TryGetValue(key, out PropertyInfo currentPropertyInfo))
+                if (reflectedProperties.TryGetValue(key, out var currentPropertyInfo))
                 {
                     var serializedPropertyValue = serializedContentDictionary[key];
 

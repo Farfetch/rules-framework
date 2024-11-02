@@ -11,15 +11,15 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
 
     public class OperatorContainsManyToOneTests : RulesEngineTestsBase
     {
-        private static readonly RulesetNames testContentType = RulesetNames.Sample1;
+        private static readonly RulesetNames testRuleset = RulesetNames.Sample1;
         private readonly Rule<RulesetNames, ConditionNames> expectedMatchRule;
         private readonly Rule<RulesetNames, ConditionNames> otherRule;
 
         public OperatorContainsManyToOneTests()
-            : base(testContentType)
+            : base(testRuleset)
         {
             this.expectedMatchRule = Rule.Create<RulesetNames, ConditionNames>("Expected rule")
-                .InRuleset(testContentType)
+                .InRuleset(testRuleset)
                 .SetContent("Just as expected!")
                 .Since(UtcDate("2020-01-01Z"))
                 .ApplyWhen(ConditionNames.Condition1, Operators.Contains, "Cat")
@@ -27,7 +27,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                 .Rule;
 
             this.otherRule = Rule.Create<RulesetNames, ConditionNames>("Other rule")
-                .InRuleset(testContentType)
+                .InRuleset(testRuleset)
                 .SetContent("Oops! Not expected to be matched.")
                 .Since(UtcDate("2020-01-01Z"))
                 .Build()
@@ -39,7 +39,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public async Task RulesEngine_GivenConditionType1WithArrayOfStringsContainingCat_MatchesExpectedRule(bool compiled)
+        public async Task RulesEngine_GivenCondition1WithArrayOfStringsContainingCat_MatchesExpectedRule(bool compiled)
         {
             // Arrange
             var emptyConditions = new Dictionary<ConditionNames, object>
@@ -58,7 +58,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public async Task RulesEngine_GivenConditionType1WithArrayOfStringsNotContainingCat_MatchesOtherRule(bool compiled)
+        public async Task RulesEngine_GivenCondition1WithArrayOfStringsNotContainingCat_MatchesOtherRule(bool compiled)
         {
             // Arrange
             var emptyConditions = new Dictionary<ConditionNames, object>

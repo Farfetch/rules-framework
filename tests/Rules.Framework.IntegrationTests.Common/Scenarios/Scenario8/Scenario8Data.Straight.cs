@@ -10,7 +10,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
         {
             return new[]
             {
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 6, 5, 4, 3, 2")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight 6, 5, 4, 3, 2")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")
@@ -24,7 +24,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 7, 6, 5, 4, 3")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight 7, 6, 5, 4, 3")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")
@@ -38,7 +38,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 8, 7, 6, 5, 4")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight 8, 7, 6, 5, 4")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")
@@ -52,7 +52,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 9, 8, 7, 6, 5")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight 9, 8, 7, 6, 5")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")
@@ -66,7 +66,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight 10, 9, 8, 7, 6")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight 10, 9, 8, 7, 6")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")
@@ -80,7 +80,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight Jack, 10, 9, 8, 7")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight Jack, 10, 9, 8, 7")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")
@@ -94,7 +94,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight Queen, Jack, 10, 9, 8")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight Queen, Jack, 10, 9, 8")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")
@@ -108,7 +108,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight King, Queen, Jack, 10, 9")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight King, Queen, Jack, 10, 9")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight" })
                     .Since("2000-01-01")

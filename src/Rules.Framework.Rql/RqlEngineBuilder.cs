@@ -5,36 +5,35 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
     using Rules.Framework.Rql.Runtime;
-    using Rules.Framework.Source;
 
-    internal class RqlEngineBuilder<TContentType, TConditionType>
+    internal sealed class RqlEngineBuilder
     {
-        private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
+        private readonly IRulesEngine rulesEngine;
         private RqlOptions options;
 
-        private RqlEngineBuilder(IRulesEngine<TContentType, TConditionType> rulesEngine)
+        private RqlEngineBuilder(IRulesEngine rulesEngine)
         {
             this.rulesEngine = rulesEngine;
         }
 
-        public static RqlEngineBuilder<TContentType, TConditionType> CreateRqlEngine(IRulesEngine<TContentType, TConditionType> rulesEngine)
+        public static RqlEngineBuilder CreateRqlEngine(IRulesEngine rulesEngine)
         {
             if (rulesEngine is null)
             {
                 throw new ArgumentNullException(nameof(rulesEngine));
             }
 
-            return new RqlEngineBuilder<TContentType, TConditionType>(rulesEngine);
+            return new RqlEngineBuilder(rulesEngine);
         }
 
         public IRqlEngine Build()
         {
-            var runtime = RqlRuntime<TContentType, TConditionType>.Create(this.rulesEngine);
+            var runtime = RqlRuntime.Create(this.rulesEngine);
             var tokenScanner = new TokenScanner();
             var parseStrategyProvider = new ParseStrategyPool();
             var parser = new Parser(parseStrategyProvider);
             var reverseRqlBuilder = new ReverseRqlBuilder();
-            var interpreter = new Interpreter<TContentType, TConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
             var args = new RqlEngineArgs
             {
                 Interpreter = interpreter,
@@ -43,10 +42,10 @@ namespace Rules.Framework.Rql
                 TokenScanner = tokenScanner,
             };
 
-            return new RqlEngine<TContentType, TConditionType>(args);
+            return new RqlEngine(args);
         }
 
-        public RqlEngineBuilder<TContentType, TConditionType> WithOptions(RqlOptions options)
+        public RqlEngineBuilder WithOptions(RqlOptions options)
         {
             if (options is null)
             {

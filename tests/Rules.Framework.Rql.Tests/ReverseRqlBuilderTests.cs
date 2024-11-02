@@ -304,8 +304,8 @@ namespace Rules.Framework.Rql.Tests
             Mock.Get(cardinalitySegment)
                 .Setup(x => x.Accept(It.IsAny<ISegmentVisitor<string>>()))
                 .Returns("ONE RULE");
-            var contentTypeExpression = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
-            Mock.Get(contentTypeExpression)
+            var rulesetExpression = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
+            Mock.Get(rulesetExpression)
                 .Setup(x => x.Accept(It.IsAny<IExpressionVisitor<string>>()))
                 .Returns("\"Test\"");
             var matchDateExpression = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
@@ -316,7 +316,7 @@ namespace Rules.Framework.Rql.Tests
             Mock.Get(inputConditionsSegment)
                 .Setup(x => x.Accept(It.IsAny<ISegmentVisitor<string>>()))
                 .Returns("WITH { @TestCondition1 is true }");
-            var matchExpression = MatchExpression.Create(cardinalitySegment, contentTypeExpression, matchDateExpression, inputConditionsSegment);
+            var matchExpression = MatchExpression.Create(cardinalitySegment, rulesetExpression, matchDateExpression, inputConditionsSegment);
 
             var reverseRqlBuilder = new ReverseRqlBuilder();
 
@@ -335,8 +335,8 @@ namespace Rules.Framework.Rql.Tests
             Mock.Get(cardinalitySegment)
                 .Setup(x => x.Accept(It.IsAny<ISegmentVisitor<string>>()))
                 .Returns("ONE RULE");
-            var contentTypeExpression = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
-            Mock.Get(contentTypeExpression)
+            var rulesetExpression = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
+            Mock.Get(rulesetExpression)
                 .Setup(x => x.Accept(It.IsAny<IExpressionVisitor<string>>()))
                 .Returns("\"Test\"");
             var matchDateExpression = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
@@ -347,7 +347,7 @@ namespace Rules.Framework.Rql.Tests
             Mock.Get(inputConditionsSegment)
                 .Setup(x => x.Accept(It.IsAny<ISegmentVisitor<string>>()))
                 .Returns(string.Empty);
-            var matchExpression = MatchExpression.Create(cardinalitySegment, contentTypeExpression, matchDateExpression, inputConditionsSegment);
+            var matchExpression = MatchExpression.Create(cardinalitySegment, rulesetExpression, matchDateExpression, inputConditionsSegment);
 
             var reverseRqlBuilder = new ReverseRqlBuilder();
 
@@ -517,7 +517,7 @@ namespace Rules.Framework.Rql.Tests
         {
             // Act
             var tokens = new Token[operatorTokens.Length];
-            for (int i = 0; i < operatorTokens.Length; i++)
+            for (var i = 0; i < operatorTokens.Length; i++)
             {
                 tokens[i] = Token.Create(
                     operatorTokens[i],
@@ -561,10 +561,10 @@ namespace Rules.Framework.Rql.Tests
         public void VisitSearchExpression_GivenSearchExpressionWithInputConditions_ReturnsRqlRepresentation()
         {
             // Arrange
-            var contentType = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
-            Mock.Get(contentType)
+            var ruleset = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
+            Mock.Get(ruleset)
                 .Setup(x => x.Accept(It.IsAny<IExpressionVisitor<string>>()))
-                .Returns("\"test content type\"");
+                .Returns("\"test ruleset\"");
 
             var dateBegin = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
             Mock.Get(dateBegin)
@@ -581,7 +581,7 @@ namespace Rules.Framework.Rql.Tests
                 .Setup(x => x.Accept(It.IsAny<ISegmentVisitor<string>>()))
                 .Returns("WITH { @TestCondition1 is \"abc\" }");
 
-            var searchExpression = new SearchExpression(contentType, dateBegin, dateEnd, inputConditions);
+            var searchExpression = new SearchExpression(ruleset, dateBegin, dateEnd, inputConditions);
 
             var reverseRqlBuilder = new ReverseRqlBuilder();
 
@@ -589,17 +589,17 @@ namespace Rules.Framework.Rql.Tests
             var actual = reverseRqlBuilder.VisitSearchExpression(searchExpression);
 
             // Assert
-            actual.Should().Be("SEARCH RULES FOR \"test content type\" SINCE $2023-01-01$ UNTIL $2024-01-01$ WITH { @TestCondition1 is \"abc\" }");
+            actual.Should().Be("SEARCH RULES FOR \"test ruleset\" SINCE $2023-01-01$ UNTIL $2024-01-01$ WITH { @TestCondition1 is \"abc\" }");
         }
 
         [Fact]
         public void VisitSearchExpression_GivenSearchExpressionWithoutInputConditions_ReturnsRqlRepresentation()
         {
             // Arrange
-            var contentType = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
-            Mock.Get(contentType)
+            var ruleset = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
+            Mock.Get(ruleset)
                 .Setup(x => x.Accept(It.IsAny<IExpressionVisitor<string>>()))
-                .Returns("\"test content type\"");
+                .Returns("\"test ruleset\"");
 
             var dateBegin = CreateMock<Expression>(RqlSourcePosition.Empty, RqlSourcePosition.Empty);
             Mock.Get(dateBegin)
@@ -616,7 +616,7 @@ namespace Rules.Framework.Rql.Tests
                 .Setup(x => x.Accept(It.IsAny<ISegmentVisitor<string>>()))
                 .Returns(string.Empty);
 
-            var searchExpression = new SearchExpression(contentType, dateBegin, dateEnd, inputConditions);
+            var searchExpression = new SearchExpression(ruleset, dateBegin, dateEnd, inputConditions);
 
             var reverseRqlBuilder = new ReverseRqlBuilder();
 
@@ -624,7 +624,7 @@ namespace Rules.Framework.Rql.Tests
             var actual = reverseRqlBuilder.VisitSearchExpression(searchExpression);
 
             // Assert
-            actual.Should().Be("SEARCH RULES FOR \"test content type\" SINCE $2023-01-01$ UNTIL $2024-01-01$");
+            actual.Should().Be("SEARCH RULES FOR \"test ruleset\" SINCE $2023-01-01$ UNTIL $2024-01-01$");
         }
 
         [Fact]

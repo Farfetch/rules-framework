@@ -10,7 +10,6 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Tokens;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Xunit;
 
     public partial class InterpreterTests
@@ -36,10 +35,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             // Arrange
             var operatorSegment = new OperatorSegment(tokenTypes.Select(tt => NewToken("test", null, (TokenType)tt)).ToArray());
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.VisitOperatorSegment(operatorSegment);
@@ -54,10 +53,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             // Arrange
             var operatorSegment = new OperatorSegment(new[] { NewToken("test", null, TokenType.NOT) });
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actualException = await Assert.ThrowsAsync<NotSupportedException>(async () => await interpreter.VisitOperatorSegment(operatorSegment));
@@ -74,10 +73,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             // Arrange
             var operatorSegment = new OperatorSegment(new[] { NewToken("test", null, (TokenType)tokenType1), NewToken("test", null, (TokenType)tokenType2) });
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actualException = await Assert.ThrowsAsync<NotSupportedException>(async () => await interpreter.VisitOperatorSegment(operatorSegment));

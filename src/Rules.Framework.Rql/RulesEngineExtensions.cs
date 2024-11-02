@@ -5,24 +5,14 @@ namespace Rules.Framework
 
     public static class RulesEngineExtensions
     {
-        public static IRqlEngine GetRqlEngine<TContentType, TConditionType>(this IRulesEngine<TContentType, TConditionType> rulesEngine)
+        public static IRqlEngine GetRqlEngine(this IRulesEngine rulesEngine)
         {
             return rulesEngine.GetRqlEngine(RqlOptions.NewWithDefaults());
         }
 
-        public static IRqlEngine GetRqlEngine<TContentType, TConditionType>(this IRulesEngine<TContentType, TConditionType> rulesEngine, RqlOptions rqlOptions)
+        public static IRqlEngine GetRqlEngine(this IRulesEngine rulesEngine, RqlOptions rqlOptions)
         {
-            if (!IsSupportedType(typeof(TContentType)))
-            {
-                throw new NotSupportedException($"Rule Query Language is only supported for enum types or strings on {nameof(TContentType)}.");
-            }
-
-            if (!IsSupportedType(typeof(TConditionType)))
-            {
-                throw new NotSupportedException($"Rule Query Language is only supported for enum types or strings on {nameof(TConditionType)}.");
-            }
-
-            return RqlEngineBuilder<TContentType, TConditionType>.CreateRqlEngine(rulesEngine)
+            return RqlEngineBuilder.CreateRqlEngine(rulesEngine)
                 .WithOptions(rqlOptions)
                 .Build();
         }

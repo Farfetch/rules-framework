@@ -121,7 +121,7 @@ namespace Rules.Framework.Tests.Extensions
             var expectedRuleContent = "Type1";
             var expectedRootCondition = new
             {
-                ConditionType = ConditionNames.NumberOfSales,
+                Condition = ConditionNames.NumberOfSales,
                 DataType = DataTypes.Integer,
                 LogicalOperator = LogicalOperators.Eval,
                 Operator = Operators.GreaterThan,
@@ -151,7 +151,7 @@ namespace Rules.Framework.Tests.Extensions
             genericRule.RootCondition.Should().BeOfType<ValueConditionNode<ConditionNames>>();
 
             var genericValueRootCondition = genericRule.RootCondition as ValueConditionNode<ConditionNames>;
-            genericValueRootCondition.Condition.Should().Be(expectedRootCondition.ConditionType);
+            genericValueRootCondition.Condition.Should().Be(expectedRootCondition.Condition);
             genericValueRootCondition.DataType.Should().Be(expectedRootCondition.DataType);
             genericValueRootCondition.LogicalOperator.Should().Be(expectedRootCondition.LogicalOperator);
             genericValueRootCondition.Operand.Should().Be(expectedRootCondition.Operand);

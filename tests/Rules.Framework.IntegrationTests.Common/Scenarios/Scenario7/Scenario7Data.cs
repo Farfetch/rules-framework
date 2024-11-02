@@ -4,6 +4,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark2
     using System.Collections.Generic;
     using Rules.Framework;
     using Rules.Framework.Generic;
+    using Rules.Framework.IntegrationTests.Common.Scenarios;
 
     public class Scenario7Data : IScenarioData<Rulesets, ConditionNames>
     {

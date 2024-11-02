@@ -14,20 +14,20 @@ namespace Rules.Framework.Providers.MongoDb.Tests
     public class MongoDbProviderRulesDataSourceTests
     {
         [Fact]
-        public async Task CreateContentTypeAsync_GivenContentTypeName_InsertsContentTypeOnCollection()
+        public async Task CreateRulesetAsync_GivenRulesetName_InsertsRulesetOnCollection()
         {
             // Arrange
-            var contentType = nameof(RulesetNames.RulesetSample);
+            var ruleset = nameof(RulesetNames.RulesetSample);
             RulesetDataModel actual = null;
-            var contentTypesCollection = Mock.Of<IMongoCollection<RulesetDataModel>>();
-            Mock.Get(contentTypesCollection)
+            var rulesetsCollection = Mock.Of<IMongoCollection<RulesetDataModel>>();
+            Mock.Get(rulesetsCollection)
                 .Setup(x => x.InsertOneAsync(It.IsAny<RulesetDataModel>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
-                .Callback<RulesetDataModel, InsertOneOptions, CancellationToken>((ct, _, _) => actual = ct);
+                .Callback<RulesetDataModel, InsertOneOptions, CancellationToken>((r, _, _) => actual = r);
 
             var mongoDatabase = Mock.Of<IMongoDatabase>();
             Mock.Get(mongoDatabase)
                 .Setup(x => x.GetCollection<RulesetDataModel>(It.IsAny<string>(), null))
-                .Returns(contentTypesCollection);
+                .Returns(rulesetsCollection);
 
             var mongoClient = Mock.Of<IMongoClient>();
             Mock.Get(mongoClient)
@@ -48,82 +48,20 @@ namespace Rules.Framework.Providers.MongoDb.Tests
                 ruleFactory);
 
             // Act
-            await mongoDbProviderRulesDataSource.CreateRulesetAsync(contentType);
+            await mongoDbProviderRulesDataSource.CreateRulesetAsync(ruleset);
 
             // Assert
             actual.Should().NotBeNull();
-            actual.Name.Should().Be(contentType);
+            actual.Name.Should().Be(ruleset);
             actual.Id.Should().NotBeEmpty();
             actual.Creation.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(DateTime.UtcNow);
         }
 
         [Fact]
-        public async Task GetContentTypesAsync_NoConditions_ReturnsCollectionOfContentTypes()
+        public async Task GetRulesAsync_GivenRulesetAndDatesInterval_ReturnsCollectionOfRules()
         {
             // Arrange
-            var contentTypeDataModels = new[]
-            {
-                new RulesetDataModel
-                {
-                    Creation = DateTime.UtcNow,
-                    Id = Guid.NewGuid(),
-                    Name = nameof(RulesetNames.RulesetSample),
-                },
-            };
-
-            var fetchedRulesCursor = Mock.Of<IAsyncCursor<RulesetDataModel>>();
-            Mock.Get(fetchedRulesCursor)
-                .SetupSequence(x => x.MoveNextAsync(default))
-                .ReturnsAsync(true)
-                .ReturnsAsync(false);
-            Mock.Get(fetchedRulesCursor)
-                .SetupGet(x => x.Current)
-                .Returns(contentTypeDataModels);
-            Mock.Get(fetchedRulesCursor)
-                .Setup(x => x.Dispose());
-
-            var contentTypesCollection = Mock.Of<IMongoCollection<RulesetDataModel>>();
-            Mock.Get(contentTypesCollection)
-                .Setup(x => x.FindAsync(It.IsAny<FilterDefinition<RulesetDataModel>>(), It.IsAny<FindOptions<RulesetDataModel, RulesetDataModel>>(), default))
-                .ReturnsAsync(fetchedRulesCursor);
-
-            var mongoDatabase = Mock.Of<IMongoDatabase>();
-            Mock.Get(mongoDatabase)
-                .Setup(x => x.GetCollection<RulesetDataModel>(It.IsAny<string>(), null))
-                .Returns(contentTypesCollection);
-
-            var mongoClient = Mock.Of<IMongoClient>();
-            Mock.Get(mongoClient)
-                .Setup(x => x.GetDatabase(It.IsAny<string>(), null))
-                .Returns(mongoDatabase);
-
-            var mongoDbProviderSettings = new MongoDbProviderSettings
-            {
-                DatabaseName = "TestDatabaseName",
-                RulesCollectionName = "TestCollectionName"
-            };
-
-            var ruleFactory = Mock.Of<IRuleFactory>();
-
-            var mongoDbProviderRulesDataSource = new MongoDbProviderRulesDataSource(
-                mongoClient,
-                mongoDbProviderSettings,
-                ruleFactory);
-
-            // Act
-            var actual = await mongoDbProviderRulesDataSource.GetRulesetsAsync();
-
-            // Assert
-            actual.Should().NotBeNull()
-                .And.HaveCount(1)
-                .And.Contain(r => string.Equals(r.Name, nameof(RulesetNames.RulesetSample), StringComparison.Ordinal));
-        }
-
-        [Fact]
-        public async Task GetRulesAsync_GivenContentTypeAndDatesInterval_ReturnsCollectionOfRules()
-        {
-            // Arrange
-            var contentType = RulesetNames.RulesetSample.ToString();
+            var ruleset = RulesetNames.RulesetSample.ToString();
             var dateBegin = new DateTime(2020, 03, 01);
             var dateEnd = new DateTime(2020, 04, 01);
 
@@ -187,11 +125,73 @@ namespace Rules.Framework.Providers.MongoDb.Tests
                 ruleFactory);
 
             // Act
-            var rules = await mongoDbProviderRulesDataSource.GetRulesAsync(contentType, dateBegin, dateEnd);
+            var rules = await mongoDbProviderRulesDataSource.GetRulesAsync(ruleset, dateBegin, dateEnd);
 
             // Assert
             rules.Should().NotBeNull()
                 .And.HaveCount(2);
+        }
+
+        [Fact]
+        public async Task GetRulesetsAsync_NoConditions_ReturnsCollectionOfRulesets()
+        {
+            // Arrange
+            var rulesetDataModels = new[]
+            {
+                new RulesetDataModel
+                {
+                    Creation = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    Name = nameof(RulesetNames.RulesetSample),
+                },
+            };
+
+            var fetchedRulesCursor = Mock.Of<IAsyncCursor<RulesetDataModel>>();
+            Mock.Get(fetchedRulesCursor)
+                .SetupSequence(x => x.MoveNextAsync(default))
+                .ReturnsAsync(true)
+                .ReturnsAsync(false);
+            Mock.Get(fetchedRulesCursor)
+                .SetupGet(x => x.Current)
+                .Returns(rulesetDataModels);
+            Mock.Get(fetchedRulesCursor)
+                .Setup(x => x.Dispose());
+
+            var rulesetsCollection = Mock.Of<IMongoCollection<RulesetDataModel>>();
+            Mock.Get(rulesetsCollection)
+                .Setup(x => x.FindAsync(It.IsAny<FilterDefinition<RulesetDataModel>>(), It.IsAny<FindOptions<RulesetDataModel, RulesetDataModel>>(), default))
+                .ReturnsAsync(fetchedRulesCursor);
+
+            var mongoDatabase = Mock.Of<IMongoDatabase>();
+            Mock.Get(mongoDatabase)
+                .Setup(x => x.GetCollection<RulesetDataModel>(It.IsAny<string>(), null))
+                .Returns(rulesetsCollection);
+
+            var mongoClient = Mock.Of<IMongoClient>();
+            Mock.Get(mongoClient)
+                .Setup(x => x.GetDatabase(It.IsAny<string>(), null))
+                .Returns(mongoDatabase);
+
+            var mongoDbProviderSettings = new MongoDbProviderSettings
+            {
+                DatabaseName = "TestDatabaseName",
+                RulesCollectionName = "TestCollectionName"
+            };
+
+            var ruleFactory = Mock.Of<IRuleFactory>();
+
+            var mongoDbProviderRulesDataSource = new MongoDbProviderRulesDataSource(
+                mongoClient,
+                mongoDbProviderSettings,
+                ruleFactory);
+
+            // Act
+            var actual = await mongoDbProviderRulesDataSource.GetRulesetsAsync();
+
+            // Assert
+            actual.Should().NotBeNull()
+                .And.HaveCount(1)
+                .And.Contain(r => string.Equals(r.Name, nameof(RulesetNames.RulesetSample), StringComparison.Ordinal));
         }
     }
 }

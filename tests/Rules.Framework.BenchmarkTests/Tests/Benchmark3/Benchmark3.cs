@@ -3,6 +3,7 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
     using System.Threading.Tasks;
     using BenchmarkDotNet.Attributes;
     using Rules.Framework.Generic;
+    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8;
 
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark3 : IBenchmark

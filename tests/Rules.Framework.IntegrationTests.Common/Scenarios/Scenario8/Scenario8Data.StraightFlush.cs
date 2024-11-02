@@ -11,7 +11,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
             return new[]
             {
                 // Straight flush of Clubs:
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: 6, 5, 4, 3, 2")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: 6, 5, 4, 3, 2")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -25,7 +25,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: 7, 6, 5, 4, 3")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: 7, 6, 5, 4, 3")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -39,7 +39,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: 8, 7, 6, 5, 4")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: 8, 7, 6, 5, 4")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -53,7 +53,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: 9, 8, 7, 6, 5")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: 9, 8, 7, 6, 5")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -67,7 +67,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: 10, 9, 8, 7, 6")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: 10, 9, 8, 7, 6")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -81,7 +81,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: Jack, 10, 9, 8, 7")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: Jack, 10, 9, 8, 7")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -95,7 +95,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: Queen, Jack, 10, 9, 8")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: Queen, Jack, 10, 9, 8")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -109,7 +109,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Clubs: King, Queen, Jack, 10, 9")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Clubs: King, Queen, Jack, 10, 9")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -125,7 +125,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                     .Build().Rule,
 
                 // Straight flush of Diamonds:
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: 6, 5, 4, 3, 2")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: 6, 5, 4, 3, 2")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -139,7 +139,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: 7, 6, 5, 4, 3")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: 7, 6, 5, 4, 3")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -153,7 +153,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: 8, 7, 6, 5, 4")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: 8, 7, 6, 5, 4")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -167,7 +167,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: 9, 8, 7, 6, 5")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: 9, 8, 7, 6, 5")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -181,7 +181,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: 10, 9, 8, 7, 6")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: 10, 9, 8, 7, 6")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -195,7 +195,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: Jack, 10, 9, 8, 7")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: Jack, 10, 9, 8, 7")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -209,7 +209,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: Queen, Jack, 10, 9, 8")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: Queen, Jack, 10, 9, 8")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -223,7 +223,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Diamonds: King, Queen, Jack, 10, 9")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Diamonds: King, Queen, Jack, 10, 9")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -239,7 +239,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                     .Build().Rule,
 
                 // Straight flush of Hearts:
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: 6, 5, 4, 3, 2")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: 6, 5, 4, 3, 2")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -253,7 +253,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: 7, 6, 5, 4, 3")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: 7, 6, 5, 4, 3")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -267,7 +267,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: 8, 7, 6, 5, 4")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: 8, 7, 6, 5, 4")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -281,7 +281,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: 9, 8, 7, 6, 5")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: 9, 8, 7, 6, 5")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -295,7 +295,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: 10, 9, 8, 7, 6")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: 10, 9, 8, 7, 6")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -309,7 +309,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: Jack, 10, 9, 8, 7")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: Jack, 10, 9, 8, 7")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -323,7 +323,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: Queen, Jack, 10, 9, 8")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: Queen, Jack, 10, 9, 8")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -337,7 +337,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Hearts: King, Queen, Jack, 10, 9")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Hearts: King, Queen, Jack, 10, 9")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -353,7 +353,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                     .Build().Rule,
 
                 // Straight flush of Spades:
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: 6, 5, 4, 3, 2")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: 6, 5, 4, 3, 2")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -367,7 +367,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: 7, 6, 5, 4, 3")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: 7, 6, 5, 4, 3")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -381,7 +381,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: 8, 7, 6, 5, 4")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: 8, 7, 6, 5, 4")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -395,7 +395,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: 9, 8, 7, 6, 5")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: 9, 8, 7, 6, 5")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -409,7 +409,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: 10, 9, 8, 7, 6")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: 10, 9, 8, 7, 6")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -423,7 +423,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: Jack, 10, 9, 8, 7")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: Jack, 10, 9, 8, 7")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -437,7 +437,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: Queen, Jack, 10, 9, 8")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: Queen, Jack, 10, 9, 8")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")
@@ -451,7 +451,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                         )
                     )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Straight flush of Spades: King, Queen, Jack, 10, 9")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Straight flush of Spades: King, Queen, Jack, 10, 9")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Straight Flush" })
                     .Since("2000-01-01")

@@ -4,9 +4,9 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Runtime.Types;
 
     [ExcludeFromCodeCoverage]
-    public class RulesSetResultLine<TContentType, TConditionType>
+    public class RulesSetResultLine
     {
-        internal RulesSetResultLine(int lineNumber, RqlRule<TContentType, TConditionType> rule)
+        internal RulesSetResultLine(int lineNumber, RqlRule rule)
         {
             this.LineNumber = lineNumber;
             this.Rule = rule;
@@ -14,6 +14,6 @@ namespace Rules.Framework.Rql
 
         public int LineNumber { get; }
 
-        public RqlRule<TContentType, TConditionType> Rule { get; }
+        public RqlRule Rule { get; }
     }
 }

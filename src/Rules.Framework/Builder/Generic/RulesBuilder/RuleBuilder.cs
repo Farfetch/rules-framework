@@ -37,10 +37,10 @@ namespace Rules.Framework.Builder.Generic.RulesBuilder
         }
 
         public IRuleBuilder<TRuleset, TCondition> ApplyWhen<TDataType>(
-            TCondition conditionType, Operators condOperator, TDataType operand)
+            TCondition condition, Operators condOperator, TDataType operand)
         {
             var rootConditionNodeBuilder = new RootConditionNodeBuilder<TCondition>();
-            var valueCondition = rootConditionNodeBuilder.Value(conditionType, condOperator, operand);
+            var valueCondition = rootConditionNodeBuilder.Value(condition, condOperator, operand);
             return this.ApplyWhen(valueCondition);
         }
 

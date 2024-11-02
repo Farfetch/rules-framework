@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Tests.Stubs
 {
-    internal enum ContentType
+    internal enum Rulesets
     {
         Type1 = 1,
 

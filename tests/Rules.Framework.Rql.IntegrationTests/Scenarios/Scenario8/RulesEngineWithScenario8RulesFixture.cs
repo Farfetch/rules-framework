@@ -9,8 +9,6 @@ namespace Rules.Framework.Rql.IntegrationTests.Scenarios.Scenario8
         public RulesEngineWithScenario8RulesFixture()
         {
             this.RulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
                 .SetInMemoryDataSource()
                 .Configure(options =>
                 {
@@ -23,7 +21,7 @@ namespace Rules.Framework.Rql.IntegrationTests.Scenarios.Scenario8
             ScenarioLoader.LoadScenarioAsync(this.RulesEngine, scenarioData).GetAwaiter().GetResult();
         }
 
-        public IRulesEngine<ContentTypes, ConditionTypes> RulesEngine { get; private set; }
+        public IRulesEngine RulesEngine { get; private set; }
 
         public void Dispose()
         {

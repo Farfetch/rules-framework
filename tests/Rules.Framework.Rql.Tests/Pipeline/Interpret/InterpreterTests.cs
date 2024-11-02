@@ -11,7 +11,6 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.Types;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Rules.Framework.Rql.Tokens;
     using Xunit;
 
@@ -29,10 +28,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
                 .Throws(expectedException);
             var statements = new[] { mockStatementToExecute.Object };
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.InterpretAsync(statements);
@@ -56,10 +55,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
                 .Returns(Task.FromResult<Framework.Rql.Pipeline.Interpret.IResult>(expected));
             var statements = new[] { mockStatementToExecute.Object };
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.InterpretAsync(statements);
@@ -102,7 +101,7 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
         private static RqlArray NewRqlArray(params IRuntimeValue[] runtimeValues)
         {
             var rqlArray = new RqlArray(runtimeValues.Length);
-            for (int i = 0; i < runtimeValues.Length; i++)
+            for (var i = 0; i < runtimeValues.Length; i++)
             {
                 rqlArray.SetAtIndex(i, NewRqlAny(runtimeValues[i]));
             }

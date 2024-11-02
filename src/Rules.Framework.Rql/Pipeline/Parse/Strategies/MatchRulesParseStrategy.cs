@@ -32,7 +32,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 return Expression.None;
             }
 
-            var contentType = this.ParseExpressionWith<ContentTypeParseStrategy>(parseContext);
+            var ruleset = this.ParseExpressionWith<RulesetParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
                 return Expression.None;
@@ -65,7 +65,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 inputConditionsExpression = Segment.None;
             }
 
-            return MatchExpression.Create(cardinality, contentType, matchDate, inputConditionsExpression);
+            return MatchExpression.Create(cardinality, ruleset, matchDate, inputConditionsExpression);
         }
 
         private Expression ParseDate(ParseContext parseContext)

@@ -10,7 +10,7 @@ namespace Rules.Framework.Rql
     using Rules.Framework.Rql.Pipeline.Scan;
     using Rules.Framework.Rql.Runtime.Types;
 
-    internal class RqlEngine<TContentType, TConditionType> : IRqlEngine
+    internal class RqlEngine : IRqlEngine
     {
         private const string ExceptionMessage = "Errors have occurred processing provided RQL source";
         private const string RqlErrorSourceUnavailable = "<unavailable>";
@@ -89,18 +89,18 @@ namespace Rules.Framework.Rql
             _ => throw new NotSupportedException($"Result of type '{result.GetType().FullName}' is not supported."),
         };
 
-        private static RulesSetResult<TContentType, TConditionType> ConvertToRulesSetResult(ExpressionStatementResult expressionStatementResult)
+        private static RulesSetResult ConvertToRulesSetResult(ExpressionStatementResult expressionStatementResult)
         {
             var rqlArray = (RqlArray)expressionStatementResult.Result;
-            var lines = new List<RulesSetResultLine<TContentType, TConditionType>>(rqlArray.Size);
-            for (int i = 0; i < rqlArray.Size; i++)
+            var lines = new List<RulesSetResultLine>(rqlArray.Size);
+            for (var i = 0; i < rqlArray.Size; i++)
             {
-                var rule = rqlArray.Value[i].Unwrap<RqlRule<TContentType, TConditionType>>();
-                var rulesSetResultLine = new RulesSetResultLine<TContentType, TConditionType>(i + 1, rule);
+                var rule = rqlArray.Value[i].Unwrap<RqlRule>();
+                var rulesSetResultLine = new RulesSetResultLine(i + 1, rule);
                 lines.Add(rulesSetResultLine);
             }
 
-            return new RulesSetResult<TContentType, TConditionType>(expressionStatementResult.Rql, rqlArray.Size, lines);
+            return new RulesSetResult(expressionStatementResult.Rql, rqlArray.Size, lines);
         }
 
         private static bool IsRulesSetResult(ExpressionStatementResult expressionStatementResult)
@@ -112,7 +112,7 @@ namespace Rules.Framework.Rql
                     return false;
                 }
 
-                for (int i = 0; i < rqlArray.Size; i++)
+                for (var i = 0; i < rqlArray.Size; i++)
                 {
                     if (rqlArray.Value[i].UnderlyingType != RqlTypes.Rule)
                     {

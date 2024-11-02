@@ -2,10 +2,10 @@ namespace Rules.Framework.Builder.Validation
 {
     using FluentValidation;
 
-    internal sealed class GenericConditionNodeValidationArgs<TConditionType, TValidationContext>
+    internal sealed class GenericConditionNodeValidationArgs<TCondition, TValidationContext>
     {
-        public GenericComposedConditionNodeValidator<TConditionType> ComposedConditionNodeValidator { get; set; }
+        public GenericComposedConditionNodeValidator<TCondition> ComposedConditionNodeValidator { get; set; }
         public ValidationContext<TValidationContext> ValidationContext { get; set; }
-        public GenericValueConditionNodeValidator<TConditionType> ValueConditionNodeValidator { get; set; }
+        public GenericValueConditionNodeValidator<TCondition> ValueConditionNodeValidator { get; set; }
     }
 }

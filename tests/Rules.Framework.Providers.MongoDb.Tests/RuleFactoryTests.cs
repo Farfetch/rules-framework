@@ -99,7 +99,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests
             var ruleDataModel = new RuleDataModel
             {
                 Content = content,
-                Ruleset = "ContentTypeSample",
+                Ruleset = "RulesetSample",
                 DateBegin = new System.DateTime(2020, 1, 1),
                 DateEnd = null,
                 Name = "My rule used for testing purposes",

@@ -3,19 +3,19 @@ namespace Rules.Framework.Builder.Validation
     using FluentValidation;
     using Rules.Framework.Generic;
 
-    internal sealed class GenericRuleValidator<TContentType, TConditionType> : AbstractValidator<Rule<TContentType, TConditionType>>
+    internal sealed class GenericRuleValidator<TRuleset, TCondition> : AbstractValidator<Rule<TRuleset, TCondition>>
     {
-        private static GenericRuleValidator<TContentType, TConditionType> ruleValidator;
+        private static GenericRuleValidator<TRuleset, TCondition> ruleValidator;
 
-        private readonly GenericComposedConditionNodeValidator<TConditionType> composedConditionNodeValidator;
+        private readonly GenericComposedConditionNodeValidator<TCondition> composedConditionNodeValidator;
 
-        private readonly GenericValueConditionNodeValidator<TConditionType> valueConditionNodeValidator;
+        private readonly GenericValueConditionNodeValidator<TCondition> valueConditionNodeValidator;
 
         private GenericRuleValidator()
         {
-            this.composedConditionNodeValidator = new GenericComposedConditionNodeValidator<TConditionType>();
-            this.valueConditionNodeValidator = new GenericValueConditionNodeValidator<TConditionType>();
-            this.RuleFor(r => r.RootCondition).Custom((cn, cc) => cn.PerformValidation(new GenericConditionNodeValidationArgs<TConditionType, Rule<TContentType, TConditionType>>
+            this.composedConditionNodeValidator = new GenericComposedConditionNodeValidator<TCondition>();
+            this.valueConditionNodeValidator = new GenericValueConditionNodeValidator<TCondition>();
+            this.RuleFor(r => r.RootCondition).Custom((cn, cc) => cn.PerformValidation(new GenericConditionNodeValidationArgs<TCondition, Rule<TRuleset, TCondition>>
             {
                 ComposedConditionNodeValidator = this.composedConditionNodeValidator,
                 ValidationContext = cc,
@@ -23,11 +23,11 @@ namespace Rules.Framework.Builder.Validation
             }));
         }
 
-        public static GenericRuleValidator<TContentType, TConditionType> Instance
+        public static GenericRuleValidator<TRuleset, TCondition> Instance
         {
             get
             {
-                ruleValidator ??= new GenericRuleValidator<TContentType, TConditionType>();
+                ruleValidator ??= new GenericRuleValidator<TRuleset, TCondition>();
 
                 return ruleValidator;
             }

@@ -2,7 +2,6 @@ namespace Rules.Framework.Rql.Tests.Runtime
 {
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Core;
     using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.RuleManipulation;
     using Rules.Framework.Rql.Runtime.Types;
@@ -89,8 +88,8 @@ namespace Rules.Framework.Rql.Tests.Runtime
         public void ApplyBinary_ErrorConditions_ThrowsRuntimeException(object left, object @operator, object right, string expectedErrorMessage)
         {
             // Arrange
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rulesEngine = Mock.Of<IRulesEngine>();
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var runtimeException = Assert.Throws<RuntimeException>(() => rqlRuntime.ApplyBinary((IRuntimeValue)left, (RqlOperators)@operator, (IRuntimeValue)right));
@@ -104,8 +103,8 @@ namespace Rules.Framework.Rql.Tests.Runtime
         public void ApplyBinary_SuccessConditions_ReturnsBinaryResult(object left, object @operator, object right, object expected)
         {
             // Arrange
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rulesEngine = Mock.Of<IRulesEngine>();
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var actual = rqlRuntime.ApplyBinary((IRuntimeValue)left, (RqlOperators)@operator, (IRuntimeValue)right);
@@ -119,8 +118,8 @@ namespace Rules.Framework.Rql.Tests.Runtime
         public void ApplyUnary_ErrorConditions_ThrowsRuntimeException(object operand, object @operator, string expectedErrorMessage)
         {
             // Arrange
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rulesEngine = Mock.Of<IRulesEngine>();
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var runtimeException = Assert.Throws<RuntimeException>(() => rqlRuntime.ApplyUnary((IRuntimeValue)operand, (RqlOperators)@operator));
@@ -134,8 +133,8 @@ namespace Rules.Framework.Rql.Tests.Runtime
         public void ApplyUnary_SuccessConditions_ReturnsUnaryResult(object operand, object @operator, object expected)
         {
             // Arrange
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rulesEngine = Mock.Of<IRulesEngine>();
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var actual = rqlRuntime.ApplyUnary((IRuntimeValue)operand, (RqlOperators)@operator);
@@ -148,10 +147,10 @@ namespace Rules.Framework.Rql.Tests.Runtime
         public void Create_GivenRulesEngine_ReturnsNewRqlRuntime()
         {
             // Arrange
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
+            var rulesEngine = Mock.Of<IRulesEngine>();
 
             // Act
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Assert
             rqlRuntime.Should().NotBeNull();
@@ -162,28 +161,28 @@ namespace Rules.Framework.Rql.Tests.Runtime
         {
             // Arrange
             const MatchCardinality matchCardinality = MatchCardinality.All;
-            const ContentType contentType = ContentType.Type1;
+            var ruleset = nameof(Rulesets.Type1);
             var matchDate = new RqlDate(DateTime.Parse("2024-04-13Z"));
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal)
             {
-                new Condition<ConditionType>(ConditionType.IsoCountryCode, "PT")
+                { nameof(Conditions.IsoCountryCode), "PT" },
             };
-            var matchRulesArgs = new MatchRulesArgs<ContentType, ConditionType>
+            var matchRulesArgs = new MatchRulesArgs
             {
                 Conditions = conditions,
-                ContentType = contentType,
+                Ruleset = ruleset,
                 MatchCardinality = matchCardinality,
                 MatchDate = matchDate,
             };
 
-            var expectedRule1 = BuildRule("Rule 1", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), contentType);
-            var expectedRule2 = BuildRule("Rule 2", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), contentType);
+            var expectedRule1 = BuildRule("Rule 1", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), ruleset);
+            var expectedRule2 = BuildRule("Rule 2", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), ruleset);
             var expectedRules = new[] { expectedRule1, expectedRule2 };
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
+            var rulesEngine = Mock.Of<IRulesEngine>();
             Mock.Get(rulesEngine)
-                .Setup(x => x.MatchManyAsync(contentType, matchDate.Value, It.Is<IEnumerable<Condition<ConditionType>>>(c => c.SequenceEqual(conditions))))
+                .Setup(x => x.MatchManyAsync(ruleset, matchDate.Value, It.Is<IDictionary<string, object>>(c => c.SequenceEqual(conditions))))
                 .ReturnsAsync(expectedRules);
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var actual = await rqlRuntime.MatchRulesAsync(matchRulesArgs);
@@ -191,9 +190,9 @@ namespace Rules.Framework.Rql.Tests.Runtime
             // Assert
             actual.Should().NotBeNull();
             actual.Size.Value.Should().Be(2);
-            actual.Value[0].Unwrap().Should().BeOfType<RqlRule<ContentType, ConditionType>>()
+            actual.Value[0].Unwrap().Should().BeOfType<RqlRule>()
                 .Subject.Value.Should().BeSameAs(expectedRule1);
-            actual.Value[1].Unwrap().Should().BeOfType<RqlRule<ContentType, ConditionType>>()
+            actual.Value[1].Unwrap().Should().BeOfType<RqlRule>()
                 .Subject.Value.Should().BeSameAs(expectedRule2);
         }
 
@@ -202,19 +201,19 @@ namespace Rules.Framework.Rql.Tests.Runtime
         {
             // Arrange
             const MatchCardinality matchCardinality = MatchCardinality.None;
-            const ContentType contentType = ContentType.Type1;
+            var ruleset = nameof(Rulesets.Type1);
             var matchDate = new RqlDate(DateTime.Parse("2024-04-13Z"));
-            var conditions = Array.Empty<Condition<ConditionType>>();
-            var matchRulesArgs = new MatchRulesArgs<ContentType, ConditionType>
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal);
+            var matchRulesArgs = new MatchRulesArgs
             {
                 Conditions = conditions,
-                ContentType = contentType,
+                Ruleset = ruleset,
                 MatchCardinality = matchCardinality,
                 MatchDate = matchDate,
             };
 
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rulesEngine = Mock.Of<IRulesEngine>();
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var actual = await Assert.ThrowsAsync<ArgumentException>(async () => await rqlRuntime.MatchRulesAsync(matchRulesArgs));
@@ -230,25 +229,25 @@ namespace Rules.Framework.Rql.Tests.Runtime
         {
             // Arrange
             const MatchCardinality matchCardinality = MatchCardinality.One;
-            const ContentType contentType = ContentType.Type1;
+            var ruleset = nameof(Rulesets.Type1);
             var matchDate = new RqlDate(DateTime.Parse("2024-04-13Z"));
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal)
             {
-                new Condition<ConditionType>(ConditionType.IsoCountryCode, "PT")
+                { nameof(Conditions.IsoCountryCode), "PT" },
             };
-            var matchRulesArgs = new MatchRulesArgs<ContentType, ConditionType>
+            var matchRulesArgs = new MatchRulesArgs
             {
                 Conditions = conditions,
-                ContentType = contentType,
+                Ruleset = ruleset,
                 MatchCardinality = matchCardinality,
                 MatchDate = matchDate,
             };
 
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
+            var rulesEngine = Mock.Of<IRulesEngine>();
             Mock.Get(rulesEngine)
-                .Setup(x => x.MatchOneAsync(contentType, matchDate.Value, It.Is<IEnumerable<Condition<ConditionType>>>(c => c.SequenceEqual(conditions))))
-                .Returns(Task.FromResult<Rule<ContentType, ConditionType>>(null!));
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+                .Setup(x => x.MatchOneAsync(ruleset, matchDate.Value, It.Is<IDictionary<string, object>>(c => c.SequenceEqual(conditions))))
+                .Returns(Task.FromResult<Rule>(null!));
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var actual = await rqlRuntime.MatchRulesAsync(matchRulesArgs);
@@ -263,26 +262,26 @@ namespace Rules.Framework.Rql.Tests.Runtime
         {
             // Arrange
             const MatchCardinality matchCardinality = MatchCardinality.One;
-            const ContentType contentType = ContentType.Type1;
+            var ruleset = nameof(Rulesets.Type1);
             var matchDate = new RqlDate(DateTime.Parse("2024-04-13Z"));
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal)
             {
-                new Condition<ConditionType>(ConditionType.IsoCountryCode, "PT")
+                { nameof(Conditions.IsoCountryCode), "PT" },
             };
-            var matchRulesArgs = new MatchRulesArgs<ContentType, ConditionType>
+            var matchRulesArgs = new MatchRulesArgs
             {
                 Conditions = conditions,
-                ContentType = contentType,
+                Ruleset = ruleset,
                 MatchCardinality = matchCardinality,
                 MatchDate = matchDate,
             };
 
-            var expectedRule = BuildRule("Rule 1", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), contentType);
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
+            var expectedRule = BuildRule("Rule 1", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), ruleset);
+            var rulesEngine = Mock.Of<IRulesEngine>();
             Mock.Get(rulesEngine)
-                .Setup(x => x.MatchOneAsync(contentType, matchDate.Value, It.Is<IEnumerable<Condition<ConditionType>>>(c => c.SequenceEqual(conditions))))
+                .Setup(x => x.MatchOneAsync(ruleset, matchDate.Value, It.Is<IDictionary<string, object>>(c => c.SequenceEqual(conditions))))
                 .ReturnsAsync(expectedRule);
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var actual = await rqlRuntime.MatchRulesAsync(matchRulesArgs);
@@ -290,7 +289,7 @@ namespace Rules.Framework.Rql.Tests.Runtime
             // Assert
             actual.Should().NotBeNull();
             actual.Size.Value.Should().Be(1);
-            actual.Value[0].Unwrap().Should().BeOfType<RqlRule<ContentType, ConditionType>>()
+            actual.Value[0].Unwrap().Should().BeOfType<RqlRule>()
                 .Subject.Value.Should().BeSameAs(expectedRule);
         }
 
@@ -298,33 +297,33 @@ namespace Rules.Framework.Rql.Tests.Runtime
         public async Task MatchSearchRulesAsync_GivenSearchArgs_ReturnsRqlArrayWithTwoRules()
         {
             // Arrange
-            const ContentType contentType = ContentType.Type1;
+            var ruleset = nameof(Rulesets.Type1);
             var dateBegin = new RqlDate(DateTime.Parse("2020-01-01Z"));
             var dateEnd = new RqlDate(DateTime.Parse("2030-01-01Z"));
-            var conditions = new[]
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal)
             {
-                new Condition<ConditionType>(ConditionType.IsoCountryCode, "PT")
+                { nameof(Conditions.IsoCountryCode), "PT" },
             };
-            var searchRulesArgs = new SearchRulesArgs<ContentType, ConditionType>
+            var searchRulesArgs = new SearchRulesArgs
             {
                 Conditions = conditions,
-                ContentType = contentType,
+                Ruleset = ruleset,
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
             };
 
-            var expectedRule1 = BuildRule("Rule 1", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), contentType);
-            var expectedRule2 = BuildRule("Rule 2", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), contentType);
+            var expectedRule1 = BuildRule("Rule 1", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), ruleset);
+            var expectedRule2 = BuildRule("Rule 2", DateTime.Parse("2024-01-01Z"), DateTime.Parse("2025-01-01Z"), new object(), ruleset);
             var expectedRules = new[] { expectedRule1, expectedRule2 };
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
+            var rulesEngine = Mock.Of<IRulesEngine>();
             Mock.Get(rulesEngine)
-                .Setup(x => x.SearchAsync(It.Is<SearchArgs<ContentType, ConditionType>>(c => c.ExcludeRulesWithoutSearchConditions == true
+                .Setup(x => x.SearchAsync(It.Is<SearchArgs<string, string>>(c => c.ExcludeRulesWithoutSearchConditions == true
                     && c.Conditions.Equals(searchRulesArgs.Conditions)
-                    && c.ContentType.Equals(searchRulesArgs.ContentType)
+                    && c.Ruleset.Equals(searchRulesArgs.Ruleset)
                     && c.DateBegin.Equals(searchRulesArgs.DateBegin.Value)
                     && c.DateEnd.Equals(searchRulesArgs.DateEnd.Value))))
                 .ReturnsAsync(expectedRules);
-            var rqlRuntime = RqlRuntime<ContentType, ConditionType>.Create(rulesEngine);
+            var rqlRuntime = RqlRuntime.Create(rulesEngine);
 
             // Act
             var actual = await rqlRuntime.SearchRulesAsync(searchRulesArgs);
@@ -332,19 +331,17 @@ namespace Rules.Framework.Rql.Tests.Runtime
             // Assert
             actual.Should().NotBeNull();
             actual.Size.Value.Should().Be(2);
-            actual.Value[0].Unwrap().Should().BeOfType<RqlRule<ContentType, ConditionType>>()
+            actual.Value[0].Unwrap().Should().BeOfType<RqlRule>()
                 .Subject.Value.Should().BeSameAs(expectedRule1);
-            actual.Value[1].Unwrap().Should().BeOfType<RqlRule<ContentType, ConditionType>>()
+            actual.Value[1].Unwrap().Should().BeOfType<RqlRule>()
                 .Subject.Value.Should().BeSameAs(expectedRule2);
         }
 
-        private static Rule<ContentType, ConditionType> BuildRule(string name, DateTime dateBegin, DateTime? dateEnd, object content, ContentType contentType)
-        {
-            return RuleBuilder.NewRule<ContentType, ConditionType>()
-                .WithName(name)
-                .WithDatesInterval(dateBegin, dateEnd.GetValueOrDefault())
-                .WithContent(contentType, content)
+        private static Rule BuildRule(string name, DateTime dateBegin, DateTime? dateEnd, object content, string ruleset)
+            => Rule.Create(name)
+                .InRuleset(ruleset)
+                .SetContent(content)
+                .Since(dateBegin).Until(dateEnd)
                 .Build().Rule;
-        }
     }
 }

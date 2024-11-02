@@ -164,7 +164,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = RulesetNames.Type1.ToString(),
+                Ruleset = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
@@ -214,7 +214,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = RulesetNames.Type1.ToString(),
+                Ruleset = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
@@ -264,7 +264,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = RulesetNames.Type1.ToString(),
+                Ruleset = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };

@@ -8,30 +8,30 @@ namespace Rules.Framework.Rql.Ast.Expressions
     {
         private MatchExpression(
             Segment cardinality,
-            Expression contentType,
+            Expression ruleset,
             Expression matchDate,
             Segment inputConditions)
             : base(cardinality.BeginPosition, inputConditions?.EndPosition ?? matchDate.EndPosition)
         {
             this.Cardinality = cardinality;
-            this.ContentType = contentType;
-            this.MatchDate = matchDate;
             this.InputConditions = inputConditions;
+            this.MatchDate = matchDate;
+            this.Ruleset = ruleset;
         }
 
         public Segment Cardinality { get; }
-
-        public Expression ContentType { get; }
 
         public Segment InputConditions { get; }
 
         public Expression MatchDate { get; }
 
+        public Expression Ruleset { get; }
+
         public static MatchExpression Create(Segment cardinality,
-            Expression contentType,
+            Expression ruleset,
             Expression matchDate,
             Segment inputConditions)
-            => new(cardinality, contentType, matchDate, inputConditions);
+            => new(cardinality, ruleset, matchDate, inputConditions);
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitMatchExpression(this);
     }

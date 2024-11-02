@@ -2,7 +2,6 @@ namespace Rules.Framework.Rql.Tests
 {
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Xunit;
 
     public class RqlEngineBuilderTests
@@ -11,11 +10,11 @@ namespace Rules.Framework.Rql.Tests
         public void Build_GivenNullRqlOptions_ThrowsArgumentNullException()
         {
             // Arrange
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
+            var rulesEngine = Mock.Of<IRulesEngine>();
 
             // Act
             var argumentNullException = Assert.Throws<ArgumentNullException>(() =>
-                RqlEngineBuilder<ContentType, ConditionType>.CreateRqlEngine(rulesEngine)
+                RqlEngineBuilder.CreateRqlEngine(rulesEngine)
                     .WithOptions(null));
 
             // Assert
@@ -28,7 +27,7 @@ namespace Rules.Framework.Rql.Tests
         {
             // Act
             var argumentNullException = Assert.Throws<ArgumentNullException>(() =>
-                RqlEngineBuilder<ContentType, ConditionType>.CreateRqlEngine(null));
+                RqlEngineBuilder.CreateRqlEngine(null));
 
             // Assert
             argumentNullException.Should().NotBeNull();
@@ -39,11 +38,11 @@ namespace Rules.Framework.Rql.Tests
         public void Build_GivenRulesEngineAndRqlOptions_BuildsRqlEngine()
         {
             // Arrange
-            var rulesEngine = Mock.Of<IRulesEngine<ContentType, ConditionType>>();
+            var rulesEngine = Mock.Of<IRulesEngine>();
             var rqlOptions = RqlOptions.NewWithDefaults();
 
             // Act
-            var rqlEngine = RqlEngineBuilder<ContentType, ConditionType>.CreateRqlEngine(rulesEngine)
+            var rqlEngine = RqlEngineBuilder.CreateRqlEngine(rulesEngine)
                 .WithOptions(rqlOptions)
                 .Build();
 

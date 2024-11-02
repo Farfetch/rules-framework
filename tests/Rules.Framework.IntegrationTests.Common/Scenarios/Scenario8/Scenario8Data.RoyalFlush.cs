@@ -10,7 +10,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
         {
             return new[]
             {
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Clubs: Ace, King, Queen, Jack, 10")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Royal flush of Clubs: Ace, King, Queen, Jack, 10")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
                     .Since("2000-01-01")
@@ -24,7 +24,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                             )
                         )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Diamonds: Ace, King, Queen, Jack, 10")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Royal flush of Diamonds: Ace, King, Queen, Jack, 10")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
                     .Since("2000-01-01")
@@ -38,7 +38,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                             )
                         )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Hearts: Ace, King, Queen, Jack, 10")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Royal flush of Hearts: Ace, King, Queen, Jack, 10")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
                     .Since("2000-01-01")
@@ -52,7 +52,7 @@ namespace Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8
                             )
                         )
                     .Build().Rule,
-                Rule.Create<PokerRulesets, PokerConditions>("Benchmark 3 - Royal flush of Spades: Ace, King, Queen, Jack, 10")
+                Rule.Create<PokerRulesets, PokerConditions>("Scenario 8 - Royal flush of Spades: Ace, King, Queen, Jack, 10")
                     .InRuleset(PokerRulesets.TexasHoldemPokerSingleCombinations)
                     .SetContent(new SingleCombinationPokerScore { Combination = "Royal Flush" })
                     .Since("2000-01-01")

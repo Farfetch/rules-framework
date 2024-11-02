@@ -25,15 +25,15 @@ namespace Rules.Framework.IntegrationTests
             {
                 var contents = await streamReader.ReadToEndAsync();
                 var ruleDataModels = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents);
-                var addedContentTypes = new HashSet<TRuleset>();
+                var addedRulesets = new HashSet<TRuleset>();
 
                 foreach (var ruleDataModel in ruleDataModels)
                 {
-                    var contentType = GetRuleset<TRuleset>(ruleDataModel.Ruleset);
-                    if (!addedContentTypes.Contains(contentType))
+                    var ruleset = GetRuleset<TRuleset>(ruleDataModel.Ruleset);
+                    if (!addedRulesets.Contains(ruleset))
                     {
-                        await rulesEngine.CreateRulesetAsync(contentType);
-                        addedContentTypes.Add(contentType);
+                        await rulesEngine.CreateRulesetAsync(ruleset);
+                        addedRulesets.Add(ruleset);
                     }
 
                     object content;
@@ -47,7 +47,7 @@ namespace Rules.Framework.IntegrationTests
                     }
 
                     var ruleBuilder = Rule.Create<TRuleset, TCondition>(ruleDataModel.Name)
-                        .InRuleset(contentType)
+                        .InRuleset(ruleset)
                         .SetContent(content)
                         .Since(ruleDataModel.DateBegin)
                         .Until(ruleDataModel.DateEnd);

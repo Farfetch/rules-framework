@@ -4,14 +4,14 @@ namespace Rules.Framework.Rql.Runtime
     using Rules.Framework.Rql.Runtime.RuleManipulation;
     using Rules.Framework.Rql.Runtime.Types;
 
-    internal sealed class MatchRulesArgs<TContentType, TConditionType>
+    internal sealed class MatchRulesArgs
     {
-        public IEnumerable<Condition<TConditionType>> Conditions { get; set; }
-
-        public TContentType ContentType { get; set; }
+        public IDictionary<string, object> Conditions { get; set; }
 
         public MatchCardinality MatchCardinality { get; set; }
 
         public RqlDate MatchDate { get; set; }
+
+        public string Ruleset { get; set; }
     }
 }

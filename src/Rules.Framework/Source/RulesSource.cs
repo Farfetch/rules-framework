@@ -170,7 +170,7 @@ namespace Rules.Framework.Source
         {
             GetRulesDelegate action =
                 async (args)
-                    => await rulesDataSource.GetRulesAsync(args.ContentType, args.DateBegin, args.DateEnd).ConfigureAwait(false);
+                    => await rulesDataSource.GetRulesAsync(args.Ruleset, args.DateBegin, args.DateEnd).ConfigureAwait(false);
 
             if (middlewares.Count > 0)
             {

@@ -15,6 +15,7 @@ namespace Rules.Framework.Rql.Runtime.Types
             Object = new RqlType("object");
             ReadOnlyObject = new RqlType("read_only_object");
             Rule = new RqlType("rule");
+            Ruleset = new RqlType("ruleset");
             String = new RqlType("string");
 
             // Register assignables.
@@ -27,6 +28,7 @@ namespace Rules.Framework.Rql.Runtime.Types
             Object.AddAssignableType(Any);
             ReadOnlyObject.AddAssignableType(Any);
             Rule.AddAssignableType(Any);
+            Ruleset.AddAssignableType(Any);
             String.AddAssignableType(Any);
         }
 
@@ -49,6 +51,8 @@ namespace Rules.Framework.Rql.Runtime.Types
         public static RqlType ReadOnlyObject { get; }
 
         public static RqlType Rule { get; }
+
+        public static RqlType Ruleset { get; }
 
         public static RqlType String { get; }
     }

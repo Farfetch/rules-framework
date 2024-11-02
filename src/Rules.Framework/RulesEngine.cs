@@ -79,8 +79,8 @@ namespace Rules.Framework
                 throw new ArgumentNullException(nameof(ruleset));
             }
 
-            var getContentTypesArgs = new GetRulesetsArgs();
-            var existentRulesets = await this.rulesSource.GetRulesetsAsync(getContentTypesArgs).ConfigureAwait(false);
+            var getRulesetArgs = new GetRulesetsArgs();
+            var existentRulesets = await this.rulesSource.GetRulesetsAsync(getRulesetArgs).ConfigureAwait(false);
             if (existentRulesets.Any(rs => string.Equals(rs.Name, ruleset, StringComparison.Ordinal)))
             {
                 return OperationResult.Failure($"The ruleset '{ruleset}' already exists.");
@@ -118,9 +118,9 @@ namespace Rules.Framework
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ruleset,
                 DateBegin = dateBegin,
                 DateEnd = dateEnd,
+                Ruleset = ruleset,
             };
 
             var matchedRules = await this.rulesSource.GetRulesAsync(getRulesArgs).ConfigureAwait(false);
@@ -147,9 +147,9 @@ namespace Rules.Framework
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ruleset,
                 DateBegin = matchDateTime,
                 DateEnd = matchDateTime,
+                Ruleset = ruleset,
             };
 
             var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
@@ -175,9 +175,9 @@ namespace Rules.Framework
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ruleset,
                 DateBegin = matchDateTime,
                 DateEnd = matchDateTime,
+                Ruleset = ruleset,
             };
 
             var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
@@ -219,9 +219,9 @@ namespace Rules.Framework
 
             var getRulesArgs = new GetRulesArgs
             {
-                ContentType = searchArgs.Ruleset,
                 DateBegin = searchArgs.DateBegin,
                 DateEnd = searchArgs.DateEnd,
+                Ruleset = searchArgs.Ruleset,
             };
 
             var orderedRules = await this.GetRulesOrderedAscendingAsync(getRulesArgs).ConfigureAwait(false);
@@ -373,8 +373,8 @@ namespace Rules.Framework
 
         private async Task<OperationResult> CreateRulesetInternalAsync(string ruleset)
         {
-            var createContentTypeArgs = new CreateRulesetArgs { Name = ruleset };
-            await this.rulesSource.CreateRulesetAsync(createContentTypeArgs).ConfigureAwait(false);
+            var createRulesetArgs = new CreateRulesetArgs { Name = ruleset };
+            await this.rulesSource.CreateRulesetAsync(createRulesetArgs).ConfigureAwait(false);
             return OperationResult.Success();
         }
 

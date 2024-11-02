@@ -17,7 +17,7 @@ namespace Rules.Framework.Generic.ConditionNodes
         private readonly ValueConditionNode valueConditionNode;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueConditionNode{TConditionType}"/> class.
+        /// Initializes a new instance of the <see cref="ValueConditionNode{TCondition}"/> class.
         /// </summary>
         /// <param name="valueConditionNode">The value condition node.</param>
         public ValueConditionNode(ValueConditionNode valueConditionNode)

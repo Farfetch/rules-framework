@@ -12,7 +12,6 @@ namespace Rules.Framework.Rql.Tests
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
     using Rules.Framework.Rql.Runtime.Types;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Rules.Framework.Rql.Tests.TestStubs;
     using Rules.Framework.Rql.Tokens;
     using Xunit;
@@ -21,7 +20,7 @@ namespace Rules.Framework.Rql.Tests
     {
         private readonly IInterpreter interpreter;
         private readonly IParser parser;
-        private readonly RqlEngine<ContentType, ConditionType> rqlEngine;
+        private readonly RqlEngine rqlEngine;
         private readonly ITokenScanner tokenScanner;
 
         public RqlEngineTests()
@@ -36,7 +35,7 @@ namespace Rules.Framework.Rql.Tests
                 TokenScanner = tokenScanner,
             };
 
-            this.rqlEngine = new RqlEngine<ContentType, ConditionType>(rqlEngineArgs);
+            this.rqlEngine = new RqlEngine(rqlEngineArgs);
         }
 
         [Fact]
@@ -96,7 +95,7 @@ namespace Rules.Framework.Rql.Tests
                         Segment.None)),
             }.ToList().AsReadOnly();
             var parseResult = ParseResult.CreateSuccess(statements, new List<Message>());
-            var rqlRule = new RqlRule<ContentType, ConditionType>();
+            var rqlRule = new RqlRule();
             var rqlArray = new RqlArray(1);
             rqlArray.SetAtIndex(0, rqlRule);
             var interpretResult = new InterpretResult();
@@ -131,10 +130,10 @@ namespace Rules.Framework.Rql.Tests
                 .Rql.Should().Be("MATCH ONE RULE FOR \"Test\" ON $2023-01-01Z$;");
             var result2 = results.LastOrDefault();
             result2.Should().NotBeNull()
-                .And.BeOfType<RulesSetResult<ContentType, ConditionType>>();
-            result2.As<RulesSetResult<ContentType, ConditionType>>()
+                .And.BeOfType<RulesSetResult>();
+            result2.As<RulesSetResult>()
                 .Rql.Should().Be("MATCH ONE RULE FOR \"Other\\nTest\" ON $2024-01-01Z$;");
-            result2.As<RulesSetResult<ContentType, ConditionType>>()
+            result2.As<RulesSetResult>()
                 .Lines.Should().HaveCount(1)
                 .And.Contain(line => line.LineNumber == 1 && object.Equals(line.Rule, rqlRule));
         }

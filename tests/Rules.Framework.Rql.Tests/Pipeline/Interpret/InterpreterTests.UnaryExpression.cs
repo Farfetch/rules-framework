@@ -8,7 +8,6 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
     using Rules.Framework.Rql.Runtime.Types;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Xunit;
 
     public partial class InterpreterTests
@@ -21,13 +20,13 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var targetExpression = CreateMockedExpression(NewRqlInteger(10));
             var unaryExpression = new UnaryExpression(minusToken, targetExpression);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             Mock.Get(runtime)
                 .Setup(x => x.ApplyUnary(new RqlInteger(10), RqlOperators.Minus))
                 .Returns(new RqlInteger(-10));
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.VisitUnaryExpression(unaryExpression);
@@ -45,13 +44,13 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var targetExpression = CreateMockedExpression(NewRqlInteger(10));
             var unaryExpression = new UnaryExpression(minusToken, targetExpression);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             Mock.Get(runtime)
                 .Setup(x => x.ApplyUnary(new RqlInteger(10), RqlOperators.None))
                 .Throws(new RuntimeException("Unexpected operator"));
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actualException = await Assert.ThrowsAsync<InterpreterException>(async () => await interpreter.VisitUnaryExpression(unaryExpression));

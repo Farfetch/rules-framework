@@ -85,14 +85,14 @@ namespace Rules.Framework.Tests.Builder
         [Theory]
         [InlineData(Operators.Contains)]
         [InlineData(Operators.NotContains)]
-        public void NewRule_GivenRuleWithIntegerConditionTypeAndContainsOperator_ReturnsInvalidRuleResult(Operators containsOperator)
+        public void NewRule_GivenRuleWithIntegerConditionAndContainsOperator_ReturnsInvalidRuleResult(Operators containsOperator)
         {
             // Arrange
             var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
             var ruleset = RulesetNames.Type1;
             var content = "Content";
-            const ConditionNames conditionType = ConditionNames.NumberOfSales;
+            const ConditionNames condition = ConditionNames.NumberOfSales;
             const int conditionValue = 40;
             var conditionOperator = containsOperator;
             const DataTypes dataType = DataTypes.Integer;
@@ -102,7 +102,7 @@ namespace Rules.Framework.Tests.Builder
                 .InRuleset(ruleset)
                 .SetContent(content)
                 .Since(dateBegin)
-                .ApplyWhen(conditionType, conditionOperator, conditionValue)
+                .ApplyWhen(condition, conditionOperator, conditionValue)
                 .Build();
 
             // Assert
@@ -117,14 +117,14 @@ namespace Rules.Framework.Tests.Builder
         [Theory]
         [InlineData(Operators.Contains)]
         [InlineData(Operators.NotContains)]
-        public void NewRule_GivenRuleWithStringConditionTypeAndContainsOperator_BuildsAndReturnsRule(Operators containsOperator)
+        public void NewRule_GivenRuleWithStringConditionAndContainsOperator_BuildsAndReturnsRule(Operators containsOperator)
         {
             // Arrange
             var ruleName = "Rule 1";
             var dateBegin = DateTime.Parse("2021-01-01");
             var ruleset = RulesetNames.Type1;
             var content = "Content";
-            const ConditionNames conditionType = ConditionNames.IsoCountryCode;
+            const ConditionNames condition = ConditionNames.IsoCountryCode;
             const string conditionValue = "PT";
             var conditionOperator = containsOperator;
             const LogicalOperators logicalOperator = LogicalOperators.Eval;
@@ -135,7 +135,7 @@ namespace Rules.Framework.Tests.Builder
                 .InRuleset(ruleset)
                 .SetContent(content)
                 .Since(dateBegin)
-                .ApplyWhen(c => c.Value(conditionType, conditionOperator, conditionValue))
+                .ApplyWhen(c => c.Value(condition, conditionOperator, conditionValue))
                 .Build();
 
             // Assert
@@ -153,7 +153,7 @@ namespace Rules.Framework.Tests.Builder
             rule.RootCondition.Should().BeAssignableTo<IValueConditionNode<ConditionNames>>();
 
             var rootCondition = rule.RootCondition as IValueConditionNode<ConditionNames>;
-            rootCondition.Condition.Should().Be(conditionType);
+            rootCondition.Condition.Should().Be(condition);
             rootCondition.DataType.Should().Be(dataType);
             rootCondition.LogicalOperator.Should().Be(logicalOperator);
             rootCondition.Operator.Should().Be(conditionOperator);

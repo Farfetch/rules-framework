@@ -30,7 +30,7 @@ namespace Rules.Framework.Providers.MongoDb
         /// <summary>
         /// Gets or sets the name of the rulesets collection.
         /// </summary>
-        /// <value>The name of the content types collection.</value>
+        /// <value>The name of the rulesets collection.</value>
         public string RulesetsCollectionName { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests.Serialization
     public class DynamicToStrongTypeContentSerializationProviderTests
     {
         [Fact]
-        public void GetContentSerializer_GivenAnyContentTypeValue_ReturnsDynamicToStrongTypeContentSerializer()
+        public void GetContentSerializer_GivenAnyRulesetValue_ReturnsDynamicToStrongTypeContentSerializer()
         {
             // Arrange
             var dynamicToStrongTypeContentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider();

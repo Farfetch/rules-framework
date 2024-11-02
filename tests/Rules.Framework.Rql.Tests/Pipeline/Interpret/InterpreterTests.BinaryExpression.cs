@@ -6,7 +6,6 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
     using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Xunit;
 
     public partial class InterpreterTests
@@ -21,13 +20,13 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var rightExpression = CreateMockedExpression(NewRqlString("Hello world"));
             var binaryExpression = new BinaryExpression(leftExpression, operatorSegment, rightExpression);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             Mock.Get(runtime)
                 .Setup(r => r.ApplyBinary(It.IsAny<IRuntimeValue>(), It.IsAny<RqlOperators>(), It.IsAny<IRuntimeValue>()))
                 .Returns(expected);
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.VisitBinaryExpression(binaryExpression);
@@ -47,14 +46,14 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var rightExpression = CreateMockedExpression(NewRqlString("Hello world"));
             var binaryExpression = new BinaryExpression(leftExpression, operatorSegment, rightExpression);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             const string expected = "An error has occurred";
             Mock.Get(runtime)
                 .Setup(r => r.ApplyBinary(It.IsAny<IRuntimeValue>(), It.IsAny<RqlOperators>(), It.IsAny<IRuntimeValue>()))
                 .Throws(new RuntimeException(expected));
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var interpreterException = await Assert.ThrowsAsync<InterpreterException>(async () => await interpreter.VisitBinaryExpression(binaryExpression));

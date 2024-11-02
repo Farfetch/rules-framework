@@ -17,16 +17,16 @@ namespace Rules.Framework.Providers.InMemory
 
         public void AddRule(RuleDataModel ruleDataModel)
         {
-            var contentTypeRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
+            var rulesetRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
 
-            lock (contentTypeRules)
+            lock (rulesetRules)
             {
-                if (contentTypeRules.Exists(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal)))
+                if (rulesetRules.Exists(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal)))
                 {
                     throw new InvalidOperationException($"Rule with name '{ruleDataModel.Name}' already exists.");
                 }
 
-                contentTypeRules.Add(ruleDataModel);
+                rulesetRules.Add(ruleDataModel);
             }
         }
 
@@ -43,9 +43,9 @@ namespace Rules.Framework.Providers.InMemory
         public IReadOnlyCollection<RuleDataModel> GetAllRules()
             => this.rulesets.SelectMany(kvp => kvp.Value.Rules).ToList().AsReadOnly();
 
-        public IReadOnlyCollection<RuleDataModel> GetRulesBy(string contentType)
+        public IReadOnlyCollection<RuleDataModel> GetRulesBy(string ruleset)
         {
-            var rules = this.GetRulesCollectionByRuleset(contentType);
+            var rules = this.GetRulesCollectionByRuleset(ruleset);
 
             return rules.AsReadOnly();
         }
@@ -55,18 +55,18 @@ namespace Rules.Framework.Providers.InMemory
 
         public void UpdateRule(RuleDataModel ruleDataModel)
         {
-            var contentTypeRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
+            var rulesetRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
 
-            lock (contentTypeRules)
+            lock (rulesetRules)
             {
-                var existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
+                var existent = rulesetRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
                 if (existent is null)
                 {
                     throw new InvalidOperationException($"Rule with name '{ruleDataModel.Name}' does not exist, no update can be done.");
                 }
 
-                contentTypeRules.Remove(existent);
-                contentTypeRules.Add(ruleDataModel);
+                rulesetRules.Remove(existent);
+                rulesetRules.Add(ruleDataModel);
             }
         }
 

@@ -99,7 +99,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
             var ruleDataModel = new RuleDataModel
             {
                 Content = content,
-                Ruleset = RulesetNames.ContentTypeSample.ToString(),
+                Ruleset = RulesetNames.RulesetSample.ToString(),
                 DateBegin = new System.DateTime(2020, 1, 1),
                 DateEnd = null,
                 Name = "My rule used for testing purposes",
@@ -192,7 +192,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 .CreateValueNode(ConditionNames.SampleStringCondition.ToString(), Operators.Equal, "TEST") as ValueConditionNode;
 
             var rule1 = Rule.Create<RulesetNames, ConditionNames>("My rule used for testing purposes")
-                .InRuleset(RulesetNames.ContentTypeSample)
+                .InRuleset(RulesetNames.RulesetSample)
                 .SetContent((object)content)
                 .Since(new DateTime(2020, 1, 1))
                 .ApplyWhen(c => c

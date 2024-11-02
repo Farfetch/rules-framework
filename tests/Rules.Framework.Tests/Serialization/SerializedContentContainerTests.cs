@@ -13,7 +13,7 @@ namespace Rules.Framework.Tests.Serialization
         public void Init_GivenSerializedContent_DeserializesAndReturnsWhenFetchingContent()
         {
             // Arrange
-            var expectedContentType = RulesetNames.Type1.ToString();
+            var expectedRuleset = RulesetNames.Type1.ToString();
             var serializedContent = new object();
             object expected = 19m;
 
@@ -22,10 +22,10 @@ namespace Rules.Framework.Tests.Serialization
                 .Returns(expected);
 
             var mockContentSerializationProvider = new Mock<IContentSerializationProvider>();
-            mockContentSerializationProvider.Setup(x => x.GetContentSerializer(It.Is<string>(y => y == expectedContentType)))
+            mockContentSerializationProvider.Setup(x => x.GetContentSerializer(It.Is<string>(y => y == expectedRuleset)))
                 .Returns(mockContentSerializer.Object);
 
-            var sut = new SerializedContentContainer(expectedContentType, serializedContent, mockContentSerializationProvider.Object);
+            var sut = new SerializedContentContainer(expectedRuleset, serializedContent, mockContentSerializationProvider.Object);
 
             // Act
             var actual = sut.GetContentAs<decimal>();

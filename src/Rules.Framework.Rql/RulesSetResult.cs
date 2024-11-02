@@ -4,16 +4,16 @@ namespace Rules.Framework.Rql
     using System.Diagnostics.CodeAnalysis;
 
     [ExcludeFromCodeCoverage]
-    public class RulesSetResult<TContentType, TConditionType> : IResult
+    public class RulesSetResult : IResult
     {
-        public RulesSetResult(string rql, int numberOfRules, IReadOnlyList<RulesSetResultLine<TContentType, TConditionType>> lines)
+        public RulesSetResult(string rql, int numberOfRules, IReadOnlyList<RulesSetResultLine> lines)
         {
             this.Rql = rql;
             this.NumberOfRules = numberOfRules;
             this.Lines = lines;
         }
 
-        public IReadOnlyList<RulesSetResultLine<TContentType, TConditionType>> Lines { get; }
+        public IReadOnlyList<RulesSetResultLine> Lines { get; }
 
         public int NumberOfRules { get; }
 

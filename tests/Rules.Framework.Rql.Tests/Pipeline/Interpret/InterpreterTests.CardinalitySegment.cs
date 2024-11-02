@@ -7,7 +7,6 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
     using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Xunit;
 
     public partial class InterpreterTests
@@ -21,10 +20,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var ruleExpression = CreateMockedExpression(NewRqlString("rule"));
             var cardinalitySegment = CardinalitySegment.Create(cardinalityExpression, ruleExpression);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.VisitCardinalitySegment(cardinalitySegment);

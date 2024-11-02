@@ -9,14 +9,14 @@ namespace Rules.Framework.Serialization
         /// <summary>
         /// Creates a new <see cref="SerializedContentContainer"/>.
         /// </summary>
-        /// <param name="contentType">the content type.</param>
+        /// <param name="ruleset">the ruleset name.</param>
         /// <param name="serializedContent">the serialized content.</param>
         /// <param name="contentSerializationProvider">the content serialization provider.</param>
         public SerializedContentContainer(
-            string contentType,
+            string ruleset,
             object serializedContent,
             IContentSerializationProvider contentSerializationProvider)
-            : base((t) => contentSerializationProvider.GetContentSerializer(contentType).Deserialize(serializedContent, t))
+            : base((t) => contentSerializationProvider.GetContentSerializer(ruleset).Deserialize(serializedContent, t))
         {
         }
     }

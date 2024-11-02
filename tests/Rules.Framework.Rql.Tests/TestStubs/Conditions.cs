@@ -1,6 +1,6 @@
 namespace Rules.Framework.Rql.Tests.Stubs
 {
-    internal enum ConditionType
+    internal enum Conditions
     {
         IsoCountryCode = 1,
 

@@ -3,10 +3,10 @@ namespace Rules.Framework.WebUI.Sample.Engine
     using global::Rules.Framework;
     using global::Rules.Framework.Builder.Generic;
 
-    internal class RuleSpecificationBase<TContentType, TConditionType>
+    internal class RuleSpecificationBase<TRuleset, TCondition>
     {
         public RuleSpecificationBase(
-            RuleBuilderResult<TContentType, TConditionType> ruleBuilderResult,
+            RuleBuilderResult<TRuleset, TCondition> ruleBuilderResult,
             RuleAddPriorityOption ruleAddPriorityOption)
         {
             this.RuleBuilderResult = ruleBuilderResult;
@@ -15,6 +15,6 @@ namespace Rules.Framework.WebUI.Sample.Engine
 
         public RuleAddPriorityOption RuleAddPriorityOption { get; set; }
 
-        public RuleBuilderResult<TContentType, TConditionType> RuleBuilderResult { get; set; }
+        public RuleBuilderResult<TRuleset, TCondition> RuleBuilderResult { get; set; }
     }
 }

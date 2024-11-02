@@ -78,15 +78,32 @@ namespace Rules.Framework.Tests.Validation
         }
 
         [Fact]
-        public void Validate_GivenContentTypeAsClassTypeAndNotNullValue_ReturnsSuccessValidation()
+        public void Validate_GivenDateEndLesserThanDateEnd_ReturnsFailedValidation()
         {
             // Arrange
-            var contentType = new RulesetClass
+            var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.Parse("2021-03-01Z"), DateTime.Parse("2021-02-01Z"));
+
+            var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
+
+            // Act
+            var validationResult = validator.Validate(searchArgs);
+
+            // Assert
+            validationResult.IsValid.Should().BeFalse();
+            validationResult.Errors.Should().HaveCount(1);
+            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == nameof(searchArgs.DateEnd)));
+        }
+
+        [Fact]
+        public void Validate_GivenRulesetAsClassTypeAndNotNullValue_ReturnsSuccessValidation()
+        {
+            // Arrange
+            var ruleset = new RulesetClass
             {
                 Id = 1,
                 Name = "Sample"
             };
-            var searchArgs = new SearchArgs<RulesetClass, ConditionNames>(contentType, DateTime.MinValue, DateTime.MaxValue);
+            var searchArgs = new SearchArgs<RulesetClass, ConditionNames>(ruleset, DateTime.MinValue, DateTime.MaxValue);
 
             var validator = new SearchArgsValidator<RulesetClass, ConditionNames>();
 
@@ -99,7 +116,7 @@ namespace Rules.Framework.Tests.Validation
         }
 
         [Fact]
-        public void Validate_GivenContentTypeAsClassTypeAndNullValue_ReturnsFailedValidation()
+        public void Validate_GivenRulesetAsClassTypeAndNullValue_ReturnsFailedValidation()
         {
             // Arrange
             var searchArgs = new SearchArgs<RulesetClass, ConditionNames>(null, DateTime.MinValue, DateTime.MaxValue);
@@ -116,7 +133,7 @@ namespace Rules.Framework.Tests.Validation
         }
 
         [Fact]
-        public void Validate_GivenContentTypeAsEnumTypeAndDefinedValue_ReturnsSuccessValidation()
+        public void Validate_GivenRulesetAsEnumTypeAndDefinedValue_ReturnsSuccessValidation()
         {
             // Arrange
             var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.MinValue, DateTime.MaxValue);
@@ -132,7 +149,7 @@ namespace Rules.Framework.Tests.Validation
         }
 
         [Fact]
-        public void Validate_GivenContentTypeAsEnumTypeAndUndefinedValue_ReturnsFailedValidation()
+        public void Validate_GivenRulesetAsEnumTypeAndUndefinedValue_ReturnsFailedValidation()
         {
             // Arrange
             var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(0, DateTime.MinValue, DateTime.MaxValue);
@@ -146,23 +163,6 @@ namespace Rules.Framework.Tests.Validation
             validationResult.IsValid.Should().BeFalse();
             validationResult.Errors.Should().HaveCount(1);
             validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == nameof(searchArgs.Ruleset)));
-        }
-
-        [Fact]
-        public void Validate_GivenDateEndLesserThanDateEnd_ReturnsFailedValidation()
-        {
-            // Arrange
-            var searchArgs = new SearchArgs<RulesetNames, ConditionNames>(RulesetNames.Type1, DateTime.Parse("2021-03-01Z"), DateTime.Parse("2021-02-01Z"));
-
-            var validator = new SearchArgsValidator<RulesetNames, ConditionNames>();
-
-            // Act
-            var validationResult = validator.Validate(searchArgs);
-
-            // Assert
-            validationResult.IsValid.Should().BeFalse();
-            validationResult.Errors.Should().HaveCount(1);
-            validationResult.Errors.Should().Match(c => c.Any(vf => vf.PropertyName == nameof(searchArgs.DateEnd)));
         }
     }
 }

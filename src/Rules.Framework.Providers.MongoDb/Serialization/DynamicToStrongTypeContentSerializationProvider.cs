@@ -22,11 +22,7 @@ namespace Rules.Framework.Providers.MongoDb.Serialization
                 System.Threading.LazyThreadSafetyMode.PublicationOnly);
         }
 
-        /// <summary>
-        /// Gets the content serializer associated with the given <paramref name="contentType"/>.
-        /// </summary>
-        /// <param name="contentType">the content type.</param>
-        /// <returns>the content serializer to deal with contents for specified content type.</returns>
-        public IContentSerializer GetContentSerializer(string contentType) => this.contentSerializerLazy.Value;
+        /// <inheritdoc/>
+        public IContentSerializer GetContentSerializer(string ruleset) => this.contentSerializerLazy.Value;
     }
 }

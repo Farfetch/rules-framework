@@ -9,7 +9,6 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
     using Rules.Framework.Rql.Ast.Expressions;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Runtime;
-    using Rules.Framework.Rql.Tests.Stubs;
     using Rules.Framework.Rql.Tokens;
     using Xunit;
 
@@ -38,10 +37,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var literalToken = NewToken("dummy", "dummy", TokenType.IDENTIFIER);
             var literalExpression = LiteralExpression.Create((LiteralType)(-1), literalToken, "test");
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await Assert.ThrowsAsync<NotSupportedException>(async () => await interpreter.VisitLiteralExpression(literalExpression));
@@ -58,10 +57,10 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
             var literalToken = NewToken("dummy", expected, TokenType.IDENTIFIER);
             var literalExpression = LiteralExpression.Create((LiteralType)literalType, literalToken, runtimeValue);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.VisitLiteralExpression(literalExpression);

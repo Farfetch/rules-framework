@@ -69,7 +69,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests.Serialization
 
             // Assert
             notSupportedException.Should().NotBeNull();
-            notSupportedException.Message.Should().Be($"The serialized content type is not supported for deserialization: {typeof(object).FullName}");
+            notSupportedException.Message.Should().Be($"The serialized ruleset is not supported for deserialization: {typeof(object).FullName}");
         }
 
         [Fact]

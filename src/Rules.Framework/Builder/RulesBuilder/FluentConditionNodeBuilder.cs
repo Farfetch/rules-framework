@@ -4,7 +4,6 @@ namespace Rules.Framework.Builder.RulesBuilder
     using System.Collections.Generic;
     using Rules.Framework;
     using Rules.Framework.ConditionNodes;
-    using Rules.Framework.Generic;
 
     internal sealed class FluentConditionNodeBuilder : IFluentConditionNodeBuilder
     {
@@ -46,8 +45,7 @@ namespace Rules.Framework.Builder.RulesBuilder
 
         public IFluentConditionNodeBuilder Value<T>(string condition, Operators condOperator, T operand)
         {
-            var conditionTypeAsString = GenericConversions.Convert(condition);
-            var valueConditionNode = ConditionNodeFactory.CreateValueNode(conditionTypeAsString, condOperator, operand);
+            var valueConditionNode = ConditionNodeFactory.CreateValueNode(condition, condOperator, operand);
             this.conditions.Add(valueConditionNode);
             return this;
         }

@@ -3,8 +3,8 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark1
     using System;
     using System.Collections.Generic;
     using Rules.Framework;
-    using Rules.Framework.BenchmarkTests.Tests;
     using Rules.Framework.Generic;
+    using Rules.Framework.IntegrationTests.Common.Scenarios;
 
     public class Scenario6Data : IScenarioData<Rulesets, ConditionNames>
     {

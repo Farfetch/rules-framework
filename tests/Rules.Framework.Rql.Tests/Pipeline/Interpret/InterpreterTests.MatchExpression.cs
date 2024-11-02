@@ -28,72 +28,87 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
         };
 
         [Fact]
-        public async Task VisitMatchExpression_GivenInvalidMatchExpressionWithInvalidContentType_ThrowsInterpreterException()
+        public async Task VisitMatchExpression_GivenInvalidMatchExpressionWithInvalidRuleset_ThrowsInterpreterException()
         {
             // Arrange
-            var conditions = new[] { new Condition<ConditionType>(ConditionType.IsVip, false) };
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                { nameof(Conditions.IsVip), false },
+            };
 
             var cardinalitySegment = CreateMockedSegment(NewRqlString("one"));
-            var contentTypeExpression = CreateMockedExpression(NewRqlDecimal(1m));
+            var rulesetExpression = CreateMockedExpression(NewRqlDecimal(1m));
             var matchDateExpression = CreateMockedExpression(NewRqlDate(new DateTime(2024, 1, 1)));
             var inputConditionsSegment = CreateMockedSegment(conditions);
-            var matchExpression = MatchExpression.Create(cardinalitySegment, contentTypeExpression, matchDateExpression, inputConditionsSegment);
+            var matchExpression = MatchExpression.Create(cardinalitySegment, rulesetExpression, matchDateExpression, inputConditionsSegment);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await Assert.ThrowsAsync<InterpreterException>(async () => await interpreter.VisitMatchExpression(matchExpression));
 
             // Act
-            actual.Message.Should().Contain("Expected a content type value of type 'string' but found 'decimal' instead");
+            actual.Message.Should().Contain("Expected a ruleset value of type 'string' but found 'decimal' instead");
         }
 
         [Fact]
-        public async Task VisitMatchExpression_GivenInvalidMatchExpressionWithUnknownContentType_ThrowsInterpreterException()
+        public async Task VisitMatchExpression_GivenInvalidMatchExpressionWithUnknownRuleset_ThrowsInterpreterException()
         {
             // Arrange
-            var conditions = new[] { new Condition<ConditionType>(ConditionType.IsVip, false) };
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                { nameof(Conditions.IsVip), false },
+            };
 
             var cardinalitySegment = CreateMockedSegment(NewRqlString("one"));
-            var contentTypeExpression = CreateMockedExpression(NewRqlString("dummy"));
+            var rulesetExpression = CreateMockedExpression(NewRqlString("dummy"));
             var matchDateExpression = CreateMockedExpression(NewRqlDate(new DateTime(2024, 1, 1)));
             var inputConditionsSegment = CreateMockedSegment(conditions);
-            var matchExpression = MatchExpression.Create(cardinalitySegment, contentTypeExpression, matchDateExpression, inputConditionsSegment);
+            var matchExpression = MatchExpression.Create(cardinalitySegment, rulesetExpression, matchDateExpression, inputConditionsSegment);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
+            Mock.Get(runtime)
+                .Setup(x => x.GetRulesetsAsync())
+                .ReturnsAsync(NewRqlArray(new RqlRuleset(new Ruleset("other", DateTime.UtcNow))));
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await Assert.ThrowsAsync<InterpreterException>(async () => await interpreter.VisitMatchExpression(matchExpression));
 
             // Act
-            actual.Message.Should().Contain("The content type value 'dummy' was not found");
+            actual.Message.Should().Contain("The ruleset 'dummy' was not found");
         }
 
         [Fact]
         public async Task VisitMatchExpression_GivenMatchExpressionFailingRuntimeEvaluation_ThrowsInterpreterException()
         {
             // Arrange
-            var conditions = new[] { new Condition<ConditionType>(ConditionType.IsVip, false) };
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                { nameof(Conditions.IsVip), false },
+            };
 
             var cardinalitySegment = CreateMockedSegment(NewRqlString("one"));
-            var contentTypeExpression = CreateMockedExpression(NewRqlString("Type1"));
+            var rulesetExpression = CreateMockedExpression(NewRqlString("Type1"));
             var matchDateExpression = CreateMockedExpression(NewRqlDate(new DateTime(2024, 1, 1)));
             var inputConditionsSegment = CreateMockedSegment(conditions);
-            var matchExpression = MatchExpression.Create(cardinalitySegment, contentTypeExpression, matchDateExpression, inputConditionsSegment);
+            var matchExpression = MatchExpression.Create(cardinalitySegment, rulesetExpression, matchDateExpression, inputConditionsSegment);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             Mock.Get(runtime)
-                .Setup(x => x.MatchRulesAsync(It.IsAny<MatchRulesArgs<ContentType, ConditionType>>()))
+                .Setup(x => x.GetRulesetsAsync())
+                .ReturnsAsync(NewRqlArray(new RqlRuleset(new Ruleset("Type1", DateTime.UtcNow))));
+            Mock.Get(runtime)
+                .Setup(x => x.MatchRulesAsync(It.IsAny<MatchRulesArgs>()))
                 .Throws(new RuntimeException("test"));
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await Assert.ThrowsAsync<InterpreterException>(async () => await interpreter.VisitMatchExpression(matchExpression));
@@ -106,34 +121,42 @@ namespace Rules.Framework.Rql.Tests.Pipeline.Interpret
         [MemberData(nameof(ValidCasesMatchExpression))]
         public async Task VisitMatchExpression_GivenValidMatchExpressionForOneCardinality_ReturnsOneRule(
             string cardinalityName,
-            object contentTypeName,
+            object rulesetName,
             bool hasConditions)
         {
             // Arrange
-            var ruleResult = RuleBuilder.NewRule<ContentType, ConditionType>()
-                .WithName("Dummy rule")
-                .WithDateBegin(DateTime.Now)
-                .WithContent(ContentType.Type1, "test")
-                .WithCondition(x => x.Value(ConditionType.IsVip, Framework.Core.Operators.Equal, false))
+            var ruleResult = Rule.Create<Rulesets, Conditions>("Dummy rule")
+                .InRuleset(Rulesets.Type1)
+                .SetContent("test")
+                .Since(DateTime.Now)
+                .ApplyWhen(x => x.Value(Conditions.IsVip, Operators.Equal, false))
                 .Build();
-            var conditions = hasConditions ? new[] { new Condition<ConditionType>(ConditionType.IsVip, false) } : null;
+            var conditions = hasConditions
+                ? new Dictionary<string, object>(StringComparer.Ordinal)
+                {
+                    { nameof(Conditions.IsVip), false },
+                }
+                : null;
 
             var expected = new RqlArray(1);
-            expected.SetAtIndex(0, new RqlRule<ContentType, ConditionType>(ruleResult.Rule));
+            expected.SetAtIndex(0, new RqlRule(ruleResult.Rule));
 
             var cardinalitySegment = CreateMockedSegment(NewRqlString(cardinalityName));
-            var contentTypeExpression = CreateMockedExpression((IRuntimeValue)contentTypeName);
+            var rulesetExpression = CreateMockedExpression((IRuntimeValue)rulesetName);
             var matchDateExpression = CreateMockedExpression(NewRqlDate(new DateTime(2024, 1, 1)));
-            var inputConditionsSegment = CreateMockedSegment(conditions);
-            var matchExpression = MatchExpression.Create(cardinalitySegment, contentTypeExpression, matchDateExpression, inputConditionsSegment);
+            var inputConditionsSegment = CreateMockedSegment(conditions!);
+            var matchExpression = MatchExpression.Create(cardinalitySegment, rulesetExpression, matchDateExpression, inputConditionsSegment);
 
-            var runtime = Mock.Of<IRuntime<ContentType, ConditionType>>();
+            var runtime = Mock.Of<IRuntime>();
             Mock.Get(runtime)
-                .Setup(x => x.MatchRulesAsync(It.IsAny<MatchRulesArgs<ContentType, ConditionType>>()))
+                .Setup(x => x.GetRulesetsAsync())
+                .ReturnsAsync(NewRqlArray(new RqlRuleset(new Ruleset("Type1", DateTime.UtcNow))));
+            Mock.Get(runtime)
+                .Setup(x => x.MatchRulesAsync(It.IsAny<MatchRulesArgs>()))
                 .Returns(new ValueTask<RqlArray>(expected));
             var reverseRqlBuilder = Mock.Of<IReverseRqlBuilder>();
 
-            var interpreter = new Interpreter<ContentType, ConditionType>(runtime, reverseRqlBuilder);
+            var interpreter = new Interpreter(runtime, reverseRqlBuilder);
 
             // Act
             var actual = await interpreter.VisitMatchExpression(matchExpression);

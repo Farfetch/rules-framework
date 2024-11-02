@@ -7,7 +7,7 @@ namespace Rules.Framework.Builder.Generic
     /// <summary>
     /// Contains the results information from a generic rule build operation.
     /// </summary>
-    public class RuleBuilderResult<TContentType, TConditionType> : RuleBuilderResultBase
+    public class RuleBuilderResult<TRuleset, TCondition> : RuleBuilderResultBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RuleBuilderResult"/> class.
@@ -15,7 +15,7 @@ namespace Rules.Framework.Builder.Generic
         /// <param name="isSuccess">if set to <c>true</c> [is success].</param>
         /// <param name="rule">The rule.</param>
         /// <param name="errors">The errors.</param>
-        internal RuleBuilderResult(bool isSuccess, Rule<TContentType, TConditionType> rule, IEnumerable<string> errors)
+        internal RuleBuilderResult(bool isSuccess, Rule<TRuleset, TCondition> rule, IEnumerable<string> errors)
             : base(isSuccess, errors)
         {
             this.Rule = rule;
@@ -25,7 +25,7 @@ namespace Rules.Framework.Builder.Generic
         /// Gets the rule.
         /// </summary>
         /// <value>The rule.</value>
-        public Rule<TContentType, TConditionType> Rule { get; }
+        public Rule<TRuleset, TCondition> Rule { get; }
 
         /// <summary>
         /// Creates a result marked with failure.
@@ -33,14 +33,14 @@ namespace Rules.Framework.Builder.Generic
         /// <param name="errors">The errors.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">errors</exception>
-        public static RuleBuilderResult<TContentType, TConditionType> Failure(IEnumerable<string> errors)
+        public static RuleBuilderResult<TRuleset, TCondition> Failure(IEnumerable<string> errors)
         {
             if (errors is null)
             {
                 throw new System.ArgumentNullException(nameof(errors));
             }
 
-            return new RuleBuilderResult<TContentType, TConditionType>(isSuccess: false, null!, errors);
+            return new RuleBuilderResult<TRuleset, TCondition>(isSuccess: false, null!, errors);
         }
 
         /// <summary>
@@ -49,14 +49,14 @@ namespace Rules.Framework.Builder.Generic
         /// <param name="rule">The rule.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">rule</exception>
-        public static RuleBuilderResult<TContentType, TConditionType> Success(Rule<TContentType, TConditionType> rule)
+        public static RuleBuilderResult<TRuleset, TCondition> Success(Rule<TRuleset, TCondition> rule)
         {
             if (rule is null)
             {
                 throw new System.ArgumentNullException(nameof(rule));
             }
 
-            return new RuleBuilderResult<TContentType, TConditionType>(isSuccess: true, rule, Enumerable.Empty<string>());
+            return new RuleBuilderResult<TRuleset, TCondition>(isSuccess: true, rule, Enumerable.Empty<string>());
         }
     }
 }

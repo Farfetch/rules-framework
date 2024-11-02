@@ -9,7 +9,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     public class ConditionsValueLookupExtensionTests
     {
         [Fact]
-        public void GetValueOrDefault_GivenConditionsDictionaryAndConditionType_ReturnsNull()
+        public void GetValueOrDefault_GivenConditionsDictionaryAndCondition_ReturnsNull()
         {
             // Arrange
             const string expected = "EUR";
@@ -17,24 +17,24 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             {
                 { ConditionNames.IsoCurrency.ToString(), expected }
             };
-            var conditionType = ConditionNames.IsoCurrency.ToString();
+            var condition = ConditionNames.IsoCurrency.ToString();
 
             // Act
-            var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, conditionType);
+            var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, condition);
 
             // Assert
             result.Should().Be(expected);
         }
 
         [Fact]
-        public void GetValueOrDefault_GivenEmptyConditionsDictionaryAndConditionType_ReturnsNull()
+        public void GetValueOrDefault_GivenEmptyConditionsDictionaryAndCondition_ReturnsNull()
         {
             // Arrange
             var conditions = new Dictionary<string, object>();
-            var conditionType = ConditionNames.IsoCurrency.ToString();
+            var condition = ConditionNames.IsoCurrency.ToString();
 
             // Act
-            var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, conditionType);
+            var result = ConditionsValueLookupExtension.GetValueOrDefault(conditions, condition);
 
             // Assert
             result.Should().BeNull();

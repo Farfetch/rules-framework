@@ -13,14 +13,14 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     using Rules.Framework.Rql.Runtime.Types;
     using Rules.Framework.Rql.Tokens;
 
-    internal class Interpreter<TContentType, TConditionType> : IInterpreter, IExpressionVisitor<Task<IRuntimeValue>>, ISegmentVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
+    internal class Interpreter : IInterpreter, IExpressionVisitor<Task<IRuntimeValue>>, ISegmentVisitor<Task<object>>, IStatementVisitor<Task<IResult>>
     {
         private readonly IReverseRqlBuilder reverseRqlBuilder;
-        private readonly IRuntime<TContentType, TConditionType> runtime;
+        private readonly IRuntime runtime;
         private bool disposedValue;
 
         public Interpreter(
-            IRuntime<TContentType, TConditionType> runtime,
+            IRuntime runtime,
             IReverseRqlBuilder reverseRqlBuilder)
         {
             this.runtime = runtime;
@@ -82,19 +82,20 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public async Task<object> VisitInputConditionSegment(InputConditionSegment inputConditionExpression)
         {
-            var conditionType = await this.HandleConditionTypeAsync(inputConditionExpression.Left).ConfigureAwait(false);
+            var conditionName = await this.HandleConditionNameAsync(inputConditionExpression.Left).ConfigureAwait(false);
             var conditionValue = await inputConditionExpression.Right.Accept(this).ConfigureAwait(false);
-            return new Condition<TConditionType>(conditionType, conditionValue.RuntimeValue);
+            return (conditionName, conditionValue.RuntimeValue);
         }
 
         public async Task<object> VisitInputConditionsSegment(InputConditionsSegment inputConditionsExpression)
         {
             var inputConditions = inputConditionsExpression.InputConditions;
             var inputConditionsLength = inputConditions.Length;
-            var conditions = new Condition<TConditionType>[inputConditionsLength];
-            for (int i = 0; i < inputConditionsLength; i++)
+            var conditions = new Dictionary<string, object>(StringComparer.Ordinal);
+            for (var i = 0; i < inputConditionsLength; i++)
             {
-                conditions[i] = (Condition<TConditionType>)await inputConditions[i].Accept(this).ConfigureAwait(false);
+                (var conditionName, var conditionValue) = (ValueTuple<string, object>)await inputConditions[i].Accept(this).ConfigureAwait(false);
+                conditions[conditionName] = conditionValue;
             }
 
             return conditions;
@@ -128,19 +129,21 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             try
             {
                 var cardinality = (RqlString)await matchExpression.Cardinality.Accept(this).ConfigureAwait(false);
-                var contentType = await this.HandleContentTypeAsync(matchExpression.ContentType).ConfigureAwait(false);
+                var ruleset = await this.HandleRulesetAsync(matchExpression.Ruleset).ConfigureAwait(false);
                 var matchDate = (RqlDate)await matchExpression.MatchDate.Accept(this).ConfigureAwait(false);
                 var inputConditions = await matchExpression.InputConditions.Accept(this).ConfigureAwait(false);
-                var conditions = inputConditions is null ? Array.Empty<Condition<TConditionType>>() : (IEnumerable<Condition<TConditionType>>)inputConditions;
+                var conditions = inputConditions is null
+                    ? new Dictionary<string, object>(StringComparer.Ordinal)
+                    : (IDictionary<string, object>)inputConditions;
                 var matchCardinality = string.Equals(cardinality.Value, "ONE", StringComparison.OrdinalIgnoreCase)
                     ? MatchCardinality.One
                     : MatchCardinality.All;
-                var matchRulesArgs = new MatchRulesArgs<TContentType, TConditionType>
+                var matchRulesArgs = new MatchRulesArgs
                 {
                     Conditions = conditions,
-                    ContentType = contentType,
                     MatchCardinality = matchCardinality,
                     MatchDate = matchDate,
+                    Ruleset = ruleset,
                 };
 
                 return await this.runtime.MatchRulesAsync(matchRulesArgs).ConfigureAwait(false);
@@ -174,7 +177,7 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             var rqlObject = new RqlObject();
             var propertyAssignments = newObjectExpression.PropertyAssignments;
-            for (int i = 0; i < propertyAssignments.Length; i++)
+            for (var i = 0; i < propertyAssignments.Length; i++)
             {
                 var assignment = (AssignmentExpression)propertyAssignments[i];
                 var left = (RqlString)await assignment.Left.Accept(this).ConfigureAwait(false);
@@ -285,14 +288,14 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             try
             {
-                var contentType = await this.HandleContentTypeAsync(searchExpression.ContentType).ConfigureAwait(false);
+                var ruleset = await this.HandleRulesetAsync(searchExpression.Ruleset).ConfigureAwait(false);
                 var dateBegin = (RqlDate)await searchExpression.DateBegin.Accept(this).ConfigureAwait(false);
                 var dateEnd = (RqlDate)await searchExpression.DateEnd.Accept(this).ConfigureAwait(false);
-                var conditions = (IEnumerable<Condition<TConditionType>>)await searchExpression.InputConditions.Accept(this).ConfigureAwait(false);
-                var searchRulesArgs = new SearchRulesArgs<TContentType, TConditionType>
+                var conditions = (IDictionary<string, object>)await searchExpression.InputConditions.Accept(this).ConfigureAwait(false);
+                var searchRulesArgs = new SearchRulesArgs
                 {
-                    Conditions = conditions ?? Enumerable.Empty<Condition<TConditionType>>(),
-                    ContentType = contentType,
+                    Conditions = conditions ?? new Dictionary<string, object>(StringComparer.Ordinal),
+                    Ruleset = ruleset,
                     DateBegin = dateBegin,
                     DateEnd = dateEnd,
                 };
@@ -336,61 +339,28 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             return CreateInterpreterException(new[] { error }, astElement);
         }
 
-        private async Task<TConditionType> HandleConditionTypeAsync(Expression conditionTypeExpression)
+        private async Task<string> HandleConditionNameAsync(Expression conditionExpression)
         {
-            var conditionTypeName = (RqlString)await conditionTypeExpression.Accept(this).ConfigureAwait(false);
-            object conditionType;
-            var type = typeof(TConditionType);
-
-            if (type == typeof(string))
-            {
-                conditionType = conditionTypeName.Value;
-            }
-            else
-            {
-#if NETSTANDARD2_0
-                try
-                {
-                    conditionType = Enum.Parse(type, conditionTypeName.Value);
-                }
-                catch (Exception)
-                {
-                    throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, conditionTypeExpression);
-                }
-#else
-                if (!Enum.TryParse(type, conditionTypeName.Value, out conditionType))
-                {
-                    throw CreateInterpreterException(new[] { FormattableString.Invariant($"Condition type of name '{conditionTypeName}' was not found.") }, conditionTypeExpression);
-                }
-#endif
-            }
-
-            return (TConditionType)conditionType;
+            var conditionName = (RqlString)await conditionExpression.Accept(this).ConfigureAwait(false);
+            return conditionName.Value;
         }
 
-        private async Task<TContentType> HandleContentTypeAsync(Expression contentTypeExpression)
+        private async Task<string> HandleRulesetAsync(Expression rulesetExpression)
         {
-            var rawValue = await contentTypeExpression.Accept(this).ConfigureAwait(false);
+            var rawValue = await rulesetExpression.Accept(this).ConfigureAwait(false);
             var value = RqlTypes.Any.IsAssignableTo(rawValue.Type) ? ((RqlAny)rawValue).Unwrap() : rawValue;
             if (!RqlTypes.String.IsAssignableTo(value.Type))
             {
-                throw CreateInterpreterException($"Expected a content type value of type '{RqlTypes.String.Name}' but found '{value.Type.Name}' instead", contentTypeExpression);
+                throw CreateInterpreterException($"Expected a ruleset value of type '{RqlTypes.String.Name}' but found '{value.Type.Name}' instead", rulesetExpression);
             }
 
-            try
+            var rulesets = await this.runtime.GetRulesetsAsync();
+            if (!rulesets.Value.Select(r => r.Unwrap<RqlRuleset>().Value.Name).Contains(value.RuntimeValue))
             {
-                var type = typeof(TContentType);
-                if (type == typeof(string))
-                {
-                    return (TContentType)((RqlString)value).RuntimeValue;
-                }
+                throw CreateInterpreterException($"The ruleset '{value.RuntimeValue}' was not found", rulesetExpression);
+            }
 
-                return (TContentType)Enum.Parse(type, ((RqlString)value).Value, ignoreCase: true);
-            }
-            catch (Exception)
-            {
-                throw CreateInterpreterException($"The content type value '{value.RuntimeValue}' was not found", contentTypeExpression);
-            }
+            return ((RqlString)value).Value;
         }
     }
 }

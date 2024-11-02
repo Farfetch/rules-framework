@@ -49,9 +49,9 @@ namespace Rules.Framework.Tests.Generic
         public async Task GetRulesetsAsync_WithEmptyRulesetsNames_ReturnsEmptyRulesetsCollection()
         {
             // Arrange
-            var mockRulesEngineEmptyContentType = new Mock<IRulesEngine>();
+            var mockRulesEngineEmptyRuleset = new Mock<IRulesEngine>();
 
-            var genericRulesEngine = new RulesEngine<EmptyRulesetNames, ConditionNames>(mockRulesEngineEmptyContentType.Object);
+            var genericRulesEngine = new RulesEngine<EmptyRulesetNames, ConditionNames>(mockRulesEngineEmptyRuleset.Object);
 
             // Act
             var genericRulesets = await genericRulesEngine.GetRulesetsAsync();
@@ -98,7 +98,7 @@ namespace Rules.Framework.Tests.Generic
         }
 
         [Fact]
-        public async Task SearchAsync_GivenContentTypeAndDatesIntervalAndNoConditions_ReturnsRules()
+        public async Task SearchAsync_GivenRulesetAndDatesIntervalAndNoConditions_ReturnsRules()
         {
             // Arrange
             var expectedRule = Rule.Create<RulesetNames, ConditionNames>("Test rule")
@@ -112,9 +112,9 @@ namespace Rules.Framework.Tests.Generic
 
             var dateBegin = new DateTime(2022, 01, 01);
             var dateEnd = new DateTime(2022, 12, 01);
-            var genericContentType = RulesetNames.Type1;
+            var genericRuleset = RulesetNames.Type1;
 
-            var genericSearchArgs = new SearchArgs<RulesetNames, ConditionNames>(genericContentType, dateBegin, dateEnd);
+            var genericSearchArgs = new SearchArgs<RulesetNames, ConditionNames>(genericRuleset, dateBegin, dateEnd);
 
             var testRule = Rule.Create<RulesetNames, ConditionNames>("Test rule")
                 .InRuleset(RulesetNames.Type1)

@@ -1,25 +1,24 @@
 namespace Rules.Framework.Rql.Runtime
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Rql.Runtime.RuleManipulation;
     using Rules.Framework.Rql.Runtime.Types;
 
-    internal class RqlRuntime<TContentType, TConditionType> : IRuntime<TContentType, TConditionType>
+    internal class RqlRuntime : IRuntime
     {
-        private readonly IRulesEngine<TContentType, TConditionType> rulesEngine;
+        private readonly IRulesEngine rulesEngine;
 
-        private RqlRuntime(IRulesEngine<TContentType, TConditionType> rulesEngine)
+        private RqlRuntime(IRulesEngine rulesEngine)
         {
             this.rulesEngine = rulesEngine;
         }
 
-        public static IRuntime<TContentType, TConditionType> Create(
-            IRulesEngine<TContentType, TConditionType> rulesEngine)
+        public static IRuntime Create(
+            IRulesEngine rulesEngine)
         {
-            return new RqlRuntime<TContentType, TConditionType>(rulesEngine);
+            return new RqlRuntime(rulesEngine);
         }
 
         public IRuntimeValue ApplyBinary(IRuntimeValue leftOperand, RqlOperators rqlOperator, IRuntimeValue rightOperand)
@@ -64,7 +63,20 @@ namespace Rules.Framework.Rql.Runtime
             throw new RuntimeException($"Unary operator {rqlOperator} is not supported for value '{value}'.");
         }
 
-        public async ValueTask<RqlArray> MatchRulesAsync(MatchRulesArgs<TContentType, TConditionType> matchRulesArgs)
+        public async ValueTask<RqlArray> GetRulesetsAsync()
+        {
+            var rulesets = await this.rulesEngine.GetRulesetsAsync();
+            var rqlArrayRulesets = new RqlArray(rulesets.Count());
+            var i = 0;
+            foreach (var ruleset in rulesets)
+            {
+                rqlArrayRulesets.SetAtIndex(i++, new RqlRuleset(ruleset));
+            }
+
+            return rqlArrayRulesets;
+        }
+
+        public async ValueTask<RqlArray> MatchRulesAsync(MatchRulesArgs matchRulesArgs)
         {
             if (matchRulesArgs.MatchCardinality == MatchCardinality.None)
             {
@@ -73,32 +85,32 @@ namespace Rules.Framework.Rql.Runtime
 
             if (matchRulesArgs.MatchCardinality == MatchCardinality.One)
             {
-                var rule = await this.rulesEngine.MatchOneAsync(matchRulesArgs.ContentType, matchRulesArgs.MatchDate.Value, matchRulesArgs.Conditions).ConfigureAwait(false);
+                var rule = await this.rulesEngine.MatchOneAsync(matchRulesArgs.Ruleset, matchRulesArgs.MatchDate.Value, matchRulesArgs.Conditions).ConfigureAwait(false);
                 if (rule != null)
                 {
                     var rqlArrayOne = new RqlArray(1);
-                    rqlArrayOne.SetAtIndex(0, new RqlRule<TContentType, TConditionType>(rule));
+                    rqlArrayOne.SetAtIndex(0, new RqlRule(rule));
                     return rqlArrayOne;
                 }
 
                 return new RqlArray(0);
             }
 
-            var rules = await this.rulesEngine.MatchManyAsync(matchRulesArgs.ContentType, matchRulesArgs.MatchDate.Value, matchRulesArgs.Conditions).ConfigureAwait(false);
+            var rules = await this.rulesEngine.MatchManyAsync(matchRulesArgs.Ruleset, matchRulesArgs.MatchDate.Value, matchRulesArgs.Conditions).ConfigureAwait(false);
             var rqlArrayAll = new RqlArray(rules.Count());
             var i = 0;
             foreach (var rule in rules)
             {
-                rqlArrayAll.SetAtIndex(i++, new RqlRule<TContentType, TConditionType>(rule));
+                rqlArrayAll.SetAtIndex(i++, new RqlRule(rule));
             }
 
             return rqlArrayAll;
         }
 
-        public async ValueTask<RqlArray> SearchRulesAsync(SearchRulesArgs<TContentType, TConditionType> searchRulesArgs)
+        public async ValueTask<RqlArray> SearchRulesAsync(SearchRulesArgs searchRulesArgs)
         {
-            var searchArgs = new SearchArgs<TContentType, TConditionType>(
-                searchRulesArgs.ContentType,
+            var searchArgs = new SearchArgs<string, string>(
+                searchRulesArgs.Ruleset,
                 searchRulesArgs.DateBegin.Value,
                 searchRulesArgs.DateEnd.Value)
             {
@@ -111,7 +123,7 @@ namespace Rules.Framework.Rql.Runtime
             var i = 0;
             foreach (var rule in rules)
             {
-                rqlArray.SetAtIndex(i++, new RqlRule<TContentType, TConditionType>(rule));
+                rqlArray.SetAtIndex(i++, new RqlRule(rule));
             }
 
             return rqlArray;

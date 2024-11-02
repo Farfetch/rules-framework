@@ -2,7 +2,6 @@ namespace Rules.Framework.Rql.IntegrationTests.Scenarios.Scenario8
 {
     using System.Threading.Tasks;
     using FluentAssertions;
-    using Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8;
     using Rules.Framework.Rql.Runtime.Types;
     using Xunit;
 
@@ -35,12 +34,12 @@ namespace Rules.Framework.Rql.IntegrationTests.Scenarios.Scenario8
 
             if (expectsRules)
             {
-                result.Should().BeOfType<RulesSetResult<ContentTypes, ConditionTypes>>();
-                var rulesSetResult = (RulesSetResult<ContentTypes, ConditionTypes>)result;
+                result.Should().BeOfType<RulesSetResult>();
+                var rulesSetResult = (RulesSetResult)result;
                 rulesSetResult.NumberOfRules.Should().Be(ruleNames.Length);
                 rulesSetResult.Lines.Should().HaveCount(ruleNames.Length);
 
-                for (int i = 0; i < ruleNames.Length; i++)
+                for (var i = 0; i < ruleNames.Length; i++)
                 {
                     var rule = rulesSetResult.Lines[i].Rule.Value;
                     rule.Name.Should().Be(ruleNames[i]);
@@ -76,8 +75,8 @@ namespace Rules.Framework.Rql.IntegrationTests.Scenarios.Scenario8
 
             if (expectsRule)
             {
-                result.Should().BeOfType<RulesSetResult<ContentTypes, ConditionTypes>>();
-                var rulesSetResult = (RulesSetResult<ContentTypes, ConditionTypes>)result;
+                result.Should().BeOfType<RulesSetResult>();
+                var rulesSetResult = (RulesSetResult)result;
                 rulesSetResult.NumberOfRules.Should().Be(1);
                 rulesSetResult.Lines.Should().HaveCount(1);
 
@@ -114,12 +113,12 @@ namespace Rules.Framework.Rql.IntegrationTests.Scenarios.Scenario8
 
             if (expectsRules)
             {
-                result.Should().BeOfType<RulesSetResult<ContentTypes, ConditionTypes>>();
-                var rulesSetResult = (RulesSetResult<ContentTypes, ConditionTypes>)result;
+                result.Should().BeOfType<RulesSetResult>();
+                var rulesSetResult = (RulesSetResult)result;
                 rulesSetResult.NumberOfRules.Should().Be(ruleNames.Length);
                 rulesSetResult.Lines.Should().HaveCount(ruleNames.Length);
 
-                for (int i = 0; i < ruleNames.Length; i++)
+                for (var i = 0; i < ruleNames.Length; i++)
                 {
                     var rule = rulesSetResult.Lines[i].Rule.Value;
                     rule.Name.Should().Be(ruleNames[i]);

@@ -100,7 +100,7 @@ namespace Rules.Framework.Rql
         public string VisitMatchExpression(MatchExpression matchExpression)
         {
             var cardinality = matchExpression.Cardinality.Accept(this);
-            var contentType = matchExpression.ContentType.Accept(this);
+            var ruleset = matchExpression.Ruleset.Accept(this);
             var matchDate = matchExpression.MatchDate.Accept(this);
             var inputConditions = matchExpression.InputConditions.Accept(this);
 
@@ -110,7 +110,7 @@ namespace Rules.Framework.Rql
                 .Append(SPACE)
                 .Append("FOR")
                 .Append(SPACE)
-                .Append(contentType)
+                .Append(ruleset)
                 .Append(SPACE)
                 .Append("ON")
                 .Append(SPACE)
@@ -137,7 +137,7 @@ namespace Rules.Framework.Rql
             }
             else
             {
-                for (int i = 0; i < newArrayExpression.Values.Length; i++)
+                for (var i = 0; i < newArrayExpression.Values.Length; i++)
                 {
                     stringBuilder.Append(SPACE)
                         .Append(newArrayExpression.Values[i].Accept(this));
@@ -163,7 +163,7 @@ namespace Rules.Framework.Rql
             {
                 stringBuilder.AppendLine()
                     .Append('{');
-                for (int i = 0; i < newObjectExpression.PropertyAssignments.Length; i++)
+                for (var i = 0; i < newObjectExpression.PropertyAssignments.Length; i++)
                 {
                     var propertyAssignment = newObjectExpression.PropertyAssignments[i].Accept(this);
                     stringBuilder.AppendLine()
@@ -202,7 +202,7 @@ namespace Rules.Framework.Rql
 
         public string VisitSearchExpression(SearchExpression searchExpression)
         {
-            var contentType = searchExpression.ContentType.Accept(this);
+            var ruleset = searchExpression.Ruleset.Accept(this);
             var dateBegin = searchExpression.DateBegin.Accept(this);
             var dateEnd = searchExpression.DateEnd.Accept(this);
             var inputConditions = searchExpression.InputConditions.Accept(this);
@@ -211,7 +211,7 @@ namespace Rules.Framework.Rql
                 .Append(SPACE)
                 .Append("FOR")
                 .Append(SPACE)
-                .Append(contentType)
+                .Append(ruleset)
                 .Append(SPACE)
                 .Append("SINCE")
                 .Append(SPACE)

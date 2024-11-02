@@ -4,7 +4,7 @@ namespace Rules.Framework.IntegrationTests
 
     internal class JsonContentSerializationProvider : IContentSerializationProvider
     {
-        public IContentSerializer GetContentSerializer(string contentType)
+        public IContentSerializer GetContentSerializer(string ruleset)
         {
             return new JsonContentSerializer();
         }

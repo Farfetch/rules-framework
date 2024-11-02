@@ -23,7 +23,7 @@ namespace Rules.Framework.RqlReplTester
                     Console.ForegroundColor = originalConsoleForegroundColor;
                     switch (result)
                     {
-                        case RulesSetResult<ContentTypes, ConditionTypes> rulesResultSet:
+                        case RulesSetResult rulesResultSet:
                             HandleRulesSetResult(rulesResultSet);
                             break;
 
@@ -75,7 +75,7 @@ namespace Rules.Framework.RqlReplTester
             Console.WriteLine($"{tab}{value}");
         }
 
-        private static void HandleRulesSetResult(RulesSetResult<ContentTypes, ConditionTypes> result)
+        private static void HandleRulesSetResult(RulesSetResult result)
         {
             Console.WriteLine();
             if (result.Lines.Any())
@@ -147,10 +147,8 @@ namespace Rules.Framework.RqlReplTester
             app.OnExecuteAsync(async (ct) =>
             {
                 var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
-                .SetInMemoryDataSource()
-                .Build();
+                    .SetInMemoryDataSource()
+                    .Build();
 
                 await ScenarioLoader.LoadScenarioAsync(rulesEngine, new Scenario8Data());
                 var rqlEngine = rulesEngine.GetRqlEngine();

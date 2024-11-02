@@ -64,8 +64,8 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
 
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesetsCollectionName);
-            var contentTypesMongoCollection = mongoDatabase.GetCollection<RulesetDataModel>(this.mongoDbProviderSettings.RulesetsCollectionName);
-            contentTypesMongoCollection.InsertMany(rulesets);
+            var rulesetsMongoCollection = mongoDatabase.GetCollection<RulesetDataModel>(this.mongoDbProviderSettings.RulesetsCollectionName);
+            rulesetsMongoCollection.InsertMany(rulesets);
 
             mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
             var rulesMongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);

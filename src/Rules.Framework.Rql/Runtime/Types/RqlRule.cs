@@ -4,15 +4,14 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.ConditionNodes;
 
-    public readonly struct RqlRule<TContentType, TConditionType> : IRuntimeValue, IEquatable<RqlRule<TContentType, TConditionType>>
+    public readonly struct RqlRule : IRuntimeValue, IEquatable<RqlRule>
     {
-        private static readonly Type runtimeType = typeof(Rule<TContentType, TConditionType>);
+        private static readonly Type runtimeType = typeof(Rule);
         private readonly Dictionary<string, RqlAny> properties;
 
-        internal RqlRule(Rule<TContentType, TConditionType> rule)
+        internal RqlRule(Rule rule)
         {
             this.Value = rule;
             this.properties = new Dictionary<string, RqlAny>(StringComparer.Ordinal)
@@ -23,6 +22,7 @@ namespace Rules.Framework.Rql.Runtime.Types
                 { "Name", new RqlString(rule.Name) },
                 { "Priority", new RqlInteger(rule.Priority) },
                 { "RootCondition", rule.RootCondition is not null ? ConvertCondition(rule.RootCondition) : new RqlNothing() },
+                { "Ruleset", new RqlString(rule.Ruleset) },
             };
         }
 
@@ -32,11 +32,11 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         public RqlType Type => RqlTypes.Rule;
 
-        public readonly Rule<TContentType, TConditionType> Value { get; }
+        public readonly Rule Value { get; }
 
-        public static implicit operator RqlAny(RqlRule<TContentType, TConditionType> rqlRule) => new RqlAny(rqlRule);
+        public static implicit operator RqlAny(RqlRule rqlRule) => new RqlAny(rqlRule);
 
-        public bool Equals(RqlRule<TContentType, TConditionType> other) => this.Value.Equals(other.Value);
+        public bool Equals(RqlRule other) => this.Value.Equals(other.Value);
 
         public override string ToString()
                     => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
@@ -80,11 +80,11 @@ namespace Rules.Framework.Rql.Runtime.Types
                 .ToString();
         }
 
-        private static RqlAny ConvertCondition(IConditionNode<TConditionType> condition)
+        private static RqlAny ConvertCondition(IConditionNode condition)
         {
             switch (condition)
             {
-                case ComposedConditionNode<TConditionType> ccn:
+                case ComposedConditionNode ccn:
                     var childConditions = new RqlArray(ccn.ChildConditionNodes.Count());
                     var i = 0;
                     foreach (var childConditionNode in ccn.ChildConditionNodes)
@@ -99,10 +99,10 @@ namespace Rules.Framework.Rql.Runtime.Types
                     };
                     return new RqlReadOnlyObject(composedConditionProperties);
 
-                case ValueConditionNode<TConditionType> vcn:
+                case ValueConditionNode vcn:
                     var valueConditionProperties = new Dictionary<string, RqlAny>(StringComparer.Ordinal)
                     {
-                        { "ConditionType", new RqlString(vcn.ConditionType.ToString()) },
+                        { "Condition", new RqlString(vcn.Condition) },
                         { "DataType", new RqlString(vcn.DataType.ToString()) },
                         { "LogicalOperator", new RqlString(vcn.LogicalOperator.ToString()) },
                         { "Operand", ConvertValue(vcn.Operand) },

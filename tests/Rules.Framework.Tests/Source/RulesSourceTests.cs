@@ -216,7 +216,7 @@ namespace Rules.Framework.Tests.Source
 
             var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
+                .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.Ruleset), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
                 .ReturnsAsync(expected);
 
             RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
@@ -228,7 +228,7 @@ namespace Rules.Framework.Tests.Source
             actual.Should().NotBeNullOrEmpty()
                 .And.BeEquivalentTo(expected);
             Mock.Get(rulesDataSource)
-                .Verify(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)), Times.Once());
+                .Verify(x => x.GetRulesAsync(It.IsIn(getRulesArgs.Ruleset), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)), Times.Once());
         }
 
         [Fact]
@@ -246,7 +246,7 @@ namespace Rules.Framework.Tests.Source
 
             var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
+                .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.Ruleset), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
                 .ReturnsAsync(expected);
 
             RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
@@ -259,7 +259,7 @@ namespace Rules.Framework.Tests.Source
                 .And.Contain(expected);
             middleware1.GetRulesCalls.Should().Be(1);
             Mock.Get(rulesDataSource)
-                .Verify(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)), Times.Once());
+                .Verify(x => x.GetRulesAsync(It.IsIn(getRulesArgs.Ruleset), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)), Times.Once());
         }
 
         [Fact]
@@ -279,7 +279,7 @@ namespace Rules.Framework.Tests.Source
 
             var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
+                .Setup(x => x.GetRulesAsync(It.IsIn(getRulesArgs.Ruleset), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)))
                 .ReturnsAsync(expected);
 
             RulesSource rulesSource = new(rulesDataSource, rulesSourceMiddlewares);
@@ -294,7 +294,7 @@ namespace Rules.Framework.Tests.Source
             middleware2.GetRulesCalls.Should().Be(1);
             middlewareMessages.Should().ContainInOrder("Enter middleware1.", "Enter middleware2.", "Exit middleware2.", "Exit middleware1.");
             Mock.Get(rulesDataSource)
-                .Verify(x => x.GetRulesAsync(It.IsIn(getRulesArgs.ContentType), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)), Times.Once());
+                .Verify(x => x.GetRulesAsync(It.IsIn(getRulesArgs.Ruleset), It.IsIn(getRulesArgs.DateBegin), It.IsIn(getRulesArgs.DateEnd)), Times.Once());
         }
 
         [Fact]
@@ -303,8 +303,8 @@ namespace Rules.Framework.Tests.Source
             // Arrange
             var expected = new[]
             {
-                new Ruleset("Content Type 1", DateTime.UtcNow),
-                new Ruleset("Content Type 2", DateTime.UtcNow),
+                new Ruleset("Ruleset 1", DateTime.UtcNow),
+                new Ruleset("Ruleset 2", DateTime.UtcNow),
             };
 
             var getRulesetsArgs = new GetRulesetsArgs();
@@ -335,8 +335,8 @@ namespace Rules.Framework.Tests.Source
             // Arrange
             var expected = new[]
             {
-                new Ruleset("Content Type 1", DateTime.UtcNow),
-                new Ruleset("Content Type 2", DateTime.UtcNow),
+                new Ruleset("Ruleset 1", DateTime.UtcNow),
+                new Ruleset("Ruleset 2", DateTime.UtcNow),
             };
 
             var getRulesetsArgs = new GetRulesetsArgs();
@@ -369,8 +369,8 @@ namespace Rules.Framework.Tests.Source
             // Arrange
             var expected = new[]
             {
-                new Ruleset("Content Type 1", DateTime.UtcNow),
-                new Ruleset("Content Type 2", DateTime.UtcNow),
+                new Ruleset("Ruleset 1", DateTime.UtcNow),
+                new Ruleset("Ruleset 2", DateTime.UtcNow),
             };
 
             var getRulesetsArgs = new GetRulesetsArgs();
@@ -599,7 +599,7 @@ namespace Rules.Framework.Tests.Source
 
         private static GetRulesArgs CreateGetRulesArgs() => new()
         {
-            ContentType = RulesetNames.Type1.ToString(),
+            Ruleset = RulesetNames.Type1.ToString(),
             DateBegin = DateTime.Parse("2022-01-01Z"),
             DateEnd = DateTime.Parse("2023-01-01Z"),
         };
