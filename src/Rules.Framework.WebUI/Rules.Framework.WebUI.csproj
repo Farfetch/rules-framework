@@ -1,75 +1,47 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>		
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>	
-	<SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
-	<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
-	<LangVersion>10.0</LangVersion>
-	<Authors></Authors>
-	<Version></Version>
-	<PackageVersion></PackageVersion>
-	<AssemblyVersion></AssemblyVersion>
-	<FileVersion></FileVersion>
-	<InformationalVersion></InformationalVersion>
-	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-	<PackageProjectUrl></PackageProjectUrl>
-	<RepositoryUrl></RepositoryUrl>
-	<RepositoryType>Git</RepositoryType>
-	<PackageTags>rules rulesframework web ui</PackageTags>
-	<Description>A rules framework web ui that allows you to see the rules configured in your application</Description>
-	<Copyright></Copyright>	  
-  </PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk.Razor" InitialTargets="EmbedScopedCss">
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<LangVersion>10.0</LangVersion>
+		<Authors></Authors>
+		<Version></Version>
+		<PackageVersion></PackageVersion>
+		<AssemblyVersion></AssemblyVersion>
+		<FileVersion></FileVersion>
+		<InformationalVersion></InformationalVersion>
+		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+		<PackageProjectUrl></PackageProjectUrl>
+		<RepositoryUrl></RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<PackageTags>rules rulesframework web ui</PackageTags>
+		<Description>A rules framework web ui that allows you to see the rules configured in your application</Description>
+		<Copyright></Copyright>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="..\..\LICENSE.md" Link="LICENSE.md">
 			<PackagePath></PackagePath>
 			<Pack>True</Pack>
 		</None>
+		<EmbeddedResource Include="Assets/**" />
 	</ItemGroup>
-	
-  <ItemGroup>	  
-	  <EmbeddedResource Include="node_modules/glyphicons-only-bootstrap/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
-	  <EmbeddedResource Include="node_modules/jquery/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
-	  <EmbeddedResource Include="node_modules/paginationjs/dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
-	  <EmbeddedResource Include="node_modules/bootstrap/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
-	  <EmbeddedResource Include="index.html" />
-	  <EmbeddedResource Include="node_modules/rules_list.ico" />
-  </ItemGroup>	
+
+	<Target Name="EmbedScopedCss" BeforeTargets="Build" DependsOnTargets="$(GenerateComputedBuildStaticWebAssetsDependsOn)">
+		<ItemGroup>
+			<EmbeddedResource Include="$(IntermediateOutputPath)\scopedcss\bundle\$(AssemblyName).styles.css">
+				<LogicalName>$(AssemblyName).Assets.$(AssemblyName).styles.css</LogicalName>
+			</EmbeddedResource>
+		</ItemGroup>
+	</Target>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
+		<ProjectReference Include="..\Rules.Framework\Rules.Framework.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="node_modules\glyphicons-only-bootstrap\css\bootstrap.min.css">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="node_modules\jquery\dist\jquery.min.js">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="node_modules\paginationjs\dist\pagination.css">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="node_modules\paginationjs\dist\pagination.min.js">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="node_modules\bootstrap\dist\bootstrap.bundle.min.js">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="node_modules\bootstrap\css\bootstrap.min.css">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Blazor.Bootstrap" Version="3.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.*" />
 	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
-		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.9" />
-		<PackageReference Include="System.Text.Json" Version="8.0.4" />
-	</ItemGroup>
-	
 </Project>

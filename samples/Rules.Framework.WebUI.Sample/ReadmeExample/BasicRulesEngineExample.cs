@@ -2,7 +2,6 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
 {
     using System;
     using global::Rules.Framework.WebUI.Sample.Engine;
-    using global::Rules.Framework.WebUI.Sample.Enums;
 
     internal class BasicRulesEngineExample
     {
@@ -35,7 +34,7 @@ namespace Rules.Framework.WebUI.Sample.ReadmeExample
 
         protected void CreateRulesets()
         {
-            foreach (var rulesetName in Enum.GetValues<RulesetNames>())
+            foreach (var rulesetName in Enum.GetValues<BasicRulesetNames>())
             {
                 this.RulesEngine.CreateRulesetAsync(rulesetName.ToString())
                     .GetAwaiter()
