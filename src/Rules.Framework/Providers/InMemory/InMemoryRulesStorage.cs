@@ -6,18 +6,18 @@ namespace Rules.Framework.Providers.InMemory
     using System.Linq;
     using Rules.Framework.Providers.InMemory.DataModel;
 
-    internal sealed class InMemoryRulesStorage<TContentType, TConditionType> : IInMemoryRulesStorage<TContentType, TConditionType>
+    internal sealed class InMemoryRulesStorage : IInMemoryRulesStorage
     {
-        private readonly ConcurrentDictionary<TContentType, List<RuleDataModel<TContentType, TConditionType>>> rulesByContentType;
+        private readonly ConcurrentDictionary<string, RulesetDataModel> rulesets;
 
         public InMemoryRulesStorage()
         {
-            this.rulesByContentType = new ConcurrentDictionary<TContentType, List<RuleDataModel<TContentType, TConditionType>>>();
+            this.rulesets = new ConcurrentDictionary<string, RulesetDataModel>(StringComparer.Ordinal);
         }
 
-        public void AddRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
+        public void AddRule(RuleDataModel ruleDataModel)
         {
-            List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var contentTypeRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
 
             lock (contentTypeRules)
             {
@@ -30,23 +30,36 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        public IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetAllRules()
-            => this.rulesByContentType.SelectMany(kvp => kvp.Value).ToList().AsReadOnly();
-
-        public IReadOnlyCollection<RuleDataModel<TContentType, TConditionType>> GetRulesBy(TContentType contentType)
+        public void CreateRuleset(string ruleset)
         {
-            List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(contentType);
-
-            return contentTypeRules.AsReadOnly();
+            _ = this.rulesets.TryAdd(ruleset, new RulesetDataModel
+            {
+                Creation = DateTime.UtcNow,
+                Name = ruleset,
+                Rules = new List<RuleDataModel>(),
+            });
         }
 
-        public void UpdateRule(RuleDataModel<TContentType, TConditionType> ruleDataModel)
+        public IReadOnlyCollection<RuleDataModel> GetAllRules()
+            => this.rulesets.SelectMany(kvp => kvp.Value.Rules).ToList().AsReadOnly();
+
+        public IReadOnlyCollection<RuleDataModel> GetRulesBy(string contentType)
         {
-            List<RuleDataModel<TContentType, TConditionType>> contentTypeRules = GetRulesCollectionByContentType(ruleDataModel.ContentType);
+            var rules = this.GetRulesCollectionByRuleset(contentType);
+
+            return rules.AsReadOnly();
+        }
+
+        public IReadOnlyCollection<RulesetDataModel> GetRulesets()
+            => this.rulesets.Values.ToList().AsReadOnly();
+
+        public void UpdateRule(RuleDataModel ruleDataModel)
+        {
+            var contentTypeRules = this.GetRulesCollectionByRuleset(ruleDataModel.Ruleset);
 
             lock (contentTypeRules)
             {
-                RuleDataModel<TContentType, TConditionType> existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
+                var existent = contentTypeRules.Find(r => string.Equals(r.Name, ruleDataModel.Name, StringComparison.Ordinal));
                 if (existent is null)
                 {
                     throw new InvalidOperationException($"Rule with name '{ruleDataModel.Name}' does not exist, no update can be done.");
@@ -57,7 +70,14 @@ namespace Rules.Framework.Providers.InMemory
             }
         }
 
-        private List<RuleDataModel<TContentType, TConditionType>> GetRulesCollectionByContentType(TContentType contentType) => this.rulesByContentType
-                                .GetOrAdd(contentType, (ct) => new List<RuleDataModel<TContentType, TConditionType>>());
+        private List<RuleDataModel> GetRulesCollectionByRuleset(string ruleset)
+        {
+            if (this.rulesets.TryGetValue(ruleset, out var rulesetDataModel))
+            {
+                return rulesetDataModel.Rules;
+            }
+
+            throw new InvalidOperationException($"A ruleset with name '{ruleset}' does not exist.");
+        }
     }
 }

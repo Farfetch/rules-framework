@@ -5,10 +5,8 @@ namespace Rules.Framework.Tests.Providers.InMemory
     using System.Threading.Tasks;
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Core;
     using Rules.Framework.Providers.InMemory;
     using Rules.Framework.Providers.InMemory.DataModel;
-    using Rules.Framework.Tests.Providers.InMemory.TestStubs;
     using Xunit;
 
     public class InMemoryProviderRulesDataSourceTests
@@ -16,33 +14,32 @@ namespace Rules.Framework.Tests.Providers.InMemory
         public static IEnumerable<object[]> CtorArguments { get; } = new[]
         {
             new object[] { null, null },
-            new object[] { Mock.Of<IInMemoryRulesStorage<ContentType, ConditionType>>(), null }
+            new object[] { Mock.Of<IInMemoryRulesStorage>(), null }
         };
 
         [Fact]
         public async Task AddRuleAsync_GivenNullRule_ThrowsArgumentNullException()
         {
             // Arrange
-            Rule<ContentType, ConditionType> rule = null;
+            Rule rule = null;
 
-            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage<ContentType, ConditionType>>();
-            var ruleFactory = Mock.Of<IRuleFactory<ContentType, ConditionType>>();
+            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage>();
+            var ruleFactory = Mock.Of<IRuleFactory>();
 
             Mock.Get(ruleFactory)
                 .Setup(x => x.CreateRule(rule))
                 .Verifiable();
 
             Mock.Get(inMemoryRulesStorage)
-                .Setup(x => x.AddRule(It.IsAny<RuleDataModel<ContentType, ConditionType>>()))
+                .Setup(x => x.AddRule(It.IsAny<RuleDataModel>()))
                 .Verifiable();
 
             var inMemoryProviderRulesDataSource
-                = new InMemoryProviderRulesDataSource<ContentType, ConditionType>(inMemoryRulesStorage, ruleFactory);
+                = new InMemoryProviderRulesDataSource(inMemoryRulesStorage, ruleFactory);
 
             // Act
             var argumentNullException = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await inMemoryProviderRulesDataSource.AddRuleAsync(rule).ConfigureAwait(false)
-            ).ConfigureAwait(false);
+                await inMemoryProviderRulesDataSource.AddRuleAsync(rule));
 
             // Assert
             argumentNullException.Should().NotBeNull();
@@ -53,11 +50,11 @@ namespace Rules.Framework.Tests.Providers.InMemory
         public async Task AddRuleAsync_GivenRule_ConvertsToRuleDataModelAndAddsToDataSource()
         {
             // Arrange
-            var rule = new Rule<ContentType, ConditionType>();
-            var ruleDataModel = new RuleDataModel<ContentType, ConditionType>();
+            var rule = new Rule();
+            var ruleDataModel = new RuleDataModel();
 
-            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage<ContentType, ConditionType>>();
-            var ruleFactory = Mock.Of<IRuleFactory<ContentType, ConditionType>>();
+            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage>();
+            var ruleFactory = Mock.Of<IRuleFactory>();
 
             Mock.Get(ruleFactory)
                 .Setup(x => x.CreateRule(rule))
@@ -69,10 +66,10 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 .Verifiable();
 
             var inMemoryProviderRulesDataSource
-                = new InMemoryProviderRulesDataSource<ContentType, ConditionType>(inMemoryRulesStorage, ruleFactory);
+                = new InMemoryProviderRulesDataSource(inMemoryRulesStorage, ruleFactory);
 
             // Act
-            await inMemoryProviderRulesDataSource.AddRuleAsync(rule).ConfigureAwait(false);
+            await inMemoryProviderRulesDataSource.AddRuleAsync(rule);
 
             // Assert
             Mock.VerifyAll(Mock.Get(inMemoryRulesStorage), Mock.Get(ruleFactory));
@@ -83,11 +80,11 @@ namespace Rules.Framework.Tests.Providers.InMemory
         public void Ctor_GivenNullParameters_ThrowsArgumentNullException(object param1, object param2)
         {
             // Arrange
-            var inMemoryRulesStorage = param1 as IInMemoryRulesStorage<ContentType, ConditionType>;
-            var ruleFactory = param2 as IRuleFactory<ContentType, ConditionType>;
+            var inMemoryRulesStorage = param1 as IInMemoryRulesStorage;
+            var ruleFactory = param2 as IRuleFactory;
 
             // Act
-            var argumentNullException = Assert.Throws<ArgumentNullException>(() => new InMemoryProviderRulesDataSource<ContentType, ConditionType>(inMemoryRulesStorage, ruleFactory));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => new InMemoryProviderRulesDataSource(inMemoryRulesStorage, ruleFactory));
 
             //Assert
             argumentNullException.Should().NotBeNull();
@@ -98,26 +95,25 @@ namespace Rules.Framework.Tests.Providers.InMemory
         public async Task UpdateRuleAsync_GivenNullRule_ThrowsArgumentNullException()
         {
             // Arrange
-            Rule<ContentType, ConditionType> rule = null;
+            Rule rule = null;
 
-            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage<ContentType, ConditionType>>();
-            var ruleFactory = Mock.Of<IRuleFactory<ContentType, ConditionType>>();
+            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage>();
+            var ruleFactory = Mock.Of<IRuleFactory>();
 
             Mock.Get(ruleFactory)
                 .Setup(x => x.CreateRule(rule))
                 .Verifiable();
 
             Mock.Get(inMemoryRulesStorage)
-                .Setup(x => x.UpdateRule(It.IsAny<RuleDataModel<ContentType, ConditionType>>()))
+                .Setup(x => x.UpdateRule(It.IsAny<RuleDataModel>()))
                 .Verifiable();
 
             var inMemoryProviderRulesDataSource
-                = new InMemoryProviderRulesDataSource<ContentType, ConditionType>(inMemoryRulesStorage, ruleFactory);
+                = new InMemoryProviderRulesDataSource(inMemoryRulesStorage, ruleFactory);
 
             // Act
             var argumentNullException = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await inMemoryProviderRulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false)
-            ).ConfigureAwait(false);
+                await inMemoryProviderRulesDataSource.UpdateRuleAsync(rule));
 
             // Assert
             argumentNullException.Should().NotBeNull();
@@ -128,11 +124,11 @@ namespace Rules.Framework.Tests.Providers.InMemory
         public async Task UpdateRuleAsync_GivenRule_ConvertsToRuleDataModelAndUpdatesOnDataSource()
         {
             // Arrange
-            var rule = new Rule<ContentType, ConditionType>();
-            var ruleDataModel = new RuleDataModel<ContentType, ConditionType>();
+            var rule = new Rule();
+            var ruleDataModel = new RuleDataModel();
 
-            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage<ContentType, ConditionType>>();
-            var ruleFactory = Mock.Of<IRuleFactory<ContentType, ConditionType>>();
+            var inMemoryRulesStorage = Mock.Of<IInMemoryRulesStorage>();
+            var ruleFactory = Mock.Of<IRuleFactory>();
 
             Mock.Get(ruleFactory)
                 .Setup(x => x.CreateRule(rule))
@@ -144,10 +140,10 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 .Verifiable();
 
             var inMemoryProviderRulesDataSource
-                = new InMemoryProviderRulesDataSource<ContentType, ConditionType>(inMemoryRulesStorage, ruleFactory);
+                = new InMemoryProviderRulesDataSource(inMemoryRulesStorage, ruleFactory);
 
             // Act
-            await inMemoryProviderRulesDataSource.UpdateRuleAsync(rule).ConfigureAwait(false);
+            await inMemoryProviderRulesDataSource.UpdateRuleAsync(rule);
 
             // Assert
             Mock.VerifyAll(Mock.Get(inMemoryRulesStorage), Mock.Get(ruleFactory));

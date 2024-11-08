@@ -3,7 +3,7 @@ namespace Rules.Framework.Tests.Evaluation.ValueEvaluation.Dispatchers
     using System;
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers;

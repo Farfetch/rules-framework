@@ -2,10 +2,9 @@ namespace Rules.Framework.Evaluation.Compiled
 {
     using System;
     using System.Linq.Expressions;
-    using Rules.Framework.Core;
 
-    internal interface IRuleConditionsExpressionBuilder<TConditionType>
+    internal interface IRuleConditionsExpressionBuilder
     {
-        Expression<Func<EvaluationContext<TConditionType>, bool>> BuildExpression(IConditionNode<TConditionType> rootConditionNode);
+        Expression<Func<EvaluationContext, bool>> BuildExpression(IConditionNode rootConditionNode);
     }
 }

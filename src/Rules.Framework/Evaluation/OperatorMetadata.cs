@@ -3,7 +3,7 @@ namespace Rules.Framework.Evaluation
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal sealed class OperatorMetadata
     {

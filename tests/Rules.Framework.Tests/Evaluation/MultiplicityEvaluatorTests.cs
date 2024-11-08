@@ -3,7 +3,7 @@ namespace Rules.Framework.Tests.Evaluation
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.Evaluation;
     using Xunit;
 

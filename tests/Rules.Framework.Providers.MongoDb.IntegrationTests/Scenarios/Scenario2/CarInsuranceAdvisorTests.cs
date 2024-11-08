@@ -30,20 +30,20 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             this.mongoClient = CreateMongoClient();
             this.mongoDbProviderSettings = CreateProviderSettings();
 
-            Stream? rulesFile = Assembly.GetExecutingAssembly()
+            var rulesFile = Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream("Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2.rules-framework-tests.car-insurance-advisor.json");
 
             IEnumerable<RuleDataModel> rules;
-            using (StreamReader streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
+            using (var streamReader = new StreamReader(rulesFile ?? throw new InvalidOperationException("Could not load rules file.")))
             {
-                string json = streamReader.ReadToEnd();
+                var json = streamReader.ReadToEnd();
 
-                IEnumerable<RuleDataModel> array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
+                var array = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(json, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
 
-                rules = array.Select(t =>
+                rules = array!.Select(t =>
                 {
                     t.Content = t.Content as string;
 
@@ -51,11 +51,25 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 }).ToList();
             }
 
-            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
-            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
-            var mongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesets = rules
+                .Select(r => new RulesetDataModel
+                {
+                    Creation = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    Name = r.Ruleset,
+                })
+                .Distinct()
+                .ToArray();
 
-            mongoCollection.InsertMany(rules);
+            var mongoDatabase = this.mongoClient.GetDatabase(this.mongoDbProviderSettings.DatabaseName);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesetsCollectionName);
+            var contentTypesMongoCollection = mongoDatabase.GetCollection<RulesetDataModel>(this.mongoDbProviderSettings.RulesetsCollectionName);
+            contentTypesMongoCollection.InsertMany(rulesets);
+
+            mongoDatabase.DropCollection(this.mongoDbProviderSettings.RulesCollectionName);
+            var rulesMongoCollection = mongoDatabase.GetCollection<RuleDataModel>(this.mongoDbProviderSettings.RulesCollectionName);
+            rulesMongoCollection.InsertMany(rules);
         }
 
         public void Dispose()
@@ -71,17 +85,15 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
         {
             // Arrange
             var expected = CarInsuranceAdvices.RefusePaymentPerFranchise;
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            const CarInsuranceRulesetNames expectedRuleset = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<CarInsuranceConditionNames, object>
             {
-                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
-                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
+                { CarInsuranceConditionNames.RepairCosts, 800.00000m },
+                { CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
@@ -89,9 +101,10 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<CarInsuranceRulesetNames, CarInsuranceConditionNames>();
 
             // Act
-            var actual = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions).ConfigureAwait(false);
+            var actual = await genericRulesEngine.MatchOneAsync(expectedRuleset, expectedMatchDate, expectedConditions);
 
             // Assert
             actual.Should().NotBeNull();
@@ -105,17 +118,15 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
         public async Task GetCarInsuranceAdvice_UpdatesRuleAndAddsNewOneAndEvaluates_ReturnsPay(bool enableCompilation)
         {
             // Arrange
-            const ContentTypes expectedContent = ContentTypes.CarInsuranceAdvice;
+            const CarInsuranceRulesetNames expectedContent = CarInsuranceRulesetNames.CarInsuranceAdvice;
             var expectedMatchDate = new DateTime(2018, 06, 01);
-            var expectedConditions = new[]
+            var expectedConditions = new Dictionary<CarInsuranceConditionNames, object>
             {
-                new Condition<ConditionTypes>(ConditionTypes.RepairCosts, 800.00000m),
-                new Condition<ConditionTypes>(ConditionTypes.RepairCostsCommercialValueRate, 23.45602m)
+                { CarInsuranceConditionNames.RepairCosts, 800.00000m },
+                { CarInsuranceConditionNames.RepairCostsCommercialValueRate, 23.45602m },
             };
 
             var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(opt =>
                 {
@@ -123,29 +134,30 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                     opt.PriorityCriteria = PriorityCriterias.BottommostRuleWins;
                 })
                 .Build();
+            var genericRulesEngine = rulesEngine.MakeGeneric<CarInsuranceRulesetNames, CarInsuranceConditionNames>();
 
-            var rulesDataSource = CreateRulesDataSourceTest<ContentTypes, ConditionTypes>(this.mongoClient, this.mongoDbProviderSettings);
+            var rulesDataSource = CreateRulesDataSourceTest(this.mongoClient, this.mongoDbProviderSettings);
 
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentTypes, ConditionTypes>()
-                .WithName("Car Insurance Advise on self damage coverage")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentTypes.CarInsuranceAdvice, CarInsuranceAdvices.Pay)
+            var ruleBuilderResult = Rule.Create<CarInsuranceRulesetNames, CarInsuranceConditionNames>("Car Insurance Advise on self damage coverage")
+                .InRuleset(CarInsuranceRulesetNames.CarInsuranceAdvice)
+                .SetContent(CarInsuranceAdvices.Pay)
+                .Since(DateTime.Parse("2018-01-01"))
                 .Build();
-            var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>
+            var existentRules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs
             {
                 Name = "Car Insurance Advise on repair costs lower than franchise boundary"
-            }).ConfigureAwait(false);
+            });
 
             var ruleToAdd = ruleBuilderResult.Rule;
             var ruleToUpdate1 = existentRules1.First();
             ruleToUpdate1.Priority = 2;
 
             // Act 1
-            var updateOperationResult1 = await rulesEngine.UpdateRuleAsync(ruleToUpdate1).ConfigureAwait(false);
+            var updateOperationResult1 = await rulesEngine.UpdateRuleAsync(ruleToUpdate1);
 
-            var eval1 = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions).ConfigureAwait(false);
+            var eval1 = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
 
-            var rules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
+            var rules1 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs());
 
             // Assert 1
             updateOperationResult1.Should().NotBeNull();
@@ -172,16 +184,16 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
                 AtRuleNameOptionValue = "Car Insurance Advise on repair costs lower than franchise boundary"
             });
 
-            var eval2 = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions).ConfigureAwait(false);
+            var eval2 = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
 
-            var rules2 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
+            var rules2 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs());
 
             // Assert 2
             addOperationResult.Should().NotBeNull();
             addOperationResult.IsSuccess.Should().BeTrue();
 
             eval2.Priority.Should().Be(3);
-            CarInsuranceAdvices content2 = eval2.ContentContainer.GetContentAs<CarInsuranceAdvices>();
+            var content2 = eval2.ContentContainer.GetContentAs<CarInsuranceAdvices>();
             content2.Should().Be(CarInsuranceAdvices.RefusePaymentPerFranchise);
 
             var rule21 = rules2.First(r => r.Name == "Car Insurance Advise on repair costs lesser than 80% of commercial value");
@@ -198,18 +210,18 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             rule24.Priority.Should().Be(4);
 
             // Act 3
-            var existentRules2 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>
+            var existentRules2 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs
             {
                 Name = "Car Insurance Advise on repair costs lower than franchise boundary"
-            }).ConfigureAwait(false);
+            });
             var ruleToUpdate2 = existentRules2.First();
             ruleToUpdate2.Priority = 4;
 
-            var updateOperationResult2 = await rulesEngine.UpdateRuleAsync(ruleToUpdate2).ConfigureAwait(false);
+            var updateOperationResult2 = await rulesEngine.UpdateRuleAsync(ruleToUpdate2);
 
-            var eval3 = await rulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions).ConfigureAwait(false);
+            var eval3 = await genericRulesEngine.MatchOneAsync(expectedContent, expectedMatchDate, expectedConditions);
 
-            var rules3 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs<ContentTypes>()).ConfigureAwait(false);
+            var rules3 = await rulesDataSource.GetRulesByAsync(new RulesFilterArgs());
 
             // Assert 3
             updateOperationResult2.Should().NotBeNull();
@@ -246,19 +258,19 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Scenarios.Scenario2
             return new MongoClient(settings);
         }
 
-        private static IRulesDataSource<TContentType, TConditionType> CreateRulesDataSourceTest<TContentType, TConditionType>(
+        private static MongoDbProviderRulesDataSource CreateRulesDataSourceTest(
             IMongoClient mongoClient,
             MongoDbProviderSettings mongoDbProviderSettings)
         {
-            var contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider<TContentType>();
-            var ruleFactory = new RuleFactory<TContentType, TConditionType>(contentSerializationProvider);
-            return new MongoDbProviderRulesDataSource<TContentType, TConditionType>(
+            var contentSerializationProvider = new DynamicToStrongTypeContentSerializationProvider();
+            var ruleFactory = new RuleFactory(contentSerializationProvider);
+            return new MongoDbProviderRulesDataSource(
                     mongoClient,
                     mongoDbProviderSettings,
                     ruleFactory);
         }
 
-        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        private MongoDbProviderSettings CreateProviderSettings() => new()
         {
             DatabaseName = "rules-framework-tests",
             RulesCollectionName = "car-insurance-advisor"

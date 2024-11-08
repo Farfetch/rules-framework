@@ -1,7 +1,7 @@
 private Func<object, Operators, object, string> Evaluate1;
-private Func<IDictionary<ConditionType, object>, ConditionType, object> GetValueOrDefault1;
+private Func<IDictionary<string, object>, string, object> GetValueOrDefault1;
 
-internal bool Main(EvaluationContext<ConditionType> evaluationContext)
+internal bool Main(EvaluationContext evaluationContext)
 {
     bool cnd0Result;
     object cnd0LeftOperand;
@@ -12,7 +12,7 @@ internal bool Main(EvaluationContext<ConditionType> evaluationContext)
     object cnd1RightOperand;
     string cnd1Multiplicity;
 
-    cnd0LeftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), ConditionType.NumberOfSales);
+    cnd0LeftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), "NumberOfSales");
     cnd0RightOperand = 100;
 
     if (cnd0LeftOperand == null)
@@ -41,7 +41,7 @@ internal bool Main(EvaluationContext<ConditionType> evaluationContext)
     }
 cnd0LabelEndValueConditionNode:
 
-    cnd1LeftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), ConditionType.IsoCountryCode);
+    cnd1LeftOperand = GetValueOrDefault1.Invoke(evaluationContext.get_Conditions(), "IsoCountryCode");
     cnd1RightOperand = "GB";
 
     if (cnd1LeftOperand == null)

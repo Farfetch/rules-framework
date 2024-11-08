@@ -1,6 +1,6 @@
 namespace Rules.Framework.Evaluation
 {
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal interface IDataTypesConfigurationProvider
     {

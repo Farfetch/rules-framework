@@ -6,7 +6,7 @@ namespace Rules.Framework.IntegrationTests.DataSource
     {
         public IEnumerable<ConditionNodeDataModel> ChildConditionNodes { get; set; }
 
-        public string ConditionType { get; set; }
+        public string Condition { get; set; }
 
         public string DataType { get; set; }
 

@@ -1,0 +1,384 @@
+@attribute [ExcludeFromCodeCoverage]
+@page "/rules-ui/search-rules"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using System.IO
+@using System.Text
+@inject WebUIOptions Options
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
+@inject ProtectedSessionStorage Storage
+
+<PageTitle>@(this.Options.DocumentTitle) - Search rules</PageTitle>
+
+<h2>Search rules</h2>
+
+<div id="rules" class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex flex-row">
+                <div>
+                    <Dropdown Color="DropdownColor.Secondary"
+                        AutoClose="true"
+                        AutoCloseBehavior="DropdownAutoCloseBehavior.Outside">
+                        <DropdownToggleButton>Select rulesets</DropdownToggleButton>
+                        <DropdownMenu Class="overflow-auto" Style="max-height: 15rem;">
+                            @if (this.instanceId == Guid.Empty)
+                            {
+                                <p>Loading...</p>
+                            }
+                            else
+                            {
+                                <div class="form-check m-2">
+                                    <input type="checkbox"
+                                        id="checkbox_ruleset_all"
+                                        class="form-check-input"
+                                        checked="@(this.allRulesetsSelected)"
+                                        @onchange="() => OnRulesetCheckAsync(Guid.Empty)" />
+                                    <label for="checkbox_ruleset_all"
+                                        class="form-check-label">All</label>
+                                </div>
+                                <DropdownDivider />
+                                foreach (var ruleset in this.rulesets)
+                                {
+                                    <div class="form-check m-2">
+                                        <input type="checkbox"
+                                            id="@($"checkbox_ruleset_{ruleset.Id}")"
+                                            class="form-check-input"
+                                            checked="@(this.rulesetIds.Contains(ruleset.Id))"
+                                            @onchange="() => OnRulesetCheckAsync(ruleset.Id)" />
+                                        <label for="@($"checkbox_ruleset_{ruleset.Id}")"
+                                            class="form-check-label">@(ruleset.Name)</label>
+                                    </div>
+                                }
+                            }
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+                <div class="ms-2 d-flex flex-row align-items-center">
+                    <div>
+                        @if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
+                        {
+                            <b>@(this.rulesetIds.Count) selected: </b>
+                            var count = 0;
+                            foreach (var ruleset in this.rulesets)
+                            {
+                                if (this.rulesetIds.Contains(ruleset.Id))
+                                {
+                                    if (count > 0)
+                                    {
+                                        <span>, </span>
+                                    }
+
+                                    if (count == 5)
+                                    {
+                                        <i>and more...</i>
+                                        break;
+                                    }
+
+                                    <span>@(ruleset.Name)</span>
+                                    count++;
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-lg-8">
+                    <h5 class="mb-3">Rules</h5>
+                </div>
+                <div class="col-lg-4" style="text-align:right">
+                    <em><Badge Color="BadgeColor.Light">@priorityCriteria <Tooltip Title="@priorityCriteriaTooltip"><Icon Name="IconName.QuestionCircleFill" /></Tooltip></Badge></em>
+                    <Dropdown Color="DropdownColor.Dark">
+                        <DropdownToggleButton><span class="me-1">Actions</span><Icon Name="IconName.LightningFill" Color="IconColor.Light" /></DropdownToggleButton>
+                        <DropdownMenu>
+                            <DropdownItem Type="DropdownItemType.Button" @onclick="OnExportJsonButtonClickAsync" Disabled="@(!this.rulesetIds.Any())">Export JSON</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <Grid TItem="RuleViewModel"
+                    DataProvider="LoadRulesAsync"
+                    AllowPaging="true"
+                    AllowSorting="true"
+                    AllowFiltering="true"
+                    Responsive="true"
+                    PageSizeSelectorVisible="true"
+                    PageSizeSelectorItems="new[] { 5, 10, 50 }"
+                    PageSize="@DefaultPageSize"
+                    Class="table table-hover table-bordered table-striped"
+                    @ref="rulesGrid"
+                    AllowDetailView="true">
+                    <GridColumns>
+                        <GridColumn TItem="RuleViewModel" HeaderText="Priority" PropertyName="Priority" SortKeySelector="item => item.Priority">
+                            @(context.Priority)
+                        </GridColumn>
+                        <GridColumn TItem="RuleViewModel" HeaderText="Ruleset" PropertyName="Ruleset" SortKeySelector="item => item.Ruleset">
+                            @(context.Ruleset)
+                        </GridColumn>
+                        <GridColumn TItem="RuleViewModel" HeaderText="Name" PropertyName="Name" SortKeySelector="item => item.Name">
+                            @(context.Name)
+                        </GridColumn>
+                        <GridColumn TItem="RuleViewModel" HeaderText="Date begin" PropertyName="DateBegin" SortKeySelector="item => item.DateBegin">
+                            @(context.DateBegin)
+                        </GridColumn>
+                        <GridColumn TItem="RuleViewModel" HeaderText="Date end" PropertyName="DateEnd" SortKeySelector="item => item.DateEnd">
+                            @(context.DateEnd)
+                        </GridColumn>
+                        <GridColumn TItem="RuleViewModel" HeaderText="Content" PropertyName="Content">
+                            @(JsonSerializer.Serialize(context.Content, this.jsonSerializerOptions))
+                        </GridColumn>
+                        <GridColumn TItem="RuleViewModel" HeaderText="Status" PropertyName="Active">
+                            @if (context.Active)
+                            {
+                                <Badge Color="BadgeColor.Primary" IndicatorType="BadgeIndicatorType.RoundedPill" Class="p-2">Active</Badge>
+                            }
+                            else
+                            {
+                                <Badge Color="BadgeColor.Secondary" IndicatorType="BadgeIndicatorType.RoundedPill" Class="p-2">Deactivated</Badge>
+                            }
+                        </GridColumn>
+                    </GridColumns>
+                    <GridDetailView TItem="RuleViewModel">
+                        <Tabs EnableFadeEffect="true">
+                            <Tab Title="JSON view" Active="true">
+                                <Content>
+                                    <div class="overflow-auto" style="max-height: 40vh;">
+                                        <pre>
+                                            <code>
+                                                @(JsonSerializer.Serialize(context.RootCondition, this.jsonSerializerOptions))
+                                            </code>
+                                        </pre>
+                                    </div>
+                                </Content>
+                            </Tab>
+                            <Tab Title="Tree view">
+                                <Content>
+                                    <div class="overflow-auto" style="max-height: 40vh;">
+                                        @if (context.RootCondition is not null)
+                                        {
+                                            var conditionNodes = new[] { ConvertToComponentModel(context.RootCondition) };
+                                            <RuleConditionHierarchicalAccordion ConditionNodes="@conditionNodes"
+                                                                                EnableCollapseAllButton="true"
+                                                                                EnableShowAllButton="true" />
+                                        }
+                                    </div>
+                                </Content>
+                            </Tab>
+                        </Tabs>
+                    </GridDetailView>
+                </Grid>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Modal @ref="exportModal" Size="ModalSize.ExtraLarge" />
+
+@code {
+    private bool allRulesetsSelected;
+    private const int DefaultPageSize = 5;
+    private DateTime? dateBegin;
+    private DateInput<DateTime?> dateBeginSearch;
+    private DateTime? dateEnd;
+    private Guid instanceId;
+    private JsonSerializerOptions jsonSerializerOptions;
+    private string exportFileName;
+    private Modal exportModal;
+    private string exportText;
+    private string priorityCriteria;
+    private string priorityCriteriaTooltip;
+    private HashSet<Guid> rulesetIds;
+    private List<RulesetViewModel> rulesets;
+    private Grid<RuleViewModel> rulesGrid;
+
+    public SearchRules()
+    {
+        this.jsonSerializerOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IncludeFields = true,
+            WriteIndented = true,
+        };
+        this.jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        this.jsonSerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeViewModel>());
+        this.rulesetIds = new HashSet<Guid>();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var instanceIdResult = await this.Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
+            if (instanceIdResult.Success)
+            {
+                this.instanceId = instanceIdResult.Value;
+                var instance = this.RulesEngineInstanceProvider.GetInstance(this.instanceId);
+
+                switch (instance.RulesEngine.Options.PriorityCriteria)
+                {
+                    case PriorityCriterias.BottommostRuleWins:
+                        this.priorityCriteria = WebUIConstants.OptionPriorityCriteriaBottommostRuleWinsName;
+                        this.priorityCriteriaTooltip = WebUIConstants.OptionPriorityCriteriaBottommostRuleWinsDescription;
+                        break;
+                    default:
+                        this.priorityCriteria = WebUIConstants.OptionPriorityCriteriaTopmostRuleWinsName;
+                        this.priorityCriteriaTooltip = WebUIConstants.OptionPriorityCriteriaTopmostRuleWinsDescription;
+                        break;
+                }
+
+                var rulesets = await instance.RulesEngine.GetRulesetsAsync();
+                var number = 1;
+                this.rulesets = rulesets.OrderBy(r => r.Name).Select(r => new RulesetViewModel
+                {
+                    Id = GuidGenerator.GenerateFromString(r.Name),
+                    Name = r.Name,
+                    Number = number++,
+                }).ToList();
+
+                foreach (var ruleset in this.rulesets)
+                {
+                    var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(
+                        ruleset.Name,
+                        DateTime.MinValue,
+                        DateTime.MaxValue));
+
+                    ruleset.TotalRulesCount = rules.Count();
+                    ruleset.ActiveRulesCount = rules.Count(r => r.Active);
+                }
+            }
+
+            var rulesetIdResult = await this.Storage.GetAsync<Guid[]>(WebUIConstants.SelectedRulesetsStorageKey);
+            if (rulesetIdResult.Success)
+            {
+                this.rulesetIds = new HashSet<Guid>(rulesetIdResult.Value);
+            }
+
+            this.StateHasChanged();
+            await this.rulesGrid.RefreshDataAsync();
+        }
+    }
+
+    private RuleConditionHierarchicalAccordion.ConditionNode ConvertToComponentModel(ConditionNodeViewModel viewModel)
+    {
+        return viewModel switch
+        {
+            ComposedConditionNodeViewModel composedConditionNodeViewModel => new RuleConditionHierarchicalAccordion.ComposedConditionNode
+                {
+                ChildConditionNodes = composedConditionNodeViewModel.ChildConditionNodes.Select(x => ConvertToComponentModel(x)),
+                LogicalOperator = composedConditionNodeViewModel.LogicalOperator,
+            },
+            ValueConditionNodeViewModel valueConditionNodeViewModel => new RuleConditionHierarchicalAccordion.ValueConditionNode
+            {
+                Condition = valueConditionNodeViewModel.Condition,
+                DataType = valueConditionNodeViewModel.DataType,
+                LogicalOperator = valueConditionNodeViewModel.LogicalOperator,
+                Operand = valueConditionNodeViewModel.Operand,
+                Operator = valueConditionNodeViewModel.Operator,
+            },
+            _ => throw new NotSupportedException(),
+        };
+    }
+
+    private async Task<GridDataProviderResult<RuleViewModel>> LoadRulesAsync(GridDataProviderRequest<RuleViewModel> request)
+    {
+        List<RuleViewModel> ruleViewModels = new List<RuleViewModel>();
+        if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
+        {
+
+            var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
+            var rulesets = await instance.RulesEngine.GetRulesetsAsync();
+            var rulesetsToSearch = this.rulesetIds.Contains(Guid.Empty)
+                ? rulesets
+                : rulesets.Where(r => this.rulesetIds.Contains(GuidGenerator.GenerateFromString(r.Name)));
+
+            var searchDateBegin = this.dateBegin.GetValueOrDefault(DateTime.MinValue);
+            var searchDateEnd = this.dateEnd.GetValueOrDefault(DateTime.MaxValue);
+            foreach (var ruleset in rulesetsToSearch)
+            {
+                var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(ruleset.Name, searchDateBegin, searchDateEnd));
+
+                ruleViewModels.AddRange(rules.OrderBy(r => r.Priority).Select(r => r.ToViewModel()));
+            }
+        }
+
+        return request.ApplyTo(ruleViewModels);
+    }
+
+    private async Task OnRulesetCheckAsync(Guid rulesetId)
+    {
+        if (rulesetId == Guid.Empty)
+        {
+            if (this.allRulesetsSelected)
+            {
+                this.rulesetIds.Clear();
+            }
+            else
+            {
+                this.rulesetIds.Clear();
+                foreach (var ruleset in this.rulesets)
+                {
+                    this.rulesetIds.Add(ruleset.Id);
+                }
+            }
+
+            this.allRulesetsSelected = !this.allRulesetsSelected;
+        }
+        else
+        {
+            if (this.rulesetIds.Contains(rulesetId))
+            {
+                this.rulesetIds.Remove(rulesetId);
+            }
+            else
+            {
+                this.rulesetIds.Add(rulesetId);
+            }
+        }
+
+        await this.Storage.SetAsync(WebUIConstants.SelectedRulesetsStorageKey, this.rulesetIds);
+        this.StateHasChanged();
+        await this.rulesGrid.RefreshDataAsync();
+    }
+
+    private async Task OnExportJsonButtonClickAsync()
+    {
+        if (this.rulesetIds.Any())
+        {
+            var request = new GridDataProviderRequest<RuleViewModel>
+            {
+                Filters = this.rulesGrid.GetFilters(),
+            };
+            var response = await this.rulesGrid.DataProvider.Invoke(request);
+            var rules = response.Data.Select(r => r.ToExportRulesModel()).ToArray();
+            if (this.rulesetIds.Count > 1)
+            {
+                this.exportFileName = "selection-rules";
+            }
+            else
+            {
+                var rulesetId = this.rulesetIds.Single();
+                var selectedRulesetName = this.rulesets.First(r => r.Id == rulesetId).Name;
+                this.exportFileName = $"{selectedRulesetName}-selection-rules";
+            }
+
+            this.StateHasChanged();
+            await this.exportModal.ShowAsync<ExportRules>(
+                title: "Export result",
+                parameters: new Dictionary<string, object>(StringComparer.Ordinal)
+                {
+                    { "CloseButtonCallback", EventCallback.Factory.Create(this.exportModal, async () => await this.exportModal.HideAsync()) },
+                    { "CloseButtonEnable", true },
+                    { "ExportFileName", this.exportFileName },
+                    { "Rules", rules },
+                });
+        }
+    }
+
+    
+}

@@ -4,7 +4,7 @@ namespace Rules.Framework.Evaluation
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal static class OperatorsMetadata
     {

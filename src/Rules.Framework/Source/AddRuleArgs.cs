@@ -1,9 +1,7 @@
 namespace Rules.Framework.Source
 {
-    using Rules.Framework.Core;
-
-    internal sealed class AddRuleArgs<TContentType, TConditionType>
+    internal sealed class AddRuleArgs
     {
-        public Rule<TContentType, TConditionType> Rule { get; set; }
+        public Rule Rule { get; set; }
     }
 }

@@ -11,9 +11,6 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
         [BsonElement(Order = 7)]
         public dynamic Content { get; set; }
 
-        [BsonElement(Order = 2)]
-        public string ContentType { get; set; }
-
         [BsonElement(Order = 3)]
         public DateTime DateBegin { get; set; }
 
@@ -28,5 +25,8 @@ namespace Rules.Framework.Providers.MongoDb.DataModel
 
         [BsonElement(Order = 6)]
         public ConditionNodeDataModel RootCondition { get; set; }
+
+        [BsonElement(Order = 2)]
+        public string Ruleset { get; set; }
     }
 }

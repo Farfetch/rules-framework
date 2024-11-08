@@ -2,17 +2,15 @@ namespace Rules.Framework.Builder.Validation
 {
     using System.Collections.Generic;
     using FluentValidation;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework;
+    using Rules.Framework.ConditionNodes;
 
-    internal sealed class ValueConditionNodeValidator<TConditionType> : AbstractValidator<ValueConditionNode<TConditionType>>
+    internal sealed class ValueConditionNodeValidator : AbstractValidator<ValueConditionNode>
     {
         public ValueConditionNodeValidator()
         {
-            this.RuleFor(c => c.ConditionType)
-                .NotEmpty()
-                .IsInEnum()
-                .When(c => c.ConditionType.GetType().IsEnum);
+            this.RuleFor(c => c.Condition)
+                .NotEmpty();
 
             this.RuleFor(c => c.DataType)
                 .IsInEnum()

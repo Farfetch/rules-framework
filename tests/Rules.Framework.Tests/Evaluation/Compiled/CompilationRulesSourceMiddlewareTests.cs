@@ -7,7 +7,8 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
     using System.Threading.Tasks;
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Builder;
+    using Rules.Framework;
+    using Rules.Framework.Builder.Generic;
     using Rules.Framework.Core;
     using Rules.Framework.Evaluation.Compiled;
     using Rules.Framework.Source;
@@ -26,39 +27,39 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Simulate compiled rule.
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.IsCompiledKey] = true;
 
-            var addRuleArgs = new AddRuleArgs<ContentType, ConditionType>
+            var addRuleArgs = new AddRuleArgs
             {
                 Rule = expectedRule,
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new AddRuleDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            await compilationRulesSourceMiddleware.HandleAddRuleAsync(addRuleArgs, nextDelegate).ConfigureAwait(false);
+            await compilationRulesSourceMiddleware.HandleAddRuleAsync(addRuleArgs, nextDelegate);
 
             // Assert
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
         }
 
         [Fact]
@@ -68,39 +69,39 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var ruleResult = CreateTestRule(withCondition: false);
             var expectedRule = ruleResult.Rule;
 
-            var addRuleArgs = new AddRuleArgs<ContentType, ConditionType>
+            var addRuleArgs = new AddRuleArgs
             {
                 Rule = expectedRule,
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new AddRuleDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            await compilationRulesSourceMiddleware.HandleAddRuleAsync(addRuleArgs, nextDelegate).ConfigureAwait(false);
+            await compilationRulesSourceMiddleware.HandleAddRuleAsync(addRuleArgs, nextDelegate);
 
             // Assert
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
         }
 
         [Fact]
@@ -110,40 +111,40 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var ruleResult = CreateTestRule(withCondition: true);
             var expectedRule = ruleResult.Rule;
 
-            var addRuleArgs = new AddRuleArgs<ContentType, ConditionType>
+            var addRuleArgs = new AddRuleArgs
             {
                 Rule = expectedRule,
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new AddRuleDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new AddRuleDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            await compilationRulesSourceMiddleware.HandleAddRuleAsync(addRuleArgs, nextDelegate).ConfigureAwait(false);
+            await compilationRulesSourceMiddleware.HandleAddRuleAsync(addRuleArgs, nextDelegate);
 
             // Assert
             expectedRule.RootCondition.Properties.Should().HaveCount(2);
             expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
                 .WhoseValue.Should().Be(true);
             expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
-                .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
+                .WhoseValue.Should().BeOfType<Func<EvaluationContext, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.VerifyAll(
@@ -159,48 +160,48 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             // Simulate compiled rule.
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.IsCompiledKey] = true;
-            var expectedRules = new[] { expectedRule };
+            var expectedRules = new Rule[] { expectedRule };
 
-            var getRulesArgs = new GetRulesArgs<ContentType>
+            var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ContentType.Type1,
+                ContentType = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new GetRulesDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
-                return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
+                return Task.FromResult<IEnumerable<Rule>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()));
+                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule>()));
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
+            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate);
 
             // Assert
             actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
             Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Never());
+                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule>()), Times.Never());
         }
 
         [Fact]
@@ -209,48 +210,48 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Arrange
             var ruleResult = CreateTestRule(withCondition: false);
             var expectedRule = ruleResult.Rule;
-            var expectedRules = new[] { expectedRule };
+            var expectedRules = new Rule[] { expectedRule };
 
-            var getRulesArgs = new GetRulesArgs<ContentType>
+            var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ContentType.Type1,
+                ContentType = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new GetRulesDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
-                return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
+                return Task.FromResult<IEnumerable<Rule>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()));
+                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule>()));
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
+            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate);
 
             // Assert
             actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
             Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Never());
+                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule>()), Times.Never());
         }
 
         [Fact]
@@ -259,39 +260,39 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Arrange
             var ruleResult = CreateTestRule(withCondition: true);
             var expectedRule = ruleResult.Rule;
-            var expectedRules = new[] { expectedRule };
+            var expectedRules = new Rule[] { expectedRule };
 
-            var getRulesArgs = new GetRulesArgs<ContentType>
+            var getRulesArgs = new GetRulesArgs
             {
-                ContentType = ContentType.Type1,
+                ContentType = RulesetNames.Type1.ToString(),
                 DateBegin = DateTime.UtcNow.AddDays(-1),
                 DateEnd = DateTime.UtcNow.AddDays(1),
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new GetRulesDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
-                return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
+                return Task.FromResult<IEnumerable<Rule>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()));
+                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule>()));
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate).ConfigureAwait(false);
+            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesAsync(getRulesArgs, nextDelegate);
 
             // Assert
             actualRules.Should().HaveCount(1);
@@ -300,7 +301,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
                 .WhoseValue.Should().Be(true);
             actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
-                .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
+                .WhoseValue.Should().BeOfType<Func<EvaluationContext, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.VerifyAll(
@@ -317,46 +318,46 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
 
             // Simulate compiled rule.
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.IsCompiledKey] = true;
-            var expectedRules = new[] { expectedRule };
+            var expectedRules = new Rule[] { expectedRule };
 
-            var getRulesFilteredArgs = new GetRulesFilteredArgs<ContentType>
+            var getRulesFilteredArgs = new GetRulesFilteredArgs
             {
-                ContentType = ContentType.Type1,
+                Ruleset = RulesetNames.Type1.ToString(),
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new GetRulesFilteredDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
-                return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
+                return Task.FromResult<IEnumerable<Rule>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()));
+                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule>()));
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
+            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate);
 
             // Assert
             actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
             Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Never());
+                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule>()), Times.Never());
         }
 
         [Fact]
@@ -365,46 +366,46 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Arrange
             var ruleResult = CreateTestRule(withCondition: false);
             var expectedRule = ruleResult.Rule;
-            var expectedRules = new[] { expectedRule };
+            var expectedRules = new Rule[] { expectedRule };
 
-            var getRulesFilteredArgs = new GetRulesFilteredArgs<ContentType>
+            var getRulesFilteredArgs = new GetRulesFilteredArgs
             {
-                ContentType = ContentType.Type1,
+                Ruleset = RulesetNames.Type1.ToString(),
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new GetRulesFilteredDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
-                return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
+                return Task.FromResult<IEnumerable<Rule>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()));
+                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule>()));
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
+            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate);
 
             // Assert
             actualRules.Should().BeEquivalentTo(expectedRules);
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
             Mock.Get(rulesDataSource)
-                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()), Times.Never());
+                .Verify(x => x.UpdateRuleAsync(It.IsAny<Rule>()), Times.Never());
         }
 
         [Fact]
@@ -413,37 +414,37 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Arrange
             var ruleResult = CreateTestRule(withCondition: true);
             var expectedRule = ruleResult.Rule;
-            var expectedRules = new[] { expectedRule };
+            var expectedRules = new Rule[] { expectedRule };
 
-            var getRulesFilteredArgs = new GetRulesFilteredArgs<ContentType>
+            var getRulesFilteredArgs = new GetRulesFilteredArgs
             {
-                ContentType = ContentType.Type1,
+                Ruleset = RulesetNames.Type1.ToString(),
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new GetRulesFilteredDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new GetRulesFilteredDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
-                return Task.FromResult<IEnumerable<Rule<ContentType, ConditionType>>>(expectedRules);
+                return Task.FromResult<IEnumerable<Rule>>(expectedRules);
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
             Mock.Get(rulesDataSource)
-                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule<ContentType, ConditionType>>()));
+                .Setup(x => x.UpdateRuleAsync(It.IsAny<Rule>()));
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate).ConfigureAwait(false);
+            var actualRules = await compilationRulesSourceMiddleware.HandleGetRulesFilteredAsync(getRulesFilteredArgs, nextDelegate);
 
             // Assert
             actualRules.Should().HaveCount(1);
@@ -452,7 +453,7 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
                 .WhoseValue.Should().Be(true);
             actualRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
-                .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
+                .WhoseValue.Should().BeOfType<Func<EvaluationContext, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.VerifyAll(
@@ -470,39 +471,39 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             // Simulate compiled rule.
             expectedRule.RootCondition.Properties[ConditionNodeProperties.CompilationProperties.IsCompiledKey] = true;
 
-            var updateRuleArgs = new UpdateRuleArgs<ContentType, ConditionType>
+            var updateRuleArgs = new UpdateRuleArgs
             {
                 Rule = expectedRule,
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new UpdateRuleDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            await compilationRulesSourceMiddleware.HandleUpdateRuleAsync(updateRuleArgs, nextDelegate).ConfigureAwait(false);
+            await compilationRulesSourceMiddleware.HandleUpdateRuleAsync(updateRuleArgs, nextDelegate);
 
             // Assert
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
         }
 
         [Fact]
@@ -512,39 +513,39 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var ruleResult = CreateTestRule(withCondition: false);
             var expectedRule = ruleResult.Rule;
 
-            var updateRuleArgs = new UpdateRuleArgs<ContentType, ConditionType>
+            var updateRuleArgs = new UpdateRuleArgs
             {
                 Rule = expectedRule,
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new UpdateRuleDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            await compilationRulesSourceMiddleware.HandleUpdateRuleAsync(updateRuleArgs, nextDelegate).ConfigureAwait(false);
+            await compilationRulesSourceMiddleware.HandleUpdateRuleAsync(updateRuleArgs, nextDelegate);
 
             // Assert
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()), Times.Never());
+                .Verify(x => x.BuildExpression(It.IsAny<IConditionNode>()), Times.Never());
         }
 
         [Fact]
@@ -554,56 +555,56 @@ namespace Rules.Framework.Tests.Evaluation.Compiled
             var ruleResult = CreateTestRule(withCondition: true);
             var expectedRule = ruleResult.Rule;
 
-            var updateRuleArgs = new UpdateRuleArgs<ContentType, ConditionType>
+            var updateRuleArgs = new UpdateRuleArgs
             {
                 Rule = expectedRule,
             };
 
-            bool nextDelegateWasInvoked = false;
-            var nextDelegate = new UpdateRuleDelegate<ContentType, ConditionType>((_) =>
+            var nextDelegateWasInvoked = false;
+            var nextDelegate = new UpdateRuleDelegate((_) =>
             {
                 nextDelegateWasInvoked = true;
                 return Task.CompletedTask;
             });
 
-            Expression<Func<EvaluationContext<ConditionType>, bool>> expectedExpression = (_) => true;
+            Expression<Func<EvaluationContext, bool>> expectedExpression = (_) => true;
 
-            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder<ConditionType>>();
+            var ruleConditionsExpressionBuilder = Mock.Of<IRuleConditionsExpressionBuilder>();
             Mock.Get(ruleConditionsExpressionBuilder)
-                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode<ConditionType>>()))
+                .Setup(x => x.BuildExpression(It.IsAny<IConditionNode>()))
                 .Returns(expectedExpression);
 
-            var rulesDataSource = Mock.Of<IRulesDataSource<ContentType, ConditionType>>();
+            var rulesDataSource = Mock.Of<IRulesDataSource>();
 
-            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware<ContentType, ConditionType>(
+            var compilationRulesSourceMiddleware = new CompilationRulesSourceMiddleware(
                 ruleConditionsExpressionBuilder,
                 rulesDataSource);
 
             // Act
-            await compilationRulesSourceMiddleware.HandleUpdateRuleAsync(updateRuleArgs, nextDelegate).ConfigureAwait(false);
+            await compilationRulesSourceMiddleware.HandleUpdateRuleAsync(updateRuleArgs, nextDelegate);
 
             // Assert
             expectedRule.RootCondition.Properties.Should().HaveCount(2);
             expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.IsCompiledKey)
                 .WhoseValue.Should().Be(true);
             expectedRule.RootCondition.Properties.Should().ContainKey(ConditionNodeProperties.CompilationProperties.CompiledDelegateKey)
-                .WhoseValue.Should().BeOfType<Func<EvaluationContext<ConditionType>, bool>>();
+                .WhoseValue.Should().BeOfType<Func<EvaluationContext, bool>>();
             nextDelegateWasInvoked.Should().BeTrue();
 
             Mock.VerifyAll(
                 Mock.Get(ruleConditionsExpressionBuilder));
         }
 
-        private static RuleBuilderResult<ContentType, ConditionType> CreateTestRule(bool withCondition)
+        private static RuleBuilderResult<RulesetNames, ConditionNames> CreateTestRule(bool withCondition)
         {
-            var ruleBuilder = RuleBuilder.NewRule<ContentType, ConditionType>()
-                        .WithName("Test rule")
-                        .WithDateBegin(DateTime.UtcNow)
-                        .WithContent(ContentType.Type1, "Test content");
+            var ruleBuilder = Rule.Create<RulesetNames, ConditionNames>("Test rule")
+                .InRuleset(RulesetNames.Type1)
+                .SetContent("Test content")
+                .Since(DateTime.UtcNow);
 
             if (withCondition)
             {
-                ruleBuilder.WithCondition(ConditionType.IsoCountryCode, Operators.Equal, "PT");
+                ruleBuilder.ApplyWhen(ConditionNames.IsoCountryCode, Operators.Equal, "PT");
             }
 
             return ruleBuilder.Build();

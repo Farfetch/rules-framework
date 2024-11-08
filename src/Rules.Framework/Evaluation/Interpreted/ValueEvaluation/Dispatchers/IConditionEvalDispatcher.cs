@@ -1,6 +1,6 @@
 namespace Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers
 {
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal interface IConditionEvalDispatcher
     {

@@ -2,25 +2,24 @@ namespace Rules.Framework
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// The set of search arguments to find rules.
     /// </summary>
-    /// <typeparam name="TContentType">The type of the content type.</typeparam>
-    /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
-    public class SearchArgs<TContentType, TConditionType>
+    /// <typeparam name="TRuleset">The type of the ruleset.</typeparam>
+    /// <typeparam name="TCondition">The type of the condition.</typeparam>
+    public class SearchArgs<TRuleset, TCondition>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SearchArgs{TContentType, TConditionType}"/> class.
+        /// Initializes a new instance of the <see cref="SearchArgs{TRuleset, TCondition}"/> class.
         /// </summary>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="ruleset">The ruleset name.</param>
         /// <param name="dateBegin">The date begin.</param>
         /// <param name="dateEnd">The date end.</param>
-        public SearchArgs(TContentType contentType, DateTime dateBegin, DateTime dateEnd)
+        public SearchArgs(TRuleset ruleset, DateTime dateBegin, DateTime dateEnd)
         {
-            this.Conditions = Enumerable.Empty<Condition<TConditionType>>();
-            this.ContentType = contentType;
+            this.Conditions = new Dictionary<TCondition, object>();
+            this.Ruleset = ruleset;
             this.DateBegin = dateBegin;
             this.DateEnd = dateEnd;
             this.ExcludeRulesWithoutSearchConditions = false;
@@ -28,16 +27,16 @@ namespace Rules.Framework
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SearchArgs{TContentType, TConditionType}"/> class.
+        /// Initializes a new instance of the <see cref="SearchArgs{TRuleset, TCondition}"/> class.
         /// </summary>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="ruleset">The ruleset name.</param>
         /// <param name="dateBegin">The date begin.</param>
         /// <param name="dateEnd">The date end.</param>
         /// <param name="active">The active status.</param>
-        public SearchArgs(TContentType contentType, DateTime dateBegin, DateTime dateEnd, bool active)
+        public SearchArgs(TRuleset ruleset, DateTime dateBegin, DateTime dateEnd, bool active)
         {
-            this.Conditions = Enumerable.Empty<Condition<TConditionType>>();
-            this.ContentType = contentType;
+            this.Conditions = new Dictionary<TCondition, object>();
+            this.Ruleset = ruleset;
             this.DateBegin = dateBegin;
             this.DateEnd = dateEnd;
             this.ExcludeRulesWithoutSearchConditions = false;
@@ -54,13 +53,7 @@ namespace Rules.Framework
         /// Gets or sets the search conditions.
         /// </summary>
         /// <value>The conditions.</value>
-        public IEnumerable<Condition<TConditionType>> Conditions { get; set; }
-
-        /// <summary>
-        /// Gets or sets the content type to search.
-        /// </summary>
-        /// <value>The type of the content.</value>
-        public TContentType ContentType { get; }
+        public IDictionary<TCondition, object> Conditions { get; set; }
 
         /// <summary>
         /// Gets or sets the date begin.
@@ -79,5 +72,11 @@ namespace Rules.Framework
         /// </summary>
         /// <value><c>true</c> if [exclude rules without search conditions]; otherwise, <c>false</c>.</value>
         public bool ExcludeRulesWithoutSearchConditions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ruleset to search.
+        /// </summary>
+        /// <value>The ruleset name.</value>
+        public TRuleset Ruleset { get; }
     }
 }

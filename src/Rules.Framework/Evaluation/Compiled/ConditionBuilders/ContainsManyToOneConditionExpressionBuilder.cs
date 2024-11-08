@@ -5,7 +5,7 @@ namespace Rules.Framework.Evaluation.Compiled.ConditionBuilders
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using Rules.Framework.Core;
+    using Rules.Framework;
     using Rules.Framework.Evaluation.Compiled.ExpressionBuilders;
 
     internal sealed class ContainsManyToOneConditionExpressionBuilder : IConditionExpressionBuilder

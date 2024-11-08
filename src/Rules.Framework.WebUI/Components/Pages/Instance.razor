@@ -1,0 +1,133 @@
+@attribute [ExcludeFromCodeCoverage]
+@page "/rules-ui/instance"
+@rendermode InteractiveServer
+@inject WebUIOptions Options
+@inject ProtectedSessionStorage Storage
+@inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
+
+<PageTitle>@(this.Options.DocumentTitle) - Instance</PageTitle>
+
+<h2>Instance</h2>
+
+@if (this.instanceId == Guid.Empty)
+{
+    <p>Loading... Please wait.</p>
+}
+else
+{
+    <p>Name: @(instance.Name)</p>
+
+    <h2>Options</h2>
+
+    <ul>
+        @foreach (var option in instance.Options)
+        {
+            <li>
+                <code>@(option.Name)</code>
+                @if (!string.IsNullOrEmpty(option.NameDescription))
+                {
+                    <span> </span>
+                    <Tooltip Title="@(option.NameDescription)">
+                        <Icon Name="IconName.QuestionCircleFill" />
+                    </Tooltip>
+                }
+                @if (string.Equals(option.Name, "DataTypeDefaults"))
+                {
+                    <ul>
+                        @foreach (var dataTypeDefault in (IDictionary<string, object>)option.Value)
+                        {
+                            <li><code>@(dataTypeDefault.Key)</code> <Icon Name="IconName.ArrowRight" /> <code>@(dataTypeDefault.Value)</code></li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <span> </span>
+                    <Icon Name="IconName.ArrowRight" />
+                    <span> </span>
+                    @if (!string.IsNullOrEmpty(option.ValueDescription))
+                    {
+                        <Tooltip Title="@(option.ValueDescription)">
+                            <code class="text-decoration-underline">@(option.Value)</code>
+                        </Tooltip>
+                    }
+                    else
+                    {
+                        <code>@(option.Value)</code>
+                    }
+                }
+            </li>
+        }
+    </ul>
+}
+
+
+@code {
+    private Guid instanceId;
+    private RulesEngineInstanceViewModel instance;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var instanceIdResult = await Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
+            if (instanceIdResult.Success)
+            {
+                this.instanceId = instanceIdResult.Value;
+                var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
+                this.instance = new RulesEngineInstanceViewModel
+                {
+                    Id = instance.Id,
+                    Name = instance.Name,
+                    Options = new List<OptionViewModel>
+                    {
+                        new OptionViewModel
+                        {
+                            Name = nameof(instance.RulesEngine.Options.AutoCreateRulesets),
+                            NameDescription = WebUIConstants.OptionAutoCreateRulesetsDescription,
+                            Value = instance.RulesEngine.Options.AutoCreateRulesets.ToString().ToLower(),
+                        },
+                        new OptionViewModel
+                        {
+                            Name = nameof(instance.RulesEngine.Options.DataTypeDefaults),
+                            NameDescription = WebUIConstants.OptionDataTypeDefaultsDescription,
+                            Value = instance.RulesEngine.Options.DataTypeDefaults.ToDictionary(k => k.Key.ToString(), v =>v.Key switch
+                            {
+                                DataTypes.Boolean => v.Value.ToString().ToLower(),
+                                DataTypes.String when string.Equals(v.Value, string.Empty) => "string.Empty",
+                                DataTypes.String => $"\"{v.Value}\"",
+                                _ => v.Value,
+                            }),
+                        },
+                        new OptionViewModel
+                        {
+                            Name = nameof(instance.RulesEngine.Options.MissingConditionBehavior),
+                            NameDescription = WebUIConstants.OptionMissingConditionBehaviorDescription,
+                            Value = instance.RulesEngine.Options.MissingConditionBehavior.ToString(),
+                            ValueDescription = instance.RulesEngine.Options.MissingConditionBehavior switch
+                            {
+                                MissingConditionBehaviors.UseDataTypeDefault => WebUIConstants.OptionMissingConditionBehaviorUseDataTypeDefaultDescription,
+                                MissingConditionBehaviors.Discard => WebUIConstants.OptionMissingConditionBehaviorDiscardDescription,
+                                _ => "",
+                            },
+                        },
+                        new OptionViewModel
+                        {
+                            Name = nameof(instance.RulesEngine.Options.PriorityCriteria),
+                            NameDescription = WebUIConstants.OptionPriorityCriteriaDescription,
+                            Value = instance.RulesEngine.Options.PriorityCriteria.ToString(),
+                            ValueDescription = instance.RulesEngine.Options.PriorityCriteria switch
+                            {
+                                PriorityCriterias.TopmostRuleWins => WebUIConstants.OptionPriorityCriteriaTopmostRuleWinsDescription,
+                                PriorityCriterias.BottommostRuleWins => WebUIConstants.OptionPriorityCriteriaBottommostRuleWinsDescription,
+                                _ => "",
+                            },
+                        },
+                    },
+                };
+
+                this.StateHasChanged();
+            }
+        }
+    }
+}

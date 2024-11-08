@@ -3,8 +3,8 @@ namespace Rules.Framework.Evaluation
     using System.Collections.Generic;
     using Rules.Framework.Core;
 
-    internal interface IConditionsEvalEngine<TConditionType>
+    internal interface IConditionsEvalEngine
     {
-        bool Eval(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions, EvaluationOptions evaluationOptions);
+        bool Eval(IConditionNode conditionNode, IDictionary<string, object> conditions, EvaluationOptions evaluationOptions);
     }
 }

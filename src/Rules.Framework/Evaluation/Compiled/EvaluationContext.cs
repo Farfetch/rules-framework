@@ -2,10 +2,10 @@ namespace Rules.Framework.Evaluation.Compiled
 {
     using System.Collections.Generic;
 
-    internal sealed class EvaluationContext<TConditionType>
+    internal sealed class EvaluationContext
     {
         public EvaluationContext(
-            IDictionary<TConditionType, object> conditions,
+            IDictionary<string, object> conditions,
             MatchModes matchMode,
             MissingConditionBehaviors missingConditionBehavior)
         {
@@ -14,7 +14,7 @@ namespace Rules.Framework.Evaluation.Compiled
             this.MissingConditionBehavior = missingConditionBehavior;
         }
 
-        public IDictionary<TConditionType, object> Conditions { get; }
+        public IDictionary<string, object> Conditions { get; }
 
         public MatchModes MatchMode { get; }
 

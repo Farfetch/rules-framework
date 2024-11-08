@@ -3,8 +3,8 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
     using System.Collections.Generic;
     using FluentAssertions;
     using Moq;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework;
+    using Rules.Framework.ConditionNodes;
     using Rules.Framework.Evaluation;
     using Rules.Framework.Evaluation.Interpreted;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers;
@@ -17,7 +17,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenBooleanConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.Boolean, ConditionType.IsVip, Operators.NotEqual, true);
+            var conditionNode = new ValueConditionNode(DataTypes.Boolean, ConditionNames.IsVip.ToString(), Operators.NotEqual, true);
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -27,9 +27,9 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<string, object>
             {
-                { ConditionType.IsVip, false }
+                { ConditionNames.IsVip.ToString(), false }
             };
 
             var matchMode = MatchModes.Exact;
@@ -40,7 +40,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
 
             // Act
             var actual = sut.GetDeferredEvalFor(conditionNode, matchMode);
-            bool actualEvalResult = actual.Invoke(conditions);
+            var actualEvalResult = actual.Invoke(conditions);
 
             // Assert
             actualEvalResult.Should().BeTrue();
@@ -53,7 +53,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenDecimalConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.Decimal, ConditionType.PluviosityRate, Operators.GreaterThan, 50);
+            var conditionNode = new ValueConditionNode(DataTypes.Decimal, ConditionNames.PluviosityRate.ToString(), Operators.GreaterThan, 50);
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -63,9 +63,9 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<string, object>
             {
-                { ConditionType.PluviosityRate, 78 }
+                { ConditionNames.PluviosityRate.ToString(), 78 }
             };
 
             var matchMode = MatchModes.Exact;
@@ -89,7 +89,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenIntegerConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.Integer, ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
+            var conditionNode = new ValueConditionNode(DataTypes.Integer, ConditionNames.NumberOfSales.ToString(), Operators.GreaterThan, 1000);
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -99,9 +99,9 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<string, object>
             {
-                { ConditionType.NumberOfSales, 2300 }
+                { ConditionNames.NumberOfSales.ToString(), 2300 }
             };
 
             var matchMode = MatchModes.Exact;
@@ -125,7 +125,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenStringConditionNode_ReturnsFuncToEvalConditionsCollection()
         {
             // Arrange
-            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.Equal, "EUR");
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -135,9 +135,9 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<string, object>
             {
-                { ConditionType.IsoCurrency, "EUR" }
+                { ConditionNames.IsoCurrency.ToString(), "EUR" }
             };
 
             var matchMode = MatchModes.Exact;
@@ -161,7 +161,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToDiscardWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
-            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.Equal, "EUR");
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -171,9 +171,9 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<string, object>
             {
-                { ConditionType.IsoCountryCode, "PT" }
+                { ConditionNames.IsoCountryCode.ToString(), "PT" }
             };
 
             var matchMode = MatchModes.Exact;
@@ -198,7 +198,7 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
         public void GetDeferredEvalFor_GivenStringConditionNodeWithNoConditionSuppliedAndRulesEngineConfiguredToUseDataTypeDefaultWhenMissing_ReturnsFuncThatEvalsFalse()
         {
             // Arrange
-            var conditionNode = new ValueConditionNode<ConditionType>(DataTypes.String, ConditionType.IsoCurrency, Operators.Equal, "EUR");
+            var conditionNode = new ValueConditionNode(DataTypes.String, ConditionNames.IsoCurrency.ToString(), Operators.Equal, "EUR");
 
             var mockOperatorEvalStrategy = new Mock<IConditionEvalDispatcher>();
             mockOperatorEvalStrategy.Setup(x => x.EvalDispatch(It.IsAny<DataTypes>(), It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
@@ -208,9 +208,9 @@ namespace Rules.Framework.Tests.Evaluation.Interpreted
             mockConditionEvalDispatchProvider.Setup(x => x.GetEvalDispatcher(It.IsAny<object>(), It.IsAny<Operators>(), It.IsAny<object>()))
                 .Returns(mockOperatorEvalStrategy.Object);
 
-            var conditions = new Dictionary<ConditionType, object>
+            var conditions = new Dictionary<string, object>
             {
-                { ConditionType.IsoCountryCode, "PT" }
+                { ConditionNames.IsoCountryCode.ToString(), "PT" }
             };
 
             var matchMode = MatchModes.Exact;

@@ -1,10 +1,9 @@
 namespace Rules.Framework.Evaluation
 {
     using System.Collections.Generic;
-    using Rules.Framework.Core;
 
-    internal interface IConditionsTreeAnalyzer<TConditionType>
+    internal interface IConditionsTreeAnalyzer
     {
-        bool AreAllSearchConditionsPresent(IConditionNode<TConditionType> conditionNode, IDictionary<TConditionType, object> conditions);
+        bool AreAllSearchConditionsPresent(IConditionNode conditionNode, IDictionary<string, object> conditions);
     }
 }

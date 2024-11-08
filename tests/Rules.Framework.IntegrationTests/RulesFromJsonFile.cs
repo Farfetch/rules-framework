@@ -6,8 +6,9 @@ namespace Rules.Framework.IntegrationTests
     using System.IO;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Rules.Framework.Builder;
-    using Rules.Framework.Core;
+    using Rules.Framework;
+    using Rules.Framework.Builder.Generic.RulesBuilder;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.DataSource;
 
     internal class RulesFromJsonFile
@@ -16,26 +17,23 @@ namespace Rules.Framework.IntegrationTests
 
         public static RulesFromJsonFile Load => instance;
 
-        public async Task FromJsonFileAsync<TContentType, TConditionType>(RulesEngine<TContentType, TConditionType> rulesEngine, string filePath, Type contentRuntimeType, bool serializedContent = true)
-            where TContentType : new()
+        public async Task FromJsonFileAsync<TRuleset, TCondition>(IRulesEngine<TRuleset, TCondition> rulesEngine, string filePath, Type contentRuntimeType, bool serializedContent = true)
+            where TRuleset : new()
         {
             using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (var streamReader = new StreamReader(fileStream))
             {
                 var contents = await streamReader.ReadToEndAsync();
                 var ruleDataModels = JsonConvert.DeserializeObject<IEnumerable<RuleDataModel>>(contents);
+                var addedContentTypes = new HashSet<TRuleset>();
 
                 foreach (var ruleDataModel in ruleDataModels)
                 {
-                    var contentType = GetContentType<TContentType>(ruleDataModel.ContentTypeCode);
-
-                    var ruleBuilder = RuleBuilder.NewRule<TContentType, TConditionType>()
-                        .WithName(ruleDataModel.Name)
-                        .WithDatesInterval(ruleDataModel.DateBegin, ruleDataModel.DateEnd);
-
-                    if (ruleDataModel.RootCondition is { })
+                    var contentType = GetRuleset<TRuleset>(ruleDataModel.Ruleset);
+                    if (!addedContentTypes.Contains(contentType))
                     {
-                        ruleBuilder.WithCondition(b => this.ConvertConditionNode(b, ruleDataModel.RootCondition));
+                        await rulesEngine.CreateRulesetAsync(contentType);
+                        addedContentTypes.Add(contentType);
                     }
 
                     object content;
@@ -48,7 +46,16 @@ namespace Rules.Framework.IntegrationTests
                         content = RulesFromJsonFile.Parse(ruleDataModel.Content, contentRuntimeType);
                     }
 
-                    ruleBuilder.WithContent(contentType, content);
+                    var ruleBuilder = Rule.Create<TRuleset, TCondition>(ruleDataModel.Name)
+                        .InRuleset(contentType)
+                        .SetContent(content)
+                        .Since(ruleDataModel.DateBegin)
+                        .Until(ruleDataModel.DateEnd);
+
+                    if (ruleDataModel.RootCondition is { })
+                    {
+                        ruleBuilder.ApplyWhen(b => this.ConvertConditionNode(b, ruleDataModel.RootCondition));
+                    }
                     var ruleBuilderResult = ruleBuilder.Build();
 
                     if (ruleBuilderResult.IsSuccess)
@@ -64,82 +71,82 @@ namespace Rules.Framework.IntegrationTests
             }
         }
 
-        private static IFluentComposedConditionNodeBuilder<TConditionType> CreateValueConditionNode<TConditionType>(IFluentComposedConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private static IFluentConditionNodeBuilder<TCondition> CreateValueConditionNode<TCondition>(IFluentConditionNodeBuilder<TCondition> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
-            var integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
+            var condition = RulesFromJsonFile.Parse<TCondition>(conditionNodeDataModel.Condition);
             var @operator = RulesFromJsonFile.Parse<Operators>(conditionNodeDataModel.Operator);
 
             switch (dataType)
             {
                 case DataTypes.Integer:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 case DataTypes.Decimal:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 case DataTypes.String:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         conditionNodeDataModel.Operand);
 
                 case DataTypes.Boolean:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 default:
-                    throw new NotSupportedException($"Unsupported data type: {dataType.ToString()}.");
+                    throw new NotSupportedException($"Unsupported data type: {dataType}.");
             }
         }
 
-        private static IConditionNode<TConditionType> CreateValueConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private static IConditionNode CreateValueConditionNode<TCondition>(IRootConditionNodeBuilder<TCondition> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var dataType = RulesFromJsonFile.Parse<DataTypes>(conditionNodeDataModel.DataType);
-            var integrationTestsConditionType = RulesFromJsonFile.Parse<TConditionType>(conditionNodeDataModel.ConditionType);
+            var condition = RulesFromJsonFile.Parse<TCondition>(conditionNodeDataModel.Condition);
             var @operator = RulesFromJsonFile.Parse<Operators>(conditionNodeDataModel.Operator);
 
             switch (dataType)
             {
                 case DataTypes.Integer:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         Convert.ToInt32(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 case DataTypes.Decimal:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         Convert.ToDecimal(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 case DataTypes.String:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         conditionNodeDataModel.Operand);
 
                 case DataTypes.Boolean:
                     return conditionNodeBuilder.Value(
-                        integrationTestsConditionType,
+                        condition,
                         @operator,
                         Convert.ToBoolean(conditionNodeDataModel.Operand, CultureInfo.InvariantCulture));
 
                 default:
-                    throw new NotSupportedException($"Unsupported data type: {dataType.ToString()}.");
+                    throw new NotSupportedException($"Unsupported data type: {dataType}.");
             }
         }
 
-        private static TContentType GetContentType<TContentType>(short contentTypeCode) where TContentType : new()
-                    => RulesFromJsonFile.Parse<TContentType>(contentTypeCode.ToString());
+        private static TRuleset GetRuleset<TRuleset>(string ruleset) where TRuleset : new()
+            => RulesFromJsonFile.Parse<TRuleset>(ruleset);
 
         private static T Parse<T>(string value)
             => (T)Parse(value, typeof(T));
@@ -147,7 +154,7 @@ namespace Rules.Framework.IntegrationTests
         private static object Parse(string value, Type type)
             => type.IsEnum ? Enum.Parse(type, value) : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
-        private IConditionNode<TConditionType> ConvertConditionNode<TConditionType>(IRootConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private IConditionNode ConvertConditionNode<TCondition>(IRootConditionNodeBuilder<TCondition> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
 
@@ -167,7 +174,7 @@ namespace Rules.Framework.IntegrationTests
             }
         }
 
-        private IFluentComposedConditionNodeBuilder<TConditionType> ConvertConditionNode<TConditionType>(IFluentComposedConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private IFluentConditionNodeBuilder<TCondition> ConvertConditionNode<TCondition>(IFluentConditionNodeBuilder<TCondition> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             var logicalOperator = RulesFromJsonFile.Parse<LogicalOperators>(conditionNodeDataModel.LogicalOperator);
 
@@ -187,7 +194,7 @@ namespace Rules.Framework.IntegrationTests
             }
         }
 
-        private IFluentComposedConditionNodeBuilder<TConditionType> HandleChildConditionNodes<TConditionType>(IFluentComposedConditionNodeBuilder<TConditionType> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
+        private IFluentConditionNodeBuilder<TCondition> HandleChildConditionNodes<TCondition>(IFluentConditionNodeBuilder<TCondition> conditionNodeBuilder, ConditionNodeDataModel conditionNodeDataModel)
         {
             foreach (var child in conditionNodeDataModel.ChildConditionNodes)
             {

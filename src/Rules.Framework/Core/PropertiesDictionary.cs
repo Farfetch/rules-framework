@@ -4,6 +4,7 @@ namespace Rules.Framework.Core
     using System.Collections;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
+    using Rules.Framework.Generic;
 
     /// <summary>
     /// A dictionary to hold the properties of a <see cref="IConditionNode{TConditionType}"/>.

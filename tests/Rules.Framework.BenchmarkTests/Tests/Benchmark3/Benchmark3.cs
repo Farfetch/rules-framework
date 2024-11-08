@@ -2,12 +2,13 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
 {
     using System.Threading.Tasks;
     using BenchmarkDotNet.Attributes;
+    using Rules.Framework.Generic;
 
     [SkewnessColumn, KurtosisColumn]
     public class Benchmark3 : IBenchmark
     {
         private readonly Scenario8Data benchmarkData = new Scenario8Data();
-        private RulesEngine<ContentTypes, ConditionTypes>? rulesEngine;
+        private IRulesEngine<PokerRulesets, PokerConditions>? genericRulesEngine;
 
         [ParamsAllValues]
         public bool EnableCompilation { get; set; }
@@ -18,15 +19,13 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
         [Benchmark]
         public async Task RunAsync()
         {
-            await this.rulesEngine!.MatchOneAsync(ContentTypes.TexasHoldemPokerSingleCombinations, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
+            await this.genericRulesEngine!.MatchOneAsync(PokerRulesets.TexasHoldemPokerSingleCombinations, this.benchmarkData.MatchDate, this.benchmarkData.Conditions).ConfigureAwait(false);
         }
 
         [GlobalSetup]
         public async Task SetUpAsync()
         {
-            this.rulesEngine = RulesEngineBuilder.CreateRulesEngine()
-                .WithContentType<ContentTypes>()
-                .WithConditionType<ConditionTypes>()
+            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
                 .SetDataSourceForBenchmark(this.Provider!, nameof(Benchmark3))
                 .Configure(options =>
                 {
@@ -34,17 +33,21 @@ namespace Rules.Framework.BenchmarkTests.Tests.Benchmark3
                 })
                 .Build();
 
+            await rulesEngine.CreateRulesetAsync(nameof(PokerRulesets.TexasHoldemPokerSingleCombinations));
+
             foreach (var rule in this.benchmarkData.Rules)
             {
-                await this.rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
+                await rulesEngine.AddRuleAsync(rule, RuleAddPriorityOption.AtTop).ConfigureAwait(false);
             }
+
+            this.genericRulesEngine = rulesEngine.MakeGeneric<PokerRulesets, PokerConditions>();
         }
 
         [GlobalCleanup]
         public async Task TearDownAsync()
         {
             await Extensions.TearDownProviderAsync(this.Provider!, nameof(Benchmark3)).ConfigureAwait(false);
-            this.rulesEngine = null;
+            this.genericRulesEngine = null;
         }
     }
 }

@@ -4,8 +4,6 @@ namespace Rules.Framework.Tests.Builder
     using System.Collections.Generic;
     using FluentAssertions;
     using Rules.Framework.Builder;
-    using Rules.Framework.Core;
-    using Rules.Framework.Tests.Stubs;
     using Xunit;
 
     public class RuleBuilderResultTests
@@ -17,7 +15,7 @@ namespace Rules.Framework.Tests.Builder
             IEnumerable<string> expectedErrors = new[] { "Error1", "Error2" };
 
             // Act
-            RuleBuilderResult<ContentType, ConditionType> ruleBuilderResult = RuleBuilderResult.Failure<ContentType, ConditionType>(expectedErrors);
+            var ruleBuilderResult = RuleBuilderResult.Failure(expectedErrors);
 
             // Assert
             ruleBuilderResult.Should().NotBeNull();
@@ -33,7 +31,7 @@ namespace Rules.Framework.Tests.Builder
             IEnumerable<string> expectedErrors = null;
 
             // Act
-            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => RuleBuilderResult.Failure<ContentType, ConditionType>(expectedErrors));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => RuleBuilderResult.Failure(expectedErrors));
 
             // Arrange
             argumentNullException.Should().NotBeNull();
@@ -44,10 +42,10 @@ namespace Rules.Framework.Tests.Builder
         public void Success_GivenAllValidParameters_ReturnsRuleBuilderResultWithSuccessAndNewRule()
         {
             // Arrange
-            Rule<ContentType, ConditionType> rule = new Rule<ContentType, ConditionType>();
+            var rule = new Rule();
 
             // Act
-            RuleBuilderResult<ContentType, ConditionType> ruleBuilderResult = RuleBuilderResult.Success<ContentType, ConditionType>(rule);
+            var ruleBuilderResult = RuleBuilderResult.Success(rule);
 
             // Assert
             ruleBuilderResult.Should().NotBeNull();
@@ -60,10 +58,10 @@ namespace Rules.Framework.Tests.Builder
         public void Success_GivenNullErrorsCollection_ThrowsArgumentNullException()
         {
             // Arrange
-            Rule<ContentType, ConditionType> rule = null;
+            Rule rule = null;
 
             // Act
-            ArgumentNullException argumentNullException = Assert.Throws<ArgumentNullException>(() => RuleBuilderResult.Success<ContentType, ConditionType>(rule));
+            var argumentNullException = Assert.Throws<ArgumentNullException>(() => RuleBuilderResult.Success(rule));
 
             // Arrange
             argumentNullException.Should().NotBeNull();

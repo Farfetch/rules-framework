@@ -17,7 +17,7 @@ namespace Rules.Framework.Providers.MongoDb.Tests.TestStubs
         public Guid Prop04 { get; set; }
 
         // For the purpose of testing when type must be parsed to specific enum.
-        public ContentType Prop05 { get; set; }
+        public RulesetNames Prop05 { get; set; }
 
         // For the purpose of testing when type must be parsed to int.
         public int Prop06 { get; set; }

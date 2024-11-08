@@ -1,101 +1,71 @@
 namespace Rules.Framework.WebUI
 {
     using System;
-    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Threading.Tasks;
+    using Components;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
-    using Rules.Framework.Generics;
-    using Rules.Framework.WebUI.Dto;
-    using Rules.Framework.WebUI.Handlers;
+    using Microsoft.Extensions.FileProviders;
+    using Rules.Framework.WebUI.Services;
 
     /// <summary>
-    /// IApplicationBuilder extension for Rules Framework Web UI
+    /// <see cref="IApplicationBuilder"/> extension for Rules Framework Web UI
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class WebUIApplicationBuilderExtensions
     {
         /// <summary>
         /// Uses the rules framework web UI.
         /// </summary>
         /// <param name="app">The application.</param>
-        /// <param name="genericRulesEngineFactory">The generic rules engine factory.</param>
-        /// <param name="webUIOptionsAction">The web UI options action.</param>
         /// <returns></returns>
-        public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            Func<IServiceProvider, IGenericRulesEngine> genericRulesEngineFactory,
+        public static IApplicationBuilder UseRulesFrameworkWebUI(
+            this IApplicationBuilder app)
+        {
+            return app.UseRulesFrameworkWebUI(options => { });
+        }
+
+        /// <summary>
+        /// Uses the rules framework web UI.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="webUIOptionsAction">The web UI options configuration action.</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseRulesFrameworkWebUI(
+            this IApplicationBuilder app,
             Action<WebUIOptions> webUIOptionsAction)
         {
-            var genericRulesEngine = genericRulesEngineFactory.Invoke(app.ApplicationServices);
-            return app.UseRulesFrameworkWebUI(genericRulesEngine, webUIOptionsAction);
-        }
+            var rulesEngineInstanceProvider = app.ApplicationServices.GetRequiredService<RulesEngineInstanceProvider>();
+            rulesEngineInstanceProvider.EnumerateInstances(app.ApplicationServices);
 
-        /// <summary>
-        /// Uses the rules framework web UI.
-        /// </summary>
-        /// <param name="app">The application.</param>
-        /// <param name="genericRulesEngineFactory">The generic rules engine factory.</param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            Func<IServiceProvider, IGenericRulesEngine> genericRulesEngineFactory)
-        {
-            return app.UseRulesFrameworkWebUI(genericRulesEngineFactory, null);
-        }
+            // Options
+            var webUIOptions = new WebUIOptions();
+            webUIOptionsAction.Invoke(webUIOptions);
+            var webUIOptionsRegistry = app.ApplicationServices.GetRequiredService<WebUIOptionsRegistry>();
+            webUIOptionsRegistry.Register(webUIOptions);
 
-        /// <summary>
-        /// Uses the rules framework web UI.
-        /// </summary>
-        /// <param name="app">The application.</param>
-        /// <param name="genericRulesEngine">The generic rules engine.</param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            IGenericRulesEngine genericRulesEngine)
-        {
-            return app.UseRulesFrameworkWebUI(genericRulesEngine, new WebUIOptions());
-        }
+            // Blazor
+            var embeddedProvider = new EmbeddedFileProvider(typeof(WebUIApplicationBuilderExtensions).Assembly, "Rules.Framework.WebUI.Assets");
 
-        /// <summary>
-        /// Uses the rules framework web UI.
-        /// </summary>
-        /// <param name="app">The application.</param>
-        /// <param name="genericRulesEngine">The generic rules engine.</param>
-        /// <param name="webUIOptionsAction">The web UI options action.</param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app,
-            IGenericRulesEngine genericRulesEngine,
-            Action<WebUIOptions> webUIOptionsAction)
-        {
-            WebUIOptions webUIOptions;
-
-            using (var scope = app.ApplicationServices.CreateScope())
+            app.UseStaticFiles(new StaticFileOptions
             {
-                webUIOptions = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<WebUIOptions>>().Value;
-                webUIOptionsAction?.Invoke(webUIOptions);
-            }
+                FileProvider = embeddedProvider,
+                RequestPath = new PathString("/rules-ui")
+            });
 
-            return app.UseRulesFrameworkWebUI(genericRulesEngine, webUIOptions);
-        }
-
-        /// <summary>
-        /// Uses the rules framework web UI.
-        /// </summary>
-        /// <param name="app">The application.</param>
-        /// <param name="genericRulesEngine">The generic rules engine.</param>
-        /// <param name="webUIOptions">The web UI options.</param>
-        /// <returns></returns>
-        private static IApplicationBuilder UseRulesFrameworkWebUI(this IApplicationBuilder app, IGenericRulesEngine genericRulesEngine,
-            WebUIOptions webUIOptions)
-        {
-            var ruleStatusDtoAnalyzer = new RuleStatusDtoAnalyzer();
-
-            app.UseMiddleware<WebUIMiddleware>(
-                new List<IHttpRequestHandler>
+            app.UseEndpoints(builder =>
+            {
+                builder.MapGet("/rules-ui", ctx =>
                 {
-                    new GetIndexPageHandler(webUIOptions),
-                    new GetConfigurationsHandler(genericRulesEngine, webUIOptions),
-                    new GetContentTypeHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions),
-                    new GetRulesHandler(genericRulesEngine, ruleStatusDtoAnalyzer, webUIOptions)
-                },
-                webUIOptions);
+                    ctx.Response.Redirect("/rules-ui/instance");
+                    return Task.CompletedTask;
+                });
+
+                builder.MapRazorComponents<WebUIApp>()
+                    .AddInteractiveServerRenderMode();
+            });
 
             return app;
         }

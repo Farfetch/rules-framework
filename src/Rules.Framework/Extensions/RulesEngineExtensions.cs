@@ -1,6 +1,6 @@
-namespace Rules.Framework.Extension
+namespace Rules.Framework
 {
-    using Rules.Framework.Generics;
+    using Rules.Framework.Generic;
 
     /// <summary>
     /// Extensions for rules engine
@@ -10,13 +10,13 @@ namespace Rules.Framework.Extension
         /// <summary>
         /// Creates a generic rules engine.
         /// </summary>
-        /// <typeparam name="TContentType">The type of the content type.</typeparam>
-        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
+        /// <typeparam name="TRuleset">The ruleset type that strongly types rulesets.</typeparam>
+        /// <typeparam name="TCondition">The condition type that strongly types conditions.</typeparam>
         /// <param name="rulesEngine">The rules engine.</param>
         /// <returns>A new instance of generic engine</returns>
-        public static IGenericRulesEngine CreateGenericEngine<TContentType, TConditionType>(this RulesEngine<TContentType, TConditionType> rulesEngine)
+        public static IRulesEngine<TRuleset, TCondition> MakeGeneric<TRuleset, TCondition>(this IRulesEngine rulesEngine)
         {
-            return new GenericRulesEngine<TContentType, TConditionType>(rulesEngine);
+            return new RulesEngine<TRuleset, TCondition>(rulesEngine);
         }
     }
 }

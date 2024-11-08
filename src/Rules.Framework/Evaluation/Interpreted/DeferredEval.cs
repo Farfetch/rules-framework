@@ -2,7 +2,7 @@ namespace Rules.Framework.Evaluation.Interpreted
 {
     using System;
     using System.Collections.Generic;
-    using Rules.Framework.Core.ConditionNodes;
+    using Rules.Framework.ConditionNodes;
     using Rules.Framework.Evaluation.Interpreted.ValueEvaluation.Dispatchers;
 
     internal sealed class DeferredEval : IDeferredEval
@@ -18,14 +18,14 @@ namespace Rules.Framework.Evaluation.Interpreted
             this.rulesEngineOptions = rulesEngineOptions;
         }
 
-        public Func<IDictionary<TConditionType, object>, bool> GetDeferredEvalFor<TConditionType>(IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
+        public Func<IDictionary<string, object>, bool> GetDeferredEvalFor(IValueConditionNode valueConditionNode, MatchModes matchMode)
             => (conditions) => Eval(conditions, valueConditionNode, matchMode);
 
-        private bool Eval<TConditionType>(IDictionary<TConditionType, object> conditions, IValueConditionNode<TConditionType> valueConditionNode, MatchModes matchMode)
+        private bool Eval(IDictionary<string, object> conditions, IValueConditionNode valueConditionNode, MatchModes matchMode)
         {
             var rightOperand = valueConditionNode.Operand;
 
-            conditions.TryGetValue(valueConditionNode.ConditionType, out var leftOperand);
+            conditions.TryGetValue(valueConditionNode.Condition, out var leftOperand);
 
             if (leftOperand is null)
             {

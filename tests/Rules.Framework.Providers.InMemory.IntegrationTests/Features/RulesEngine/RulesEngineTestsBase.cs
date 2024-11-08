@@ -4,22 +4,20 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
 
     public abstract class RulesEngineTestsBase
     {
-        private readonly ContentType TestContentType;
+        private readonly RulesetNames TestRuleset;
 
-        protected RulesEngineTestsBase(ContentType testContentType)
+        protected RulesEngineTestsBase(RulesetNames testRuleset)
         {
-            this.TestContentType = testContentType;
+            this.TestRuleset = testRuleset;
 
-            this.CompiledRulesEngine = RulesEngineBuilder
+            var compiledRulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
-                .WithContentType<ContentType>()
-                .WithConditionType<ConditionType>()
                 .SetInMemoryDataSource()
                 .Configure(c =>
                 {
@@ -27,21 +25,23 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
                     c.PriorityCriteria = PriorityCriterias.TopmostRuleWins;
                 })
                 .Build();
+            this.CompiledRulesEngine = compiledRulesEngine.MakeGeneric<RulesetNames, ConditionNames>();
+            this.CompiledRulesEngine.CreateRulesetAsync(testRuleset).GetAwaiter().GetResult();
 
-            this.InterpretedRulesEngine = RulesEngineBuilder
+            var interpretedRulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
-                .WithContentType<ContentType>()
-                .WithConditionType<ConditionType>()
                 .SetInMemoryDataSource()
                 .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
                 .Build();
+            this.InterpretedRulesEngine = interpretedRulesEngine.MakeGeneric<RulesetNames, ConditionNames>();
+            this.InterpretedRulesEngine.CreateRulesetAsync(testRuleset).GetAwaiter().GetResult();
         }
 
-        protected RulesEngine<ContentType, ConditionType> CompiledRulesEngine { get; }
+        protected IRulesEngine<RulesetNames, ConditionNames> CompiledRulesEngine { get; }
 
-        protected RulesEngine<ContentType, ConditionType> InterpretedRulesEngine { get; }
+        protected IRulesEngine<RulesetNames, ConditionNames> InterpretedRulesEngine { get; }
 
-        protected async Task<RuleOperationResult> ActivateRuleAsync(Rule<ContentType, ConditionType> rule, bool compiled)
+        protected async Task<OperationResult> ActivateRuleAsync(Rule<RulesetNames, ConditionNames> rule, bool compiled)
         {
             if (compiled)
             {
@@ -67,7 +67,7 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             }
         }
 
-        protected async Task<RuleOperationResult> DeactivateRuleAsync(Rule<ContentType, ConditionType> rule, bool compiled)
+        protected async Task<OperationResult> DeactivateRuleAsync(Rule<RulesetNames, ConditionNames> rule, bool compiled)
         {
             if (compiled)
             {
@@ -79,22 +79,22 @@ namespace Rules.Framework.Providers.InMemory.IntegrationTests.Features.RulesEngi
             }
         }
 
-        protected async Task<Rule<ContentType, ConditionType>> MatchOneAsync(
+        protected async Task<Rule<RulesetNames, ConditionNames>> MatchOneAsync(
             DateTime matchDate,
-            Condition<ConditionType>[] conditions,
+            IDictionary<ConditionNames, object> conditions,
             bool compiled)
         {
             if (compiled)
             {
-                return await CompiledRulesEngine.MatchOneAsync(TestContentType, matchDate, conditions);
+                return await CompiledRulesEngine.MatchOneAsync(TestRuleset, matchDate, conditions);
             }
             else
             {
-                return await InterpretedRulesEngine.MatchOneAsync(TestContentType, matchDate, conditions);
+                return await InterpretedRulesEngine.MatchOneAsync(TestRuleset, matchDate, conditions);
             }
         }
 
-        protected async Task<RuleOperationResult> UpdateRuleAsync(Rule<ContentType, ConditionType> rule, bool compiled)
+        protected async Task<OperationResult> UpdateRuleAsync(Rule<RulesetNames, ConditionNames> rule, bool compiled)
         {
             if (compiled)
             {

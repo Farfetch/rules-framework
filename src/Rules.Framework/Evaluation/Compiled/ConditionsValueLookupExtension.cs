@@ -6,7 +6,7 @@ namespace Rules.Framework.Evaluation.Compiled
     internal static class ConditionsValueLookupExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object GetValueOrDefault<TConditionType>(IDictionary<TConditionType, object> conditions, TConditionType conditionType)
+        public static object GetValueOrDefault(IDictionary<string, object> conditions, string conditionType)
         {
             if (conditions.TryGetValue(conditionType, out var conditionValue))
             {

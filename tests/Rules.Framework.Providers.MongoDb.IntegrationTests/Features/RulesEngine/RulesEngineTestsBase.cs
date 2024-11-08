@@ -7,7 +7,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
     using MongoDB.Bson;
     using MongoDB.Driver;
     using MongoDB.Driver.Core.Events;
-    using Rules.Framework.Core;
+    using Rules.Framework.Generic;
     using Rules.Framework.IntegrationTests.Common.Features;
     using Rules.Framework.Tests.Stubs;
 
@@ -15,24 +15,25 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
     {
         private readonly IMongoClient mongoClient;
         private readonly MongoDbProviderSettings mongoDbProviderSettings;
-        private readonly ContentType TestContentType;
+        private readonly RulesetNames TestRuleset;
 
-        protected RulesEngineTestsBase(ContentType testContentType)
+        protected RulesEngineTestsBase(RulesetNames testRuleset)
         {
             this.mongoClient = CreateMongoClient();
             this.mongoDbProviderSettings = CreateProviderSettings();
-            this.TestContentType = testContentType;
+            this.TestRuleset = testRuleset;
 
-            this.RulesEngine = RulesEngineBuilder
+            var rulesEngine = RulesEngineBuilder
                 .CreateRulesEngine()
-                .WithContentType<ContentType>()
-                .WithConditionType<ConditionType>()
                 .SetMongoDbDataSource(this.mongoClient, this.mongoDbProviderSettings)
                 .Configure(c => c.PriorityCriteria = PriorityCriterias.TopmostRuleWins)
                 .Build();
+
+            this.RulesEngine = rulesEngine.MakeGeneric<RulesetNames, ConditionNames>();
+            this.RulesEngine.CreateRulesetAsync(testRuleset).GetAwaiter().GetResult();
         }
 
-        protected RulesEngine<ContentType, ConditionType> RulesEngine { get; }
+        protected IRulesEngine<RulesetNames, ConditionNames> RulesEngine { get; }
 
         public void Dispose()
         {
@@ -47,23 +48,21 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
                 this.RulesEngine.AddRuleAsync(
                     ruleSpecification.Rule,
                     ruleSpecification.RuleAddPriorityOption)
-                    .ConfigureAwait(false)
                     .GetAwaiter()
                     .GetResult();
             }
         }
 
-        protected async Task<Rule<ContentType, ConditionType>> MatchOneAsync(
+        protected async Task<Rule<RulesetNames, ConditionNames>> MatchOneAsync(
             DateTime matchDate,
-            Condition<ConditionType>[] conditions) => await RulesEngine.MatchOneAsync(
-                TestContentType,
+            Dictionary<ConditionNames, object> conditions) => await RulesEngine.MatchOneAsync(
+                TestRuleset,
                 matchDate,
-                conditions)
-            .ConfigureAwait(false);
+                conditions);
 
         private static MongoClient CreateMongoClient()
         {
-            MongoClientSettings settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
+            var settings = MongoClientSettings.FromConnectionString($"mongodb://{SettingsProvider.GetMongoDbHost()}:27017");
             settings.ClusterConfigurator = (cb) =>
             {
                 cb.Subscribe<CommandStartedEvent>(e =>
@@ -74,7 +73,7 @@ namespace Rules.Framework.Providers.MongoDb.IntegrationTests.Features.RulesEngin
             return new MongoClient(settings);
         }
 
-        private MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
+        private static MongoDbProviderSettings CreateProviderSettings() => new MongoDbProviderSettings
         {
             DatabaseName = "rules-framework-tests",
             RulesCollectionName = "features-tests"

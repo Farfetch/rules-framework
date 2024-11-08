@@ -3,7 +3,7 @@ namespace Rules.Framework.Builder
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
     internal static class RulesEngineOptionsValidator
     {

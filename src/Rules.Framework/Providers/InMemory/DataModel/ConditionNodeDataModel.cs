@@ -1,9 +1,9 @@
 namespace Rules.Framework.Providers.InMemory.DataModel
 {
     using System.Collections.Generic;
-    using Rules.Framework.Core;
+    using Rules.Framework;
 
-    internal class ConditionNodeDataModel<TConditionType>
+    internal class ConditionNodeDataModel
     {
         public LogicalOperators LogicalOperator { get; set; }
 

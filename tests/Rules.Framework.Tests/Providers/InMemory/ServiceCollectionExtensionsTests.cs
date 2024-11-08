@@ -3,7 +3,6 @@ namespace Rules.Framework.Tests.Providers.InMemory
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
     using Moq;
-    using Rules.Framework.Tests.Providers.InMemory.TestStubs;
     using Xunit;
 
     public class ServiceCollectionExtensionsTests
@@ -24,7 +23,7 @@ namespace Rules.Framework.Tests.Providers.InMemory
                 });
 
             // Act
-            var actual = services.AddInMemoryRulesDataSource<ContentType, ConditionType>(serviceLifetime);
+            var actual = services.AddInMemoryRulesDataSource(serviceLifetime);
 
             // Assert
             actual.Should().NotBeNull();

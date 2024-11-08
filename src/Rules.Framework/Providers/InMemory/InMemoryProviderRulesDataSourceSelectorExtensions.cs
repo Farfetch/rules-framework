@@ -12,26 +12,22 @@ namespace Rules.Framework
         /// <summary>
         /// Sets the rules engine data source from a in-memory data source.
         /// </summary>
-        /// <typeparam name="TContentType">The type of the content type.</typeparam>
-        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
         /// <param name="rulesDataSourceSelector">The rules data source selector.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">rulesDataSourceSelector</exception>
-        public static IConfiguredRulesEngineBuilder<TContentType, TConditionType> SetInMemoryDataSource<TContentType, TConditionType>(
-            this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector)
-            => rulesDataSourceSelector.SetInMemoryDataSource(new InMemoryRulesStorage<TContentType, TConditionType>());
+        public static IConfiguredRulesEngineBuilder SetInMemoryDataSource(
+            this IRulesDataSourceSelector rulesDataSourceSelector)
+            => rulesDataSourceSelector.SetInMemoryDataSource(new InMemoryRulesStorage());
 
         /// <summary>
         /// Sets the rules engine data source from a in-memory data source.
         /// </summary>
-        /// <typeparam name="TContentType">The type of the content type.</typeparam>
-        /// <typeparam name="TConditionType">The type of the condition type.</typeparam>
         /// <param name="rulesDataSourceSelector">The rules data source selector.</param>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">rulesDataSourceSelector or serviceProvider</exception>
-        public static IConfiguredRulesEngineBuilder<TContentType, TConditionType> SetInMemoryDataSource<TContentType, TConditionType>(
-            this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector,
+        public static IConfiguredRulesEngineBuilder SetInMemoryDataSource(
+            this IRulesDataSourceSelector rulesDataSourceSelector,
             IServiceProvider serviceProvider)
         {
             if (serviceProvider is null)
@@ -39,24 +35,24 @@ namespace Rules.Framework
                 throw new ArgumentNullException(nameof(serviceProvider));
             }
 
-            var inMemoryRulesStorage = (IInMemoryRulesStorage<TContentType, TConditionType>)serviceProvider
-                .GetService(typeof(IInMemoryRulesStorage<TContentType, TConditionType>));
+            var inMemoryRulesStorage = (IInMemoryRulesStorage)serviceProvider
+                .GetService(typeof(IInMemoryRulesStorage));
 
             return rulesDataSourceSelector.SetInMemoryDataSource(inMemoryRulesStorage);
         }
 
-        private static IConfiguredRulesEngineBuilder<TContentType, TConditionType> SetInMemoryDataSource<TContentType, TConditionType>(
-            this IRulesDataSourceSelector<TContentType, TConditionType> rulesDataSourceSelector,
-            IInMemoryRulesStorage<TContentType, TConditionType> inMemoryRulesStorage)
+        private static IConfiguredRulesEngineBuilder SetInMemoryDataSource(
+            this IRulesDataSourceSelector rulesDataSourceSelector,
+            IInMemoryRulesStorage inMemoryRulesStorage)
         {
             if (rulesDataSourceSelector is null)
             {
                 throw new ArgumentNullException(nameof(rulesDataSourceSelector));
             }
 
-            var ruleFactory = new RuleFactory<TContentType, TConditionType>();
+            var ruleFactory = new RuleFactory();
             var inMemoryProviderRulesDataSource
-                = new InMemoryProviderRulesDataSource<TContentType, TConditionType>(inMemoryRulesStorage, ruleFactory);
+                = new InMemoryProviderRulesDataSource(inMemoryRulesStorage, ruleFactory);
 
             return rulesDataSourceSelector.SetDataSource(inMemoryProviderRulesDataSource);
         }

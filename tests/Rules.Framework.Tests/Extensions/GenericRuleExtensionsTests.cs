@@ -3,11 +3,9 @@ namespace Rules.Framework.Tests.Extensions
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
-    using Rules.Framework.Builder;
-    using Rules.Framework.Core;
-    using Rules.Framework.Core.ConditionNodes;
-    using Rules.Framework.Extensions;
-    using Rules.Framework.Generics;
+    using Rules.Framework;
+    using Rules.Framework.Generic;
+    using Rules.Framework.Generic.ConditionNodes;
     using Rules.Framework.Tests.Stubs;
     using Xunit;
 
@@ -18,33 +16,33 @@ namespace Rules.Framework.Tests.Extensions
         {
             var expectedRuleContent = "Type1";
 
-            var expectedRootCondition = new GenericComposedConditionNode
+            var expectedRootCondition = new
             {
-                ChildConditionNodes = new List<GenericConditionNode>
+                ChildConditionNodes = new List<object>
                 {
-                    new GenericValueConditionNode
+                    new
                     {
-                        ConditionTypeName = ConditionType.IsVip.ToString(),
+                        Condition = ConditionNames.IsVip,
                         DataType = DataTypes.Boolean,
                         LogicalOperator = LogicalOperators.Eval,
                         Operand = true,
                         Operator = Operators.Equal
                     },
-                    new GenericComposedConditionNode
+                    new
                     {
-                        ChildConditionNodes = new List<GenericConditionNode>
+                        ChildConditionNodes = new List<object>
                         {
-                            new GenericValueConditionNode
+                            new
                             {
-                                ConditionTypeName = ConditionType.IsoCurrency.ToString(),
+                                Condition = ConditionNames.IsoCurrency,
                                 DataType = DataTypes.String,
                                 LogicalOperator = LogicalOperators.Eval,
                                 Operand = "EUR",
                                 Operator = Operators.Equal
                             },
-                            new GenericValueConditionNode
+                            new
                             {
-                                ConditionTypeName = ConditionType.IsoCurrency.ToString(),
+                                Condition = ConditionNames.IsoCurrency,
                                 DataType = DataTypes.String,
                                 LogicalOperator = LogicalOperators.Eval,
                                 Operand = "USD",
@@ -57,36 +55,37 @@ namespace Rules.Framework.Tests.Extensions
                 LogicalOperator = LogicalOperators.And
             };
 
-            var rootComposedCondition = new RootConditionNodeBuilder<ConditionType>()
-                .And(a => a
-                    .Value(ConditionType.IsVip, Operators.Equal, true)
-                    .Or(o => o
-                        .Value(ConditionType.IsoCurrency, Operators.Equal, "EUR")
-                        .Value(ConditionType.IsoCurrency, Operators.Equal, "USD")
+            var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>("Dummy Rule")
+                .InRuleset(RulesetNames.Type1)
+                .SetContent(expectedRuleContent)
+                .Since(DateTime.Parse("2018-01-01"))
+                .ApplyWhen(b => b
+                    .And(a => a
+                        .Value(ConditionNames.IsVip, Operators.Equal, true)
+                        .Or(o => o
+                            .Value(ConditionNames.IsoCurrency, Operators.Equal, "EUR")
+                            .Value(ConditionNames.IsoCurrency, Operators.Equal, "USD")
+                        )
                     )
-                );
-
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
-                .WithName("Dummy Rule")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentType.Type1, expectedRuleContent)
-                .WithCondition(rootComposedCondition)
+                )
                 .Build();
 
-            var rule = ruleBuilderResult.Rule;
+            var rule = (Rule)ruleBuilderResult.Rule;
 
             // Act
-            var genericRule = rule.ToGenericRule();
+            var genericRule = rule.ToGenericRule<RulesetNames, ConditionNames>();
 
             // Assert
             genericRule.Should().BeEquivalentTo(rule, config => config
                 .Excluding(r => r.ContentContainer)
-                .Excluding(r => r.RootCondition));
-            genericRule.Content.Should().BeOfType<string>();
-            genericRule.Content.Should().Be(expectedRuleContent);
-            genericRule.RootCondition.Should().BeOfType<GenericComposedConditionNode>();
+                .Excluding(r => r.RootCondition)
+                .Excluding(r => r.Ruleset));
+            var content = genericRule.ContentContainer.GetContentAs<object>();
+            content.Should().BeOfType<string>();
+            content.Should().Be(expectedRuleContent);
+            genericRule.RootCondition.Should().BeOfType<ComposedConditionNode<ConditionNames>>();
 
-            var genericComposedRootCondition = genericRule.RootCondition as GenericComposedConditionNode;
+            var genericComposedRootCondition = genericRule.RootCondition as ComposedConditionNode<ConditionNames>;
             genericComposedRootCondition.Should().BeEquivalentTo(expectedRootCondition, config => config.IncludingAllRuntimeProperties());
         }
 
@@ -95,21 +94,24 @@ namespace Rules.Framework.Tests.Extensions
         {
             var expectedRuleContent = "Type2";
 
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
-                .WithName("Dummy Rule")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentType.Type2, expectedRuleContent)
+            var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>("Dummy Rule")
+                .InRuleset(RulesetNames.Type2)
+                .SetContent(expectedRuleContent)
+                .Since(DateTime.Parse("2018-01-01"))
                 .Build();
 
-            var rule = ruleBuilderResult.Rule;
+            var rule = (Rule)ruleBuilderResult.Rule;
 
             // Act
-            var genericRule = rule.ToGenericRule();
+            var genericRule = rule.ToGenericRule<RulesetNames, ConditionNames>();
 
             // Assert
-            genericRule.Should().BeEquivalentTo(rule, config => config.Excluding(r => r.ContentContainer));
-            genericRule.Content.Should().BeOfType<string>();
-            genericRule.Content.Should().Be(expectedRuleContent);
+            genericRule.Should().BeEquivalentTo(rule, config => config
+                .Excluding(r => r.ContentContainer)
+                .Excluding(r => r.Ruleset));
+            var content = genericRule.ContentContainer.GetContentAs<object>();
+            content.Should().BeOfType<string>();
+            content.Should().Be(expectedRuleContent);
             genericRule.RootCondition.Should().BeNull();
         }
 
@@ -117,30 +119,39 @@ namespace Rules.Framework.Tests.Extensions
         public void GenericRuleExtensions_ToGenericRule_WithValueCondition_Success()
         {
             var expectedRuleContent = "Type1";
-            var expectedRootCondition = new ValueConditionNode<ConditionType>(DataTypes.Integer, ConditionType.NumberOfSales, Operators.GreaterThan, 1000);
+            var expectedRootCondition = new
+            {
+                ConditionType = ConditionNames.NumberOfSales,
+                DataType = DataTypes.Integer,
+                LogicalOperator = LogicalOperators.Eval,
+                Operator = Operators.GreaterThan,
+                Operand = 1000
+            };
 
-            var ruleBuilderResult = RuleBuilder.NewRule<ContentType, ConditionType>()
-                .WithName("Dummy Rule")
-                .WithDateBegin(DateTime.Parse("2018-01-01"))
-                .WithContent(ContentType.Type1, expectedRuleContent)
-                .WithCondition(expectedRootCondition)
+            var ruleBuilderResult = Rule.Create<RulesetNames, ConditionNames>("Dummy Rule")
+                .InRuleset(RulesetNames.Type1)
+                .SetContent(expectedRuleContent)
+                .Since(DateTime.Parse("2018-01-01"))
+                .ApplyWhen(ConditionNames.NumberOfSales, Operators.GreaterThan, 1000)
                 .Build();
 
-            var rule = ruleBuilderResult.Rule;
+            var rule = (Rule)ruleBuilderResult.Rule;
 
             // Act
-            var genericRule = rule.ToGenericRule();
+            var genericRule = rule.ToGenericRule<RulesetNames, ConditionNames>();
 
             // Assert
             genericRule.Should().BeEquivalentTo(rule, config => config
                 .Excluding(r => r.ContentContainer)
-                .Excluding(r => r.RootCondition));
-            genericRule.Content.Should().BeOfType<string>();
-            genericRule.Content.Should().Be(expectedRuleContent);
-            genericRule.RootCondition.Should().BeOfType<GenericValueConditionNode>();
+                .Excluding(r => r.RootCondition)
+                .Excluding(r => r.Ruleset));
+            var content = genericRule.ContentContainer.GetContentAs<object>();
+            content.Should().BeOfType<string>();
+            content.Should().Be(expectedRuleContent);
+            genericRule.RootCondition.Should().BeOfType<ValueConditionNode<ConditionNames>>();
 
-            var genericValueRootCondition = genericRule.RootCondition as GenericValueConditionNode;
-            genericValueRootCondition.ConditionTypeName.Should().Be(expectedRootCondition.ConditionType.ToString());
+            var genericValueRootCondition = genericRule.RootCondition as ValueConditionNode<ConditionNames>;
+            genericValueRootCondition.Condition.Should().Be(expectedRootCondition.ConditionType);
             genericValueRootCondition.DataType.Should().Be(expectedRootCondition.DataType);
             genericValueRootCondition.LogicalOperator.Should().Be(expectedRootCondition.LogicalOperator);
             genericValueRootCondition.Operand.Should().Be(expectedRootCondition.Operand);
