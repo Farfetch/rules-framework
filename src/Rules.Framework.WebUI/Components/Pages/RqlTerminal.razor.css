@@ -1,0 +1,27 @@
+.terminal {
+    height: 80vh !important;
+    scroll-behavior: smooth;
+}
+
+.terminal-input {
+    outline: none;
+    caret-color: rgb(255, 255, 255);
+    caret-shape: bar;
+}
+
+.terminal-line {
+    font-size: 1rem;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+.terminal-output {
+    display: flex;
+    flex-direction: column;
+    white-space: pre-wrap;
+}
+
+.terminal-text {
+    font-family: var(--bs-font-monospace);
+    font-size: 1rem !important;
+}

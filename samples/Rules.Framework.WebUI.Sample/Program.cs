@@ -1,5 +1,7 @@
 namespace Rules.Framework.WebUI.Sample
 {
+    using global::Rules.Framework.IntegrationTests.Common.Scenarios;
+    using global::Rules.Framework.IntegrationTests.Common.Scenarios.Scenario8;
     using global::Rules.Framework.WebUI.Sample.Engine;
     using global::Rules.Framework.WebUI.Sample.ReadmeExample;
     using global::Rules.Framework.WebUI.Sample.Rules;
@@ -23,6 +25,16 @@ namespace Rules.Framework.WebUI.Sample
                             }));
 
                             return await rulesProvider.GetRulesEngineAsync();
+                        })
+                        .AddInstance("Poker combinations example", async (_, _) =>
+                        {
+                            var rulesEngine = RulesEngineBuilder.CreateRulesEngine()
+                                .SetInMemoryDataSource()
+                                .Build();
+
+                            await ScenarioLoader.LoadScenarioAsync(rulesEngine, new Scenario8Data());
+
+                            return rulesEngine;
                         });
                 });
 

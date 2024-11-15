@@ -8,6 +8,7 @@
     <base href="/" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <link href="_content/Blazor.Bootstrap/blazor.bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="rules-ui/glyphicons-only-bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="rules-ui/app.css" />
@@ -21,6 +22,7 @@
     <Routes />
     <script src="_framework/blazor.web.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
     <script>
         window.downloadFileFromStream = async (fileName, contentStreamReference) => {
@@ -33,6 +35,19 @@
             anchorElement.click();
             anchorElement.remove();
             URL.revokeObjectURL(url);
+        }
+
+        window.scrollToTop = (selector) => {
+            let element = document.querySelector(selector);
+            element.scrollTo(0, element.scrollHeight);
+        }
+
+        window.focusOnElement = (id) => {
+            var selection = window.getSelection();
+            if (selection.type != "Range") {
+                document.getElementById(id).focus();
+                return false;
+            }
         }
     </script>
 </body>

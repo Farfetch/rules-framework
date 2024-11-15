@@ -1,0 +1,262 @@
+@attribute [ExcludeFromCodeCoverage]
+@page "/rules-ui/rql-terminal"
+@using Rules.Framework.Rql
+@using Rules.Framework.Rql.Runtime.Types
+@using System.Text
+@using System.Text.Json
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject WebUIOptions Options
+@inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
+@inject ProtectedSessionStorage Storage
+
+<PageTitle>@(this.Options.DocumentTitle) - RQL Terminal</PageTitle>
+
+<h2>RQL Terminal</h2>
+
+<div class="w-100" onclick="window.focusOnElement('commandInputTextbox')">
+    <div class="terminal p-2 bg-dark rounded shadow-sm d-flex flex-column-reverse overflow-auto">
+        <div class="terminal-text text-bg-dark d-flex">
+            <span id="commandInputLabel" class="pe-2">></span>
+            <input id="commandInputTextbox"
+                type="text"
+                class="terminal-input bg-dark text-bg-dark border-0 flex-fill"
+                aria-describedby="commandInputLabel"
+                @bind-value="commandInput"
+                @onkeyup="OnCommandInputKeyUpAsync" />
+        </div>
+        <pre class="terminal-output terminal-text text-bg-dark" onclick="window.focusOnElement('commandInputTextbox')">
+            @foreach (var line in this.outputQueue)
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    <code class="terminal-line mb-1" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line)</code>
+                }
+                <br class="mb-1" onclick="window.focusOnElement('commandInputTextbox')" />
+            }
+        </pre>
+    </div>
+</div>
+
+@code {
+    private static readonly string tab = new string(' ', 4);
+    private string commandInput;
+    private LinkedList<string> commandInputHistory;
+    private int commandInputHistoryCount;
+    private LinkedListNode<string> commandInputHistoryCurrent;
+    private Queue<string> outputQueue;
+    private IRqlEngine rqlEngine;
+
+    protected override void OnInitialized()
+    {
+        this.outputQueue = new Queue<string>(this.Options.RqlTerminal.MaxOutputLines);
+        this.commandInputHistory = new LinkedList<string>();
+        this.commandInputHistoryCount = 0;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var instanceIdResult = await this.Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
+            if (instanceIdResult.Success)
+            {
+                var instanceId = instanceIdResult.Value;
+                var rulesEngineInstance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
+                this.rqlEngine = rulesEngineInstance.RulesEngine.GetRqlEngine();
+                this.StateHasChanged();
+            }
+        }
+
+        await this.JS.InvokeVoidAsync("scrollToTop", ".terminal > pre");
+    }
+
+    private async Task OnCommandInputKeyUpAsync(KeyboardEventArgs args)
+    {
+        switch (args.Key)
+        {
+            case "Enter":
+            case "NumpadEnter":
+                if (!string.IsNullOrWhiteSpace(this.commandInput))
+                {
+                    await ExecuteAsync(this.rqlEngine, this.commandInput);
+
+                    if (this.commandInputHistoryCount >= 50)
+                    {
+                        this.commandInputHistory.RemoveLast();
+                    }
+
+                    this.commandInputHistory.AddFirst(this.commandInput);
+                    this.commandInput = string.Empty;
+                    this.commandInputHistoryCurrent = null;
+                    this.StateHasChanged();
+                }
+                break;
+
+            case "ArrowUp":
+                if (this.commandInputHistoryCurrent is not null)
+                {
+                    if (this.commandInputHistoryCurrent.Next is not null)
+                    {
+                        this.commandInputHistoryCurrent = this.commandInputHistoryCurrent.Next;
+                        this.commandInput = this.commandInputHistoryCurrent.Value;
+                    }
+                }
+                else
+                {
+                    this.commandInputHistoryCurrent = this.commandInputHistory.First;
+                    if (this.commandInputHistoryCurrent is not null)
+                    {
+                        this.commandInput = this.commandInputHistoryCurrent.Value;
+                    }
+                }
+                break;
+
+            case "ArrowDown":
+                if (this.commandInputHistoryCurrent is not null)
+                {
+                    if (this.commandInputHistoryCurrent.Previous is not null)
+                    {
+                        this.commandInputHistoryCurrent = this.commandInputHistoryCurrent.Previous;
+                        this.commandInput = this.commandInputHistoryCurrent.Value;
+                    }
+                    else
+                    {
+                        this.commandInput = string.Empty;
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private async Task ExecuteAsync(IRqlEngine rqlEngine, string? input)
+    {
+        try
+        {
+            WriteLine($"> {input}");
+            var results = await rqlEngine.ExecuteAsync(input);
+            foreach (var result in results)
+            {
+                switch (result)
+                {
+                    case RulesSetResult rulesResultSet:
+                        HandleRulesSetResult(rulesResultSet);
+                        break;
+
+                    case NothingResult:
+                        // Nothing to be done.
+                        break;
+
+                    case ValueResult valueResult:
+                        HandleObjectResult(valueResult);
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Result type is not supported: '{result.GetType().FullName}'");
+                }
+            }
+        }
+        catch (RqlException rqlException)
+        {
+            WriteLine($"{rqlException.Message} Errors:");
+
+            foreach (var rqlError in rqlException.Errors)
+            {
+                var errorMessageBuilder = new StringBuilder(" - ")
+                    .Append(rqlError.Text)
+                    .Append(" @")
+                    .Append(rqlError.BeginPosition)
+                    .Append('-')
+                    .Append(rqlError.EndPosition);
+                WriteLine(errorMessageBuilder.ToString());
+            }
+        }
+
+        WriteLine();
+    }
+
+    private void HandleObjectResult(ValueResult result)
+    {
+        WriteLine();
+        var rawValue = result.Value switch
+        {
+            RqlAny rqlAny when rqlAny.UnderlyingType == RqlTypes.Object => rqlAny.ToString() ?? string.Empty,
+            RqlAny rqlAny => rqlAny.ToString() ?? string.Empty,
+            _ => result.Value.ToString(),
+        };
+        var value = rawValue!.Replace("\n", $"\n{tab}");
+        WriteLine($"{tab}{value}");
+    }
+
+    private void HandleRulesSetResult(RulesSetResult result)
+    {
+        WriteLine();
+        if (result.Lines.Any())
+        {
+            WriteLine($"{tab}{result.Rql}");
+            WriteLine($"{tab}{new string('-', Math.Min(result.Rql.Length, 20))}");
+            if (result.NumberOfRules > 0)
+            {
+                WriteLine($"{tab} {result.NumberOfRules} rules were returned.");
+            }
+            else
+            {
+                WriteLine($"{tab} {result.Lines.Count} rules were returned.");
+            }
+
+            WriteLine();
+            WriteLine($"{tab} | # | Priority | Status   | Range                     | Rule");
+            WriteLine($"{tab}{new string('-', 20)}");
+
+            foreach (var line in result.Lines)
+            {
+                var rule = line.Rule.Value;
+                var lineNumber = line.LineNumber.ToString();
+                var priority = rule.Priority.ToString();
+                var active = rule.Active ? "Active" : "Inactive";
+                var dateBegin = rule.DateBegin.Date.ToString("yyyy-MM-ddZ");
+                var dateEnd = rule.DateEnd?.Date.ToString("yyyy-MM-ddZ") ?? "(no end)";
+                var ruleName = rule.Name;
+                var content = JsonSerializer.Serialize(rule.ContentContainer.GetContentAs<object>());
+
+                WriteLine($"{tab} | {lineNumber} | {priority,-8} | {active,-8} | {dateBegin,-11} - {dateEnd,-11} | {ruleName}: {content}");
+            }
+        }
+        else if (result.NumberOfRules > 0)
+        {
+            WriteLine($"{tab}{result.Rql}");
+            WriteLine($"{tab}{new string('-', result.Rql.Length)}");
+            WriteLine($"{tab} {result.NumberOfRules} rules were affected.");
+        }
+        else
+        {
+            WriteLine($"{tab}{result.Rql}");
+            WriteLine($"{tab}{new string('-', result.Rql.Length)}");
+            WriteLine($"{tab} (empty)");
+        }
+    }
+
+    private void WriteLine(string? output = null)
+    {
+        if (output is not null)
+        {
+            var linesSplitOutput = output.Split('\n');
+            foreach (var line in linesSplitOutput)
+            {
+                this.outputQueue.Enqueue(line);
+            }
+        }
+        else
+        {
+            this.outputQueue.Enqueue(string.Empty);
+        }
+
+        while (this.outputQueue.Count >= this.Options.RqlTerminal.MaxOutputLines)
+        {
+            this.outputQueue.Dequeue();
+        }
+    }
+}

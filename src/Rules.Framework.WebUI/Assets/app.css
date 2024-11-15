@@ -54,11 +54,14 @@ h1:focus {
     position: relative;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 main {
     max-height: calc(100vh - 3.5rem);
     height: calc(100vh - 3.5rem);
+    padding-right: 0 !important;
+    margin-right: 0 !important;
 }
 
 .sidebar {

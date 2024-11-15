@@ -10,5 +10,11 @@ namespace Rules.Framework.WebUI
         /// present "Rules Framework" as default.
         /// </summary>
         public string DocumentTitle { get; set; } = "Rules Framework";
+
+        /// <summary>
+        /// Gets the RQL terminal options.
+        /// </summary>
+        /// <value>The RQL terminal options.</value>
+        public RqlTerminalOptions RqlTerminal { get; } = new RqlTerminalOptions();
     }
 }
