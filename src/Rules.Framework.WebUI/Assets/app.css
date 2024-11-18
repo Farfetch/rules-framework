@@ -136,3 +136,12 @@ main {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+/* RQL highlighting add-ons */
+.hljs-date {
+    color: #4ac16e;
+}
+
+.hljs-placeholder {
+    color: rgb(232, 130, 14);
+}
