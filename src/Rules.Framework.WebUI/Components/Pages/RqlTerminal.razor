@@ -16,8 +16,8 @@
 
 <div class="w-100" onclick="window.focusOnElement('commandInputTextbox')">
     <div class="terminal p-2 bg-dark rounded shadow-sm d-flex flex-column-reverse overflow-auto">
-        <div class="terminal-text text-bg-dark d-flex">
-            <span id="commandInputLabel" class="pe-2">></span>
+        <div class="terminal-text text-bg-dark d-flex align-items-center">
+            <span id="commandInputLabel" class="pe-2 align-middle">></span>
             <div class="flex-fill container mx-0 px-0 layered">
                 <pre class="col-12 terminal-input bg-dark text-bg-dark border-0 mb-0 layered-item">
                     <code id="commandInputDisplay"
@@ -45,55 +45,71 @@
                     {
                         <code class="terminal-line mb-1" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line.Text)</code>
                     }
+                    <br class="mb-1" onclick="window.focusOnElement('commandInputTextbox')" />
                 }
-                <br class="mb-1" onclick="window.focusOnElement('commandInputTextbox')" />
             }
         </pre>
     </div>
 </div>
-<script src="rules-ui/rql-terminal.js"></script>
 <script>
+    function onCommandInputTextboxKeyDown(event) {
+        const commandInputDisplayElement = document.getElementById('commandInputDisplay');
+        const scrollOffset = commandInputTextboxElement.scrollLeft;
+        commandInputDisplayElement.scrollTo({
+            top: 0,
+            left: scrollOffset,
+            behavior: 'instant'
+        });
+    }
+
     function onCommandInputTextboxKeyUp(event) {
-    const redirectKeys = ["Enter", "NumpadEnter", "ArrowUp", "ArrowDown"];
-    const clearKeys = ['Enter', 'NumpadEnter'];
-    const commandInputDisplayElement = document.getElementById('commandInputDisplay');
-    if (redirectKeys.includes(event.key)) {
-    const keyboardEvent = new KeyboardEvent(
-    'keyup',
-    {
-    key: event.key,
-    ctrlKey: false,
-    altKey: false,
-    shiftKey: false,
-    code: event.key,
-    view: window,
-    bubbles: true,
-    cancelable: true,
-    charCode: 0
-    });
-    commandInputDisplayElement.dispatchEvent(keyboardEvent);
-    }
+        const redirectKeys = ["Enter", "NumpadEnter", "ArrowUp", "ArrowDown"];
+        const clearKeys = ['Enter', 'NumpadEnter'];
+        const commandInputDisplayElement = document.getElementById('commandInputDisplay');
+        if (redirectKeys.includes(event.key)) {
+            const keyboardEvent = new KeyboardEvent(
+                'keyup',
+                {
+                    key: event.key,
+                    ctrlKey: false,
+                    altKey: false,
+                    shiftKey: false,
+                    code: event.key,
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    charCode: 0
+                });
+            commandInputDisplayElement.dispatchEvent(keyboardEvent);
+        }
 
-    if (clearKeys.includes(event.key)) {
-    commandInputDisplayElement.innerText = '';
-    }
-    else {
-    commandInputDisplayElement.innerText = event.target.value;
-    }
+        if (clearKeys.includes(event.key)) {
+            commandInputDisplayElement.innerText = '';
+        }
+        else {
+            commandInputDisplayElement.innerText = event.target.value;
+        }
 
-    delete commandInputDisplayElement.dataset['highlighted'];
-    hljs.highlightElement(commandInputDisplayElement);
+        delete commandInputDisplayElement.dataset['highlighted'];
+        hljs.highlightElement(commandInputDisplayElement);
+        const scrollOffset = commandInputTextboxElement.scrollLeft;
+        commandInputDisplayElement.scrollTo({
+            top: 0,
+            left: scrollOffset,
+            behavior: 'instant'
+        });
     }
 
     var commandInputTextboxElement = document.getElementById('commandInputTextbox');
     commandInputTextboxElement.addEventListener('keyup', onCommandInputTextboxKeyUp);
+    commandInputTextboxElement.addEventListener('keydown', onCommandInputTextboxKeyDown);
 
     window.setCommandInputDisplayValue = (value) => {
-    const commandInputDisplayElement = document.getElementById('commandInputDisplay');
-    commandInputDisplayElement.innerText = value;
+        const commandInputDisplayElement = document.getElementById('commandInputDisplay');
+        commandInputDisplayElement.innerText = value;
 
-    delete commandInputDisplayElement.dataset['highlighted'];
-    hljs.highlightElement(commandInputDisplayElement);
+        delete commandInputDisplayElement.dataset['highlighted'];
+        hljs.highlightElement(commandInputDisplayElement);
     }
 </script>
 

@@ -1,10 +1,6 @@
 .layered {
     display: grid;
-    /* Set horizontal alignment of items in, case they have a different width. */
-    /* justify-items: start | end | center | stretch (default); */
     justify-items: start;
-    /* Set vertical alignment of items, in case they have a different height. */
-    /* align-items: start | end | center | stretch (default); */
     align-items: start;
 }
 
@@ -22,17 +18,26 @@
     caret-color: rgb(255, 255, 255);
     caret-shape: bar;
     height: 1.7rem;
+    margin: 0.1em 0 0 0;
     outline: none;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    padding: 0;
 }
 
 .terminal-line {
     background-color: rgba(0, 0, 0, 0) !important;
     font-size: 1rem;
-    height: 1.7rem;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
     padding: 0rem;
     width: 100%;
     word-wrap: break-word;
 }
+
+    .terminal-line ::deep {
+        overflow-wrap: break-word !important;
+    }
 
 .terminal-output {
     display: flex;
