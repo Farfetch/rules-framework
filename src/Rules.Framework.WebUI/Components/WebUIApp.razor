@@ -38,11 +38,6 @@
             URL.revokeObjectURL(url);
         }
 
-        window.scrollToTop = (selector) => {
-            let element = document.querySelector(selector);
-            element.scrollTo(0, element.scrollHeight);
-        }
-
         window.focusOnElement = (id) => {
             var selection = window.getSelection();
             if (selection.type != "Range") {

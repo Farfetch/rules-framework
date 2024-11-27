@@ -39,11 +39,11 @@
                 {
                     if (line.Type == TerminalOutputLineTypes.Rql)
                     {
-                        <code class="terminal-line mb-1 language-rql" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line.Text)</code>
+                        <code class="terminal-line w-100 mb-1 language-rql" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line.Text)</code>
                     }
                     else
                     {
-                        <code class="terminal-line mb-1" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line.Text)</code>
+                        <code class="terminal-line w-100 mb-1" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line.Text)</code>
                     }
                     <br class="mb-1" onclick="window.focusOnElement('commandInputTextbox')" />
                 }
@@ -51,67 +51,7 @@
         </pre>
     </div>
 </div>
-<script>
-    function onCommandInputTextboxKeyDown(event) {
-        const commandInputDisplayElement = document.getElementById('commandInputDisplay');
-        const scrollOffset = commandInputTextboxElement.scrollLeft;
-        commandInputDisplayElement.scrollTo({
-            top: 0,
-            left: scrollOffset,
-            behavior: 'instant'
-        });
-    }
-
-    function onCommandInputTextboxKeyUp(event) {
-        const redirectKeys = ["Enter", "NumpadEnter", "ArrowUp", "ArrowDown"];
-        const clearKeys = ['Enter', 'NumpadEnter'];
-        const commandInputDisplayElement = document.getElementById('commandInputDisplay');
-        if (redirectKeys.includes(event.key)) {
-            const keyboardEvent = new KeyboardEvent(
-                'keyup',
-                {
-                    key: event.key,
-                    ctrlKey: false,
-                    altKey: false,
-                    shiftKey: false,
-                    code: event.key,
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                    charCode: 0
-                });
-            commandInputDisplayElement.dispatchEvent(keyboardEvent);
-        }
-
-        if (clearKeys.includes(event.key)) {
-            commandInputDisplayElement.innerText = '';
-        }
-        else {
-            commandInputDisplayElement.innerText = event.target.value;
-        }
-
-        delete commandInputDisplayElement.dataset['highlighted'];
-        hljs.highlightElement(commandInputDisplayElement);
-        const scrollOffset = commandInputTextboxElement.scrollLeft;
-        commandInputDisplayElement.scrollTo({
-            top: 0,
-            left: scrollOffset,
-            behavior: 'instant'
-        });
-    }
-
-    var commandInputTextboxElement = document.getElementById('commandInputTextbox');
-    commandInputTextboxElement.addEventListener('keyup', onCommandInputTextboxKeyUp);
-    commandInputTextboxElement.addEventListener('keydown', onCommandInputTextboxKeyDown);
-
-    window.setCommandInputDisplayValue = (value) => {
-        const commandInputDisplayElement = document.getElementById('commandInputDisplay');
-        commandInputDisplayElement.innerText = value;
-
-        delete commandInputDisplayElement.dataset['highlighted'];
-        hljs.highlightElement(commandInputDisplayElement);
-    }
-</script>
+<script src="rules-ui/dist/RqlTerminal.js" type="module"></script>
 
 @code {
     private static readonly string tab = new string(' ', 4);
@@ -143,8 +83,8 @@
             }
         }
 
-        await this.JS.InvokeVoidAsync("scrollToTop", ".terminal > pre");
-        await this.JS.InvokeVoidAsync("hljs.highlightAll");
+        await this.JS.InvokeVoidAsync("rqlTerminal.scrollToLastCommand", ".terminal > pre");
+        await this.JS.InvokeVoidAsync("rqlTerminal.refreshOutputDisplay");
     }
 
     private async Task OnCommandInputKeyUpAsync(KeyboardEventArgs args)
@@ -176,7 +116,7 @@
                     {
                         this.commandInputHistoryCurrent = this.commandInputHistoryCurrent.Next;
                         this.commandInput = this.commandInputHistoryCurrent.Value;
-                        await this.JS.InvokeVoidAsync("setCommandInputDisplayValue", this.commandInput);
+                        await this.JS.InvokeVoidAsync("rqlTerminal.refreshInputDisplay", this.commandInput);
 
                     }
                 }
@@ -186,7 +126,7 @@
                     if (this.commandInputHistoryCurrent is not null)
                     {
                         this.commandInput = this.commandInputHistoryCurrent.Value;
-                        await this.JS.InvokeVoidAsync("setCommandInputDisplayValue", this.commandInput);
+                        await this.JS.InvokeVoidAsync("rqlTerminal.refreshInputDisplay", this.commandInput);
                     }
                 }
                 break;
@@ -205,7 +145,7 @@
                         this.commandInput = string.Empty;
                     }
 
-                    await this.JS.InvokeVoidAsync("setCommandInputDisplayValue", this.commandInput);
+                    await this.JS.InvokeVoidAsync("rqlTerminal.refreshInputDisplay", this.commandInput);
                 }
                 break;
 
