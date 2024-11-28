@@ -46,7 +46,7 @@
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Blazor.Bootstrap" Version="3.0.0" />
+		<PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.*" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.7.1">
 		  <PrivateAssets>all</PrivateAssets>

@@ -135,6 +135,7 @@ declare namespace hljs {
     }
 
     export interface IOptions {
+        cssSelector?: string | undefined;
         classPrefix?: string | undefined;
         tabReplace?: string | undefined;
         useBR?: boolean | undefined;

@@ -14,7 +14,7 @@
 
 <h2>RQL Terminal</h2>
 
-<div class="w-100" onclick="window.focusOnElement('commandInputTextbox')">
+<div class="w-100" onclick="window.rqlTerminal.focusOnInput()">
     <div class="terminal p-2 bg-dark rounded shadow-sm d-flex flex-column-reverse overflow-auto">
         <div class="terminal-text text-bg-dark d-flex align-items-center">
             <span id="commandInputLabel" class="pe-2 align-middle">></span>
@@ -32,20 +32,20 @@
                        @bind-value="commandInput" />
             </div>
         </div>
-        <pre class="terminal-output terminal-text text-bg-dark" onclick="window.focusOnElement('commandInputTextbox')">
+        <pre class="terminal-output terminal-text text-bg-dark" onclick="window.rqlTerminal.focusOnInput()">
             @foreach (var line in this.outputQueue)
             {
                 if (!string.IsNullOrWhiteSpace(line.Text))
                 {
                     if (line.Type == TerminalOutputLineTypes.Rql)
                     {
-                        <code class="terminal-line w-100 mb-1 language-rql" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line.Text)</code>
+                        <code class="terminal-line w-100 mb-1 language-rql" onclick="window.rqlTerminal.focusOnInput()">@((MarkupString)line.Text)</code>
                     }
                     else
                     {
-                        <code class="terminal-line w-100 mb-1" onclick="window.focusOnElement('commandInputTextbox')">@((MarkupString)line.Text)</code>
+                        <code class="terminal-line w-100 mb-1" onclick="window.rqlTerminal.focusOnInput()">@((MarkupString)line.Text)</code>
                     }
-                    <br class="mb-1" onclick="window.focusOnElement('commandInputTextbox')" />
+                    <br class="mb-1" onclick="window.rqlTerminal.focusOnInput()" />
                 }
             }
         </pre>

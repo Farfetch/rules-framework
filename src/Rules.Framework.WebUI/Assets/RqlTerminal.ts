@@ -68,6 +68,18 @@ class RqlTerminal {
         this.inputTextbox.addEventListener('keyup', (event: KeyboardEvent) => {
             rqlTerminal.rqlTerminalHandler.handleKeyUp(event, this.inputTextbox, this.inputDisplay);
         });
+        window.hljs.configure({
+            cssSelector: '.language-rql',
+            languages: ['rql']
+        });
+    }
+
+    focusOnInput() {
+        var selection = window.getSelection()!;
+        if (selection.type != "Range") {
+            this.inputTextbox.focus();
+            return false;
+        }
     }
 
     refreshOutputDisplay() {
