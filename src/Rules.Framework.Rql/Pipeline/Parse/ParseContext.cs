@@ -7,6 +7,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse
 
     internal class ParseContext
     {
+        private static readonly TokenType[] synchronizableTokens = new[] { TokenType.SEMICOLON, TokenType.EOF };
+
         public ParseContext(IReadOnlyList<Token> tokens)
         {
             this.PanicMode = false;
@@ -90,6 +92,17 @@ namespace Rules.Framework.Rql.Pipeline.Parse
             }
 
             return false;
+        }
+
+        public void Synchronize()
+        {
+            while (this.MoveNext())
+            {
+                if (synchronizableTokens.Contains(this.GetCurrentToken().Type))
+                {
+                    return;
+                }
+            }
         }
 
         private Token GetToken(int offset)

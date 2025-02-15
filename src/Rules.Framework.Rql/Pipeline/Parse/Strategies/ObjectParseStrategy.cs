@@ -56,33 +56,31 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
         private Expression ParseObjectAssignment(ParseContext parseContext)
         {
+            var left = Expression.None;
+            var assign = Token.None;
+            var right = Expression.None;
             if (!parseContext.IsMatchCurrentToken(Constants.AllowedUnescapedIdentifierNames))
             {
                 var currentToken = parseContext.GetCurrentToken();
                 if (!currentToken.IsEscaped || !parseContext.IsMatchCurrentToken(Constants.AllowedEscapedIdentifierNames))
                 {
                     parseContext.EnterPanicMode("Expected identifier for object property.", currentToken);
-                    return Expression.None;
+                    return new AssignmentExpression(left, assign, right);
                 }
             }
 
-            var left = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
+            left = this.ParseExpressionWith<IdentifierParseStrategy>(parseContext);
             if (!parseContext.MoveNextIfNextToken(TokenType.ASSIGN))
             {
                 parseContext.EnterPanicMode("Expected token '='.", parseContext.GetNextToken());
-                return Expression.None;
+                return new AssignmentExpression(left, assign, right);
             }
 
-            var assign = parseContext.GetCurrentToken();
+            assign = parseContext.GetCurrentToken();
             _ = parseContext.MoveNext();
 
             // TODO: update according to future logic to process 'or' expressions.
-            var right = this.ParseExpressionWith<TermParseStrategy>(parseContext);
-            if (parseContext.PanicMode)
-            {
-                return Expression.None;
-            }
-
+            right = this.ParseExpressionWith<TermParseStrategy>(parseContext);
             return new AssignmentExpression(left, assign, right);
         }
     }

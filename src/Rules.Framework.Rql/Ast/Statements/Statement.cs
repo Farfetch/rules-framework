@@ -19,5 +19,8 @@ namespace Rules.Framework.Rql.Ast.Statements
         public RqlSourcePosition EndPosition { get; }
 
         public abstract T Accept<T>(IStatementVisitor<T> visitor);
+
+        public bool ContainsPosition(RqlSourcePosition position)
+            => this.BeginPosition <= position && this.EndPosition >= RqlSourcePosition.From(position.Line, position.Column - 1);
     }
 }

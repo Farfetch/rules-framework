@@ -1,5 +1,6 @@
 namespace Rules.Framework.Rql.Runtime
 {
+    using System;
     using System.Threading.Tasks;
     using Rules.Framework.Rql.Runtime.Types;
 
@@ -10,6 +11,8 @@ namespace Rules.Framework.Rql.Runtime
         IRuntimeValue ApplyUnary(IRuntimeValue value, RqlOperators rqlOperator);
 
         ValueTask<RqlArray> GetRulesetsAsync();
+
+        ValueTask<RqlArray> GetUniqueConditionsAsync(string rulesetName, DateTime dateBegin, DateTime dateEnd);
 
         ValueTask<RqlArray> MatchRulesAsync(MatchRulesArgs matchRulesArgs);
 

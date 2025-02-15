@@ -19,38 +19,37 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle match rules expression.");
             }
 
+            var matchKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+            var cardinality = Segment.None;
+            var ruleset = Segment.None;
+            var matchDate = Segment.None;
+            var inputConditionsExpression = Segment.None;
+
             _ = parseContext.MoveNext();
-            var cardinality = this.ParseSegmentWith<CardinalityParseStrategy>(parseContext);
+            cardinality = this.ParseSegmentWith<CardinalityParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return MatchExpression.Create(matchKeyword, cardinality, ruleset, matchDate, inputConditionsExpression);
             }
 
-            if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
-            {
-                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetNextToken());
-                return Expression.None;
-            }
-
-            var ruleset = this.ParseExpressionWith<RulesetParseStrategy>(parseContext);
+            ruleset = this.ParseSegmentWith<RulesetParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return MatchExpression.Create(matchKeyword, cardinality, ruleset, matchDate, inputConditionsExpression);
             }
 
-            var matchDate = this.ParseDate(parseContext);
+            matchDate = this.ParseDate(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return MatchExpression.Create(matchKeyword, cardinality, ruleset, matchDate, inputConditionsExpression);
             }
 
-            Segment inputConditionsExpression;
             if (parseContext.MoveNextIfNextToken(TokenType.WHEN))
             {
                 inputConditionsExpression = this.ParseSegmentWith<InputConditionsParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
-                    return Expression.None;
+                    return MatchExpression.Create(matchKeyword, cardinality, ruleset, matchDate, inputConditionsExpression);
                 }
             }
             else
@@ -59,42 +58,44 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 {
                     var token = parseContext.GetNextToken();
                     parseContext.EnterPanicMode($"Unrecognized token '{token.Lexeme}'.", token);
-                    return Expression.None;
+                    return MatchExpression.Create(matchKeyword, cardinality, ruleset, matchDate, inputConditionsExpression);
                 }
 
                 inputConditionsExpression = Segment.None;
             }
 
-            return MatchExpression.Create(cardinality, ruleset, matchDate, inputConditionsExpression);
+            return MatchExpression.Create(matchKeyword, cardinality, ruleset, matchDate, inputConditionsExpression);
         }
 
-        private Expression ParseDate(ParseContext parseContext)
+        private Segment ParseDate(ParseContext parseContext)
         {
+            var onKeyword = Expression.None;
+            var matchDate = Expression.None;
             if (!parseContext.MoveNextIfNextToken(TokenType.ON))
             {
                 parseContext.EnterPanicMode("Expected token 'ON'.", parseContext.GetNextToken());
-                return Expression.None;
+                return MatchDateSegment.Create(onKeyword, matchDate);
             }
 
+            onKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
             if (!parseContext.MoveNext())
             {
                 parseContext.EnterPanicMode("Expected literal of type date.", parseContext.GetCurrentToken());
-                return Expression.None;
+                return MatchDateSegment.Create(onKeyword, matchDate);
             }
 
-            var matchDate = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
+            matchDate = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return MatchDateSegment.Create(onKeyword, matchDate);
             }
 
             if (matchDate is LiteralExpression literalExpression && literalExpression.Type != LiteralType.DateTime)
             {
                 parseContext.EnterPanicMode("Expected literal of type date.", parseContext.GetCurrentToken());
-                return Expression.None;
             }
 
-            return matchDate;
+            return MatchDateSegment.Create(onKeyword, matchDate);
         }
     }
 }

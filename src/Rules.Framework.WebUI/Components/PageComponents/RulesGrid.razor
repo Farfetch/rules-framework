@@ -66,8 +66,8 @@
                             {
                                 var conditionNodes = new[] { context.RootCondition };
                                 <RuleConditionHierarchicalAccordion ConditionNodes="@conditionNodes"
-                                                                    EnableCollapseAllButton="true"
-                                                                    EnableShowAllButton="true" />
+                                EnableCollapseAllButton="true"
+                                EnableShowAllButton="true" />
                             }
                         </div>
                     </Content>
@@ -94,6 +94,8 @@
         this.jsonSerializerOptions.Converters.Add(new PolymorphicWriteOnlyJsonConverter<ConditionNodeViewModel>());
     }
 
+    public int? CurrentItemsCount { get; private set; }
+
     [Parameter]
     public RulesGridProviderDelegate DataProvider { get; set; }
 
@@ -105,7 +107,9 @@
     private async Task<GridDataProviderResult<RuleViewModel>> LoadRulesAsync(GridDataProviderRequest<RuleViewModel> request)
     {
         var rules = await this.DataProvider.Invoke();
-        return request.ApplyTo(rules);
+        var result = request.ApplyTo(rules);
+        this.CurrentItemsCount = result.TotalCount;
+        return result;
     }
 
     public delegate Task<IEnumerable<RuleViewModel>> RulesGridProviderDelegate();

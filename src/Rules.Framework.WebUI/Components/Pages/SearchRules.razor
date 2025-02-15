@@ -5,6 +5,10 @@
 @using System.Text.Json.Serialization
 @using System.IO
 @using System.Text
+@using Rules.Framework.Rql
+@using Rules.Framework.Rql.Runtime.Types
+@implements IAsyncDisposable
+@inject IJSRuntime JS
 @inject WebUIOptions Options
 @inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
 @inject ProtectedSessionStorage Storage
@@ -16,73 +20,105 @@
 <div id="rules" class="content">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex flex-row">
-                <div>
-                    <Dropdown Color="DropdownColor.Secondary"
-                        AutoClose="true"
-                        AutoCloseBehavior="DropdownAutoCloseBehavior.Outside">
-                        <DropdownToggleButton>Select rulesets</DropdownToggleButton>
-                        <DropdownMenu Class="overflow-auto" Style="max-height: 15rem;">
-                            @if (this.instanceId == Guid.Empty)
-                            {
-                                <p>Loading...</p>
-                            }
-                            else
-                            {
-                                <div class="form-check m-2">
-                                    <input type="checkbox"
-                                        id="checkbox_ruleset_all"
-                                        class="form-check-input"
-                                        checked="@(this.allRulesetsSelected)"
-                                        @onchange="() => OnRulesetCheckAsync(Guid.Empty)" />
-                                    <label for="checkbox_ruleset_all"
-                                        class="form-check-label">All</label>
+            <div class="d-flex flex-column w-100">
+                <Tabs @ref="rulesFilterControls"
+                    EnableFadeEffect="true"
+                    OnShown="(args) => OnTabShown(args)">
+                    <Tab Name="SelectorTab" Title="UI">
+                        <Content>
+                            <div class="mt-2">
+                                <Dropdown Color="DropdownColor.Secondary" AutoClose="true" AutoCloseBehavior="DropdownAutoCloseBehavior.Outside">
+                                    <DropdownToggleButton>Select rulesets</DropdownToggleButton>
+                                    <DropdownMenu Class="overflow-auto" Style="max-height: 15rem;">
+                                        @if (this.instanceId == Guid.Empty)
+                                        {
+                                            <p>Loading...</p>
+                                        }
+                                        else
+                                        {
+                                            <div class="form-check m-2">
+                                                <input type="checkbox" id="checkbox_ruleset_all" class="form-check-input" checked="@(this.allRulesetsSelected)" @onchange="() => OnRulesetCheckAsync(Guid.Empty)" />
+                                                <label for="checkbox_ruleset_all" class="form-check-label">All</label>
+                                            </div>
+                                            <DropdownDivider />
+                                            foreach (var ruleset in this.rulesets)
+                                            {
+                                                <div class="form-check m-2">
+                                                    <input type="checkbox" id="@($"checkbox_ruleset_{ruleset.Id}")" class="form-check-input" checked="@(this.rulesetIds.Contains(ruleset.Id))" @onchange="() => OnRulesetCheckAsync(ruleset.Id)" />
+                                                    <label for="@($"checkbox_ruleset_{ruleset.Id}")" class="form-check-label">@(ruleset.Name)</label>
+                                                </div>
+                                            }
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </div>
+                            <div class="ms-2 mt-2 d-flex flex-row align-items-center">
+                                <div>
+                                    @if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
+                                    {
+                                        <b>@(this.rulesetIds.Count) selected: </b>
+                                        var count = 0;
+                                        foreach (var ruleset in this.rulesets)
+                                        {
+                                            if (this.rulesetIds.Contains(ruleset.Id))
+                                            {
+                                                if (count > 0)
+                                                {
+                                                    <span>, </span>
+                                                }
+
+                                                if (count == 5)
+                                                {
+                                                    <i>and more...</i>
+                                                    break;
+                                                }
+
+                                                <span>@(ruleset.Name)</span>
+                                                count++;
+                                            }
+                                        }
+                                    }
                                 </div>
-                                <DropdownDivider />
-                                foreach (var ruleset in this.rulesets)
-                                {
-                                    <div class="form-check m-2">
-                                        <input type="checkbox"
-                                            id="@($"checkbox_ruleset_{ruleset.Id}")"
-                                            class="form-check-input"
-                                            checked="@(this.rulesetIds.Contains(ruleset.Id))"
-                                            @onchange="() => OnRulesetCheckAsync(ruleset.Id)" />
-                                        <label for="@($"checkbox_ruleset_{ruleset.Id}")"
-                                            class="form-check-label">@(ruleset.Name)</label>
+                            </div>
+                        </Content>
+                    </Tab>
+                    <Tab Name="RqlTab" Title="RQL">
+                        <Content>
+                            <div class="mt-2 p-2 bg-dark rounded shadow-sm d-flex overflow-auto" onclick="window.searchWithRql.prompt.focus()">
+                                <div class="terminal-text text-bg-dark d-flex align-items-center">
+                                    <span id="commandInputLabel" class="pe-2 align-middle">></span>
+                                    <div id="commandInputContainer" class="flex-fill container mx-0 px-0 layered">
+                                        <input id="commandInputTextbox" type="text" class="col-12 terminal-input bg-dark text-bg-dark border-0 layered-item" style="background: transparent !important; color: transparent !important;" aria-describedby="commandInputLabel" @bind-value="commandInput" />
+                                        <input id="relayInputTextbox" type="text" style="display: none;" @onkeyup="OnCommandInputKeyUpAsync" />
                                     </div>
-                                }
-                            }
-                        </DropdownMenu>
-                    </Dropdown>
-                </div>
-                <div class="ms-2 d-flex flex-row align-items-center">
-                    <div>
-                        @if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
-                        {
-                            <b>@(this.rulesetIds.Count) selected: </b>
-                            var count = 0;
-                            foreach (var ruleset in this.rulesets)
+                                </div>
+                            </div>
+                            @if (this.outputTextRql.Any())
                             {
-                                if (this.rulesetIds.Contains(ruleset.Id))
+                                var alertColor = this.outputTextRqlType switch
                                 {
-                                    if (count > 0)
+                                    RqlOutputAlertType.Warning => AlertColor.Warning,
+                                    RqlOutputAlertType.Error => AlertColor.Danger,
+                                    _ => AlertColor.Info,
+                                };
+                                var iconName = this.outputTextRqlType switch
+                                {
+                                    RqlOutputAlertType.Warning => IconName.ExclamationTriangleFill,
+                                    RqlOutputAlertType.Error => IconName.XCircleFill,
+                                    _ => IconName.InfoCircleFill,
+                                };
+                                <Alert Color="alertColor">
+                                    <Icon Name="iconName" Class="me-2"></Icon>
+                                    @foreach (var line in this.outputTextRql)
                                     {
-                                        <span>, </span>
+                                        @line
+                                        <br />
                                     }
-
-                                    if (count == 5)
-                                    {
-                                        <i>and more...</i>
-                                        break;
-                                    }
-
-                                    <span>@(ruleset.Name)</span>
-                                    count++;
-                                }
+                                </Alert>
                             }
-                        }
-                    </div>
-                </div>
+                        </Content>
+                    </Tab>
+                </Tabs>
             </div>
             <br />
             <div class="row">
@@ -94,7 +130,9 @@
                     <Dropdown Color="DropdownColor.Dark">
                         <DropdownToggleButton><span class="me-1">Actions</span><Icon Name="IconName.LightningFill" Color="IconColor.Light" /></DropdownToggleButton>
                         <DropdownMenu>
-                            <DropdownItem Type="DropdownItemType.Button" @onclick="OnExportJsonButtonClickAsync" Disabled="@(!this.rulesetIds.Any())">Export JSON</DropdownItem>
+                            <DropdownItem Type="DropdownItemType.Button"
+                            @onclick="OnExportJsonButtonClickAsync"
+                            Disabled="@(this.rulesGrid.CurrentItemsCount.GetValueOrDefault(0) <= 0)">Export JSON</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -108,32 +146,46 @@
 
 @code {
     private bool allRulesetsSelected;
-    private Guid instanceId;
+    private string commandInput;
     private string exportFileName;
     private Modal exportModal;
     private string exportText;
+    private Guid instanceId;
+    private RulesEngineInstance instance;
+    private IJSObjectReference module;
+    private List<string> outputTextRql;
+    private RqlOutputAlertType outputTextRqlType;
+    private DotNetObjectReference<SearchRules> page;
     private string priorityCriteria;
     private string priorityCriteriaTooltip;
+    private IRqlEngine rqlEngine;
     private HashSet<Guid> rulesetIds;
     private List<RulesetViewModel> rulesets;
     private RulesGrid rulesGrid;
+    private Tabs rulesFilterControls;
+    private string rulesFilterControlsCurrentTabName;
 
     public SearchRules()
     {
+        this.outputTextRql = new List<string>();
         this.rulesetIds = new HashSet<Guid>();
+        this.rulesFilterControlsCurrentTabName = "SelectorTab";
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            this.module = await this.JS.InvokeAsync<IJSObjectReference>("import", "./rules-ui/app/rql/search/SearchWithRqlBootstrap.js");
+            this.page = DotNetObjectReference.Create(this);
+            await this.module.InvokeVoidAsync("initialize", this.page);
             var instanceIdResult = await this.Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
             if (instanceIdResult.Success)
             {
-                this.instanceId = instanceIdResult.Value;
-                var instance = this.RulesEngineInstanceProvider.GetInstance(this.instanceId);
+                this.instance = this.RulesEngineInstanceProvider.GetInstance(instanceIdResult.Value);
+                this.rqlEngine = this.instance.RulesEngine.GetRqlEngine();
 
-                switch (instance.RulesEngine.Options.PriorityCriteria)
+                switch (this.instance.RulesEngine.Options.PriorityCriteria)
                 {
                     case PriorityCriterias.BottommostRuleWins:
                         this.priorityCriteria = WebUIConstants.OptionPriorityCriteriaBottommostRuleWinsName;
@@ -145,7 +197,7 @@
                         break;
                 }
 
-                var rulesets = await instance.RulesEngine.GetRulesetsAsync();
+                var rulesets = await this.instance.RulesEngine.GetRulesetsAsync();
                 var number = 1;
                 this.rulesets = rulesets.OrderBy(r => r.Name).Select(r => new RulesetViewModel
                 {
@@ -156,7 +208,7 @@
 
                 foreach (var ruleset in this.rulesets)
                 {
-                    var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(
+                    var rules = await this.instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(
                         ruleset.Name,
                         DateTime.MinValue,
                         DateTime.MaxValue));
@@ -177,23 +229,101 @@
         }
     }
 
+
+    private async Task OnCommandInputKeyUpAsync(KeyboardEventArgs args)
+    {
+        string[] executeKeys = new string[] { "Enter", "NumpadEnter" };
+        if (executeKeys.Contains(args.Key))
+        {
+            await this.rulesGrid.RefreshAsync();
+            this.StateHasChanged();
+        }
+    }
+
+    private void OnTabShown(TabsEventArgs args) {
+        this.rulesFilterControlsCurrentTabName = args.ActiveTabName;
+    }
+
     private async Task<IEnumerable<RuleViewModel>> LoadRulesAsync()
     {
         List<RuleViewModel> ruleViewModels = new List<RuleViewModel>();
-        if (this.instanceId != Guid.Empty && this.rulesetIds.Any())
+        if (this.instance != null)
         {
-
-            var instance = this.RulesEngineInstanceProvider.GetInstance(instanceId);
-            var rulesets = await instance.RulesEngine.GetRulesetsAsync();
-            var rulesetsToSearch = this.rulesetIds.Contains(Guid.Empty)
-                ? rulesets
-                : rulesets.Where(r => this.rulesetIds.Contains(GuidGenerator.GenerateFromString(r.Name)));
-
-            foreach (var ruleset in rulesetsToSearch)
+            this.outputTextRql.Clear();
+            switch (this.rulesFilterControlsCurrentTabName)
             {
-                var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(ruleset.Name, DateTime.MinValue, DateTime.MaxValue));
+                case "RqlTab":
+                    if (!string.IsNullOrWhiteSpace(this.commandInput))
+                    {
+                        try
+                        {
+                            var results = await this.rqlEngine.ExecuteAsync(this.commandInput);
+                            foreach (var result in results)
+                            {
+                                switch (result)
+                                {
+                                    case RulesSetResult rulesResultSet:
+                                        ruleViewModels.AddRange(rulesResultSet.Lines.Select(l => l.Rule.Value.ToViewModel()));
+                                        break;
 
-                ruleViewModels.AddRange(rules.OrderBy(r => r.Priority).Select(r => r.ToViewModel()));
+                                    case NothingResult:
+                                        // Nothing to be done.
+                                        break;
+
+                                    case ValueResult valueResult:
+                                        this.outputTextRql.Add("The RQL query yielded empty result.");
+                                        this.outputTextRqlType = RqlOutputAlertType.Info;
+                                        break;
+
+                                    default:
+                                        throw new NotSupportedException($"Result type is not supported: '{result.GetType().FullName}'");
+                                }
+                            }
+                        }
+                        catch (RqlException rqlException)
+                        {
+                            this.outputTextRql.Add("Errors:");
+
+                            foreach (var rqlError in rqlException.Errors)
+                            {
+                                var errorMessageBuilder = new StringBuilder(" - ")
+                                    .Append(rqlError.Text)
+                                    .Append(" @")
+                                    .Append(rqlError.BeginPosition)
+                                    .Append('-')
+                                    .Append(rqlError.EndPosition);
+                                this.outputTextRql.Add(errorMessageBuilder.ToString());
+                            }
+
+                            this.outputTextRqlType = RqlOutputAlertType.Error;
+                        }
+                    }
+                    else
+                    {
+                        this.outputTextRql.Add("No result. Please enter a valid RQL query.");
+                        this.outputTextRqlType = RqlOutputAlertType.Warning;
+                    }
+                    break;
+
+                case "SelectorTab":
+                    if (this.rulesetIds.Any())
+                    {
+                        var rulesets = await this.instance.RulesEngine.GetRulesetsAsync();
+                        var rulesetsToSearch = this.rulesetIds.Contains(Guid.Empty)
+                            ? rulesets
+                            : rulesets.Where(r => this.rulesetIds.Contains(GuidGenerator.GenerateFromString(r.Name)));
+
+                        foreach (var ruleset in rulesetsToSearch)
+                        {
+                            var rules = await instance.RulesEngine.SearchAsync(new SearchArgs<string, string>(ruleset.Name, DateTime.MinValue, DateTime.MaxValue));
+
+                            ruleViewModels.AddRange(rules.OrderBy(r => r.Priority).Select(r => r.ToViewModel()));
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
             }
         }
 
@@ -238,19 +368,29 @@
 
     private async Task OnExportJsonButtonClickAsync()
     {
-        if (this.rulesetIds.Any())
+        if (this.rulesGrid.CurrentItemsCount.GetValueOrDefault(0) > 0)
         {
             var response = await this.rulesGrid.DataProvider.Invoke();
             var rules = response.Select(r => r.ToExportRulesModel()).ToArray();
-            if (this.rulesetIds.Count > 1)
+            switch (this.rulesFilterControlsCurrentTabName)
             {
-                this.exportFileName = "selection-rules";
-            }
-            else
-            {
-                var rulesetId = this.rulesetIds.Single();
-                var selectedRulesetName = this.rulesets.First(r => r.Id == rulesetId).Name;
-                this.exportFileName = $"{selectedRulesetName}-selection-rules";
+                case "SelectorTab":
+                    if (this.rulesetIds.Count > 1)
+                    {
+                        this.exportFileName = "selection-rules";
+                    }
+                    else
+                    {
+                        var rulesetId = this.rulesetIds.Single();
+                        var selectedRulesetName = this.rulesets.First(r => r.Id == rulesetId).Name;
+                        this.exportFileName = $"{selectedRulesetName}-selection-rules";
+                    }
+                    break;
+                case "RqlTab":
+                    this.exportFileName = "rql-selection-rules";
+                    break;
+                default:
+                    break;
             }
 
             this.StateHasChanged();
@@ -266,5 +406,33 @@
         }
     }
 
-    
+    [JSInvokable("getAssistSuggestions")]
+    public async Task<IEnumerable<string>> GetAssistSuggestionsAsync(string rql, uint line, uint column)
+    {
+        var assistSuggestions = await this.rqlEngine.ProvideAssistSuggestionsAsync(rql, RqlSourcePosition.From(line, column));
+        return assistSuggestions.Select(a => a.Lexeme).ToArray();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this.page is not null)
+        {
+            this.page.Dispose();
+            this.page = null;
+        }
+
+        if (this.module is not null)
+        {
+            await this.module.DisposeAsync();
+            this.module = null;
+        }
+    }
+
+    private enum RqlOutputAlertType
+    {
+        None = 0,
+        Info = 1,
+        Warning = 2,
+        Error = 3,
+    }
 }

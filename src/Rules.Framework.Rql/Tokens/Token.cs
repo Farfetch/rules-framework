@@ -30,6 +30,10 @@ namespace Rules.Framework.Rql.Tokens
 
         public object Literal { get; }
 
+        public Token Next { get; set; }
+
+        public Token Previous { get; set; }
+
         public TokenType Type { get; }
 
         public string UnescapedLexeme => this.IsEscaped ? this.Lexeme.Substring(1, this.Lexeme.Length - 1) : this.Lexeme;

@@ -7,5 +7,7 @@ namespace Rules.Framework.Rql
     public interface IRqlEngine : IDisposable
     {
         Task<IEnumerable<IResult>> ExecuteAsync(string rql);
+
+        Task<IEnumerable<IAssistSuggestion>> ProvideAssistSuggestionsAsync(string rql, RqlSourcePosition position);
     }
 }

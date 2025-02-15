@@ -76,6 +76,19 @@ namespace Rules.Framework.Rql.Runtime
             return rqlArrayRulesets;
         }
 
+        public async ValueTask<RqlArray> GetUniqueConditionsAsync(string rulesetName, DateTime dateBegin, DateTime dateEnd)
+        {
+            var conditions = await this.rulesEngine.GetUniqueConditionsAsync(rulesetName, dateBegin, dateEnd).ConfigureAwait(false);
+            var rqlArrayConditions = new RqlArray(conditions.Count());
+            var i = 0;
+            foreach (var condition in conditions)
+            {
+                rqlArrayConditions.SetAtIndex(i++, new RqlString(condition));
+            }
+
+            return rqlArrayConditions;
+        }
+
         public async ValueTask<RqlArray> MatchRulesAsync(MatchRulesArgs matchRulesArgs)
         {
             if (matchRulesArgs.MatchCardinality == MatchCardinality.None)

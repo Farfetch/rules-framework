@@ -13,26 +13,18 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         public override Expression Parse(ParseContext parseContext)
         {
             var unaryExpression = this.ParseExpressionWith<UnaryParseStrategy>(parseContext);
-            if (parseContext.PanicMode)
-            {
-                return Expression.None;
-            }
 
             if (parseContext.MoveNextIfNextToken(TokenType.SLASH, TokenType.STAR))
             {
+                var rightExpression = Expression.None;
                 var operatorSegment = this.ParseSegmentWith<OperatorParseStrategy>(parseContext);
                 if (parseContext.PanicMode)
                 {
-                    return Expression.None;
+                    return new BinaryExpression(unaryExpression, operatorSegment, rightExpression);
                 }
 
                 _ = parseContext.MoveNext();
-                var rightExpression = this.ParseExpressionWith<UnaryParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Expression.None;
-                }
-
+                rightExpression = this.ParseExpressionWith<UnaryParseStrategy>(parseContext);
                 return new BinaryExpression(unaryExpression, operatorSegment, rightExpression);
             }
 

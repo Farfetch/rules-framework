@@ -19,37 +19,41 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle input conditions expression.");
             }
 
+            var whenKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
+            var beginToken = Token.None;
+            var inputConditionExpressions = new List<Segment>();
+            var endToken = Token.None;
             if (!parseContext.IsMatchCurrentToken(TokenType.BRACE_LEFT))
             {
                 parseContext.EnterPanicMode("Expected '{' after WITH.", parseContext.GetCurrentToken());
-                return Segment.None;
+                return InputConditionsSegment.Create(whenKeyword, beginToken, inputConditionExpressions.ToArray(), endToken);
             }
 
+            beginToken = parseContext.GetCurrentToken();
             var inputConditionExpression = this.ParseInputCondition(parseContext);
+            inputConditionExpressions.Add(inputConditionExpression);
             if (parseContext.PanicMode)
             {
-                return Segment.None;
+                return InputConditionsSegment.Create(whenKeyword, beginToken, inputConditionExpressions.ToArray(), endToken);
             }
 
-            var inputConditionExpressions = new List<Segment> { inputConditionExpression };
             while (parseContext.MoveNextIfNextToken(TokenType.COMMA))
             {
                 inputConditionExpression = this.ParseInputCondition(parseContext);
+                inputConditionExpressions.Add(inputConditionExpression);
                 if (parseContext.PanicMode)
                 {
-                    return Segment.None;
+                    return InputConditionsSegment.Create(whenKeyword, beginToken, inputConditionExpressions.ToArray(), endToken);
                 }
-
-                inputConditionExpressions.Add(inputConditionExpression);
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.BRACE_RIGHT))
             {
                 parseContext.EnterPanicMode("Expected ',' or '}' after input condition.", parseContext.GetNextToken());
-                return Segment.None;
             }
 
-            return new InputConditionsSegment(inputConditionExpressions.ToArray());
+            endToken = parseContext.GetCurrentToken();
+            return InputConditionsSegment.Create(whenKeyword, beginToken, inputConditionExpressions.ToArray(), endToken);
         }
 
         private Segment ParseInputCondition(ParseContext parseContext)

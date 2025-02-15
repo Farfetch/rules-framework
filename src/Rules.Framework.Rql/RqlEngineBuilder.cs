@@ -1,6 +1,7 @@
 namespace Rules.Framework.Rql
 {
     using System;
+    using Rules.Framework.Rql.Pipeline.Assist;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
@@ -34,8 +35,10 @@ namespace Rules.Framework.Rql
             var parser = new Parser(parseStrategyProvider);
             var reverseRqlBuilder = new ReverseRqlBuilder();
             var interpreter = new Interpreter(runtime, reverseRqlBuilder);
+            var assistEngine = new AssistEngine(runtime);
             var args = new RqlEngineArgs
             {
+                AssistEngine = assistEngine,
                 Interpreter = interpreter,
                 Options = this.options,
                 Parser = parser,

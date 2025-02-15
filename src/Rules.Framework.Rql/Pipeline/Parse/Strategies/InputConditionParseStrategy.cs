@@ -21,28 +21,25 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
 
             var leftToken = parseContext.GetCurrentToken();
             var leftExpression = new PlaceholderExpression(leftToken);
+            var operatorToken = Token.None;
+            var rightExpression = Expression.None;
 
             if (!parseContext.MoveNextIfNextToken(TokenType.IS))
             {
                 parseContext.EnterPanicMode("Expected token 'IS'.", parseContext.GetCurrentToken());
-                return Segment.None;
+                return new InputConditionSegment(leftExpression, operatorToken, rightExpression);
             }
 
-            var operatorToken = parseContext.GetCurrentToken();
+            operatorToken = parseContext.GetCurrentToken();
 
             if (parseContext.MoveNextIfNextToken(TokenType.STRING, TokenType.INT, TokenType.DECIMAL, TokenType.BOOL, TokenType.IDENTIFIER))
             {
-                var rightExpression = this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Segment.None;
-                }
-
+                rightExpression = this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
                 return new InputConditionSegment(leftExpression, operatorToken, rightExpression);
             }
 
             parseContext.EnterPanicMode("Expected literal for condition.", parseContext.GetNextToken());
-            return Segment.None;
+            return new InputConditionSegment(leftExpression, operatorToken, rightExpression);
         }
     }
 }

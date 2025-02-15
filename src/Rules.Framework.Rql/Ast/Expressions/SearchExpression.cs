@@ -6,25 +6,37 @@ namespace Rules.Framework.Rql.Ast.Expressions
     [ExcludeFromCodeCoverage]
     internal class SearchExpression : Expression
     {
-        public SearchExpression(Expression ruleset,
-            Expression dateBegin,
-            Expression dateEnd,
+        public SearchExpression(
+            Expression searchKeyword,
+            Expression rulesKeyword,
+            Segment ruleset,
+            Segment datesInterval,
             Segment inputConditions)
-            : base(ruleset.BeginPosition, inputConditions?.EndPosition ?? dateEnd.EndPosition)
+            : base(ruleset.BeginPosition, inputConditions?.EndPosition ?? datesInterval.EndPosition)
         {
-            this.DateBegin = dateBegin;
-            this.DateEnd = dateEnd;
+            this.DatesInterval = datesInterval;
             this.InputConditions = inputConditions;
+            this.SearchKeyword = searchKeyword;
+            this.RulesKeyword = rulesKeyword;
             this.Ruleset = ruleset;
         }
 
-        public Expression DateBegin { get; }
-
-        public Expression DateEnd { get; }
+        public Segment DatesInterval { get; }
 
         public Segment InputConditions { get; }
 
-        public Expression Ruleset { get; }
+        public Segment Ruleset { get; }
+
+        public Expression RulesKeyword { get; }
+
+        public Expression SearchKeyword { get; }
+
+        public static SearchExpression Create(
+            Expression searchKeyword,
+            Expression rulesKeyword,
+            Segment ruleset,
+            Segment datesInterval,
+            Segment inputConditions) => new SearchExpression(searchKeyword, rulesKeyword, ruleset, datesInterval, inputConditions);
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitSearchExpression(this);
     }

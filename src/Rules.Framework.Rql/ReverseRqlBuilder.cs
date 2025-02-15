@@ -42,6 +42,19 @@ namespace Rules.Framework.Rql
         public string VisitCardinalitySegment(CardinalitySegment expression)
             => $"{expression.CardinalityKeyword.Accept(this)} {expression.RuleKeyword.Accept(this)}";
 
+        public string VisitDatesIntervalSegment(DatesIntervalSegment datesIntervalSegment)
+        {
+            return new StringBuilder()
+                .Append(datesIntervalSegment.SinceKeyword.Accept(this))
+                .Append(SPACE)
+                .Append(datesIntervalSegment.SinceDate.Accept(this))
+                .Append(SPACE)
+                .Append(datesIntervalSegment.UntilKeyword.Accept(this))
+                .Append(SPACE)
+                .Append(datesIntervalSegment.UntilDate.Accept(this))
+                .ToString();
+        }
+
         public string VisitExpressionStatement(ExpressionStatement expressionStatement)
             => $"{expressionStatement.Expression.Accept(this)};";
 
@@ -60,7 +73,9 @@ namespace Rules.Framework.Rql
             var inputConditionsRqlBuilder = new StringBuilder();
             if (inputConditionsExpression.InputConditions.Any())
             {
-                inputConditionsRqlBuilder.Append("WITH {");
+                inputConditionsRqlBuilder.Append(inputConditionsExpression.WhenKeyword.Accept(this))
+                    .Append(SPACE)
+                    .Append(inputConditionsExpression.BeginToken.Lexeme);
 
                 var notFirst = false;
                 foreach (var inputConditionExpression in inputConditionsExpression.InputConditions)
@@ -80,7 +95,7 @@ namespace Rules.Framework.Rql
                 }
 
                 inputConditionsRqlBuilder.Append(SPACE)
-                    .Append('}');
+                    .Append(inputConditionsExpression.EndToken.Lexeme);
             }
 
             return inputConditionsRqlBuilder.ToString();
@@ -97,22 +112,21 @@ namespace Rules.Framework.Rql
             _ => throw new NotSupportedException($"The literal type '{literalExpression.Type}' is not supported."),
         };
 
+        public string VisitMatchDateSegment(MatchDateSegment matchDateSegment) => $"ON {matchDateSegment.MatchDate.Accept(this)}";
+
         public string VisitMatchExpression(MatchExpression matchExpression)
         {
+            var match = matchExpression.MatchKeyword.Accept(this);
             var cardinality = matchExpression.Cardinality.Accept(this);
             var ruleset = matchExpression.Ruleset.Accept(this);
             var matchDate = matchExpression.MatchDate.Accept(this);
             var inputConditions = matchExpression.InputConditions.Accept(this);
 
-            var matchRqlBuilder = new StringBuilder("MATCH")
+            var matchRqlBuilder = new StringBuilder(match)
                 .Append(SPACE)
                 .Append(cardinality)
                 .Append(SPACE)
-                .Append("FOR")
-                .Append(SPACE)
                 .Append(ruleset)
-                .Append(SPACE)
-                .Append("ON")
                 .Append(SPACE)
                 .Append(matchDate);
 
@@ -200,26 +214,21 @@ namespace Rules.Framework.Rql
 
         public string VisitPlaceholderExpression(PlaceholderExpression placeholderExpression) => placeholderExpression.Token.Lexeme;
 
+        public string VisitRulesetSegment(RulesetSegment rulesetSegment)
+            => $"{rulesetSegment.ForKeyword.Accept(this)} {rulesetSegment.RulesetName.Accept(this)}";
+
         public string VisitSearchExpression(SearchExpression searchExpression)
         {
-            var ruleset = searchExpression.Ruleset.Accept(this);
-            var dateBegin = searchExpression.DateBegin.Accept(this);
-            var dateEnd = searchExpression.DateEnd.Accept(this);
             var inputConditions = searchExpression.InputConditions.Accept(this);
 
-            var searchRqlBuilder = new StringBuilder("SEARCH RULES")
+            var searchRqlBuilder = new StringBuilder()
+                .Append(searchExpression.SearchKeyword.Accept(this))
                 .Append(SPACE)
-                .Append("FOR")
+                .Append(searchExpression.RulesKeyword.Accept(this))
                 .Append(SPACE)
-                .Append(ruleset)
+                .Append(searchExpression.Ruleset.Accept(this))
                 .Append(SPACE)
-                .Append("SINCE")
-                .Append(SPACE)
-                .Append(dateBegin)
-                .Append(SPACE)
-                .Append("UNTIL")
-                .Append(SPACE)
-                .Append(dateEnd);
+                .Append(searchExpression.DatesInterval.Accept(this));
 
             if (!string.IsNullOrWhiteSpace(inputConditions))
             {

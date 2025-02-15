@@ -70,6 +70,13 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
 
         public async Task<object> VisitCardinalitySegment(CardinalitySegment expression) => await expression.CardinalityKeyword.Accept(this).ConfigureAwait(false);
 
+        public async Task<object> VisitDatesIntervalSegment(DatesIntervalSegment datesIntervalSegment)
+        {
+            var sinceDate = (RqlDate)await datesIntervalSegment.SinceDate.Accept(this).ConfigureAwait(false);
+            var untilDate = (RqlDate)await datesIntervalSegment.UntilDate.Accept(this).ConfigureAwait(false);
+            return (sinceDate, untilDate);
+        }
+
         public async Task<IResult> VisitExpressionStatement(ExpressionStatement expressionStatement)
         {
             var rql = this.reverseRqlBuilder.BuildRql(expressionStatement);
@@ -124,12 +131,15 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
             });
         }
 
+        public async Task<object> VisitMatchDateSegment(MatchDateSegment matchDateSegment)
+            => await matchDateSegment.MatchDate.Accept(this).ConfigureAwait(false);
+
         public async Task<IRuntimeValue> VisitMatchExpression(MatchExpression matchExpression)
         {
             try
             {
                 var cardinality = (RqlString)await matchExpression.Cardinality.Accept(this).ConfigureAwait(false);
-                var ruleset = await this.HandleRulesetAsync(matchExpression.Ruleset).ConfigureAwait(false);
+                var ruleset = (string)await matchExpression.Ruleset.Accept(this).ConfigureAwait(false);
                 var matchDate = (RqlDate)await matchExpression.MatchDate.Accept(this).ConfigureAwait(false);
                 var inputConditions = await matchExpression.InputConditions.Accept(this).ConfigureAwait(false);
                 var conditions = inputConditions is null
@@ -284,20 +294,37 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         public Task<IRuntimeValue> VisitPlaceholderExpression(PlaceholderExpression placeholderExpression)
             => Task.FromResult<IRuntimeValue>(new RqlString((string)placeholderExpression.Token.Literal));
 
+        public async Task<object> VisitRulesetSegment(RulesetSegment rulesetSegment)
+        {
+            var rawValue = await rulesetSegment.RulesetName.Accept(this).ConfigureAwait(false);
+            var value = RqlTypes.Any.IsAssignableTo(rawValue.Type) ? ((RqlAny)rawValue).Unwrap() : rawValue;
+            if (!RqlTypes.String.IsAssignableTo(value.Type))
+            {
+                throw CreateInterpreterException($"Expected a ruleset value of type '{RqlTypes.String.Name}' but found '{value.Type.Name}' instead", rulesetSegment);
+            }
+
+            var rulesets = await this.runtime.GetRulesetsAsync().ConfigureAwait(false);
+            if (!rulesets.Value.Select(r => r.Unwrap<RqlRuleset>().Value.Name).Contains(value.RuntimeValue))
+            {
+                throw CreateInterpreterException($"The ruleset '{value.RuntimeValue}' was not found", rulesetSegment);
+            }
+
+            return ((RqlString)value).Value;
+        }
+
         public async Task<IRuntimeValue> VisitSearchExpression(SearchExpression searchExpression)
         {
             try
             {
-                var ruleset = await this.HandleRulesetAsync(searchExpression.Ruleset).ConfigureAwait(false);
-                var dateBegin = (RqlDate)await searchExpression.DateBegin.Accept(this).ConfigureAwait(false);
-                var dateEnd = (RqlDate)await searchExpression.DateEnd.Accept(this).ConfigureAwait(false);
+                var ruleset = (string)await searchExpression.Ruleset.Accept(this).ConfigureAwait(false);
+                (var sinceDate, var untilDate) = ((RqlDate, RqlDate))await searchExpression.DatesInterval.Accept(this).ConfigureAwait(false);
                 var conditions = (IDictionary<string, object>)await searchExpression.InputConditions.Accept(this).ConfigureAwait(false);
                 var searchRulesArgs = new SearchRulesArgs
                 {
                     Conditions = conditions ?? new Dictionary<string, object>(StringComparer.Ordinal),
                     Ruleset = ruleset,
-                    DateBegin = dateBegin,
-                    DateEnd = dateEnd,
+                    DateBegin = sinceDate,
+                    DateEnd = untilDate,
                 };
 
                 return await this.runtime.SearchRulesAsync(searchRulesArgs).ConfigureAwait(false);
@@ -343,24 +370,6 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
         {
             var conditionName = (RqlString)await conditionExpression.Accept(this).ConfigureAwait(false);
             return conditionName.Value;
-        }
-
-        private async Task<string> HandleRulesetAsync(Expression rulesetExpression)
-        {
-            var rawValue = await rulesetExpression.Accept(this).ConfigureAwait(false);
-            var value = RqlTypes.Any.IsAssignableTo(rawValue.Type) ? ((RqlAny)rawValue).Unwrap() : rawValue;
-            if (!RqlTypes.String.IsAssignableTo(value.Type))
-            {
-                throw CreateInterpreterException($"Expected a ruleset value of type '{RqlTypes.String.Name}' but found '{value.Type.Name}' instead", rulesetExpression);
-            }
-
-            var rulesets = await this.runtime.GetRulesetsAsync();
-            if (!rulesets.Value.Select(r => r.Unwrap<RqlRuleset>().Value.Name).Contains(value.RuntimeValue))
-            {
-                throw CreateInterpreterException($"The ruleset '{value.RuntimeValue}' was not found", rulesetExpression);
-            }
-
-            return ((RqlString)value).Value;
         }
     }
 }

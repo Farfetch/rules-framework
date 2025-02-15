@@ -19,8 +19,8 @@ namespace Rules.Framework.Rql.Pipeline.Parse
 
         public bool Success { get; }
 
-        public static ParseResult CreateError(IReadOnlyList<Message> messages)
-            => new ParseResult(success: false, messages, statements: null);
+        public static ParseResult CreateError(IReadOnlyList<Statement> statements, IReadOnlyList<Message> messages)
+            => new ParseResult(success: false, messages, statements);
 
         public static ParseResult CreateSuccess(IReadOnlyList<Statement> statements, IReadOnlyList<Message> messages)
             => new ParseResult(success: true, messages, statements);

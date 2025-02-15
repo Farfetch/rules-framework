@@ -17,11 +17,6 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 var @operator = parseContext.GetCurrentToken();
                 _ = parseContext.MoveNext();
                 var right = this.ParseExpressionWith<UnaryParseStrategy>(parseContext);
-                if (parseContext.PanicMode)
-                {
-                    return Expression.None;
-                }
-
                 return new UnaryExpression(@operator, right);
             }
 

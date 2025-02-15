@@ -5,6 +5,7 @@ namespace Rules.Framework.Rql
     using System.Linq;
     using System.Threading.Tasks;
     using Rules.Framework.Rql.Messages;
+    using Rules.Framework.Rql.Pipeline.Assist;
     using Rules.Framework.Rql.Pipeline.Interpret;
     using Rules.Framework.Rql.Pipeline.Parse;
     using Rules.Framework.Rql.Pipeline.Scan;
@@ -14,6 +15,7 @@ namespace Rules.Framework.Rql
     {
         private const string ExceptionMessage = "Errors have occurred processing provided RQL source";
         private const string RqlErrorSourceUnavailable = "<unavailable>";
+        private IAssistEngine assistEngine;
         private bool disposedValue;
         private IInterpreter interpreter;
         private IParser parser;
@@ -24,6 +26,7 @@ namespace Rules.Framework.Rql
             this.tokenScanner = rqlEngineArgs.TokenScanner;
             this.parser = rqlEngineArgs.Parser;
             this.interpreter = rqlEngineArgs.Interpreter;
+            this.assistEngine = rqlEngineArgs.AssistEngine;
         }
 
         public void Dispose()
@@ -66,6 +69,15 @@ namespace Rules.Framework.Rql
             throw new RqlException(ExceptionMessage, errorResults);
         }
 
+        public async Task<IEnumerable<IAssistSuggestion>> ProvideAssistSuggestionsAsync(string rql, RqlSourcePosition position)
+        {
+            var scanResult = this.tokenScanner.ScanTokens(rql);
+            var tokens = scanResult.Tokens;
+            var parserResult = parser.Parse(tokens);
+            var statements = parserResult.Statements;
+            return await this.assistEngine.ProcessAssistAsync(tokens, statements, position).ConfigureAwait(false);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -75,6 +87,7 @@ namespace Rules.Framework.Rql
                     this.interpreter = null!;
                     this.tokenScanner = null!;
                     this.parser = null!;
+                    this.assistEngine = null!;
                 }
 
                 disposedValue = true;

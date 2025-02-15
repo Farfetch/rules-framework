@@ -3,6 +3,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using Rules.Framework.Rql.Messages;
     using Rules.Framework.Rql.Tokens;
@@ -67,6 +68,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             if (!string.IsNullOrWhiteSpace(source))
             {
                 var scanContext = new ScanContext(source);
+                var previousToken = Token.None;
                 do
                 {
                     using (scanContext.BeginTokenCandidate())
@@ -74,9 +76,16 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                         var token = ScanNextToken(scanContext);
                         if (token != Token.None)
                         {
+                            token.Previous = previousToken;
                             tokens.Add(token);
                         }
 
+                        if (previousToken != Token.None)
+                        {
+                            previousToken.Next = token;
+                        }
+
+                        previousToken = token;
                         if (scanContext.TokenCandidate.HasError)
                         {
                             messageContainer.Error(
@@ -87,6 +96,11 @@ namespace Rules.Framework.Rql.Pipeline.Scan
                     }
                 } while (scanContext.MoveNext());
 
+                if (tokens.Count > 0)
+                {
+                    tokens.LastOrDefault().Next = Token.None!;
+                }
+
                 using (scanContext.BeginTokenCandidate())
                 {
                     CreateToken(scanContext, string.Empty, TokenType.EOF, literal: null!);
@@ -96,7 +110,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             var messages = messageContainer.Messages;
             if (messageContainer.ErrorsCount > 0)
             {
-                return ScanResult.CreateError(messages);
+                return ScanResult.CreateError(tokens, messages);
             }
 
             return ScanResult.CreateSuccess(tokens, messages);
@@ -115,7 +129,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
         private static Token CreateToken(ScanContext scanContext, TokenType tokenType)
         {
-            string lexeme = scanContext.ExtractLexeme();
+            var lexeme = scanContext.ExtractLexeme();
             return CreateToken(scanContext, lexeme, tokenType, literal: null!);
         }
 
@@ -169,7 +183,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             ConsumeAlphaNumeric(scanContext);
             var lexeme = scanContext.ExtractLexeme();
             var lexemeUpper = lexeme.ToUpperInvariant();
-            if (!keywords.TryGetValue(lexemeUpper, out TokenType type))
+            if (!keywords.TryGetValue(lexemeUpper, out var type))
             {
                 return CreateToken(scanContext, lexeme, TokenType.IDENTIFIER, lexeme);
             }
@@ -266,7 +280,7 @@ namespace Rules.Framework.Rql.Pipeline.Scan
             return CreateToken(scanContext, lexeme, TokenType.STRING, value);
         }
 
-        private static bool IsAlpha(char @char) => @char >= 'A' && @char <= 'Z' || @char >= 'a' && @char <= 'z' || @char == '_';
+        private static bool IsAlpha(char @char) => (@char >= 'A' && @char <= 'Z') || (@char >= 'a' && @char <= 'z') || @char == '_';
 
         private static bool IsAlphaNumeric(char @char) => IsAlpha(@char) || IsNumeric(@char);
 

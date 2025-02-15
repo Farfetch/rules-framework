@@ -14,6 +14,27 @@
     scroll-behavior: smooth;
 }
 
+.terminal-assist {
+    box-shadow: 0 0 0.25rem rgba(255, 255, 255, 0.075);
+    display: none;
+    position: absolute;
+    width: 12rem;
+    max-height: 8rem;
+    overflow-y: auto;
+}
+
+.terminal-assist-item {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 2rem;
+    padding: 0 0.5rem;
+}
+
+.terminal-assist-item-focused {
+    background: rgb(226 232 240);
+}
+
 .terminal-input {
     caret-color: rgb(255, 255, 255);
     caret-shape: bar;
@@ -30,7 +51,7 @@
     font-size: 1rem;
     overflow-x: hidden !important;
     overflow-y: hidden !important;
-    padding: 0rem;
+    padding: 0rem !important;
     width: 100%;
     word-wrap: break-word;
 }

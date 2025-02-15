@@ -42,7 +42,7 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                     if (!parseContext.MoveNextIfNextToken(TokenType.IN))
                     {
                         parseContext.EnterPanicMode("Expected token 'in'.", parseContext.GetNextToken());
-                        return Segment.None;
+                        break;
                     }
 
                     operatorTokens.Add(parseContext.GetCurrentToken());

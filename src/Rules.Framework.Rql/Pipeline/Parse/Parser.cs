@@ -1,7 +1,6 @@
 namespace Rules.Framework.Rql.Pipeline.Parse
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Rules.Framework.Rql.Ast.Statements;
     using Rules.Framework.Rql.Messages;
     using Rules.Framework.Rql.Pipeline.Parse.Strategies;
@@ -33,33 +32,19 @@ namespace Rules.Framework.Rql.Pipeline.Parse
                         panicModeInfo.Message,
                         panicModeInfo.CauseToken.BeginPosition,
                         panicModeInfo.CauseToken.EndPosition);
-                    Synchronize(parseContext);
                     parseContext.ExitPanicMode();
                 }
-                else
-                {
-                    statements.Add(statement);
-                }
+
+                statements.Add(statement);
             }
 
             var messages = messageContainer.Messages;
             if (messageContainer.ErrorsCount > 0)
             {
-                return ParseResult.CreateError(messages);
+                return ParseResult.CreateError(statements, messages);
             }
 
             return ParseResult.CreateSuccess(statements, messages);
-        }
-
-        private static void Synchronize(ParseContext parseContext)
-        {
-            while (parseContext.MoveNext())
-            {
-                if (synchronizableTokens.Contains(parseContext.GetCurrentToken().Type))
-                {
-                    return;
-                }
-            }
         }
     }
 }

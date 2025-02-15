@@ -7,11 +7,12 @@ namespace Rules.Framework.Rql.Ast.Expressions
     internal class MatchExpression : Expression
     {
         private MatchExpression(
+            Expression matchKeyword,
             Segment cardinality,
-            Expression ruleset,
-            Expression matchDate,
+            Segment ruleset,
+            Segment matchDate,
             Segment inputConditions)
-            : base(cardinality.BeginPosition, inputConditions?.EndPosition ?? matchDate.EndPosition)
+            : base(matchKeyword.BeginPosition, inputConditions?.EndPosition ?? matchDate.EndPosition)
         {
             this.Cardinality = cardinality;
             this.InputConditions = inputConditions;
@@ -23,15 +24,19 @@ namespace Rules.Framework.Rql.Ast.Expressions
 
         public Segment InputConditions { get; }
 
-        public Expression MatchDate { get; }
+        public Segment MatchDate { get; }
 
-        public Expression Ruleset { get; }
+        public Expression MatchKeyword { get; }
 
-        public static MatchExpression Create(Segment cardinality,
-            Expression ruleset,
-            Expression matchDate,
+        public Segment Ruleset { get; }
+
+        public static MatchExpression Create(
+            Expression matchKeyword,
+            Segment cardinality,
+            Segment ruleset,
+            Segment matchDate,
             Segment inputConditions)
-            => new(cardinality, ruleset, matchDate, inputConditions);
+            => new(matchKeyword, cardinality, ruleset, matchDate, inputConditions);
 
         public override T Accept<T>(IExpressionVisitor<T> visitor) => visitor.VisitMatchExpression(this);
     }

@@ -19,41 +19,47 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
                 throw new InvalidOperationException("Unable to handle array expression.");
             }
 
-            Token initializerBeginToken;
-            Token initializerEndToken;
+            var initializerBeginToken = Token.None;
+            var initializerEndToken = Token.None;
+            var size = Expression.None;
             if (parseContext.IsMatchCurrentToken(TokenType.BRACE_LEFT))
             {
+                var values = new List<Expression>();
                 initializerBeginToken = parseContext.GetCurrentToken();
-                _ = parseContext.MoveNext();
+                if (!parseContext.MoveNext())
+                {
+                    parseContext.EnterPanicMode("Expected values following array initialization token '{'.", parseContext.GetCurrentToken());
+                    return NewArrayExpression.Create(Token.None, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
+                }
 
                 // TODO: update according to future logic to process 'or' expressions.
                 var literal = this.ParseExpressionWith<TermParseStrategy>(parseContext);
+                values.Add(literal);
                 if (parseContext.PanicMode)
                 {
-                    return Expression.None;
+                    return NewArrayExpression.Create(Token.None, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
                 }
 
                 _ = parseContext.MoveNext();
-                var values = new List<Expression> { literal };
                 while (parseContext.IsMatchCurrentToken(TokenType.COMMA))
                 {
                     _ = parseContext.MoveNext();
 
                     // TODO: update according to future logic to process 'or' expressions.
                     literal = this.ParseExpressionWith<TermParseStrategy>(parseContext);
+                    values.Add(literal);
                     if (parseContext.PanicMode)
                     {
-                        return Expression.None;
+                        return NewArrayExpression.Create(Token.None, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
                     }
 
-                    values.Add(literal);
                     _ = parseContext.MoveNext();
                 }
 
                 if (!parseContext.IsMatchCurrentToken(TokenType.BRACE_RIGHT))
                 {
                     parseContext.EnterPanicMode("Expected token '}'.", parseContext.GetCurrentToken());
-                    return Expression.None;
+                    return NewArrayExpression.Create(Token.None, initializerBeginToken, Expression.None, values.ToArray(), initializerEndToken);
                 }
 
                 initializerEndToken = parseContext.GetCurrentToken();
@@ -65,21 +71,21 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             if (!parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_LEFT))
             {
                 parseContext.EnterPanicMode("Expected token '['.", parseContext.GetNextToken());
-                return Expression.None;
+                return NewArrayExpression.Create(arrayToken, initializerBeginToken, size, Array.Empty<Expression>(), initializerEndToken);
             }
 
             initializerBeginToken = parseContext.GetCurrentToken();
             _ = parseContext.MoveNext();
-            var size = this.ParseSizeExpression(parseContext);
+            size = this.ParseSizeExpression(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return NewArrayExpression.Create(arrayToken, initializerBeginToken, size, Array.Empty<Expression>(), initializerEndToken);
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.STRAIGHT_BRACKET_RIGHT))
             {
                 parseContext.EnterPanicMode("Expected token ']'.", parseContext.GetNextToken());
-                return Expression.None;
+                return NewArrayExpression.Create(arrayToken, initializerBeginToken, size, Array.Empty<Expression>(), initializerEndToken);
             }
 
             initializerEndToken = parseContext.GetCurrentToken();

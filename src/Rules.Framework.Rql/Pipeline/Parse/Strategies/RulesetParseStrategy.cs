@@ -3,9 +3,10 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
     using System;
     using System.Linq;
     using Rules.Framework.Rql.Ast.Expressions;
+    using Rules.Framework.Rql.Ast.Segments;
     using Rules.Framework.Rql.Tokens;
 
-    internal class RulesetParseStrategy : ParseStrategyBase<Expression>, IExpressionParseStrategy
+    internal class RulesetParseStrategy : ParseStrategyBase<Segment>, ISegmentParseStrategy
     {
         private static readonly LiteralType[] allowedLiteralTypesAsRuleset = new[] { LiteralType.Integer, LiteralType.String };
 
@@ -16,32 +17,35 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
         {
         }
 
-        public override Expression Parse(ParseContext parseContext)
+        public override Segment Parse(ParseContext parseContext)
         {
-            if (!parseContext.IsMatchCurrentToken(TokenType.FOR))
+            var forKeyword = Expression.None;
+            var rulesetName = Expression.None;
+            if (!parseContext.MoveNextIfNextToken(TokenType.FOR))
             {
-                throw new InvalidOperationException("Unable to handle ruleset expression.");
+                parseContext.EnterPanicMode("Expected token 'FOR'.", parseContext.GetNextToken());
+                return RulesetSegment.Create(forKeyword, rulesetName);
             }
 
+            forKeyword = this.ParseExpressionWith<KeywordParseStrategy>(parseContext);
             if (!parseContext.MoveNext())
             {
                 parseContext.EnterPanicMode("Expected ruleset name.", parseContext.GetNextToken());
-                return Expression.None;
+                return RulesetSegment.Create(forKeyword, rulesetName);
             }
 
-            var rulesetNameExpression = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
+            rulesetName = this.ParseExpressionWith<BaseExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Expression.None;
+                return RulesetSegment.Create(forKeyword, rulesetName);
             }
 
-            if (rulesetNameExpression is LiteralExpression literalExpression && !allowedLiteralTypesAsRuleset.Contains(literalExpression.Type))
+            if (rulesetName is LiteralExpression literalExpression && !allowedLiteralTypesAsRuleset.Contains(literalExpression.Type))
             {
                 parseContext.EnterPanicMode($"Literal '{literalExpression.Token.Lexeme}' is not allowed as a valid ruleset. {allowedLiteralTypesMessage.Value}", literalExpression.Token);
-                return Expression.None;
             }
 
-            return rulesetNameExpression;
+            return RulesetSegment.Create(forKeyword, rulesetName);
         }
     }
 }

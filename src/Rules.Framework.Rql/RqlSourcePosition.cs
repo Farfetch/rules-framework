@@ -16,6 +16,70 @@ namespace Rules.Framework.Rql
 
         public readonly uint Line;
 
+        public static bool operator >(RqlSourcePosition left, RqlSourcePosition right)
+        {
+            if (left.Line < right.Line)
+            {
+                return false;
+            }
+
+            if (left.Line > right.Line)
+            {
+                return true;
+            }
+
+            return left.Column > right.Column;
+        }
+
+        public static bool operator <(RqlSourcePosition left, RqlSourcePosition right)
+        {
+            if (left.Line > right.Line)
+            {
+                return false;
+            }
+
+            if (left.Line < right.Line)
+            {
+                return true;
+            }
+
+            return left.Column < right.Column;
+        }
+
+        public static bool operator >=(RqlSourcePosition left, RqlSourcePosition right)
+        {
+            if (left.Line < right.Line)
+            {
+                return false;
+            }
+
+            if (left.Line > right.Line)
+            {
+                return true;
+            }
+
+            return left.Column >= right.Column;
+        }
+
+        public static bool operator <=(RqlSourcePosition left, RqlSourcePosition right)
+        {
+            if (left.Line > right.Line)
+            {
+                return false;
+            }
+
+            if (left.Line < right.Line)
+            {
+                return true;
+            }
+
+            return left.Column <= right.Column;
+        }
+
+        public static bool operator ==(RqlSourcePosition left, RqlSourcePosition right) => left.Equals(right);
+
+        public static bool operator !=(RqlSourcePosition left, RqlSourcePosition right) => !left.Equals(right);
+
         public static RqlSourcePosition Empty { get; } = new RqlSourcePosition(0, 0);
 
         public static RqlSourcePosition From(uint line, uint column) => new RqlSourcePosition(line, column);

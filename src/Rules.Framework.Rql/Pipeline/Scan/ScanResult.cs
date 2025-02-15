@@ -19,8 +19,8 @@ namespace Rules.Framework.Rql.Pipeline.Scan
 
         public IReadOnlyList<Token> Tokens { get; }
 
-        public static ScanResult CreateError(IReadOnlyList<Message> messages)
-            => new ScanResult(success: false, messages, tokens: null);
+        public static ScanResult CreateError(IReadOnlyList<Token> tokens, IReadOnlyList<Message> messages)
+            => new ScanResult(success: false, messages, tokens);
 
         public static ScanResult CreateSuccess(IReadOnlyList<Token> tokens, IReadOnlyList<Message> messages)
             => new ScanResult(success: true, messages, tokens);

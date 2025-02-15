@@ -15,16 +15,17 @@ namespace Rules.Framework.Rql.Pipeline.Parse.Strategies
             var expression = this.ParseExpressionWith<ExpressionParseStrategy>(parseContext);
             if (parseContext.PanicMode)
             {
-                return Statement.None;
+                parseContext.Synchronize();
+                return ExpressionStatement.Create(expression, expression.BeginPosition, parseContext.GetCurrentToken().EndPosition);
             }
 
             if (!parseContext.MoveNextIfNextToken(TokenType.SEMICOLON))
             {
                 parseContext.EnterPanicMode("Expected token ';'.", parseContext.GetNextToken());
-                return Statement.None;
+                parseContext.Synchronize();
             }
 
-            return ExpressionStatement.Create(expression);
+            return ExpressionStatement.Create(expression, expression.BeginPosition, parseContext.GetCurrentToken().EndPosition);
         }
     }
 }

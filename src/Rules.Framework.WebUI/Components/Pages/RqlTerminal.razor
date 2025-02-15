@@ -5,6 +5,7 @@
 @using System.Text
 @using System.Text.Json
 @rendermode InteractiveServer
+@implements IAsyncDisposable
 @inject IJSRuntime JS
 @inject WebUIOptions Options
 @inject IRulesEngineInstanceProvider RulesEngineInstanceProvider
@@ -14,65 +15,63 @@
 
 <h2>RQL Terminal</h2>
 
-<div class="w-100" onclick="window.rqlTerminal.focusOnInput()">
+<div class="w-100" onclick="window.rqlTerminal.prompt.focus()">
     <div class="terminal p-2 bg-dark rounded shadow-sm d-flex flex-column-reverse overflow-auto">
         <div class="terminal-text text-bg-dark d-flex align-items-center">
             <span id="commandInputLabel" class="pe-2 align-middle">></span>
-            <div class="flex-fill container mx-0 px-0 layered">
-                <pre class="col-12 terminal-input bg-dark text-bg-dark border-0 mb-0 layered-item">
-                    <code id="commandInputDisplay"
-                        class="terminal-line mb-1 layered-item language-rql"
-                        @onkeyup="OnCommandInputKeyUpAsync"></code>
-                </pre>
+            <div id="commandInputContainer" class="flex-fill container mx-0 px-0 layered">
                 <input id="commandInputTextbox"
                        type="text"
                        class="col-12 terminal-input bg-dark text-bg-dark border-0 layered-item"
                        style="background: transparent !important; color: transparent !important;"
                        aria-describedby="commandInputLabel"
                        @bind-value="commandInput" />
+                <input id="relayInputTextbox"
+                       type="text"
+                       style="display: none;"
+                       @onkeyup="OnCommandInputKeyUpAsync" />
             </div>
         </div>
-        <pre class="terminal-output terminal-text text-bg-dark" onclick="window.rqlTerminal.focusOnInput()">
+        <pre class="terminal-output terminal-text text-bg-dark" onclick="window.rqlTerminal.prompt.focus()">
             @foreach (var line in this.outputQueue)
             {
                 if (!string.IsNullOrWhiteSpace(line.Text))
                 {
                     if (line.Type == TerminalOutputLineTypes.Rql)
                     {
-                        <code class="terminal-line w-100 mb-1 language-rql" onclick="window.rqlTerminal.focusOnInput()">@((MarkupString)line.Text)</code>
+                        <code class="terminal-line w-100 mb-1 language-rql" onclick="window.rqlTerminal.prompt.focus()">@((MarkupString)line.Text)</code>
                     }
                     else
                     {
-                        <code class="terminal-line w-100 mb-1" onclick="window.rqlTerminal.focusOnInput()">@((MarkupString)line.Text)</code>
+                        <code class="terminal-line w-100 mb-1" onclick="window.rqlTerminal.prompt.focus()">@((MarkupString)line.Text)</code>
                     }
-                    <br class="mb-1" onclick="window.rqlTerminal.focusOnInput()" />
+                    <br class="mb-1" onclick="window.rqlTerminal.prompt.focus()" />
                 }
             }
         </pre>
     </div>
 </div>
-<script src="rules-ui/dist/RqlTerminal.js" type="module"></script>
 
 @code {
     private static readonly string tab = new string(' ', 4);
     private string commandInput;
-    private LinkedList<string> commandInputHistory;
-    private int commandInputHistoryCount;
-    private LinkedListNode<string> commandInputHistoryCurrent;
+    private IJSObjectReference module;
     private Queue<TerminalOutputLineViewModel> outputQueue;
+    private DotNetObjectReference<RqlTerminal> page;
     private IRqlEngine rqlEngine;
 
     protected override void OnInitialized()
     {
         this.outputQueue = new Queue<TerminalOutputLineViewModel>(this.Options.RqlTerminal.MaxOutputLines);
-        this.commandInputHistory = new LinkedList<string>();
-        this.commandInputHistoryCount = 0;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            this.module = await this.JS.InvokeAsync<IJSObjectReference>("import", "./rules-ui/app/rql/terminal/RqlTerminalBootstrap.js");
+            this.page = DotNetObjectReference.Create(this);
+            await this.module.InvokeVoidAsync("initialize", this.page);
             var instanceIdResult = await this.Storage.GetAsync<Guid>(WebUIConstants.SelectedInstanceStorageKey);
             if (instanceIdResult.Success)
             {
@@ -82,76 +81,44 @@
                 this.StateHasChanged();
             }
         }
-
-        await this.JS.InvokeVoidAsync("rqlTerminal.scrollToLastCommand", ".terminal > pre");
-        await this.JS.InvokeVoidAsync("rqlTerminal.refreshOutputDisplay");
+        else
+        {
+            await this.JS.InvokeVoidAsync("rqlTerminal.scrollToLastCommand");
+            await this.JS.InvokeVoidAsync("rqlTerminal.refreshOutputDisplay");
+        }
     }
 
     private async Task OnCommandInputKeyUpAsync(KeyboardEventArgs args)
     {
-        switch (args.Key)
+        string[] executeKeys = new string[] { "Enter", "NumpadEnter" };
+        if (executeKeys.Contains(args.Key) && !string.IsNullOrWhiteSpace(this.commandInput))
         {
-            case "Enter":
-            case "NumpadEnter":
-                if (!string.IsNullOrWhiteSpace(this.commandInput))
-                {
-                    await ExecuteAsync(this.rqlEngine, this.commandInput);
-
-                    if (this.commandInputHistoryCount >= 50)
-                    {
-                        this.commandInputHistory.RemoveLast();
-                    }
-
-                    this.commandInputHistory.AddFirst(this.commandInput);
-                    this.commandInput = string.Empty;
-                    this.commandInputHistoryCurrent = null;
-                    this.StateHasChanged();
-                }
-                break;
-
-            case "ArrowUp":
-                if (this.commandInputHistoryCurrent is not null)
-                {
-                    if (this.commandInputHistoryCurrent.Next is not null)
-                    {
-                        this.commandInputHistoryCurrent = this.commandInputHistoryCurrent.Next;
-                        this.commandInput = this.commandInputHistoryCurrent.Value;
-                        await this.JS.InvokeVoidAsync("rqlTerminal.refreshInputDisplay", this.commandInput);
-
-                    }
-                }
-                else
-                {
-                    this.commandInputHistoryCurrent = this.commandInputHistory.First;
-                    if (this.commandInputHistoryCurrent is not null)
-                    {
-                        this.commandInput = this.commandInputHistoryCurrent.Value;
-                        await this.JS.InvokeVoidAsync("rqlTerminal.refreshInputDisplay", this.commandInput);
-                    }
-                }
-                break;
-
-            case "ArrowDown":
-                if (this.commandInputHistoryCurrent is not null)
-                {
-                    if (this.commandInputHistoryCurrent.Previous is not null)
-                    {
-                        this.commandInputHistoryCurrent = this.commandInputHistoryCurrent.Previous;
-                        this.commandInput = this.commandInputHistoryCurrent.Value;
-                    }
-                    else
-                    {
-                        this.commandInputHistoryCurrent = null;
-                        this.commandInput = string.Empty;
-                    }
-
-                    await this.JS.InvokeVoidAsync("rqlTerminal.refreshInputDisplay", this.commandInput);
-                }
-                break;
-
-            default:
-                break;
+            await ExecuteAsync(this.rqlEngine, this.commandInput);
+            this.commandInput = string.Empty;
+            this.StateHasChanged();
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this.page is not null)
+        {
+            this.page.Dispose();
+            this.page = null;
+        }
+
+        if (this.module is not null)
+        {
+            await this.module.DisposeAsync();
+            this.module = null;
+        }
+    }
+
+    [JSInvokable("getAssistSuggestions")]
+    public async Task<IEnumerable<string>> GetAssistSuggestionsAsync(string rql, uint line, uint column)
+    {
+        var assistSuggestions = await this.rqlEngine.ProvideAssistSuggestionsAsync(rql, RqlSourcePosition.From(line, column));
+        return assistSuggestions.Select(a => a.Lexeme).ToArray();
     }
 
     private async Task ExecuteAsync(IRqlEngine rqlEngine, string? input)
