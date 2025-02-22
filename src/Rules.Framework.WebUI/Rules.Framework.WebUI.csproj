@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor" InitialTargets="EmbedScopedCss">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor" InitialTargets="EmbedScopedCss">
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
 		<TargetFrameworks>net8.0</TargetFrameworks>
 		<LangVersion>10.0</LangVersion>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Authors></Authors>
 		<Version></Version>
 		<PackageVersion></PackageVersion>

@@ -149,7 +149,6 @@
     private string commandInput;
     private string exportFileName;
     private Modal exportModal;
-    private string exportText;
     private Guid instanceId;
     private RulesEngineInstance instance;
     private IJSObjectReference module;
@@ -167,6 +166,7 @@
 
     public SearchRules()
     {
+        this.instanceId = Guid.Empty;
         this.outputTextRql = new List<string>();
         this.rulesetIds = new HashSet<Guid>();
         this.rulesFilterControlsCurrentTabName = "SelectorTab";

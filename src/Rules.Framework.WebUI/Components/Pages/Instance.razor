@@ -93,7 +93,7 @@ else
                             NameDescription = WebUIConstants.OptionDataTypeDefaultsDescription,
                             Value = instance.RulesEngine.Options.DataTypeDefaults.ToDictionary(k => k.Key.ToString(), v =>v.Key switch
                             {
-                                DataTypes.Boolean => v.Value.ToString().ToLower(),
+                                DataTypes.Boolean => v.Value?.ToString()?.ToLower(),
                                 DataTypes.String when string.Equals(v.Value, string.Empty) => "string.Empty",
                                 DataTypes.String => $"\"{v.Value}\"",
                                 _ => v.Value,

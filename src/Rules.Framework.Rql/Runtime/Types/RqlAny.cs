@@ -4,6 +4,9 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System.Diagnostics;
     using Rules.Framework.Rql.Runtime;
 
+    /// <summary>
+    /// Defines the .NET representation of a RQL &lt;any&gt; value.
+    /// </summary>
     [DebuggerDisplay("<{this.Type.Name,nq}> (<{this.UnderlyingType.Name,nq}>)")]
     public readonly struct RqlAny : IRuntimeValue, IEquatable<RqlAny>
     {
@@ -11,6 +14,9 @@ namespace Rules.Framework.Rql.Runtime.Types
 
         private readonly IRuntimeValue underlyingRuntimeValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RqlAny"/> struct.
+        /// </summary>
         public RqlAny()
             : this(new RqlNothing())
         {
@@ -27,18 +33,31 @@ namespace Rules.Framework.Rql.Runtime.Types
             this.underlyingRuntimeValue = runtimeValue;
         }
 
+        /// <inheritdoc/>
         public Type RuntimeType => this.underlyingRuntimeValue.RuntimeType;
 
+        /// <inheritdoc/>
         public object RuntimeValue => this.underlyingRuntimeValue.RuntimeValue;
 
+        /// <inheritdoc/>
         public RqlType Type => type;
 
+        /// <summary>
+        /// Gets the underlying RQL type under the RQL &lt;any&gt; instance.
+        /// </summary>
+        /// <value>The underlying RQL type under the RQL &lt;any&gt; instance.</value>
         public RqlType UnderlyingType => this.underlyingRuntimeValue.Type;
 
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <value>The value.</value>
         public object Value => this.underlyingRuntimeValue.RuntimeValue;
 
+        /// <inheritdoc/>
         public bool Equals(RqlAny other) => this.underlyingRuntimeValue == other.underlyingRuntimeValue;
 
+        /// <inheritdoc/>
         public override string ToString()
             => $"<{this.Type.Name}> ({this.underlyingRuntimeValue.ToString()})";
 

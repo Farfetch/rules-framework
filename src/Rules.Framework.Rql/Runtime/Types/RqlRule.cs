@@ -7,6 +7,9 @@ namespace Rules.Framework.Rql.Runtime.Types
     using System.Text;
     using Rules.Framework.ConditionNodes;
 
+    /// <summary>
+    /// Defines the .NET representation of a RQL &lt;rule&gt; value.
+    /// </summary>
     [DebuggerDisplay("<{this.Type.Name,nq}> ({this.Value.Priority}) {this.Value.Name, nq}")]
     public readonly struct RqlRule : IRuntimeValue, IEquatable<RqlRule>
     {
@@ -28,20 +31,33 @@ namespace Rules.Framework.Rql.Runtime.Types
             };
         }
 
+        /// <inheritdoc/>
         public Type RuntimeType => runtimeType;
 
+        /// <inheritdoc/>
         public object RuntimeValue => this.Value;
 
+        /// <inheritdoc/>
         public RqlType Type => RqlTypes.Rule;
 
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <value>The value.</value>
         public readonly Rule Value { get; }
 
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="RqlRule"/> to <see cref="RqlAny"/>.
+        /// </summary>
+        /// <param name="rqlRule">The RQL rule.</param>
+        /// <returns>The result of the conversion.</returns>
         public static implicit operator RqlAny(RqlRule rqlRule) => new RqlAny(rqlRule);
 
+        /// <inheritdoc/>
         public bool Equals(RqlRule other) => this.Value.Equals(other.Value);
 
-        public override string ToString()
-                    => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
+        /// <inheritdoc/>
+        public override string ToString() => $"<{Type.Name}>{Environment.NewLine}{this.ToString(4)}";
 
         internal string ToString(int indent)
         {

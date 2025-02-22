@@ -121,7 +121,7 @@
         return assistSuggestions.Select(a => a.Lexeme).ToArray();
     }
 
-    private async Task ExecuteAsync(IRqlEngine rqlEngine, string? input)
+    private async Task ExecuteAsync(IRqlEngine rqlEngine, string input)
     {
         try
         {
@@ -225,7 +225,7 @@
         }
     }
 
-    private void WriteLine(string? output = null, TerminalOutputLineTypes terminalOutputLineType = TerminalOutputLineTypes.PlainText)
+    private void WriteLine(string output = null, TerminalOutputLineTypes terminalOutputLineType = TerminalOutputLineTypes.PlainText)
     {
         if (output is not null)
         {

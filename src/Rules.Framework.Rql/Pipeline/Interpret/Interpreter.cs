@@ -17,7 +17,6 @@ namespace Rules.Framework.Rql.Pipeline.Interpret
     {
         private readonly IReverseRqlBuilder reverseRqlBuilder;
         private readonly IRuntime runtime;
-        private bool disposedValue;
 
         public Interpreter(
             IRuntime runtime,
