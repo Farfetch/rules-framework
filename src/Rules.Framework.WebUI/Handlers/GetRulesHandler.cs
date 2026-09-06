@@ -34,7 +34,7 @@ namespace Rules.Framework.WebUI.Handlers
 
             if (!IsValidFilterDates(rulesFilter))
             {
-                await this.WriteResponseAsync(httpResponse, new { Message = "Date begin cannot be greater than after" }, (int)HttpStatusCode.BadRequest)
+                await this.WriteResponseAsync(httpResponse, new { Message = "Date begin cannot be greater than date end" }, (int)HttpStatusCode.BadRequest)
                    .ConfigureAwait(false);
 
                 return;
