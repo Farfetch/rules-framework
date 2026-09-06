@@ -6,7 +6,7 @@ namespace Rules.Framework.Providers.InMemory
     using Rules.Framework.Core;
 
     /// <summary>
-    /// The rules data source implementation for usage backed with a in-memory database.
+    /// The rules data source implementation for usage backed with an in-memory database.
     /// </summary>
     /// <typeparam name="TContentType">The type of the content type.</typeparam>
     /// <typeparam name="TConditionType">The type of the condition type.</typeparam>

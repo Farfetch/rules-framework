@@ -45,7 +45,7 @@ namespace Rules.Framework.Builder
         /// Sets the new rule with a value condition with the specified parameters.
         /// </summary>
         /// <typeparam name="TDataType">The type of the data type.</typeparam>
-        /// <param name="conditionType">The content type.</param>
+        /// <param name="conditionType">The condition type.</param>
         /// <param name="condOperator">The operator.</param>
         /// <param name="operand">The operand.</param>
         /// <returns></returns>
